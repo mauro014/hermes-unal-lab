@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad" >Posibles Evaluadores</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<h:panelGroup rendered="#{!manejadorMensajes.vacio}">
+				<script language="javascript">
+ 			alert("  <h:outputText value="#{manejadorMensajes.mensaje}"/>");
+ 		</script>
+			</h:panelGroup>
+
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorEvaluadores.inicioTitulo}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+			<br />
+			
+			<p:panel id="panelEvaluadores"
+				header="Adición de Posibles Evaluadores" align="center">
+				<center>
+					<h:panelGrid columns="2" cellpadding="6" cellspacing="3"
+						align="center">
+						<h:outputText value="Tipo de evaluador" />
+						<p:selectOneMenu id="selectTipoEvaluador"
+							value="#{manejadorEvaluadores.tipoEvaluador}">
+							<p:ajax
+								update="EvaluadorInterno, panelEvaluadorExterno,posiblesEvaludadores, tablaExterno "
+								onchange="form.submit()" />
+							<f:selectItems value="#{manejadorEvaluadores.itemsTipoEvaluador}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid id="EvaluadorInterno" columns="1" align="center">
+						<h:panelGrid columns="2" cellpadding="6" cellspacing="3"
+							rendered="#{manejadorEvaluadores.tipoEvaluador=='I'?true:false}"
+							id="detallesInterno" align="center">
+							<h:outputText value="Nombres" />
+							<p:inputText id="nombres" value="#{manejadorEvaluadores.nombres}"
+								size="30" />
+							<h:outputText value="Apellidos" />
+							<p:inputText id="apellidos"
+								value="#{manejadorEvaluadores.apellidos}" size="30" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" align="center">
+							<p:commandButton
+								action="#{manejadorEvaluadores.buscarPosibleEvaluadorInterno}"
+								value="Buscar evaluador interno"
+								rendered="#{manejadorEvaluadores.tipoEvaluador=='I'?true:false}"
+								update="@form" />
+						</h:panelGrid>
+						<br />
+
+						<p:dataTable id="posiblesEvaludadores" cellpadding="6"
+							cellspacing="3" border="1" align="center"
+							value="#{manejadorEvaluadores.listaEleccionInternos}" var="pei"
+							update="posiblesEvaludadores"
+							rendered="#{not empty manejadorEvaluadores.listaEleccionInternos}"
+							paginator="true" rows="10"
+							paginatorPosition="bottom">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="NOMBRE" />
+								</f:facet>
+								<h:outputText
+									value="#{pei.investigadorInterno.nombre1} #{pei.investigadorInterno.nombre2} #{pei.investigadorInterno.apellido1} #{pei.investigadorInterno.apellido2}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="DEPENDENCIA" />
+								</f:facet>
+								<h:outputText
+									value="#{pei.investigadorInterno.dependencia.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="ADICIONAR" />
+								</f:facet>
+								<center>
+									<p:commandButton
+										action="#{manejadorEvaluadores.adicionarPosibleEvaluadorInterno}"
+										icon="ui-icon-plusthick" 
+										title="Adicionar Evaluador" update="@form">
+										<f:setPropertyActionListener
+											target="#{manejadorEvaluadores.peiSeleccionado}"
+											value="#{pei}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+						</p:dataTable>
+						<br />
+						<h:panelGrid columns="2" align="center">
+							<h:outputText value="Área de experticia del evaluador"
+								rendered="#{manejadorEvaluadores.tipoEvaluador=='I'?true:false}" />
+							<p:selectOneMenu value="#{manejadorEvaluadores.areaExperticia}"
+								immediate="true"
+								rendered="#{manejadorEvaluadores.tipoEvaluador=='I'?true:false}">
+								<f:selectItems
+									value="#{manejadorEvaluadores.areasTematicasItem}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<h:panelGrid id="panelEvaluadorExterno" align="center">
+						<h:panelGrid columns="2" align="center" cellpadding="6"
+							cellspacing="3"
+							rendered="#{manejadorEvaluadores.tipoEvaluador=='E'}">
+
+							<h:outputText value="Nombres *" />
+							<p:inputText id="posibleEvaluadorNombre"
+								value="#{manejadorEvaluadores.posibleEvaluador.nombre}"
+								size="38">
+								<f:validateLength maximum="50" />
+							</p:inputText>
+
+							<h:outputText value="Primer apellido *" />
+							<p:inputText id="posibleEvaluadorApellido1"
+								value="#{manejadorEvaluadores.posibleEvaluador.apellido1}"
+								size="38">
+								<f:validateLength maximum="50" />
+							</p:inputText>
+
+							<h:outputText value="Segundo apellido" />
+							<p:inputText id="posibleEvaluadorApellido2"
+								value="#{manejadorEvaluadores.posibleEvaluador.apellido2}"
+								size="38">
+								<f:validateLength maximum="50" />
+							</p:inputText>
+
+							<h:outputText value="Dirección electrónica *" />
+							<p:inputText id="posibleEvaluadorEmail"
+								value="#{manejadorEvaluadores.posibleEvaluador.email}" size="38">
+								<f:validateLength maximum="100" />
+							</p:inputText>
+
+
+							<h:outputText value="Dirección postal" />
+							<p:inputText id="posibleEvaluadorDireccionPostal"
+								value="#{manejadorEvaluadores.posibleEvaluador.direccionPostal}"
+								size="38">
+								<f:validateLength maximum="255" />
+							</p:inputText>
+
+
+							<h:outputText value="Fax" />
+							<p:inputText id="fax"
+								value="#{manejadorEvaluadores.posibleEvaluador.fax}" size="38">
+								<f:validateLength maximum="45" />
+							</p:inputText>
+
+							<h:outputText value="Área de experticia del evaluador"
+								rendered="#{manejadorEvaluadores.tipoEvaluador=='E'}" />
+							<p:selectOneMenu value="#{manejadorEvaluadores.areaExperticia}"
+								immediate="true"
+								rendered="#{manejadorEvaluadores.tipoEvaluador=='E'}">
+								<f:selectItems
+									value="#{manejadorEvaluadores.areasTematicasItem}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<p:commandButton
+							rendered="#{manejadorEvaluadores.tipoEvaluador=='E'}"
+							value="Agregar posible evaluador"
+							actionListener="#{manejadorEvaluadores.adicionarPosibleEvaluador}"
+							icon="ui-icon-plusthick"
+							update="@form">
+						</p:commandButton>
+
+						<h:panelGrid id="tablaExterno"
+							rendered="#{manejadorEvaluadores.tipoEvaluador=='E'?true:false}">
+							<p:dataTable id="EvaluadorExterno" cellpadding="6"
+								cellspacing="3" border="1" align="center"
+								value="#{manejadorEvaluadores.listaEvaluadorInvExterno}"
+								var="pei"
+								rendered="#{not empty manejadorEvaluadores.listaEvaluadorInvExterno}">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="NOMBRE" />
+									</f:facet>
+									<h:outputText
+										value="#{pei.investigadorExterno.nombre1} #{pei.investigadorExterno.nombre2} #{pei.investigadorExterno.apellido1} #{pei.investigadorExterno.apellido2}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="ADICIONAR" />
+									</f:facet>
+									<p:commandLink
+										action="#{manejadorEvaluadores.adicionarPosibleEvaluadorInvExterno}">
+										<h:outputText value="Adicionar" />
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+						</h:panelGrid>
+					</h:panelGrid>
+				</center>
+				<p:messages id="msgs" />
+
+			</p:panel>
+
+			<p:panel header="Posibles Evaluadores Agregados" align="center">
+				<center>
+					<h:panelGrid columns="1" align="center">
+						<h:outputText value="No hay evaluadores adicionados"
+							rendered="#{empty manejadorEvaluadores.listaEvaluadoresVista }" />
+					</h:panelGrid>
+					<br />
+					<p:dataTable id="posiblesEvaludadoresAgragados" align="center"
+						value="#{manejadorEvaluadores.listaEvaluadoresVista}"
+						var="posibleEvaluador"
+						rendered="#{!empty manejadorEvaluadores.listaEvaluadoresVista }">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="EVALUADOR" />
+							</f:facet>
+							<h:outputText value="#{posibleEvaluador.nombre}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="VER" />
+							</f:facet>
+							<p:commandButton id="BotonVerDetallesEvaludor"
+								update=":form:panelGridDetalles" icon="ui-icon-search"
+								onclick="dlg.show()" action="#{manejadorEvaluadores.verDetalle}">
+								<f:setPropertyActionListener
+									target="#{manejadorEvaluadores.posibleEvaluadorSeleccionado}"
+									value="#{posibleEvaluador}" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="ELIMINAR" />
+							</f:facet>
+							<center>
+								<p:commandButton id="botonEliminarEvaluadores"
+									update="@form"  icon="ui-icon-trash"
+									action="#{manejadorEvaluadores.eliminarEvaluadorVista}">
+									<f:setPropertyActionListener
+										target="#{manejadorEvaluadores.posibleEvaluadorSeleccionado}"
+										value="#{posibleEvaluador}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					
+					<p:message for="posiblesEvaludadoresAgragados" value ="No se han agregado los posibles evaluadores del proyecto"
+						rendered="#{empty manejadorEvaluadores.listaEvaluadoresVista }"/>
+
+					<p:dialog id="dialogDetalles" header="Detalles Evaluador"
+						widgetVar="dlg" closable="true" resizable="false" modal="true">
+						<h:panelGrid id="panelGridDetalles" columns="2">
+
+							<h:outputText value="NOMBRE:"/>
+							<h:outputText value="#{manejadorEvaluadores.nombreDetalle}" />
+
+							<h:outputText value="E-MAIL:" />
+							<h:outputText value="#{manejadorEvaluadores.emailDetalle}" />
+
+							<h:outputText value="TELÉFONO: " />
+							<h:outputText value="#{manejadorEvaluadores.telefonoDetalle}" />
+
+							<h:outputText value="EXPERTICIA: " />
+							<h:outputText value="#{manejadorEvaluadores.experticiaDetalle}" />
+
+							<h:outputText value="TIPO DE EVALUADOR: " />
+							<h:outputText
+								value="#{manejadorEvaluadores.tipoEvaluadorDetalle}" />
+
+						</h:panelGrid>
+					</p:dialog>
+
+					<br />
+				</center>
+			</p:panel>
+			<center>
+				<h:panelGrid columns="3" cellpadding="3">
+					<p:commandButton action="#{manejadorEvaluadores.atras}"
+						value="Atrás" immediate="true" />
+					<p:commandButton 
+						action="#{manejadorEvaluadores.salirGuardar}"
+						value="Guardar y continuar después"
+						update="@form" />
+					<p:commandButton 
+						action="#{manejadorEvaluadores.siguiente}"
+						value="Guardar y avanzar"
+						update="@form" />
+				</h:panelGrid>
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

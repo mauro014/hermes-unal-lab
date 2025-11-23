@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">Avales Registrados</ui:define>
+
+	<ui:define name="content">
+		<h:form id="content">
+			<!--	<t:div styleClass="contenido-titulo-avales-registrados" />-->
+			<t:div styleClass="contenido-titulo-general-myriad">Avales Registrados Extensión</t:div>
+			
+			<p:growl id="growl" showDetail="true" sticky="true" />
+			<p:dataTable var="avalVisitante" emptyMessage="0 avales encontrados"
+				value="#{ManejadorAvalMenuExtension.listaAvales}" paginator="true" rows="15"
+				paginatorPosition="top">
+
+				<f:facet name="header">  
+	            Avales Registrados
+	        	</f:facet>
+
+				<p:column headerText="Código">
+					
+
+					<h:outputText id="idAvalLink" value="#{avalVisitante.aviId}" />
+
+					<p:tooltip for="idAvalLink"
+						showEffect="fade" hideEffect="fade">
+						<h:panelGrid columns="1"
+							style="border: 1px; padding-bottom: 0px; width: 500px; background-color:##C0C0C0">
+							<h:outputText
+								value="#{avalVisitante.aviTitulo}" />
+						</h:panelGrid>
+					</p:tooltip>	
+								
+				</p:column>
+				
+				<p:column headerText="Titulo">
+					<h:outputText value="#{avalVisitante.aviTitulo}" />
+				</p:column>
+
+				<p:column headerText="Tipo">
+					<h:outputText value="#{avalVisitante.nombreTipo}" />
+				</p:column>
+
+				<p:column headerText="Estado">
+					<h:outputText value="#{avalVisitante.nombreEstado}" />
+				</p:column>
+
+				<p:column headerText="Fecha Solicitud">
+					<h:outputText value="#{avalVisitante.fecha}" />
+				</p:column>
+
+				<p:column headerText="Acción">
+					<p:commandButton 
+						action="#{ManejadorAvalMenuExtension.editarAval}" icon="ui-icon-pencil" rendered = "#{ManejadorAvalMenuExtension.investigadorActual.id.documento == avalVisitante.creadorId and avalVisitante.editarAval}"
+						title="Editar">
+						<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+					</p:commandButton>
+					<p:commandButton action="#{ManejadorAvalMenuExtension.editarMovilidadAval}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+
+					</p:commandButton>
+
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

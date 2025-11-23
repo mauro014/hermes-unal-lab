@@ -1,0 +1,686 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">Crear / Editar convocatoria externa</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{!manejadorAutenticacion.esAdministradorConvocatorias}">Crear convocatoria externa</t:div>
+			<t:div style="padding:15px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelConvocatoria">
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoEntidad" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoEntidad" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la entidad externa que está ofertando la convocatoria o invitación.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:30%;">
+							<h:outputText value="Entidad convocante *:" />
+						</p:column>
+						<p:column style="width:65%;">
+							<p:selectOneMenu id="entidadConvocante"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.entidad.id}"
+								style="width:100%"
+								disabled="#{(manejadorCrearEditarConvocatoriasExternas.esEdicion or manejadorCrearEditarConvocatoriasExternas.esConsulta) and !manejadorCrearEditarConvocatoriasExternas.permitirEdicion}"
+								panelStyle="width: 400px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.listaEntidadesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="nuevaEntidad" icon="ui-icon-info" />
+							<p:tooltip for="nuevaEntidad" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Solicite la creación de una entidad que no se encuentra en la lista.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="text-align: center;" colspan="2">
+							<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText
+									value="¿Requiere otra entidad que no se encuentra en la lista anterior? " />
+								<p:selectBooleanCheckbox
+									value="#{manejadorCrearEditarConvocatoriasExternas.requiereOtraFuente}">
+									<p:ajax update="panelConvocatoria"
+										process="panelConvocatoria" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorCrearEditarConvocatoriasExternas.requiereOtraFuente}">
+						<p:column colspan="3">
+							<p:panel id="panelFtesNuevas" toggleable="true" toggleSpeed="500"
+								closeSpeed="500"
+								header="Solicitud creación de entidad convocante">
+
+								<p:panelGrid columns="1" style="margin-bottom: 20px;">
+									<div style="width: 100%; color: #FF3300;">Su solicitud se
+										enviará al equipo de trabajo del Sistema de Información HERMES
+										para su aprobación. Una vez aprobada, se le enviará un correo
+										electrónico con la respuesta de la aprobación y la fuente será
+										visible en la lista de selección.</div>
+								</p:panelGrid>
+								<p:panelGrid id="pgFormFuenteFin"
+									styleClass="estilo-panelgrid-sinbordes" style="width: 100%;">
+									<p:row>
+										<p:column>
+											<h:outputText value="Naturaleza:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu id="SOM_fuentesNuevas1"
+												value="#{manejadorCrearEditarConvocatoriasExternas.naturalezaFuente}"
+												style="width:200px">
+												<f:selectItem itemLabel="Seleccione una opción"
+													itemValue="0" />
+												<f:selectItems
+													value="#{manejadorCrearEditarConvocatoriasExternas.tiposNaturalezaFuenteItem}" />
+												<p:ajax
+													listener="#{manejadorCrearEditarConvocatoriasExternas.cambiarNaturalezaFuente}"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" update="pgFormFuenteFin"
+													process="pgFormFuenteFin" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorCrearEditarConvocatoriasExternas.naturalezaFuente == 'NAT_INTERN'}">
+										<p:column>
+											<h:outputText value="Pais:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu id="SOM_paisFuente" filter="true"
+												filterMatchMode="contains" style="width:200px"
+												value="#{manejadorCrearEditarConvocatoriasExternas.paisFuente}">
+												<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+												<f:selectItems
+													value="#{manejadorCrearEditarConvocatoriasExternas.listaPaisesItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Carácter:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu id="SOM_fuentesCaracter"
+												value="#{manejadorCrearEditarConvocatoriasExternas.caracterFuente}"
+												style="width:200px">
+												<f:selectItem itemLabel="Seleccione una opción"
+													itemValue="0" />
+												<f:selectItems
+													value="#{manejadorCrearEditarConvocatoriasExternas.caracterFuenteFinanciacionItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Tipo de fuente:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu id="SOM_fuentesTipoFuente"
+												value="#{manejadorCrearEditarConvocatoriasExternas.tipoFuente}"
+												style="width:200px">
+												<f:selectItem itemLabel="Seleccione una opción"
+													itemValue="0" />
+												<f:selectItems
+													value="#{manejadorCrearEditarConvocatoriasExternas.tiposFuenteFinanciacionItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="width: 180px;">
+											<h:outputText value="Nombre:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="nombreFuente" style="width: 350px;"
+												value="#{manejadorCrearEditarConvocatoriasExternas.nombreFuente}"
+												maxlength="200">
+											</p:inputText>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="NIT:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="nitFuente" style="width: 350px;"
+												value="#{manejadorCrearEditarConvocatoriasExternas.nitFuente}"
+												maxlength="24">
+											</p:inputText>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Dirección:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="direcc" style="width: 350px;"
+												value="#{manejadorCrearEditarConvocatoriasExternas.direccionFuente}"
+												maxlength="180">
+											</p:inputText>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Teléfono:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="tel" style="width: 350px;"
+												value="#{manejadorCrearEditarConvocatoriasExternas.telefonoFuente}"
+												maxlength="200">
+											</p:inputText>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align: center;">
+											<p:commandButton id="CB_crearFuente"
+												rendered="#{!manejadorCrearEditarConvocatoriasExternas.esConsulta}"
+												binding="#{manejadorCrearEditarConvocatoriasExternas.CB_crearFuente}"
+												action="#{manejadorCrearEditarConvocatoriasExternas.solicitudIngresoFuente}"
+												value="Solicitar creación de fuente"
+												update="panelFtesNuevas" onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()">
+											</p:commandButton>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align: center;">
+											<p:message id="msgSolicitudEntidad" for="CB_crearFuente"
+												autoUpdate="true" closable="true" showSummary="false" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoConvocatoria" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoConvocatoria" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el nombre de la convocatoria tal como es llamada en la entidad externa.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Nombre de la convocatoria *:" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="60" rows="4" maxlength="3000"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.nombre}"
+								id="convocatoriaNombre"
+								disabled="#{(manejadorCrearEditarConvocatoriasExternas.esEdicion or manejadorCrearEditarConvocatoriasExternas.esConsulta) and !manejadorCrearEditarConvocatoriasExternas.permitirEdicion}">
+								<f:validateLength minimum="0" maximum="3000"
+									for="convocatoriaNombre"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+						</p:column>
+						<p:column>
+							<h:outputText id="counterNombre"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoNroConvocatoria" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoNroConvocatoria"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	En caso de que aplique indique el número de la convocatoria, entidades como Colciencias <br />
+								       	identifican sus convocatorias con un número.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Número de la convocatoria (si aplica):" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.numero}"
+								id="convocatoriaNumero" size="10"
+								disabled="#{(manejadorCrearEditarConvocatoriasExternas.esEdicion or manejadorCrearEditarConvocatoriasExternas.esConsulta) and !manejadorCrearEditarConvocatoriasExternas.permitirEdicion}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoNaturaleza" icon="ui-icon-info" />
+							<p:tooltip for="infoNaturaleza" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique si la convocatoria es nacional, internacional u otra.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Naturaleza *:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.naturaleza.id}"
+								style="width: 100%;" id="naturaleza"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.naturalezaItem}" />
+								<p:ajax process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infoContrapartida" icon="ui-icon-info" />
+							<p:tooltip for="infoContrapartida" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+									Indique si la convocatoria exige el aporte de contrapartida	
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="¿La convocatoria exige el aporte de contrapartida?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:120px;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.exigeContrapartida}"
+								panelStyle="width: 120px;"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.opcionesSiNo}" />
+								<p:ajax update="@form" process="@form"
+									listener="#{manejadorCrearEditarConvocatoriasExternas.contrapartidaCriterioEvaluacionNulo}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.exigeContrapartida == 0}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoContrapartidaCriterioEval"
+								icon="ui-icon-info" />
+							<p:tooltip for="infoContrapartidaCriterioEval"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+									Indique si la contrapartida es un criterio de evaluación
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="¿A pesar de no requerir el aporte de contrapartida es un criterio de evaluación de la convocatoria?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:120px;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.contrapartidaCriterioEvaluacion}"
+								panelStyle="width: 120px;"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.opcionesSiNo}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoFechaAbreConvocatoria"
+								icon="ui-icon-info" />
+							<p:tooltip for="infoTipoFechaAbreConvocatoria"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la fecha en que abrió o abrirá la convocatoria en la entidad externa.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Fecha de apertura *:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaApertura" navigator="true" locale="es"
+								readonlyInput="true" pattern="dd/MM/yyyy HH:mm:ss"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.fechaApertura}"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoFechaCierraConvocatoria"
+								icon="ui-icon-info" />
+							<p:tooltip for="infoTipoFechaCierraConvocatoria"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	La fecha de cierre debe ser mínimo dos días posteriores a la fecha actual, <br />
+								       	para que los docentes puedan realizar solicitudes aval. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value=" Fecha de cierre *:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaCierre" navigator="true" locale="es"
+								readonlyInput="true" pattern="dd/MM/yyyy HH:mm:ss"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.fechaCierre}"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoFechaResultados" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoFechaResultados"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la fecha en que se realizará la entrega de resultados de la convocatoria en la entidad externa.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Fecha de entrega de resultados *:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaResultados" navigator="true" locale="es"
+								readonlyInput="true"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.fechaResultados}"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">
+						<p:column style="width:5%;">
+							<p:commandButton id="fechaLim" icon="ui-icon-info" />
+							<p:tooltip for="fechaLim" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique la fecha límite para envíos de solicitud de aval. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Fecha límite para solicitud de aval:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaAval" navigator="true" locale="es"
+								readonlyInput="true"
+								mindate="#{manejadorCrearEditarConvocatoriasExternas.today}"
+								pattern="dd/MM/yyyy HH:mm:ss"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.fechaMaxRegistro}"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoTipoURL" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoURL" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	La url debe iniciar con http://, de lo contrario no podrá ser accedida por las <br />
+								       	personas que consulten la convocatoria. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Enlace (url) a la convocatoria:" />
+						</p:column>
+						<p:column>
+							<p:inputText maxlength="3500" style="width:100%;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.urlExterna}"
+								id="urlConvocatoria"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoEstado" icon="ui-icon-info" />
+							<p:tooltip for="infoEstado" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indica el estado de la convocatoria. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Estado:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:120px;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.estado}"
+								panelStyle="width: 120px;"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.estadoConvocatoriasItems}" />
+								<c:if
+									test="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.estado == 'S'}">
+									<f:selectItem itemLabel="Borrar" itemValue="B" />
+								</c:if>
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoGrupos" icon="ui-icon-info" />
+							<p:tooltip for="infoGrupos" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique si corresponde a una convocatoria para grupos o investigadores. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="¿Es convocatoria de grupos o de investigadores?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:120px;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.convocatoriaGrupos}"
+								panelStyle="width: 120px;"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.opcionesSiNo}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoAval" icon="ui-icon-info" />
+							<p:tooltip for="infoAval" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique si corresponde a un tipo de aval específico o no aplica. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="¿Es convocatoria de un tipo de aval específico?¿Cuál?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:220px;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.tipoAvalConvocatoria}"
+								panelStyle="width: 220px;"
+								disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+								<f:selectItem itemLabel="" itemValue="N" />
+								<f:selectItems
+									value="#{manejadorCrearEditarConvocatoriasExternas.categoriaItemsAval}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">
+						<p:column style="width:5%;">
+							<p:commandButton id="mensajeConvocatoria" icon="ui-icon-info" />
+							<p:tooltip for="mensajeConvocatoria" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Puede agregar una nota a la convocatoria para ser mostrada en el formulario del aval a los usuarios.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Mensaje para la convocatoria *:" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="60" rows="4" maxlength="3000"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.mensajeAvalConvocatoria}"
+								id="convocatoriaNombre"
+								disabled="#{(manejadorCrearEditarConvocatoriasExternas.esConsulta) and !manejadorCrearEditarConvocatoriasExternas.permitirEdicion}">
+								<f:validateLength minimum="0" maximum="3000"
+									for="convocatoriaNombre"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row style="width: 100%"
+						rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}">
+						<p:column style="width: 100%" colspan="3">
+							<p:dataTable id="cortes"
+								value="#{manejadorCrearEditarConvocatoriasExternas.convocatoriaExterna.listaCortes}"
+								var="corte" emptyMessage="Sin sedes para registrar cortes"
+								style="width:650px; overflow-x: scroll;">
+
+								<f:facet name="header">  
+							            Cortes por sede - Solicitud de aval
+							        	</f:facet>
+
+								<p:column style="font-weight: bold;width:80%;">
+									<f:facet name="header">
+										<h:outputText value="Sede" />
+									</f:facet>
+									<h:outputText value="#{corte.sede.nombre}" />
+								</p:column>
+								<p:column style="width:20%;">
+									<f:facet name="header">
+										<h:outputText value="Fecha límite para solicitud de aval" />
+									</f:facet>
+									<p:calendar id="fechaLimiteSede" navigator="true" locale="es"
+										readonlyInput="true"
+										pattern="dd/MM/yyyy HH:mm:ss" value="#{corte.fechaLimite}"
+										disabled="#{manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<br />
+							<br />
+							<h:outputText
+								value="Opcionalmente adjunte documentos relacionados con la convocatoria externa, como términos de referencia, adendas, formatos a diligenciar, entre otros." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3" style="text-align:center;">
+							<center>
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									style="width:100%">
+									<p:row>
+										<p:column>
+											<p:fileUpload
+												fileUploadListener="#{manejadorCrearEditarConvocatoriasExternas.adjuntarArchivo}"
+												mode="advanced" auto="true" update="tabla-archivo"
+												multiple="true" sizeLimit="3072000"
+												label="Seleccionar archivo"
+												rendered="#{!manejadorCrearEditarConvocatoriasExternas.esConsulta}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:dataTable
+												value="#{manejadorCrearEditarConvocatoriasExternas.listaArchivos}"
+												width="100%" var="archivo"
+												emptyMessage="No hay archivos asociados" id="tabla-archivo">
+
+												<p:column headerText="Id" style="width:3%">
+													<div>
+														<h:outputText value="#{archivo.id}"
+															style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+													</div>
+												</p:column>
+												<p:column headerText="Documentos adjuntos" tyle="width:90%">
+													<div style="width: 450px; font-size: 11px;">
+														<h:outputText value="#{archivo.nombre}"
+															style="text-align: left; width: 500px; text-transform:uppercase; padding-bottom: 10px;" />
+													</div>
+												</p:column>
+												<p:column headerText="Descargar"
+													style="width:3%; text-align:center;">
+													<p:commandButton id="descargar"
+														action="#{manejadorCrearEditarConvocatoriasExternas.descargarArchivo}"
+														icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+														ajax="false">
+														<f:setPropertyActionListener value="#{archivo}"
+															target="#{manejadorCrearEditarConvocatoriasExternas.archivoSeleccionado}" />
+													</p:commandButton>
+												</p:column>
+												<p:column style="width:3%; text-align:center;"
+													headerText="(-)"
+													rendered="#{!manejadorCrearEditarConvocatoriasExternas.esConsulta}">
+													<p:commandButton id="selectButton" update="tabla-archivo"
+														icon="ui-icon-trash"
+														action="#{manejadorCrearEditarConvocatoriasExternas.eliminarArchivo}"
+														title="Eliminar archivo">
+														<f:setPropertyActionListener value="#{archivo}"
+															target="#{manejadorCrearEditarConvocatoriasExternas.archivoSeleccionado}" />
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</center>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3" style="text-align:center;">
+							<br />
+							<p:commandButton
+								action="#{manejadorCrearEditarConvocatoriasExternas.guardar}"
+								rendered="#{!manejadorCrearEditarConvocatoriasExternas.esConsulta and manejadorAutenticacion.esAdministradorConvocatorias}"
+								value="Guardar" icon="ui-icon-disk" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							<p:commandButton
+								action="#{manejadorCrearEditarConvocatoriasExternas.guardarSolicitudDependencia}"
+								rendered="#{!manejadorAutenticacion.esAdministradorConvocatorias}"
+								value="Enviar solicitud" icon="ui-icon-disk" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			<p:messages id="msgs" autoUpdate="true" showDetail="true"
+				closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

@@ -1,0 +1,474 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:t="http://myfaces.apache.org/tomahawk"
+		xmlns:s="http://myfaces.apache.org/sandbox"
+		template="../../templates/common.xhtml">	
+		<ui:define name="content">
+			<h:form id="formCrearMovilidadPosgradoInvestigacion"
+				enctype="multipart/form-data" styleClass="estilo-panelgrid-sinbordes">
+	
+				<p:panel
+					header="Estudiantes de Posgrado que Participan en Actividades de Investigación">
+						<p:panelGrid columns="3" id="identificacion" align="left">
+							<h:outputText value="Tipo de documento del docente UN"
+								 styleClass="labels_proyecto"/>
+							<p:selectOneMenu
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoDocumento.id}" >
+								<f:selectItems
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText/>
+	
+							<h:outputText value="Número de documento del docente UN"
+								styleClass="labels_proyecto" />
+							<p:inputText id="Numero"
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.documento}"
+								size="20">
+							</p:inputText>						
+							<p:commandButton value="Continuar" icon="ui-icon-search"
+								action="#{ManejadorCrearMovilidadPosgradoInvConvFac.buscarPersona}"
+								update="formCrearMovilidadPosgradoInvestigacion" />						
+						</p:panelGrid>
+						
+						<br/>
+	
+						<p:panelGrid columns="1" id="identificacionEstudiante"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.mostrarDatosEvento}"
+							align="left">
+	
+							<p:panelGrid columns="3">
+								<h:outputText value="Tipo de documento del estudiante"
+									styleClass="labels_proyecto" />
+								<p:selectOneMenu
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoDocumentoEstudiante.id}">
+									<f:selectItems
+										value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoDocumentoEstudianteItem}" />
+								</p:selectOneMenu>
+								<h:outputText />
+	
+								<h:outputText value="Número de documento del estudiante"
+									styleClass="labels_proyecto" />
+								<p:inputText id="NumeroEstudiante"
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.documentoEstudiante}"
+									size="20">
+								</p:inputText>
+	
+								<p:commandButton value="Buscar" icon="ui-icon-search"
+									action="#{ManejadorCrearMovilidadPosgradoInvConvFac.buscarEstudiante}"
+									update="formCrearMovilidadPosgradoInvestigacion" />
+							</p:panelGrid>
+	
+							<p:panelGrid columns="2"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.mostrarDatosEstudiante}"
+								align="left">
+	
+								<h:outputText value="Nombre de Estudiante"
+									styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.nombreDocente}" />
+	
+								<h:outputText value="Documento de identidad"
+									styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.documentoDocente}" />
+	
+								<h:outputText value="Facultad o instituto"
+									styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.facultadDocente}" />
+	
+								<h:outputText value="Departamento" styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.departamentoDocente}" />
+									
+								<h:outputText value="Programa academico: "
+									styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.carreraDocente}" />
+									
+								<h:outputText value="Correo electrónico: "
+									styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.correoDocente}" />
+								<h:outputText
+									rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorPapa}" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[10]}"
+									styleClass="mensajeerror"
+									rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorPapa}" />
+	
+								<h:outputText
+									value="Promedio aritmético ponderado acumulado PAPA"
+									styleClass="labels_proyecto" />
+								<h:outputText
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.papaEstudiante}" />
+							</p:panelGrid>
+						</p:panelGrid>
+	
+	
+				</p:panel>
+	
+				<p:spacer height="20"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.mostrarDatosEstudiante}" />
+				<p:panel header="Información del Evento"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.mostrarDatosEstudiante}">
+	
+					<p:panelGrid columns="2" id="evento">
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorPonencia}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[5]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorPonencia}" />
+	
+						<h:outputText value="Tipo" styleClass="labels_proyecto" />
+						<p:selectOneMenu id="somTipoPonencia1"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.idTipoPonencia}">
+							<f:selectItems
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoPonencia}" />
+							<p:ajax update="formCrearMovilidadPosgradoInvestigacion"
+								listener="#{ManejadorCrearMovilidadPosgradoInvConvFac.activarOtrotipoPonencia}" />
+						</p:selectOneMenu>
+	
+						<h:outputText value="Cual tipo de ponencia"
+							styleClass="labels_proyecto"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BOtroTipoPonencia}" />
+						<p:inputText id="otroTipoPonencia"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.otroTipoPonencia}"
+							size="60" styleClass="labels_proyecto"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BOtroTipoPonencia}">
+						</p:inputText>
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorEvento}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[1]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorEvento}" />
+	
+						<h:outputText
+							value="Nombre del evento científico en el que va a participar (Incluir enlace del evento)"
+							styleClass="labels_proyecto" />
+						<p:inputTextarea id="nombreEvento"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.nombreEvento}"
+							rows="3" cols="50" autoResize="false" maxlength="2000">
+						</p:inputTextarea>
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorTitulo}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[2]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorTitulo}" />
+	
+						<h:outputText value="Título de la ponencia"
+							styleClass="labels_proyecto"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}" />
+						<p:inputTextarea id="tituloPonencia"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tituloPonencia}"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}"
+							rows="3" cols="50" autoResize="false" maxlength="2000">
+						</p:inputTextarea>
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorResumen}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[6]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorResumen}" />
+	
+						<h:outputText
+							value="Resumen de la ponencia (Máximo 4000 carácteres)"
+							styleClass="labels_proyecto"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}" />
+						<p:inputTextarea id="resumenPonencia"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.resumenPonencia}"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}"
+							counter="contadorResumen"
+							counterTemplate="{0} caracteres restantes." rows="9" cols="50"
+							autoResize="false" maxlength="4000">
+						</p:inputTextarea>
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}" />
+						<h:outputText id="contadorResumen"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}" />
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorPais}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[3]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorPais}" />
+	
+						<h:outputText value="País donde se realizará el evento"
+							styleClass="labels_proyecto" />
+						<p:selectOneMenu
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.idPais}">
+							<f:selectItems
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.paises}" />
+						</p:selectOneMenu>
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorCiudad}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[4]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorCiudad}" />
+	
+						<h:outputText value="Ciudad donde se realizará el evento"
+							styleClass="labels_proyecto" />
+						<p:inputText id="Ciudad"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.ciudadEvento}"
+							size="60" styleClass="labels_proyecto">
+						</p:inputText>
+						<h:outputText value="Nombre de la Universidad o Institución organizadora del evento donde se va a presentar la ponencia"
+							styleClass="labels_proyecto" />
+							
+						<p:inputText id="nombreUniversidad"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.universidad}"
+							size="60" styleClass="labels_proyecto">
+						</p:inputText>
+	
+						<h:outputText value="Universidad"
+							rendered="#{!ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}"
+							styleClass="labels_proyecto" />
+						<p:inputText id="univ1"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.universidad}"
+							rendered="#{!ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}"
+							size="60" styleClass="labels_proyecto">
+						</p:inputText>
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaIncorrecta}" />
+						<h:outputText
+							value="La fecha del viaje debe ser superior que la fecha actual en 30 días calendario."
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaIncorrecta}" />
+	
+						<h:outputText value="Fecha de inicio del viaje"
+							styleClass="labels_proyecto" />
+						<p:calendar id="fechainicio" pages="2" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaInicioEvento}"
+							valueChangeListener="#{ManejadorCrearMovilidadPosgradoInvConvFac.validarFecha}">
+							<p:ajax event="dateSelect" process="@all"
+								update="formCrearMovilidadPosgradoInvestigacion" />
+						</p:calendar>
+	
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaIncorrecta2}" />
+						<h:outputText
+							value="La fecha de finalización viaje no es válida. La fecha debe ser superior a la fecha de incio."
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaIncorrecta2}" />
+	
+						<h:outputText value="Fecha de finalización del viaje"
+							styleClass="labels_proyecto"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos}" />
+						<p:calendar id="fechafin" pages="2" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaFinEvento}"
+							mindate="#{ManejadorCrearMovilidadPosgradoInvConvFac.fechaInicioEvento}"
+							valueChangeListener="#{ManejadorCrearMovilidadPosgradoInvConvFac.validarFechaLlegada}"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos}">
+							<p:ajax event="dateSelect" process="@all"
+								update="formCrearMovilidadPosgradoInvestigacion" />
+						</p:calendar>
+	
+					</p:panelGrid>
+				</p:panel>
+	
+				<p:spacer height="20"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2}" />
+				<p:panel header="Apoyo Financiero"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2}">
+	
+					<center>
+						<p:panelGrid columns="2" id="panelMasDatos2">
+	
+							<h:outputText
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorResolucion}" />
+							<h:outputText
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[7]}"
+								styleClass="mensajeerror"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorResolucion}" />
+	
+							<h:outputText
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorTiquete}" />
+							<h:outputText
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[8]}"
+								styleClass="mensajeerror"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorTiquete}" />
+	
+							<h:outputText />
+							<p:message for="valorTiquetes" styleClass="mensajeerror"
+								showDetail="true" showSummary="true" />
+	
+							<h:outputText value="Valor del tiquete en pesos colombianos"
+								styleClass="labels_proyecto" />
+							<p:inputText id="valorTiquetes"
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.costoTiquetes}"
+								styleClass="labels_proyecto">
+							</p:inputText>
+	
+							<h:outputText
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorInscripcion}" />
+							<h:outputText
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[9]}"
+								styleClass="mensajeerror"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorInscripcion}" />
+	
+							<h:outputText />
+							<p:message for="valorInscripcion" styleClass="mensajeerror"
+								showDetail="true" showSummary="true" />
+	
+							<h:outputText
+								value="Valor de la inscripción al evento en pesos colombianos"
+								styleClass="labels_proyecto"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}" />
+							<p:inputText id="valorInscripcion"
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.costoInscripcion}"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia}"
+								styleClass="labels_proyecto">
+								<f:converter converterId="ConvertidorLong" />
+							</p:inputText>
+							
+							
+							<h:outputText
+								value="Si desea realizar solicitud de viáticos, por favor indique el valor de los mismos"
+								styleClass="labels_proyecto"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia or ManejadorCrearMovilidadPosgradoInvConvFac.esPasantia}" />
+							<p:inputText id="valorViaticos"
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.valorViaticos}"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia or ManejadorCrearMovilidadPosgradoInvConvFac.esPasantia}"
+								styleClass="labels_proyecto">
+								<f:converter converterId="ConvertidorLong" />
+							</p:inputText>
+
+							
+							<h:outputText
+								value="Por favor indicar las entidades o dependencias y las cantidades de dinero que estas van a aportar en caso de existir (Entidad - cantidad a aportar)"
+								styleClass="labels_proyecto"
+								rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia or ManejadorCrearMovilidadPosgradoInvConvFac.esPasantia}" />
+							<p:inputTextarea id="valorOtrosAportes"
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.valorOtrosAportes}"
+								rows="3" cols="50" autoResize="false" rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.esPonencia or ManejadorCrearMovilidadPosgradoInvConvFac.esPasantia}">
+							</p:inputTextarea>
+
+						</p:panelGrid>
+					</center>
+				</p:panel>
+	
+				<p:spacer height="20"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2}" />
+	
+				<h:outputText
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorDocumentos}" />
+				<h:outputText
+					value="#{ManejadorCrearMovilidadPosgradoInvConvFac.errores[11]}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.BErrorDocumentos}" />
+	
+				<p:panel header="Documentos Obligatorios" id="panelDocumentos"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2}">
+					<center>
+						<p:panelGrid columns="2">
+							<h:outputText value="Tipos de documentos"
+								styleClass="labels_proyecto" />
+							<p:selectOneMenu
+								value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoDocumentoSel}"
+								style="width:400px">
+								<f:selectItems
+									value="#{ManejadorCrearMovilidadPosgradoInvConvFac.tipoDocumentoSelItem}" />
+								<p:ajax update="panelDocumentos"
+									listener="#{ManejadorCrearMovilidadPosgradoInvConvFac.seleccionarTipoDocumento}" />
+							</p:selectOneMenu>
+	
+							<h:outputText />
+							<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+								mode="advanced" showButtons="false"
+								update="tablaArchivos, panelDocumentos"
+								fileUploadListener="#{ManejadorCrearMovilidadPosgradoInvConvFac.guardarArchivoObligatorio}"
+								disabled="#{!ManejadorCrearMovilidadPosgradoInvConvFac.puedeSubirArchivos}">
+							</p:fileUpload>
+						</p:panelGrid>
+					</center>
+	
+					<center>
+						<p:dataTable 
+							id="tablaArchivos"
+							var="archivoResumen1"
+							value="#{ManejadorCrearMovilidadPosgradoInvConvFac.listaArchivosObligatoriosSel}"
+							emptyMessage="No existen archivos.">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre documento" />
+								</f:facet>
+								<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<h:outputText value="#{archivoResumen1.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton icon="ui-icon-trash"
+									action="#{ManejadorCrearMovilidadPosgradoInvConvFac.eliminarArchivoObligatorio}"
+									update=":formCrearMovilidadPosgradoInvestigacion"
+									onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+									<f:setPropertyActionListener value="#{archivoResumen1}"
+										target="#{ManejadorCrearMovilidadPosgradoInvConvFac.archivoMovilidadEPSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</center>
+				</p:panel>
+	
+				<center>
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvConvFac.noExiste}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelNoExiste}" />
+	
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvConvFac.noExiste1}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelNoExiste}" />
+				</center>
+	
+				<p:messages id="msg" autoUpdate="true" closable="true"
+					redisplay="false" />
+	
+				<p:spacer height="20"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2}" />
+				<center>
+					<p:commandButton value="Guardar" icon="ui-icon-check"
+						action="#{ManejadorCrearMovilidadPosgradoInvConvFac.guardar}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2 and !ManejadorCrearMovilidadPosgradoInvConvFac.esConvocatoriaFacultad}"
+						update="formCrearMovilidadPosgradoInvestigacion"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						
+						<p:commandButton value="Guardar convocatoria facultad" icon="ui-icon-check"
+						action="#{ManejadorCrearMovilidadPosgradoInvConvFac.guardarConvocatoriaFacultad}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvConvFac.panelMasDatos2 and ManejadorCrearMovilidadPosgradoInvConvFac.esConvocatoriaFacultad}"
+						update="formCrearMovilidadPosgradoInvestigacion"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				</center>
+	
+				<p:dialog header="Por favor espere..." widgetVar="dialogEspere"
+					resizable="false" closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+				</p:dialog>
+	
+			</h:form>
+		</ui:define>
+	</ui:composition>

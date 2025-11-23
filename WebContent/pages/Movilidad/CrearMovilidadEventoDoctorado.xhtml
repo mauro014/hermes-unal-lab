@@ -1,0 +1,338 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadEventoDoctorado"
+			enctype="multipart/form-data" styleClass="estilo-panelgrid-sinbordes">
+
+			<p:panel header="Presentación final de tesis de Doctorado"
+				id="identificacion">
+				<h:outputText
+					value="Se permite informar que a partir del 7 de septiembre de 2012, se suspenden de manera temporal los apoyos para el programa de movilidad en la sede Bogotá, agradecemos su comprensión y les informaremos de manera oportuna  la reapertura del programa."
+					styleClass="labels_proyecto" />
+
+				<center>
+					<p:panelGrid columns="3">
+						<h:outputText value="Tipo de documento"
+							styleClass="labels_proyecto" />
+						<p:selectOneMenu
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.tipoDocumento.id}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadEventoDoctorado.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+						<h:outputText />
+						<h:outputText value="Número de documento"
+							styleClass="labels_proyecto" />
+						<p:inputText id="Numero"
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.documento}"
+							size="20">
+						</p:inputText>
+
+						<p:commandButton value="Buscar" icon="ui-icon-search"
+							action="#{ManejadorCrearEditarMovilidadEventoDoctorado.buscarPersona}"
+							update="formCrearMovilidadEventoDoctorado" />
+					</p:panelGrid>
+				</center>
+
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadEventoDoctorado.noExiste1}"
+					styleClass="mensajeerror" />
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadEventoDoctorado.noExiste}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelNoExiste}" />
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.mostrarDatosEvento}" />
+			<p:panel header="Investigador"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.mostrarDatosEvento}">
+				<center>
+					<p:panelGrid columns="2" id="evento"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.mostrarDatosEvento}">
+						<h:outputText value="Nombre de docente"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.nombreDocente}" />
+
+						<h:outputText value="Documento de identidad"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.documentoDocente}" />
+
+						<h:outputText value="Facultad o instituto"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.facultadDocente}" />
+
+						<h:outputText value="Departamento" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.departamentoDocente}" />
+
+						<h:outputText value="Programa de Doctorado"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.programaPosgrado}" />
+					</p:panelGrid>
+				</center>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.mostrarDatosEvento}" />
+			<p:panel header="Datos del Evento"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.mostrarDatosEvento}">
+
+				<p:panelGrid columns="2">
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorPais}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.errores[3]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorPais}" />
+
+					<h:outputText value="País donde se realizará el evento"
+						styleClass="labels_proyecto" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.idPais}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.paises}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorCiudad}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorCiudad}" />
+
+					<h:outputText value="Ciudad donde se realizará el evento"
+						styleClass="labels_proyecto" />
+					<p:inputText id="Ciudad"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.ciudadEvento}"
+						rendered="true" size="60" styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaIncorrecta}" />
+					<h:outputText
+						value="La fecha del viaje debe ser superior a la fecha actual en 30 días calendario."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaIncorrecta}" />
+
+					<h:outputText value="Fecha de inicio del viaje"
+						styleClass="labels_proyecto" />
+
+					<p:calendar id="fechainicio" pages="2" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaInicioEvento}"
+						mindate="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadEventoDoctorado.validarFecha}">
+						<p:ajax event="dateSelect"
+							update="formCrearMovilidadEventoDoctorado" />
+					</p:calendar>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaIncorrecta2}" />
+					<h:outputText
+						value="La fecha de finalización viaje no es válida. La fecha debe ser superior a la fecha de incio."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaIncorrecta2}" />
+
+					<h:outputText value="Fecha de finalización del viaje"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos}"
+						styleClass="labels_proyecto" />
+
+					<p:calendar id="fechafin" pages="2" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaFinEvento}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadEventoDoctorado.validarFechaLlegada}"
+						mindate="#{ManejadorCrearEditarMovilidadEventoDoctorado.fechaInicioEvento}"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos}">
+						<p:ajax event="dateSelect"
+							update="formCrearMovilidadEventoDoctorado" />
+					</p:calendar>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorResumen}" />
+					<h:outputText rendered="false" />
+
+					<h:outputText value="Universidad" styleClass="labels_proyecto"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}" />
+					<p:inputText id="Universidad"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.universidad}"
+						size="60" styleClass="labels_proyecto"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}">
+					</p:inputText>
+
+					<h:outputText value="Título a obtener" styleClass="labels_proyecto"
+						rendered="false" />
+					<p:inputText id="Titulo" rendered="false"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.tituloAspira}"
+						size="60" styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText value="Nombre de la tesis a presentar"
+						styleClass="labels_proyecto"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}" />
+					<p:inputText id="TituloTesis"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.nombreTesis}"
+						size="60" styleClass="labels_proyecto"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}">
+					</p:inputText>
+				</p:panelGrid>
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}" />
+			<p:panel header="Apoyo Económico"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}">
+				<p:panelGrid columns="2">
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorTiquete}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.errores[8]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorTiquete}" />
+
+					<h:outputText />
+					<p:message for="valorTiquetes" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+
+					<p:outputLabel value="Valor del tiquete en pesos colombianos"
+						for="valorTiquetes" styleClass="labels_proyecto" />
+					<p:inputText id="valorTiquetes"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.costoTiquetes}"
+						rendered="true" styleClass="labels_proyecto"
+						converter="ConvertidorLong" immediate="true">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorInscripcion}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.errores[9]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorInscripcion}" />
+					<h:outputText />
+					<h:outputText />
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}" />
+
+			<p:panel header="Documentos Obligatorios" id="panelDocumentos"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}">
+
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadEventoDoctorado.errores[13]}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.BErrorDocumentos}" />
+
+				<p:panelGrid columns="2" style="width:100%;">
+					<h:outputText value="Tipos de documentos"
+						styleClass="labels_proyecto" />
+					<p:selectOneMenu style="width:90%;"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.tipoDocumentoSel}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.tipoDocumentoSelItem}" />
+						<p:ajax update="panelDocumentos"
+							listener="#{ManejadorCrearEditarMovilidadEventoDoctorado.seleccionarTipoDocumento}" />
+					</p:selectOneMenu>
+					<h:outputText />
+					<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+						mode="advanced" showButtons="false"
+						update="formCrearMovilidadEventoDoctorado"
+						fileUploadListener="#{ManejadorCrearEditarMovilidadEventoDoctorado.guardarArchivoObligatorio}"
+						disabled="#{!ManejadorCrearEditarMovilidadEventoDoctorado.puedeSubirArchivos}">
+					</p:fileUpload>
+				</p:panelGrid>
+
+				<p:dataTable var="archivoResumen1"
+					value="#{ManejadorCrearEditarMovilidadEventoDoctorado.listaArchivosObligatoriosSel}"
+					emptyMessage="No existen archivos.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre documento" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}"
+							styleClass="normal" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.nombre}"
+							styleClass="normal" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-trash"
+							action="#{ManejadorCrearEditarMovilidadEventoDoctorado.eliminarArchivoObligatorio}"
+							update=":formCrearMovilidadEventoDoctorado"
+							onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearEditarMovilidadEventoDoctorado.archivoMovilidadDESeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:panel header="Archivos Aceptación de la(s) ponencias(s):"
+				rendered="false">
+				<h:outputText value="Adjuntar:" />
+				<p:panelGrid columns="2">
+					<t:inputFileUpload id="documentosInformeAfj"
+						value="#{ManejadorCrearEditarMovilidadEventoDoctorado.archivoCargar}"
+						storage="file" />
+					<p:commandButton value="Adjuntar" immediate="false"
+						action="#{ManejadorCrearEditarMovilidadEventoDoctorado.guardarArchivo}" />
+					<p:panelGrid columns="1"
+						rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}">
+						<p:dataTable var="archivoResumen"
+							value="#{ManejadorCrearEditarMovilidadEventoDoctorado.listaArchivos}">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre del archivo" />
+								</f:facet>
+								<h:outputText value=" #{archivoResumen.nombre}"
+									styleClass="normal" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton value="Eliminar archivo"
+									action="#{ManejadorCrearEditarMovilidadEventoDoctorado.eliminarArchivo}"
+									image="/imgplantilla/pngtitulos/cen_eliminar.png" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:messages id="msg" autoUpdate="true" closable="true"
+				redisplay="false" />
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}" />
+			<center>
+				<p:commandButton value="Guardar" icon="ui-icon-check"
+					action="#{ManejadorCrearEditarMovilidadEventoDoctorado.guardar}"
+					rendered="#{ManejadorCrearEditarMovilidadEventoDoctorado.panelMasDatos2}"
+					update="formCrearMovilidadEventoDoctorado" />
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

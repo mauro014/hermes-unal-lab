@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadPosgradoInvestigacion"
+			enctype="multipart/form-data" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Registro solicitud de movilidad</t:div>
+			<p:panel
+				header="Estudiantes de posgrado que participan en actividades de investigación">
+				<p:panelGrid columns="3" id="identificacion" align="left">
+					<t:div style="width: 247px;">
+						<h:outputText value="Tipo de documento del docente UN" />
+					</t:div>
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.tipoDocumento.id}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					<h:outputText />
+
+					<h:outputText value="Número de documento del docente UN" />
+					<p:inputText id="Numero"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.documento}"
+						size="20">
+					</p:inputText>
+					<p:commandButton value="Continuar" icon="ui-icon-search"
+						action="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.buscarPersona}"
+						update="formCrearMovilidadPosgradoInvestigacion" />
+				</p:panelGrid>
+				<br />
+				<p:panelGrid columns="1" id="identificacionEstudiante"
+					rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarDatosEvento}">
+
+					<p:panelGrid columns="3">
+						<t:div style="width: 247px;">
+							<h:outputText value="Tipo de documento del estudiante" />
+						</t:div>
+						<p:selectOneMenu
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.tipoDocumentoEstudiante.id}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.tipoDocumentoEstudianteItem}" />
+						</p:selectOneMenu>
+						<h:outputText />
+
+						<h:outputText value="Número de documento del estudiante" />
+						<p:inputText id="NumeroEstudiante"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.documentoEstudiante}"
+							size="20">
+						</p:inputText>
+
+						<p:commandButton value="Buscar" icon="ui-icon-search"
+							action="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.buscarEstudiante}"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:panelGrid>
+
+					<p:panelGrid columns="2"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarDatosEstudiante}">
+
+						<t:div style="width: 247px;">
+							<h:outputText value="Nombre de Estudiante" />
+						</t:div>
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.nombreDocente}" />
+
+						<h:outputText value="Documento de identidad" />
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.documentoDocente}" />
+
+						<h:outputText value="Facultad o instituto" />
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.facultadDocente}" />
+						<h:outputText value="Departamento" />
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.departamentoDocente}" />
+						<h:outputText value="Programa académico" />
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.carreraDocente}" />
+						<h:outputText value="Correo electónico:" />
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.correoDocente}" />
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errorPasaporte}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.msgErrorPasaporte}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errorPasaporte}" />
+
+						<h:outputText value="Pasaporte"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarPasaporte}" />
+						<p:inputText id="numPasaporte"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarPasaporte}"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.pasaporteEstudiante}"
+							style="width: 350px;" maxlength="100">
+						</p:inputText>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorPapa}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errores[10]}"
+							styleClass="mensajeerror" style="font-weight: bold;"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorPapa}" />
+
+						<t:div style="width: 247px;">
+							<h:outputText
+								value="Promedio aritmético ponderado acumulado PAPA" />
+						</t:div>
+						<h:outputText style="font-weight: bold;"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.papaEstudiante}" />
+					</p:panelGrid>
+				</p:panelGrid>
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarDatosEstudiante}" />
+			<p:panel header="Información de la pasantía de investigación"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarDatosEstudiante}">
+
+				<p:panelGrid columns="2" id="evento">
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errorSubmodalidad}" />
+					<h:outputText
+						value="Por favor seleccionar el objeto de la modalidad."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errorSubmodalidad}" />
+
+					<h:outputText value="Objeto de la movilidad"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarSubModalidades}" />
+					<p:selectOneMenu id="idListaSelDos"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.subModalidadConvocatoria}"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarSubModalidades}"
+						style="width:400px" panelStyle="width:460px">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.listaSubmodalidades}" />
+						<p:ajax update="@form" process="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Tipo de Movilidad:"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 900 or ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 1181}" />
+					<p:selectOneMenu id="uiTipoMov" style="width:350px;"
+						panelStyle="width: 350px;"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 900 or ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 1181}"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.movilidadTipo}">
+						<f:selectItem itemValue=""
+							itemLabel="Seleccione un tipo de movilidad" />
+						<f:selectItem itemValue="P" itemLabel="Presencial" />
+						<f:selectItem itemValue="V" itemLabel="Virtual" />
+						<p:ajax
+							listener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.definirInicio4049}"
+							update="@form" process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Resumen de la pasantía o residencia artística (Máximo 3900 caracteres)" />
+					</t:div>
+					<p:inputTextarea id="resumenPonencia"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.resumen}"
+						rows="9" cols="50" maxlength="3900">
+					</p:inputTextarea>
+
+					<h:outputText
+						value="Continente en el cual realizará la pasantía o residencia artística"
+						rendered="#{!ManejadorCrearEditarMovilidadPosgradoInvestigacion.esMovilidadNacional}" />
+					<p:selectOneMenu id="continente"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.idContinente}"
+						rendered="#{!ManejadorCrearEditarMovilidadPosgradoInvestigacion.esMovilidadNacional}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.continentes}" />
+						<p:ajax update="continente,pais"
+							listener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.cargarPaises}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						value="País donde se realizará la pasantía o residencia artística" />
+					<p:selectOneMenu id="pais"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.idPais}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.paises}" />
+						<p:ajax update="evento" process="evento"
+							listener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.revisarPais}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						value="Departamento donde se realizará la pasantía o residencia artística"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.siColombia}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.departamentoActual.id}"
+						effect="fade" id="depto" panelStyle="width:350px;"
+						style="width:350px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.siColombia}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.departamentoItem}" />
+						<p:ajax update="depto,CiudadSel " processo="depto,CiudadSel "
+							listener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.cambiarDepartamento}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						value="Ciudad donde se realizará la pasantía o residencia artística"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.siColombia}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.ciudadEvento}"
+						effect="fade" id="CiudadSel" panelStyle="width:350px;"
+						style="width:350px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.siColombia}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.ciudadItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorCiudad}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorCiudad}" />
+
+					<h:outputText
+						value="Ciudad donde se realizará la pasantía o residencia artística"
+						rendered="#{!ManejadorCrearEditarMovilidadPosgradoInvestigacion.siColombia}" />
+					<p:inputText id="Ciudad"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.ciudad}"
+						rendered="#{!ManejadorCrearEditarMovilidadPosgradoInvestigacion.siColombia}"
+						style="width: 350px;">
+					</p:inputText>
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Nombre de la Universidad o Institución organizadora donde se va a realizar la pasantía o residencia artística" />
+					</t:div>
+					<p:inputText id="univ1"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.universidad}"
+						size="40" styleClass="labels_proyecto">
+					</p:inputText>
+
+					<p:column
+						rendered="#{not empty ManejadorCrearEditarMovilidadPosgradoInvestigacion.convActual.infoAdicionalFormulario}"
+						style="vertical-align: top; padding-top:10px; width:250px;">
+						<h:outputText value="Información adicional:"
+							style="font-weight:bold;" />
+					</p:column>
+
+					<p:column
+						rendered="#{not empty ManejadorCrearEditarMovilidadPosgradoInvestigacion.convActual.infoAdicionalFormulario}">
+						<h:panelGroup layout="block"
+							style="border:1px solid #7b1e3a; 
+                             background:#fdecef; 
+                             color:#4a0f1f; 
+                             border-radius:8px; 
+                             padding:10px;">
+							<h:outputText
+								value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.convActual.infoAdicionalFormulario}"
+								style="white-space:pre-line; font-weight:500;" escape="true" />
+						</h:panelGroup>
+					</p:column>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.fechaIncorrecta}" />
+					<h:outputText maxlength="900"
+						value="La fecha del viaje debe ser superior que la fecha actual mas 30 días calendario."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.fechaIncorrecta}" />
+
+					<h:outputText value="Fecha de inicio del viaje" />
+					<p:calendar id="fechainicio" pages="1" locale="es" navigator="true"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.fechainicial}"
+						mindate="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.validarFecha}">
+						<p:ajax event="dateSelect" process="@all"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:calendar>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.fechaIncorrecta2}" />
+					<h:outputText
+						value="La fecha de finalización de la movilidad no es válida."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.fechaIncorrecta2}" />
+
+					<h:outputText value="Fecha de finalización del viaje"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos}" />
+					<p:calendar id="fechafin" pages="1" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.fechafinal}"
+						mindate="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.fechainicial}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.validarFechaLlegada}"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos}">
+						<p:ajax event="dateSelect" process="@all"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:calendar>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}" />
+
+			<p:panel header="Actividades" rendered="false">
+
+				<p:panelGrid columns="1" style="width: 650px;"
+					id="grupoInsercionActividades"
+					styleClass="estilo-panelgrid-sinbordes">
+
+					<p:panelGrid columns="2">
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.bErrorDescripcion}" />
+
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.errorDescripcion}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.bErrorDescripcion}" />
+						<h:outputText value="Descripción" />
+						<p:inputTextarea id="descripcion"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.descripcion}"
+							style="width:350px;" rows="5" maxlength="2000">
+						</p:inputTextarea>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.bErrorFecha}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.errorFecha}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.bErrorFecha}" />
+
+						<h:outputText value="Fecha de inicio" />
+						<p:calendar id="fechaactividad" locale="es" readonlyInput="true"
+							pattern="dd/MM/yyyy"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.fecha}"
+							mindate="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.fechainicial}"
+							maxdate="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.fechafinal}" />
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.bErrorDuracion}" />
+
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.errorDuracion}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.bErrorDuracion}" />
+
+						<h:outputText value="Duración de la actividad (días)" />
+						<p:inputText id="duracion"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actMovi.duracion}"
+							size="4" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar"
+							update="tablaActividades, grupoInsercionActividades"
+							actionListener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.adicionarActividad}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</p:panelGrid>
+
+					<p:dataTable var="actividadMovilidad" id="tablaActividades"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.listaActividades}"
+						emptyMessage="No existen actividades.">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descripción" />
+							</f:facet>
+							<t:div style="width: 350px;">
+								<h:outputText value="#{actividadMovilidad.descripcion}" />
+							</t:div>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Duración" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.duracion}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="de inicio" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.fecha}" />
+						</p:column>
+
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-trash" ajax="false"
+								update="tablaActividades"
+								action="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.eliminarActividad}"
+								onclick="if(!confirm('Esta seguro de eliminar la Actividad?'))return false">
+								<f:setPropertyActionListener value="#{actividadMovilidad}"
+									target="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.actividadMovilidadSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+			</p:panel>
+
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}" />
+			<p:panel header="Apoyo Financiero"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}">
+				<p:panelGrid columns="2" id="panelMasDatos2">
+
+					<h:outputText value="Medio de transporte" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.medioTransporte}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.medioTransporteItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorTiquete}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errores[8]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorTiquete}" />
+
+					<h:outputText />
+					<p:message for="valorTiquetes" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+
+					<h:outputText value="Valor del tiquete (en pesos colombianos)" />
+					<p:inputText id="valorTiquetes"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.costotiquete}">
+					</p:inputText>
+
+					<h:outputText />
+					<p:message for="valorInscripcion" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+					<h:outputText
+						value="Valor de la inscripción al evento en pesos colombianos"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 1181 or ManejadorCrearEditarMovilidadPosgradoInvestigacion.idConvocatoria eq 1181}" />
+
+					<p:inputText id="valorInscripcion"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.costoevento}"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 1181 or ManejadorCrearEditarMovilidadPosgradoInvestigacion.idConvocatoria eq 1181}"
+						styleClass="labels_proyecto">
+					</p:inputText>
+
+					<t:div style="width: 247px;">
+						<h:outputText value="Viáticos (en pesos colombianos)"
+							rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarValorViaticos}" />
+					</t:div>
+					<p:inputText id="valorAlojamiento"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarValorViaticos}"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.valorViaticos}">
+					</p:inputText>
+
+					<h:outputText />
+					<p:message for="valorMateriales" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+					<h:outputText
+						value="Monto para materiales, taller y divulgación o socialización"
+						rendered="#{(ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 1181 or ManejadorCrearEditarMovilidadPosgradoInvestigacion.idConvocatoria eq 1181) and (ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.subModalidadConvocatoria eq 'R')}" />
+
+					<p:inputText id="valorMateriales"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.materialesTalleresSocializacion}"
+						rendered="#{(ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.convocatoria.id eq 1181 or ManejadorCrearEditarMovilidadPosgradoInvestigacion.idConvocatoria eq 1181) and (ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.subModalidadConvocatoria eq 'R')}"
+						styleClass="labels_proyecto">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarAportesOtrasDependencias}">
+						<h:outputText value="Valor del apoyo de otras dependencias" />
+					</t:div>
+					<p:inputText id="valorApOtDep"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.valorOtrosAportes}"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarAportesOtrasDependencias}">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarAportesOtrasDependencias}">
+						<h:outputText value="Nombre de las dependencias" />
+					</t:div>
+
+					<p:inputTextarea id="depApOtDep"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mep.dependenciaOtrosAportes}"
+						rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.mostrarAportesOtrasDependencias}"
+						rows="9" cols="50" maxlength="3900">
+					</p:inputTextarea>
+
+
+				</p:panelGrid>
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}" />
+
+			<h:outputText
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorDocumentos}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.errores[11]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.BErrorDocumentos}" />
+
+			<p:panel header="Documentos Obligatorios" id="panelDocumentos"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}">
+				<center>
+					<p:panelGrid columns="2">
+						<h:outputText value="Tipos de documentos" />
+						<p:selectOneMenu style="width:430px;" panelStyle="width:430px"
+							value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.tipoDocumentoSel}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.tipoDocumentoSelItem}" />
+							<p:ajax update="panelDocumentos"
+								listener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.seleccionarTipoDocumento}" />
+						</p:selectOneMenu>
+
+						<h:outputText />
+					</p:panelGrid>
+				</center>
+
+				<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+					mode="advanced" showButtons="false" style="width: 100%;"
+					update="tablaArchivos, panelDocumentos"
+					fileUploadListener="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.guardarArchivoMovEP}"
+					disabled="#{!ManejadorCrearEditarMovilidadPosgradoInvestigacion.puedeSubirArchivos}">
+				</p:fileUpload>
+				<center>
+					<p:dataTable var="archivoResumen1" style="width:100%"
+						id="tablaArchivos"
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.listaArchivosObligatoriosSel}"
+						emptyMessage="No existen archivos.">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre documento" />
+							</f:facet>
+							<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Archivo Cargado" />
+							</f:facet>
+							<h:outputText value="#{archivoResumen1.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-trash"
+								action="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.eliminarArchivoObligatorio}"
+								update=":formCrearMovilidadPosgradoInvestigacion"
+								onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen1}"
+									target="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.archivoMovilidadEPSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+
+							<p:commandButton id="descargar"
+								action="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.descargarArchivoMovEP}"
+								icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen1}"
+									target="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.documentoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</center>
+			</p:panel>
+
+			<br />
+
+			<p:panel header="Confirmar el envío de la solicitud de movilidad"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}">
+
+				<p:panelGrid columns="2">
+					<h:outputText
+						value="Por favor confirme el envío de la solicitud de movilidad para su revisión, una vez confirmada ya no podrá editar la información registrada."
+						styleClass="labels_proyecto" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.estado}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+						<f:selectItem itemValue="P" itemLabel="Si" />
+						<f:selectItem itemValue="I" itemLabel="No" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+			</p:panel>
+
+			<center>
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.noExiste}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelNoExiste}" />
+
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.noExiste1}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelNoExiste}" />
+			</center>
+
+			<p:messages id="msg" autoUpdate="true" closable="true"
+				redisplay="false" />
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}" />
+			<center>
+				<p:commandButton value="Guardar" icon="ui-icon-check"
+					action="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.guardar}"
+					rendered="#{ManejadorCrearEditarMovilidadPosgradoInvestigacion.panelMasDatos2}"
+					update="formCrearMovilidadPosgradoInvestigacion"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</center>
+
+			<p:dialog header="Por favor espere..." widgetVar="dialogEspere"
+				resizable="false" closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

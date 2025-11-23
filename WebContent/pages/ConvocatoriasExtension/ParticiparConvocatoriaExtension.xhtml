@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formPCE" styleClass="estilo-panelgrid-sinbordes">
+
+			<p:panel header="Información de la Convocatoria">
+				<center>
+					<p:panelGrid columns="1">
+
+						<h:outputText value="Nombre:" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorConsultarConvocatoriasExtension.convExt.nombre}" />
+						<h:outputText value="" />
+
+						<h:outputText value="Entidad convocante:"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorConsultarConvocatoriasExtension.convExt.entidad}" />
+						<h:outputText value="" />
+
+						<h:outputText value="Fecha de cierre:"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorConsultarConvocatoriasExtension.convExt.fechaCierre}" />
+
+						<h:outputText value="" />
+
+						<h:outputText value="Objeto:" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorConsultarConvocatoriasExtension.convExt.objeto}" />
+					</p:panelGrid>
+					<br />
+				</center>
+
+				<center>
+					<p:dataTable var="terminosRef"
+						rendered="#{ManejadorConsultarConvocatoriasExtension.mostrarArchivos}"
+						value="#{ManejadorConsultarConvocatoriasExtension.listaArchivosObligatoriosSel}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Términos de Referencia y/o Invitación" />
+							</f:facet>
+							<h:outputText value=" #{terminosRef.nombreTerminosReferencia}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-arrowthickstop-1-s" ajax="false"
+								action="#{ManejadorConsultarConvocatoriasExtension.descargarArchivo}" />
+						</p:column>
+					</p:dataTable>
+				</center>
+			</p:panel>
+			<br />
+
+			<p:panel header="Intención de Participar en la Convocatoria">
+				<center>
+					<p:panelGrid columns="1"
+						rendered="#{!ManejadorConsultarConvocatoriasExtension.mostrarParticipacion}">
+						<h:outputText
+							value="Usted ya manifestó la intención de participar en esta convocatoria"
+							styleClass="mensajeerror" />
+					</p:panelGrid>
+				</center>
+
+				<p:panelGrid columns="1"
+					rendered="#{ManejadorConsultarConvocatoriasExtension.mostrarParticipacion}">
+					<h:outputText
+						value='Si tiene intención de participar en la convocatoria, por favor ingrese un comentario (opcional) y haga clic en el botón "Intención de participar":' />
+
+					<p:inputTextarea rows="3" cols="90" autoResize="false"
+						maxlength="4000" counterTemplate="{0} caracteres restantes."
+						counter="contadorComentarioParticipacion"
+						value="#{ManejadorConsultarConvocatoriasExtension.comentarioParticipacion}" />
+					<h:outputText id="contadorComentarioParticipacion"
+						styleClass="pequennio" />
+
+					<h:outputText
+						value="#{ManejadorConsultarConvocatoriasExtension.errorParticipacion}"
+						styleClass="mensajeerror" />
+				</p:panelGrid>
+
+				<center>
+					<p:commandButton value="Intención de participar"
+						onclick="if(!confirm('Esta seguro de participar en la Convocatoria?'))return false"
+						action="#{ManejadorConsultarConvocatoriasExtension.confirmarParticipacion}"
+						rendered="#{ManejadorConsultarConvocatoriasExtension.mostrarParticipacion}"
+						update="formPCE">
+					</p:commandButton>
+				</center>
+
+			</p:panel>
+			<br />
+
+			<p:panel header="Comentarios">
+				<p:panelGrid columns="1">
+					<h:outputText
+						value='Si tiene algún comentario sobre la convocatoria, por favor ingréselo, y haga clic en el botón "Agregar Comentario":' />
+
+					<p:inputTextarea rows="3" cols="90" autoResize="false"
+						maxlength="4000" counterTemplate="{0} caracteres restantes."
+						counter="contadorComentario"
+						value="#{ManejadorConsultarConvocatoriasExtension.comentario}" />
+					<h:outputText id="contadorComentario" styleClass="pequennio" />
+
+					<h:outputText
+						value="#{ManejadorConsultarConvocatoriasExtension.errorComentario}"
+						styleClass="mensajeerror" />
+				</p:panelGrid>
+
+				<center>
+					<p:commandButton value="Agregar Comentario"
+						onclick="if(!confirm('Esta seguro de agregar el comentario?'))return false"
+						action="#{ManejadorConsultarConvocatoriasExtension.agregarComentario}"
+						update="formPCE">
+					</p:commandButton>
+				</center>
+
+				<p:spacer height="20"
+					rendered="#{ManejadorConsultarConvocatoriasExtension.mostrarComentarios}" />
+				<p:dataTable id="tablaComentarios" var="comentarios"
+					rendered="#{ManejadorConsultarConvocatoriasExtension.mostrarComentarios}"
+					value="#{ManejadorConsultarConvocatoriasExtension.listaComentarios}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentario" />
+						</f:facet>
+						<h:outputText value="#{comentarios.comentarioParticipacion}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{comentarios.fechaRegistro}" />
+					</p:column>
+				</p:dataTable>
+
+			</p:panel>
+			<br />
+
+			<center>
+				<p:commandButton
+					value="Regresar a la lista de convocatorias activas"
+					action="#{ManejadorConsultarConvocatoriasExtension.atras}">
+				</p:commandButton>
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

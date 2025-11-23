@@ -1,0 +1,2669 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitud ISBN</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			
+<!-- 		INICIO	Formulario Solicitud ISBN -->
+
+			<h:panelGrid id="mostrarSiSolicitudISBN"
+						 rendered="#{ManejadorSolicitudISBN.mostrarSiSolicitudISBN}"
+						 style="width:100%">
+			
+			<p:panel header="Información General" id="idInfoGeneralIS">
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">INFORMACIÓN DEL TÍTULO</t:div>
+				<p:spacer height="20" />
+				
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="1" align="center" id="panelTituloInf">
+					
+					<h:outputText value="*Título de la obra" styleClass="legend2" />
+					<p:inputTextarea rows="2" cols="65" autoResize="false"
+						counter="counterTituloIS" 
+						maxlength="1000"
+						counterTemplate="{0} caracteres restantes." 
+						id="TituloOI"
+						value="#{ManejadorSolicitudISBN.proyectoActual.nombre}"
+						required="true"
+						requiredMessage="El título de la obra es obligatorio"/>
+						
+					<h:outputText id="countTituloIS" value="" />
+					<h:outputText id="counterTituloIS" />
+					
+					<h:outputText value="Subtítulo de la obra" styleClass="legend2" />
+					<p:inputTextarea rows="2" cols="65" autoResize="false"
+						counter="counterSubTituloObraIS" 
+						maxlength="1000"
+						counterTemplate="{0} caracteres restantes." 
+						required="false"
+						id="subTituloOC"
+						value="#{ManejadorSolicitudISBN.proyectoActual.subTituloObraCompletaISBN}" />
+						
+					<h:outputText id="countSubTituloObraIS" value="" />
+					<h:outputText id="counterSubTituloObraIS" />
+					
+					<h:outputText value="Título de obra completa" styleClass="legend2" />
+					<p:inputTextarea rows="2" cols="65" autoResize="false"
+						counter="counterTituloObraIS" 
+						maxlength="1000"
+						counterTemplate="{0} caracteres restantes." 
+						required="false"
+						id="TituloOC"
+						value="#{ManejadorSolicitudISBN.proyectoActual.tituloObraCompletaISBN}"
+						title="Este campo aplica para el conjunto de tomos o volúmenes que se distribuyen dentro de un empaque"/>
+						
+					<h:outputText id="countTituloObraIS" value="" />
+					<h:outputText id="counterTituloObraIS" />
+					
+					<h:outputText value="Título de volumen" styleClass="legend2" />
+					<p:inputTextarea rows="2" cols="65" autoResize="false"
+						counter="counterTituloVolIS" maxlength="1000"
+						counterTemplate="{0} caracteres restantes." required="false"
+						id="TituloV"
+						value="#{ManejadorSolicitudISBN.proyectoActual.tituloVolumenISBN}"
+						title="Tomos o volúmenes que hacen parte de la obra completa"/>
+						
+					<h:outputText id="countTituloVolIS" value="" />
+					<h:outputText id="counterTituloVolIS" />
+					
+					<h:outputText value="Número de volumen" styleClass="legend2" />
+					<p:inputText 
+						id="numeroVolumen"
+						value="#{ManejadorSolicitudISBN.proyectoActual.numeroVolumenISBN}"
+						size="65"
+						maxlength="15"
+						converter="javax.faces.Integer"
+						converterMessage="Número de volumen debe contener solo numeros"/>
+										
+					<h:outputText value="*Tipo de obra" styleClass="legend2" />
+					<p:selectOneRadio
+						value="#{ManejadorSolicitudISBN.proyectoActual.tipoObra}"
+						required="true"
+						requiredMessage="Debe indicar el tipo de obra"
+						id="tipoObra" >
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoObraISBN2018}" />
+					</p:selectOneRadio>
+					
+					<h:outputText value="*Tipo de publicación" styleClass="legend2" />
+					<h:panelGrid columns="4" cellpadding="5" cellspacing="1" align="center" id="panelTituloTipoPub">
+						<p:selectBooleanCheckbox id="booleanTipoPub1"
+							value="#{ManejadorSolicitudISBN.proyectoActual.tipoPublicacionLibro}">
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Libro impreso en papel" styleClass="legend2" />
+						<p:selectBooleanCheckbox id="booleanTipoPub2"
+							value="#{ManejadorSolicitudISBN.proyectoActual.tipoPublicacionElect}">
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Publicación electrónica" styleClass="legend2" />
+					</h:panelGrid>	
+					
+				</h:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">CLASIFICACIÓN TEMÁTICA</t:div>
+				<p:spacer height="20" />
+				
+				<t:div
+					style="text-align: right; margin-bottom: 10px; margin-top: 10px;">
+					<h:outputLink value="#{ManejadorSolicitudISBN.linkClasificacionDEWEY}"
+						target="_blank">
+						<h:outputText value="Descargar clasificación decimal DEWEY" />
+						<h:graphicImage id="imageCD" alt="jsf-sun" url="/images/iconpdf.png" />
+					</h:outputLink>
+					<p:tooltip for="imageCD"
+						value="Descargar pdf con la clasificación decimal DEWEY"
+						showEffect="fade" hideEffect="fade" />
+				</t:div>
+				
+				<h:panelGrid id="panelClasificacion" columns="2" cellpadding="5" cellspacing="1" align="center" style="width:100%">
+					
+					<h:outputText value="*Sistema de clasificación decimal DEWEY" styleClass="legend2" />
+					<p:selectOneMenu
+						id="materia"
+						value="#{ManejadorSolicitudISBN.proyectoActual.materiaISBN}"
+						style="width:100%"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaMateriasISBN}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Tipo de contenido" styleClass="legend2" />
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.tipoContenidoISBN}"
+						id="tipoContenido"
+						style="width:100%"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoContenidoISBN}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Colección" styleClass="legend2" />
+					<p:inputTextarea
+						id="nombreColeccion" 
+						rows="2" cols="65" autoResize="false"
+						counter="counterNombreColeccion"
+						maxlength="1000"
+						counterTemplate="{0} caracteres restantes."
+						value="#{ManejadorSolicitudISBN.proyectoActual.nombreColeccionISBN}"/>
+						
+					<h:outputText id="countNombreColeccion" value="" />
+					<h:outputText id="counterNombreColeccion" />
+					
+					<h:outputText value="Nº Colección" styleClass="legend2" />
+					<p:inputText 
+						id="numeroColeccion"
+						value="#{ManejadorSolicitudISBN.proyectoActual.numeroColeccionISBN}"
+						size="65" 
+						requiredMessage="Número colección es requerido" 
+						maxlength="30"
+						converter="javax.faces.Integer"
+						converterMessage="Número de colección debe contener solo numeros"/>
+					
+					<h:outputText value="Serie" styleClass="legend2" />
+					<p:inputText
+						id="serieColeccion"
+						value="#{ManejadorSolicitudISBN.proyectoActual.serieISBN}"
+						size="65"
+						requiredMessage="Serie es requerido" 
+						maxlength="100"/>
+					
+					<h:outputText value="*Idioma" styleClass="legend2" />
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.idiomaPrincipalISBN}"
+						id="idiomaPrincipal"
+						style="width:100%"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaIdiomasISBN}" />
+					</p:selectOneMenu>
+					
+				</h:panelGrid>
+				
+				<br />
+				
+				<t:div
+					style="text-align: right; margin-bottom: 10px; margin-top: 10px;">
+					<h:outputLink value="#{ManejadorSolicitudISBN.linkClasificadoresISBN}"
+						target="_blank">
+						<h:outputText value="Descargar Clasificación temática Thema. v1.2.7" />
+						<h:graphicImage id="imageee" alt="jsf-sun" url="/images/iconpdf.png" />
+					</h:outputLink>
+					<p:tooltip for="imageee"
+						value="Descargar pdf con la clasificación temática Thema. v1.2.7"
+						showEffect="fade" hideEffect="fade" />
+				</t:div>
+				
+				<p:tabView id="tabViewClasificacion">	
+	
+					<p:tab title="Clasificación THEMA" id="claThema" titleStyle="font-size:11px">
+						<br />
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelClaThema" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								CLASIFICACIÓN THEMA
+							</f:facet>
+							
+							<p:panelGrid id="panelGridClaThema" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+							
+								<br />
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionThemaISBNNivel1}"
+									id="claThemaN1" style="width:100%" filter="true" filterMatchMode="contains"
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaClasificacionTHEMA_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaThema"
+											listener="#{ManejadorSolicitudISBN.cambiarClaThemaN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionThemaISBNNivel2}"
+									id="claThemaN2" style="width:100%" filter="true" filterMatchMode="contains" effect="fade" 
+									>
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaClasificacionTHEMA_N2}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaThema"
+											listener="#{ManejadorSolicitudISBN.cambiarClaThemaN2}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionThemaISBNNivel3}"
+									id="claThemaN3" style="width:100%" filter="true" filterMatchMode="contains"
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaClasificacionTHEMA_N3}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaThema"
+											listener="#{ManejadorSolicitudISBN.cambiarClaThemaN3}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionThemaISBNNivel4}"
+									id="claThemaN4" style="width:100%" filter="true" filterMatchMode="contains"
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaClasificacionTHEMA_N4}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaThema"
+											listener="#{ManejadorSolicitudISBN.cambiarClaThemaN4}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionThemaISBNNivel5}"
+									id="claThemaN5" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaClasificacionTHEMA_N5}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaThema"
+											listener="#{ManejadorSolicitudISBN.cambiarClaThemaN5}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionThemaISBNNivel6}"
+									id="claThemaN6" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaClasificacionTHEMA_N6}" />
+								</p:selectOneMenu>
+								
+							</p:panelGrid>	
+							
+						</p:panelGrid>
+					
+					</p:tab>
+					
+					<p:tab title="Lugar" id="claCugar" titleStyle="font-size:11px">
+						<br />
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelClaLugar" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								LUGAR
+							</f:facet>
+							
+							<p:panelGrid id="panelGridLugar" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+							
+	<!-- 							<h:outputText value="Clasificación THEMA" styleClass="negrilla" /> -->
+								<br />
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel1}"
+									id="claLugarN1" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel2}"
+									id="claLugarN2" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" 
+									>
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N2}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN2}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel3}"
+									id="claLugarN3" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N3}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN3}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel4}"
+									id="claLugarN4" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N4}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN4}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel5}"
+									id="claLugarN5" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N5}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN5}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel6}"
+									id="claLugarN6" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N6}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN6}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel7}"
+									id="claLugarN7" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N7}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN7}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel8}"
+									id="claLugarN8" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N8}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridLugar"
+											listener="#{ManejadorSolicitudISBN.cambiarClaLugarN8}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionLugarISBNNivel9}"
+									id="claLugarN9" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaLugar_N9}" />
+								</p:selectOneMenu>
+								
+							</p:panelGrid>	
+							
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					<p:tab title="Idioma" id="claIdioma" titleStyle="font-size:11px">
+						<br />
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelClaIdioma" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								IDIOMA
+							</f:facet>
+							
+							<p:panelGrid id="panelGridClaIdioma" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+							
+	<!-- 							<h:outputText value="Clasificación THEMA" styleClass="negrilla" /> -->
+								<br />
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionIdiomaISBNNivel1}"
+									id="claIdiomaN1" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaIdioma_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaIdioma"
+											listener="#{ManejadorSolicitudISBN.cambiarClaIdiomaN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionIdiomaISBNNivel2}"
+									id="claIdiomaN2" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" 
+									>
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaIdioma_N2}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaIdioma"
+											listener="#{ManejadorSolicitudISBN.cambiarClaIdiomaN2}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionIdiomaISBNNivel3}"
+									id="claIdiomaN3" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaIdioma_N3}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaIdioma"
+											listener="#{ManejadorSolicitudISBN.cambiarClaIdiomaN3}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionIdiomaISBNNivel4}"
+									id="claIdiomaN4" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaIdioma_N4}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaIdioma"
+											listener="#{ManejadorSolicitudISBN.cambiarClaIdiomaN4}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionIdiomaISBNNivel5}"
+									id="claIdiomaN5" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaIdioma_N5}" />
+								</p:selectOneMenu>	
+							
+							</p:panelGrid>
+						
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					<p:tab title="Período histórico" id="claPerodoHistorico" titleStyle="font-size:11px">
+						<br />
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelPerodoHistorico" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								PERIODO HISTÓRICO
+							</f:facet>
+							
+							<p:panelGrid id="panelGridPerodoHistorico" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+								<br />
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionPerHistoricoISBNNivel1}"
+									id="claPerodoHistoricoN1" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaPerHistorico_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridPerodoHistorico"
+											listener="#{ManejadorSolicitudISBN.cambiarPerHistoN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionPerHistoricoISBNNivel2}"
+									id="claPerodoHistoricoN2" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaPerHistorico_N2}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridPerodoHistorico"
+											listener="#{ManejadorSolicitudISBN.cambiarPerHistoN2}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionPerHistoricoISBNNivel3}"
+									id="claPerodoHistoricoN3" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaPerHistorico_N3}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridPerodoHistorico"
+											listener="#{ManejadorSolicitudISBN.cambiarPerHistoN3}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionPerHistoricoISBNNivel4}"
+									id="claPerodoHistoricoN4" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaPerHistorico_N4}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridPerodoHistorico"
+											listener="#{ManejadorSolicitudISBN.cambiarPerHistoN4}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionPerHistoricoISBNNivel5}"
+									id="claPerodoHistoricoN5" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaPerHistorico_N5}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+						
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					<p:tab title="Fines didácticos" id="claFinesDidacticos" titleStyle="font-size:11px">
+						<br />
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelFinesDidacticos" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								FINES DIDÁCTICOS
+							</f:facet>
+							
+							<p:panelGrid id="panelGridFinesDidacticos" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+								<br />
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionFinDidacticoISBNNivel1}"
+									id="claFinesDidacticosN1" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaFinDidactico_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridFinesDidacticos"
+											listener="#{ManejadorSolicitudISBN.cambiarClaFinDidacN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionFinDidacticoISBNNivel2}"
+									id="claFinesDidacticosN2" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaFinDidactico_N2}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridFinesDidacticos"
+											listener="#{ManejadorSolicitudISBN.cambiarClaFinDidacN2}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionFinDidacticoISBNNivel3}"
+									id="claFinesDidacticosN3" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaFinDidactico_N3}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridFinesDidacticos"
+											listener="#{ManejadorSolicitudISBN.cambiarClaFinDidacN3}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionFinDidacticoISBNNivel4}"
+									id="claFinesDidacticosN4" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaFinDidactico_N4}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridFinesDidacticos"
+											listener="#{ManejadorSolicitudISBN.cambiarClaFinDidacN4}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionFinDidacticoISBNNivel5}"
+									id="claFinesDidacticosN5" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaFinDidactico_N5}" />
+								</p:selectOneMenu>
+							
+							</p:panelGrid>
+						
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					<p:tab title="Edad de interés e intereses especiales" id="claEdad" titleStyle="font-size:11px">
+						<br />
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelEdadInt" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								EDAD DE ÍNTERES E INTERESES ESPECIALES
+							</f:facet>
+							
+							<p:panelGrid id="panelGridClaEdadInt" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+								<br />
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionEdadInteresISBNNivel1}"
+									id="claEdadIntN1" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaEdadInteres_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaEdadInt"
+											listener="#{ManejadorSolicitudISBN.cambiarClaEdadIntN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionEdadInteresISBNNivel2}"
+									id="claEdadIntN2" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaEdadInteres_N2}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaEdadInt"
+											listener="#{ManejadorSolicitudISBN.cambiarClaEdadIntN2}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionEdadInteresISBNNivel3}"
+									id="claEdadIntN3" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaEdadInteres_N3}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaEdadInt"
+											listener="#{ManejadorSolicitudISBN.cambiarClaEdadIntN3}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionEdadInteresISBNNivel4}"
+									id="claEdadIntN4" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaEdadInteres_N4}" />
+								</p:selectOneMenu>
+							
+							</p:panelGrid>
+						
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					<p:tab title="Estilo" id="claEstilo" titleStyle="font-size:11px">
+						
+						<p:panelGrid columns="1"
+							style="width:100%;" id="panelClaEstilo" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								ESTILO
+							</f:facet>
+							
+							<p:panelGrid id="panelGridClaEstilo" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+								<br />
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionEstiloISBNNivel1}"
+									id="claEstiloN1" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaEstilo_N1}" />
+									<p:ajax update=":form:tabViewClasificacion:panelGridClaEstilo"
+											listener="#{ManejadorSolicitudISBN.cambiarClaEstiloN1}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.clasificacionEstiloISBNNivel2}"
+									id="claEstiloN2" style="width:100%" filter="true" filterMatchMode="contains" 
+									effect="fade" >
+									<f:selectItem itemValue="0" itemLabel=""/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaEstilo_N2}" />
+								</p:selectOneMenu>
+							
+							</p:panelGrid>
+						
+						</p:panelGrid>
+						
+					</p:tab>
+					
+				</p:tabView>	
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">PÚBLICO</t:div>
+				<p:spacer height="20" />
+				
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="5" 
+							 align="center" border="0" id="panelPublico">
+
+						<h:outputText value="*Publico objetivo (audiencia)" styleClass="legend2" />
+						<p:selectOneMenu
+							value="#{ManejadorSolicitudISBN.proyectoActual.audiencia}"
+							id="audiencia" style="width:415px" filter="true" filterMatchMode="contains">
+							<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+							<f:selectItems value="#{ManejadorSolicitudISBN.listaAudienciaISBN}" />
+						</p:selectOneMenu>
+					
+				</h:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">TRADUCCIÓN</t:div>
+				<p:spacer height="20" />
+				
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="5" 
+							 align="center" border="0" id="panelTraduccionSN">
+				
+					<h:outputText value="*¿Es Traducción?" styleClass="legend2" />
+					<p:selectOneRadio id="esTraduccion"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN}" 
+								required="true" 
+								requiredMessage="Debe indicar si es traducción"
+								>
+						<f:selectItem itemLabel="Si" itemValue="SI" />
+						<f:selectItem itemLabel="No" itemValue="NO" />
+						<p:ajax event="change" update="panelTraduccionSN" process="@parent"/>
+					</p:selectOneRadio>
+				
+					<h:outputText value="*Idioma original" styleClass="legend2" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.idiomaOriginalISBN}"
+						id="idiomaOriginal" style="width:415px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}">
+						<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaIdiomasISBN}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Del idioma" styleClass="legend2" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.idiomaOrigen}"
+						id="idiomaOrigen" style="width:415px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}">
+						<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaIdiomasISBN}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Al idioma" styleClass="legend2" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.idiomaDestinoISBN}"
+						id="idiomaDestino" style="width:415px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}">
+						<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaIdiomasISBN}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Título en el idioma original" styleClass="legend2" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>
+					<p:inputTextarea rows="2" cols="65" autoResize="false"
+						counter="counterTituloIdOr" maxlength="1000"
+						counterTemplate="{0} caracteres restantes." required="false"
+						id="TituloIOrig"
+						value="#{ManejadorSolicitudISBN.proyectoActual.tituloIdiomaOriginalISBN}"
+						requiredMessage="El título en idioma original es obligatorio" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>
+					
+					<h:outputText id="countTituloIdOr" value="" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>
+					<h:outputText id="counterTituloIdOr" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esTraduccionISBN == 'SI'}"/>	
+					
+				</h:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">INFORMACIÓN DE LA EDICIÓN</t:div>
+				<p:spacer height="20" />
+				
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="1" 
+							 align="center" border="0" id="panelEdicion" >
+							 
+					<h:outputText value="*Nº edición" styleClass="legend2" />
+					<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.numeroEdicionISBN}"
+						size="50" id="numeroEdicion"
+						required="false"
+						requiredMessage="Número edicion es requerido" 
+						maxlength="30"
+						converter="javax.faces.Integer"
+						converterMessage="Número de edición debe contener solo numeros"/>
+					
+					<h:outputText value="*Departamento, estado o provincia" styleClass="legend2" />
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.departamentoEdicionISBN}"
+						id="departamentoEdicionISBN" style="width:415px" filter="true" filterMatchMode="contains">
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaDepartamentos}" />
+						<p:ajax event="change" listener="#{ManejadorSolicitudISBN.cargarListaCiudades}" 
+								update="ciudadEdicion" />
+					</p:selectOneMenu>
+						
+					<h:outputText value="*Ciudad de edición" styleClass="legend2" />
+					<p:selectOneMenu
+						value="#{ManejadorSolicitudISBN.proyectoActual.ciudadEdicionISBN}"
+						id="ciudadEdicion" style="width:415px" filter="true" filterMatchMode="contains">
+						<f:selectItems value="#{ManejadorSolicitudISBN.listaCiudades}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Fecha de publicación" styleClass="legend2" />
+					<p:calendar id="fechaAparicion"
+								value="#{ManejadorSolicitudISBN.proyectoActual.fechaAparicionISBN}"
+								required="false"
+								requiredMessage="Fecha de aparición es requerido" />
+
+					<h:outputText value="*Es Coedición?" styleClass="legend2" />
+					<p:selectOneRadio id="esCoedicion"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esCoedicionISBN}" 
+								required="true" 
+								requiredMessage="Debe indicar si es coedición">
+						<f:selectItem itemLabel="Si" itemValue="SI" />
+						<f:selectItem itemLabel="No" itemValue="NO" />
+						<p:ajax event="change" update="@parent" 
+								listener="#{ManejadorSolicitudISBN.mostrarCoeditor}"
+								process="@parent"/>
+					</p:selectOneRadio>
+					
+					<h:outputText value="*Coeditor" styleClass="legend2" id="labelCoeditor"
+								  rendered="#{ManejadorSolicitudISBN.mostrarCoeditor}"/>
+					<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.coeditorISBN}"
+						size="50" id="coeditor"
+						required="false"
+						requiredMessage="Coeditor es requerido" 
+						maxlength="100"
+						rendered="#{ManejadorSolicitudISBN.mostrarCoeditor}"/>			
+					
+			    </h:panelGrid>
+
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">COMERCIALIZABLE</t:div>
+				<p:spacer height="20" />
+				
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="1" 
+							 align="center" border="0" id="panelComercializable" >
+				
+					<h:outputText value="*¿Es comercializable?" styleClass="legend2" />
+					<p:selectOneRadio id="escComercializable"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN}" 
+								required="true" 
+								requiredMessage="Debe indicar si es comercializable">
+						<f:selectItem itemLabel="Si" itemValue="SI" />
+						<f:selectItem itemLabel="No" itemValue="NO" />
+						<p:ajax event="change" update="@parent" process="@parent"/>
+					</p:selectOneRadio>
+					
+					<h:outputText value="*Nº ejemplares oferta nacional" styleClass="legend2"
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' or 
+											  ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.numEjemplaresNacionalISBN}"
+						size="50" id="numeroEjNal" 
+						maxlength="10"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' or 
+									ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					
+					<h:outputText value="*Precio en moneda local -libro impreso ($)" styleClass="legend2" 
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'}"/>
+					<p:inputText 
+						id="precioCop"
+						value="#{ManejadorSolicitudISBN.proyectoActual.precioCOPISBN}"
+						size="50"
+						maxlength="10"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'}"/>
+					
+					<h:outputText value="Precio en moneda local - libro digital ($)" styleClass="legend2" 
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'}"/>
+					<p:inputText 
+						id="precioDigitalCop"
+						value="#{ManejadorSolicitudISBN.proyectoActual.precioLibroDigitalISBN}"
+						size="50"
+						maxlength="10"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'}"/>
+					
+					<h:outputText value="Nº de ejemplares de oferta externa" styleClass="legend2" 
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' or 
+											  ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<p:inputText 
+						id="numEjemplaresExternosISBN"
+						value="#{ManejadorSolicitudISBN.proyectoActual.numEjemplaresExternosISBN}"
+						size="50"
+						required="false"
+						requiredMessage="Número de ejemplares de oferta externa es requerido" 
+						maxlength="10"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' or 
+									ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					
+					<h:outputText value="Precio en dólares (USD)" styleClass="legend2" 
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'}"/>
+					<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.precioUSDISBN}"
+						size="50" id="precioUSDISBN"
+						required="false"
+						requiredMessage="Precio en dólares es requerido" 
+						maxlength="10"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'}"/>
+					
+					<h:outputText value="*Oferta total" styleClass="legend2" 
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' or 
+											  ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.ofertaTotalISBN}"
+						size="50" id="ofertaTotalISBN"
+						required="false"
+						requiredMessage="Oferta total es requerido" 
+						maxlength="10"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' or 
+									ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					
+<!-- 					<h:outputText value="Disponibilidad" styleClass="legend2"  -->
+<!-- 								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' -->
+<!-- 											  or ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO' -->
+<!-- 											  and false}"/> -->
+<!-- 					<p:selectOneMenu -->
+<!-- 						value="#{ManejadorSolicitudISBN.proyectoActual.disponibilidadComercializable}" -->
+<!-- 						id="claThemaN1" style="width:100%" filter="true" filterMatchMode="contains" -->
+<!-- 						effect="fade"  -->
+<!-- 						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI'  -->
+<!-- 									or ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO' -->
+<!-- 									and false}"> -->
+<!-- 						<f:selectItem itemValue="0" itemLabel=""/> -->
+<!-- 						<f:selectItems value="#{ManejadorSolicitudISBN.listaDisponibilidad}" /> -->
+<!-- 					</p:selectOneMenu> -->
+
+					<h:outputText value="*Disponible en" styleClass="legend2" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' 
+									or ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<p:inputTextarea 
+						rows="3" cols="50" autoResize="false"
+						counter="counterDisponible" maxlength="1000"
+						counterTemplate="{0} caracteres restantes."
+						id="DisponibleEn"
+						value="#{ManejadorSolicitudISBN.proyectoActual.disponibleEnISBN}"
+						title="Por favor coloque  dónde estará disponible la publicación"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' 
+									or ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					
+					<h:outputText id="countDisponible" value="" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' 
+									or ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<h:outputText id="counterDisponible" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'SI' 
+									or ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+						
+					<h:outputText value="*¿Por qué no es comercializable?" 
+								  styleClass="legend2"
+								  rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<p:inputTextarea 
+						rows="3" cols="50" autoResize="false"
+						counter="counterNoComer" maxlength="1800"
+						counterTemplate="{0} caracteres restantes." 
+						id="noComercial"
+						value="#{ManejadorSolicitudISBN.proyectoActual.razonesNoComercializableISBN}"
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"
+						>
+						
+						<p:tooltip for="noComercial" showEvent="focus" hideEvent="blur"
+							showEffect="fade" hideEffect="fade">
+							<h:panelGrid columns="1"
+								style="border-bottom: 10px; padding-bottom: 10px; width: 400px">
+								<h:outputText
+									value="Explique a continuación las razones por las cuales la publicación 
+									no tendrá distribución comercial y justifique en detalle el modo en que 
+									habrán de ser distribuidos los ejemplares: cantidades y puntos específicos 
+									en los cuales la publicación estará disponible para el público en general" />
+							</h:panelGrid>
+						</p:tooltip>
+						
+					</p:inputTextarea>	
+				
+					<h:outputText id="countNoComer" value="" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					<h:outputText id="counterNoComer" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.esComercializableISBN == 'NO'}"/>
+					
+				</h:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">DESCRIPCIÓN PRODUCTO FÍSICO</t:div>
+				
+				
+				<p:panelGrid columns="1" cellpadding="5" cellspacing="5" styleClass="estilo-panelgrid-sinbordes">
+					<br />					 
+					<h:outputText value="Seleccione que tipo o tipos de ISBN requiere para su obra y diligencie la descripción del material" />
+					<br />	
+				</p:panelGrid>	
+				
+				<p:tabView id="tabViewDescripcionFisica">
+
+					<p:tab title="ISBN Impreso" id="tabISBNImpreso" titleStyle="font-size:11px">
+					
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5" 
+										 align="center" border="0" id="panelDescFisicaBol1" >
+							<h:outputText value="ISBN Impreso" />
+							<p:selectBooleanCheckbox id="booleanISBNImpreso"
+								disabled="false"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<p:ajax update=":form:tabViewDescripcionFisica:panelDescFisicaISBNImpreso" 
+										process=":form:tabViewDescripcionFisica:panelDescFisicaISBNImpreso"/>
+							</p:selectBooleanCheckbox>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5" 
+									 align="center" border="0" id="panelDescFisicaISBNImpreso" >
+							
+							<h:outputText value="*Tipo de producto" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.descripcionFisicaISBN}"
+								id="descripcionFisicaISBN" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaDescFisicaISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de encuadernación" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoEncuadernacionISBN}"
+								id="tipoEncuadernacionISBN" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoEncuadernacionISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de papel" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoPapelISBN}"
+								id="tipoPapelISBN" style="width:250px" filter="true" filterMatchMode="contains"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoPapelISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Peso (gr)" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.pesoGramosObra}"
+								size="34" id="pesoGramosISBN"
+								required="false"
+								requiredMessage="Peso en gramos de la obra es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Peso en gramos de la obra debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de impresión" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoImpresionISBN}"
+								id="tipoImpresionISBN" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoImpresionISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Gramaje" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.gramajeISBN}"
+								id="gramajeISBN" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaGramajeISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Nº páginas" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.numPaginasISBN}"
+								size="34" id="numPaginasISBN"
+								required="false"
+								requiredMessage="Número de páginas es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Número de páginas debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<h:outputText value=""/>	
+							
+							<h:outputText value="*Nº tintas" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.numTintasISBN}"
+								id="numTintasISBN" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaNumTintasISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Ancho (cm)" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.anchoISBN}"
+								size="34" id="anchoISBN"
+								required="false"
+								requiredMessage="Ancho es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Ancho debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Alto (cm)" styleClass="legend2"
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.altoISBN}"
+								size="34" id="altoISBN"
+								required="false"
+								requiredMessage="Alto es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Alto debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNImpreso}"/>
+							<h:outputText value=""/>
+						</h:panelGrid>
+					</p:tab>
+					
+					<p:tab title="ISBN Digital" id="tabISBNDigital" titleStyle="font-size:11px">
+						
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5" 
+										 align="center" border="0" id="panelDescFisicaBol2" >
+							<h:outputText value="ISBN Digital" />
+							<p:selectBooleanCheckbox id="booleanISBNDigital"
+								disabled="false"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<p:ajax update=":form:tabViewDescripcionFisica:panelDescFisicaISBNDigital" 
+										process=":form:tabViewDescripcionFisica:panelDescFisicaISBNDigital"/>
+							</p:selectBooleanCheckbox>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5" 
+									 align="center" border="0" id="panelDescFisicaISBNDigital" >
+									 
+							<h:outputText value="*Tipo de soporte" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoSoporteDigital}"
+								id="tipoSoporte" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoSoporteISBN2018}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Formato de producto" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<p:selectOneMenu
+								id="formatoISBN" value="#{ManejadorSolicitudISBN.proyectoActual.formatoISBN}"
+								style="width:250px" filter="true" filterMatchMode="contains"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaFormatoISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de contenido del producto" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoContenidoProducto}"
+								id="tipoContProducto" style="width:250px" filter="true" filterMatchMode="contains"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoContenidoProducto}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Medio electrónico o digital" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.medioElectronicoISBN}"
+								id="medioElectronicoISBN" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaMedElecISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Protección técnica" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<t:div title="DRM (gestión de derechos digitales) se utiliza para dar nombre a la tecnología digital agregada a un archivo digital y que sirve para restringir acceso no autorizado del ebook o para rastrear su uso indebido">
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.proteccionTecnicaArchivos}"
+									id="protTecArchivosDig" style="width:250px" filter="true" filterMatchMode="contains"
+									rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+									<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaProtTecnicaArcDigISBN}" />
+								</p:selectOneMenu>
+							</t:div>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Permiso de uso" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<t:div title=" Condiciones a las que el usuario podrá acceder a los contenidos digitales">
+								<p:selectOneMenu
+									value="#{ManejadorSolicitudISBN.proyectoActual.permisoUso}"
+									id="permisoUso" style="width:250px" filter="true" filterMatchMode="contains"
+									rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+									<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+									<f:selectItems value="#{ManejadorSolicitudISBN.listaPermisoUsoISBN}" />
+								</p:selectOneMenu>
+							</t:div>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipos de acceso" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoAccesoISBNDigital}"
+								id="tipoAcceso" style="width:250px" filter="true" filterMatchMode="contains"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoAcceso}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tamaño" styleClass="legend2" 
+										  rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>
+							<p:inputText
+								value="#{ManejadorSolicitudISBN.proyectoActual.tamañoISBN}"
+								size="34" 
+								required="false"
+								requiredMessage="Tamaño es requerido" 
+								maxlength="10"
+								converter="javax.faces.Long"
+								converterMessage="Tamaño debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}"/>			  
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.unidadMedidaTamañoISBN}"
+								id="unidadMed" style="width:50px"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNDigital}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTamañoISBN}" />
+							</p:selectOneMenu>
+			 
+						</h:panelGrid>		 
+					</p:tab>
+					
+					<p:tab title="ISBN IBD" id="tabISBNIBD" titleStyle="font-size:11px">
+					
+						<br />
+						<p:panel id="panelContrapartidaEfect" style="width:100%; margin: auto;" styleClass="mypanel">
+							<h:panelGrid columns="1" id="panelContrapart1" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText
+									value="La impresión bajo demanda conocida también como 'print on demand' o POD e IBD 
+									por sus siglas en inglés y español respectivamente, se basa en la impresión desde un 
+									solo ejemplar, en un plazo de producción mínimo y con la seguridad de que se venden los 
+									ejemplares pues ya han sido comprados. Como su lo nombre lo indica se ajusta la demanda." />
+							</h:panelGrid>
+						</p:panel>
+						<br />
+						
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5" align="center" border="0" id="panelDescFisicaBol3" >
+							<h:outputText value="ISBN IBD (Impresión bajo demanda)" />
+							<p:selectBooleanCheckbox id="booleanISBNIBD"
+								disabled="false"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<p:ajax update=":form:tabViewDescripcionFisica:panelDescFisicaISBNIBD" 
+										process=":form:tabViewDescripcionFisica:panelDescFisicaISBNIBD"/>
+							</p:selectBooleanCheckbox>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5" align="center" border="0" id="panelDescFisicaISBNIBD" >
+							
+							<h:outputText value="*Tipo de producto" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.descripcionFisicaISBNIBD}"
+								id="descripcionFisicaISBNIBD" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaDescFisicaISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de encuadernación" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoEncuadernacionISBNIBD}"
+								id="tipoEncuadernacionISBNIBD" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoEncuadernacionISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de papel" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoPapelISBNIBD}"
+								id="tipoPapelISBNIBD" style="width:250px" filter="true" filterMatchMode="contains"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoPapelISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Peso (gr)" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.pesoGramosObraIBD}"
+								size="34" id="pesoGramosISBNIBD"
+								required="false"
+								requiredMessage="Peso en gramos de la obra es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Peso en gramos de la obra debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Tipo de impresión" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.tipoImpresionISBNIBD}"
+								id="tipoImpresionISBNIBD" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<f:selectItem itemValue="0" itemLabel="Seleccione una opción ..."/>
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaTipoImpresionISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Gramaje" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.gramajeISBNIBD}"
+								id="gramajeISBNIBD" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaGramajeISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Nº páginas" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.numPaginasISBNIBD}"
+								size="34" id="numPaginasISBNIBD"
+								required="false"
+								requiredMessage="Número de páginas es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Número de páginas debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<h:outputText value=""/>	
+							
+							<h:outputText value="*Nº tintas" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:selectOneMenu
+								value="#{ManejadorSolicitudISBN.proyectoActual.numTintasISBNIBD}"
+								id="numTintasISBNIBD" style="width:250px" filter="false"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaNumTintasISBN}" />
+							</p:selectOneMenu>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Ancho (cm)" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.anchoISBNIBD}"
+								size="34" id="anchoISBNIBD"
+								required="false"
+								requiredMessage="Ancho es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Ancho debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<h:outputText value=""/>
+							
+							<h:outputText value="*Alto (cm)" styleClass="legend2" rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<p:inputText value="#{ManejadorSolicitudISBN.proyectoActual.altoISBNIBD}"
+								size="34" id="altoISBNIBD"
+								required="false"
+								requiredMessage="Alto es requerido" 
+								maxlength="10"
+								converter="javax.faces.Integer"
+								converterMessage="Alto debe contener solo numeros"
+								rendered="#{ManejadorSolicitudISBN.proyectoActual.esISBNIBD}"/>
+							<h:outputText value=""/>
+						</h:panelGrid>
+						
+					</p:tab>
+				
+				</p:tabView>
+				
+				<p:spacer height="20"/>
+				<t:div styleClass="contenido-titulo-general-ancizar-left">SISTEMAS DE INFORMACIÓN DE LA EDITORIAL UNAL</t:div>
+				<p:spacer height="20"/>
+				
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5" align="center" border="0" id="panelSIEUN1">
+				
+					<h:outputText value="De acuerdo con la estrategia de difusión y divulgación de la Editorial de la Universidad 
+						Nacional de Colombia en los diferentes catálogos: (página web, novedades, Cámara Colombiana del Libro, 
+						distribuidores físicos y virtuales, entre otros) se solicita la siguiente información:" styleClass="legend2" />
+					<br />
+					
+					
+					<p:panel>
+								<t:div
+									style="color:#464646; text-align:justify;">
+									Recuerde que los campos de reseña y tabla de contenido tienen un <strong style="color: #FF0000;">máximo de 3900 caracteres</strong>,
+									se recomienda revisar si los textos, en especial la tabla de contenido excede este espacio y en este caso mejor colocar el anexo 
+									correspondiente. Adicionalmente, no coloque símbolos o caracteres extraños. 
+								</t:div>
+					</p:panel>
+					
+					<br />
+				
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5" align="center" border="0" id="panelSIEUN2">
+						
+						<h:outputText value="*Reseña" styleClass="legend2" />
+						<p:inputTextarea 
+							id="resenaSI" rows="4" cols="65" autoResize="false"
+							counter="counterResenaSI" maxlength="3900"
+							counterTemplate="{0} caracteres restantes"
+							value="#{ManejadorSolicitudISBN.proyectoActual.resena}" />
+						
+						<h:outputText id="countResenaSI" value=""/>
+						<h:outputText id="counterResenaSI"/>
+						
+						<h:outputText value="*Tabla de contenido" styleClass="legend2" />
+						<p:inputTextarea 
+							id="tablaContSI" rows="4" cols="65" autoResize="false"
+							counter="counterTabContenidoSI" maxlength="3900"
+							counterTemplate="{0} caracteres restantes"
+							value="#{ManejadorSolicitudISBN.proyectoActual.tablaContenidoISBN}" />
+						
+						<h:outputText value=""/>
+						<h:outputText id="counterTabContenidoSI"/>
+						
+					</h:panelGrid>
+					
+					<p:fieldset id="fieldParticipantesISBN" legend="Palabras Clave" style="margin-top: 10px;">
+						<br />
+						<t:div>
+							Agregue mínimo 5 palabras claves. Debe escribir cada palabra y hacer clic sobre el botón <b>'Agregar palabra'</b>.
+						</t:div>
+						<br />
+						<h:panelGrid columns="2" id="gridPalabraClaveISBN" align="center">
+<!-- 							<h:outputText value="Palabras Clave" /> -->
+							<p:autoComplete id="palabraClaveS"
+								value="#{ManejadorSolicitudISBN.palabraClave.palabra}"
+								size="60" maxResults="10"
+								completeMethod="#{ManejadorSolicitudISBN.obtenerPalabraClavesSugeridas}"
+								minQueryLength="2">
+								<f:validateLength maximum="100" />
+							</p:autoComplete>
+	
+							<p:commandButton id="agregarPalabraClaveISBN" value="Agregar palabra"
+								update="palabrasTableISBN gridPalabraClaveISBN"
+								action="#{ManejadorSolicitudISBN.insertarPalabraClave}">
+							</p:commandButton>
+	
+						</h:panelGrid>
+						<br />
+						<p:outputPanel id="grupoListaPalabrasISBN" align="center">
+							<p:dataTable id="palabrasTableISBN"
+								value="#{ManejadorSolicitudISBN.proyectoActual.listaPalabrasES}"
+								var="pal"
+								emptyMessage="No se encuentran palabras clave registradas">
+								<p:column style="width:25%">
+									<f:facet name="header">
+										<h:outputText value="Palabra Clave" />
+									</f:facet>
+									<h:outputText value="#{pal.palabraVista}" />
+								</p:column>
+								<p:column style="width:3%">
+									<center>
+										<p:commandButton id="selectButtonISBN" update="palabrasTableISBN"
+											icon="ui-icon-trash"
+											action="#{ManejadorSolicitudISBN.eliminarPalabraClave}"
+											title="Eliminar palabra clave">
+											<f:setPropertyActionListener value="#{pal}"
+												target="#{ManejadorSolicitudISBN.palabraClaveTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+					</p:fieldset>
+					
+					<p:spacer height="10"/>
+					<t:div>
+						<b>NOTA:</b> Por favor adjuntar la cubierta en formato JPG en la lista de archivos adjuntos en el siguiente formulario.
+					</t:div>
+					<p:spacer height="10"/>
+		
+				</h:panelGrid>
+				
+				
+				<p:spacer height="20" rendered="false"/>
+				<t:div styleClass="contenido-titulo-general-ancizar-left" rendered="false">CATÁLOGO DE LA CÁMARA COLOMBIANA DEL LIBRO</t:div>
+				<p:spacer height="20" rendered="false"/>
+				
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5" align="center" border="0" id="panelCCL1" rendered="false">
+					
+					<h:outputText value="Nota: Si usted desea que este título sea incorporado en el catálogo de la Cámara Colombiana del Libro, 
+								por favor ingrese la información correspondiente a la cubierta (archivo.jpg) y a la reseña" styleClass="legend2" />
+					<br />
+					
+					<h:outputText value="*¿Desea incluirlo en el catálogo de la Agencia de la Cámara Colombiana del Libro?" styleClass="legend2" />
+					<p:selectOneRadio id="incluirCCL"
+								value="#{ManejadorSolicitudISBN.proyectoActual.esCamaraColLibro}" 
+								required="true" 
+								requiredMessage="Debe indicar si desea incluirlo en el catálogo de la Agencia de la Cámara Colombiana del Libro">
+						<f:selectItem itemLabel="Si" itemValue="SI" />
+						<f:selectItem itemLabel="No" itemValue="NO" />
+						<p:ajax event="change" update="panelCCL2" process="panelCCL2"/>
+					</p:selectOneRadio>					
+				
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="5" align="center" border="0" id="panelCCL2" rendered="false">
+					
+					<h:outputText value="*Reseña" styleClass="legend2" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esCamaraColLibro == 'SI'}"/>
+					<p:inputTextarea rows="2" cols="65" autoResize="false"
+						counter="counterResena" maxlength="4000"
+						counterTemplate="{0} caracteres restantes" id="resena"
+						value="#{ManejadorSolicitudISBN.proyectoActual.resena}" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esCamaraColLibro == 'SI'}"/>
+						
+					<h:outputText id="countResena" value="" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esCamaraColLibro == 'SI'}"/>
+					<h:outputText id="counterResena" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.esCamaraColLibro == 'SI'}"/>
+				
+				</h:panelGrid>
+			
+			</p:panel>
+			 
+			<br />
+			
+			<p:panel header="Autores o compiladores" id="idPanelAutoresCompiladores">
+
+				<h:panelGrid columns="2" align="center" cellpadding="5"
+					id="pgFormInvesISBN" cellspacing="5">
+
+					<h:outputText value="*Tipo de participante" />
+					<p:selectOneMenu id="tipoInvMain"
+						value="#{ManejadorSolicitudISBN.tipoInvestigador}">
+						<f:selectItems value="#{ManejadorSolicitudISBN.autores}" />
+						<p:ajax
+							listener="#{ManejadorSolicitudISBN.cambiarVinculacion}"
+							update="pgFormInvesExtISBN, OP_pruebaISBN" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Tipo de documento" />
+					<p:selectOneMenu id="tipoDocInvestigadorSelectISBN"
+						value="#{ManejadorSolicitudISBN.tipoDocumentoCoInv2.id}">
+						<f:selectItems
+							value="#{ManejadorSolicitudISBN.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="*No. documento: " />
+					<p:inputText id="numDocumentoISBN"
+						value="#{ManejadorSolicitudISBN.documentoCoinv2}" />
+					
+					<h:outputText value="*País de procedencia" id="paisTextISBN" />
+					<p:selectOneMenu value="#{ManejadorSolicitudISBN.pais}"
+						effect="fade" id="paisISBN" filter="true" filterMatchMode="contains">
+						<f:selectItems
+							value="#{ManejadorSolicitudISBN.paisItem}" />
+					</p:selectOneMenu>
+						
+					<h:outputText value="*Rol" />
+					<p:selectOneMenu id="rolAutorISBN"
+						value="#{ManejadorSolicitudISBN.rolAutorISBN}">
+						<f:selectItems
+							value="#{ManejadorSolicitudISBN.listaRolAutorISBN}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="*Fecha de nacimiento" styleClass="legend2" />
+					<p:calendar id="fechaNacimiento"
+								value="#{ManejadorSolicitudISBN.fechaNacimiento}" 
+								pages="2"
+								navigator="true"
+								yearRange="c-100:c+0"/>
+
+				</h:panelGrid>
+
+				<p:outputPanel id="OP_pruebaISBN">
+
+					<h:panelGrid id="pgFormInvesExtISBN" rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+						columns="2" cellspacing="5" align="center" cellpadding="5">
+
+						<h:outputText value="*Primer Nombre" rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+						<p:inputText 
+							id="primerNombreInvestigadorISBN"
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+							value="#{ManejadorSolicitudISBN.investigadorExterno.nombre1}"
+							size="38" requiredMessage="El Primer Nombre es obligatorio">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+
+						<h:outputText value="Segundo Nombre" rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+						<p:inputText 
+							id="segundoNombreInvISBN"
+							value="#{ManejadorSolicitudISBN.investigadorExterno.nombre2}"
+							size="38"
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+
+						<h:outputText value="*Primer Apellido" rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+						<p:inputText id="primerApellidoInvestigadorISBN"
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+							value="#{ManejadorSolicitudISBN.investigadorExterno.apellido1}"
+							size="38" requiredMessage="El Primer Apellido es obligatorio">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+
+						<h:outputText value="Segundo Apellido" rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+						<p:inputText id="segundoApellidoInvISBN"
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+							value="#{ManejadorSolicitudISBN.investigadorExterno.apellido2}"
+							size="38">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+
+						<h:outputText value="Género" rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+						<p:selectOneMenu
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+							value="#{ManejadorSolicitudISBN.investigadorExterno.genero}"
+							id="idGeneroISBN" style="width:40px">
+							<f:selectItems value="#{ManejadorSolicitudISBN.generoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="*Institución" rendered="false" />
+						<p:inputText 
+							id="insitucionNombreISBN"
+							rendered="false"
+							value="#{ManejadorSolicitudISBN.insitucionNombre}"
+							size="38" requiredMessage="La institución es obligatoria">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+
+					</h:panelGrid>
+
+				</p:outputPanel>
+
+				<br />
+				<center>
+					<p:commandButton value="Adicionar investigador"
+						id="botonAdicionarInvestigador"
+						update="listaParticipantesISBN, pgFormInvesExtISBN, OP_pruebaISBN, pgFormInvesISBN"
+						action="#{ManejadorSolicitudISBN.agregarParticipante}"
+						styleClass="ui-priority-primary" />
+				</center>
+
+				<br />
+				<br />
+
+				<p:dataTable var="i" style="width:650px"
+					value="#{ManejadorSolicitudISBN.listaParticipantes}"
+					id="listaParticipantesISBN"
+					emptyMessage="No se encuentran autores asociados">
+					
+					<p:column style="width:35%">
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigador.nombreCompletoMinusculas}" />
+					</p:column>
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Rol" />
+						</f:facet>
+<!-- 						<h:outputText -->
+<!-- 							value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" /> -->
+						
+						<h:outputText value="#{i.tipo.id == 'P' ? i.funcion : i.tipo.nombre}" />
+						
+<!-- 						<h:outputText value="#{i.tipo.nombre}" /> -->
+					</p:column>
+					
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Nacionalidad" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigador.paisOrigen}" /> 
+					</p:column>
+					
+					<p:column style="width:20%">
+						<f:facet name="header">
+							<h:outputText value="Fecha Nacimiento" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigador.fechaNacimiento}" /> 
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="(-)" />
+						</f:facet>
+						<center>
+							<p:commandButton id="botonEliminarIntegrantes"
+								update="listaParticipantesISBN" icon="ui-icon-trash"
+								action="#{ManejadorSolicitudISBN.eliminarParticipante}"
+								title="Eliminar">
+								<f:setPropertyActionListener value="#{i}"
+									target="#{ManejadorSolicitudISBN.participante}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				<br />
+			
+			</p:panel>
+			
+			<br />
+			
+			<p:panel header="Sello Editorial" id="idSello">
+			
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5" align="center" border="0" id="panelSello1">
+					
+					<h:outputText value="El Sello Editorial UN es el logo institucional que distingue las publicaciones 
+										de la Universidad Nacional de Colombia como un producto editorial que cumple con los más altos estándares 
+										de calidad en presentación y contenidos. Su utilización generalizada a partir de un control de calidad 
+										establecido y ejecutado por la Editorial UNAL pretende robustecer la imagen pública de la Universidad y 
+										apoyar su posicionamiento como entidad generadora de conocimiento." 
+						styleClass="legend2" />
+					<br />
+					
+					<h:outputText value="*¿Desea solicitar Sello Editorial?" styleClass="legend2" />
+					<p:selectOneRadio id="incluirSello"
+								value="#{ManejadorSolicitudISBN.proyectoActual.tieneSelloDigitalISBN}"
+								required="true" 
+								requiredMessage="Debe indicar si desea solicitar sello editorial">
+						<f:selectItem itemLabel="Si" itemValue="SI" />
+						<f:selectItem itemLabel="No" itemValue="NO" />
+						<p:ajax event="change" update="panelSello2" process="panelSello2"/>
+					</p:selectOneRadio>					
+				
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="5" align="center" border="0" id="panelSello2">
+					<h:outputText 
+						value="Si usted desea solicitar Sello Editorial debe adjuntar el formato solicitud de sello editorial en el siguiente formulario. Código: U.FT.03.002.035." 
+						styleClass="legend2" 
+						rendered="#{ManejadorSolicitudISBN.proyectoActual.tieneSelloDigitalISBN == 'SI'}"/>
+				
+				</h:panelGrid>
+			
+			</p:panel>
+			
+			</h:panelGrid>
+			
+<!-- 		FIN	Formulario Solicitud ISBN -->
+
+			<h:panelGrid id="mostrarSiConvocatoriaLibros"
+				rendered="#{ManejadorSolicitudISBN.mostrarSiConvLibros}"
+				style="width:100%">
+
+				<p:panel header="Información General" id="idInfoGeneral">
+					<h:panelGrid columns="2" cellpadding="10" align="center">
+						<h:outputText value="Título" styleClass="legend2" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							counter="counterTitulo" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." 
+							required="true"
+							id="Titulo"
+							value="#{ManejadorSolicitudISBN.proyectoActual.nombre}"
+							requiredMessage="El título del proyecto es obligatorio" />
+						<h:outputText id="countTitulo" value="" />
+						<h:outputText id="counterTitulo" />
+
+						<h:outputText value="Resumen (Máx. 4000 caracteres)" />
+						<p:inputTextarea id="Resumen" autoResize="false"
+							counter="counterResumen" maxlength="1000"
+							counterTemplate="{0} caracteres restantes."
+							value="#{ManejadorSolicitudISBN.proyectoActual.resumen}"
+							rows="10" cols="65" required="false">
+						</p:inputTextarea>
+						<h:outputText id="countRes" value="" />
+						<h:outputText id="counterResumen" />
+
+						<h:outputText
+							value="Objeto/Objetivo principal (Máx. 4000 caracteres):" />
+						<p:inputTextarea id="objeto" autoResize="false"
+							counter="counterObjeto" maxlength="1000"
+							counterTemplate="{0} caracteres restantes."
+							validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+							value="#{ManejadorSolicitudISBN.proyectoActual.objetivoGeneral}"
+							rows="10" cols="65">
+						</p:inputTextarea>
+						<h:outputText id="countObj" value="" />
+						<h:outputText id="counterObjeto" />
+
+						<h:outputText value="Consultar áreas de la ciencia" />
+						<h:outputLink value="#{ManejadorSolicitudISBN.linkLineas}"
+							target="_blank">
+							<h:graphicImage id="imageee" alt="jsf-sun"
+								url="/images/iconpdf.png">
+							</h:graphicImage>
+						</h:outputLink>
+
+						<h:outputText value="Area de la ciencia principal:" />
+						<p:selectOneMenu style="width:160px"
+							value="#{ManejadorSolicitudISBN.areaCiencia}"
+							id="areaCiencia">
+							<f:selectItems
+								value="#{ManejadorSolicitudISBN.areaCienciaItems}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Area de la ciencia secundaria:" />
+						<p:selectOneMenu style="width:160px"
+							value="#{ManejadorSolicitudISBN.areaCienciaSec}"
+							id="areaCiencia1">
+							<f:selectItems
+								value="#{ManejadorSolicitudISBN.areaCienciaItems}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Colección asociada:" />
+						<p:selectOneMenu
+							value="#{ManejadorSolicitudISBN.proyectoActual.claseEvento}"
+							id="tipoEvento">
+							<f:selectItems
+								value="#{ManejadorSolicitudISBN.tipoEventoItems}" />
+							<p:ajax
+								listener="#{ManejadorSolicitudISBN.cambiarTipoEvento}"
+								update="panOtroTipEve" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<h:panelGrid id="panOtroTipEve" columns="2" cellpadding="5"
+						cellspacing="5">
+						<h:outputText value="Otra - Cuál?:" id="otroEventotxt"
+							rendered="#{ManejadorSolicitudISBN.mostrarOtroTipoEvento}" />
+						<p:inputText size="40" id="otroEvento"
+							rendered="#{ManejadorSolicitudISBN.mostrarOtroTipoEvento}"
+							value="#{ManejadorSolicitudISBN.proyectoActual.otroClaseEvento}" />
+					</h:panelGrid>
+				</p:panel>
+				<br />
+
+				<p:panel header="Palabras Clave" id="idPalabrasClave">
+
+					<h:panelGrid columns="3" id="gridPalabraClave" align="center">
+						<h:outputText value="Palabras Clave" />
+						<p:autoComplete id="palabraClaveS"
+							value="#{ManejadorSolicitudISBN.palabraClave.palabra}"
+							size="50" maxResults="10"
+							completeMethod="#{ManejadorSolicitudISBN.obtenerPalabraClavesSugeridas}"
+							minQueryLength="2">
+							<f:validateLength maximum="100" />
+						</p:autoComplete>
+
+						<p:commandButton id="agregarPalabraClave" value="Agregar palabra"
+							update="palabrasTable, gridPalabraClave"
+							action="#{ManejadorSolicitudISBN.insertarPalabraClave}">
+						</p:commandButton>
+
+					</h:panelGrid>
+
+					<br />
+					<br />
+					<p:outputPanel id="grupoListaPalabras" align="center">
+						<p:dataTable id="palabrasTable"
+							value="#{ManejadorSolicitudISBN.proyectoActual.listaPalabrasES}"
+							var="pal"
+							emptyMessage="No se encuentran palabras clave registradas">
+
+							<p:column style="width:25%">
+								<f:facet name="header">
+									<h:outputText value="Palabra Clave" />
+								</f:facet>
+								<h:outputText value="#{pal.palabraVista}" />
+							</p:column>
+
+							<p:column style="width:3%">
+								<center>
+									<p:commandButton id="selectButton" update="palabrasTable"
+										icon="ui-icon-trash"
+										action="#{ManejadorSolicitudISBN.eliminarPalabraClave}"
+										title="Eliminar palabra clave">
+										<f:setPropertyActionListener value="#{pal}"
+											target="#{ManejadorSolicitudISBN.palabraClaveTabla}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+						</p:dataTable>
+					</p:outputPanel>
+				</p:panel>
+				<br />
+				<p:panel header="Autores" id="idAutores">
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="pgFormInves" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelect"
+							value="#{ManejadorSolicitudISBN.tipoDocumentoCoInv2.id}">
+							<f:selectItems
+								value="#{ManejadorSolicitudISBN.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumento"
+							value="#{ManejadorSolicitudISBN.documentoCoinv2}" />
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvMain"
+							value="#{ManejadorSolicitudISBN.tipoInvestigador}">
+							<f:selectItems value="#{ManejadorSolicitudISBN.autores}" />
+							<p:ajax
+								listener="#{ManejadorSolicitudISBN.cambiarVinculacion}"
+								update="pgFormInvesExt, OP_prueba" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<p:outputPanel id="OP_prueba">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt" cellspacing="5"
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+
+							<h:outputText value="Primer Nombre *"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="primerNombreInvestigador"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.nombre1}"
+								size="38" requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Nombre"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="segundoNombreInv"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.nombre2}"
+								size="38"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Primer Apellido *"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="primerApellidoInvestigador"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.apellido1}"
+								size="38" requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Apellido"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="segundoApellidoInv"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.apellido2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Género"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:selectOneMenu
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.genero}"
+								id="idGenero" style="width:40px">
+								<f:selectItems value="#{ManejadorSolicitudISBN.generoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Institución *"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="insitucionNombre"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.insitucionNombre}"
+								size="38" requiredMessage="La institución es obligatoria">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+
+
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<br />
+					<center>
+						<p:commandButton value="Adicionar investigador"
+							id="botonAdicionarInvestigador"
+							update="listaParticipantes, pgFormInvesExt, OP_prueba, pgFormInves"
+							action="#{ManejadorSolicitudISBN.agregarParticipante}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+					<br />
+
+					<p:dataTable var="i" style="width:650px"
+						value="#{ManejadorSolicitudISBN.listaParticipantes}"
+						id="listaParticipantes">
+
+						<p:column style="width:30%">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText
+								value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Tipo de Autor" />
+							</f:facet>
+							<h:outputText
+								value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton id="botonEliminarIntegrantes"
+									update="listaParticipantes" icon="ui-icon-trash"
+									action="#{ManejadorSolicitudISBN.eliminarParticipante}"
+									title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+									<f:setPropertyActionListener value="#{i}"
+										target="#{ManejadorSolicitudISBN.participante}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<br />
+
+
+				</p:panel>
+
+				<br />
+
+				<p:panel header="Dependencias Relacionadas" id="idDepRelacionadas">
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneralEnti">
+
+						<h:outputText value="Dependencias de la UN:" />
+						<p:selectOneMenu
+							value="#{ManejadorSolicitudISBN.dependenciaAdicionada}"
+							id="dependenciasUN_Eventos" style="width:415px" filter="true" filterMatchMode="contains">
+							<f:selectItems
+								value="#{ManejadorSolicitudISBN.dependenciaItem}" />
+						</p:selectOneMenu>
+						<h:outputText value="" />
+						<p:commandButton id="agregarDependencia"
+							value="Agregar dependencia" update="dependenciasDataTable"
+							action="#{ManejadorSolicitudISBN.adicionarDependencia}">
+						</p:commandButton>
+
+					</h:panelGrid>
+
+
+					<p:dataTable id="dependenciasDataTable"
+						value="#{ManejadorSolicitudISBN.proyectoActual.listaDependenciasAreaResponsabilidad}"
+						var="dependenciaArea" cellpadding="6" cellspacing="3" border="0"
+						emptyMessage="No existen dependencias asociadas al proyecto">
+
+						<p:column width="300">
+							<f:facet name="header">
+								<h:outputText value="Dependencia" />
+							</f:facet>
+							<h:outputText value="#{dependenciaArea.dependencia.nombre}" />
+						</p:column>
+
+
+						<p:column width="30" style="width:50px;text-align:center">
+							<p:commandButton
+								action="#{ManejadorSolicitudISBN.eliminarDependencia}"
+								icon="ui-icon-trash" update="dependenciasDataTable"
+								title="Eliminar Área de Responsabilidad">
+
+								<f:setPropertyActionListener
+									target="#{ManejadorSolicitudISBN.dependenciaAreaResponsabilidadSeleccionada}"
+									value="#{dependenciaArea}" />
+
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoDep">
+
+						<h:outputText value="Instituciones externas:" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							id="entidadesParticipantes"
+							value="#{ManejadorSolicitudISBN.proyectoActual.entidadesParticipantes}" />
+
+
+					</h:panelGrid>
+
+
+				</p:panel>
+
+
+			</h:panelGrid>
+
+
+			<p:outputPanel id="mostrarSiArticulosUno"
+				rendered="#{ManejadorSolicitudISBN.mostrarSiArticulosUno}"
+				style="width:100%">
+				
+				<p:panel id="datosContacto" header="Datos de Contacto">
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del docente:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Sede:" />
+						<h:outputText value="#{ManejadorSolicitudISBN.nombreSede}" />
+
+						<h:outputText value="Facultad/Instituto:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.nombreFacultad}" />
+
+						<h:outputText value="Departamento:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.nombreDepartamento}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.emailPersonaActual}" />
+
+						<h:outputText value="Teléfono de contacto:" />
+						<p:inputText size="20" id="idTelefono"
+							value="#{ManejadorSolicitudISBN.telefono}" />
+							
+					</h:panelGrid>
+				</p:panel>
+				<br/>
+				<p:panel id="informacionGeneral" header="Información General">
+					<h:panelGrid columns="2">
+						<h:outputText value="Tipo de servicio"/>
+						<p:selectOneMenu id="SOM_TipoServicio"
+							value="#{ManejadorSolicitudISBN.proyectoActual.modalidadEcp}">
+							<f:selectItem itemLabel="Revisión de estilo" itemValue="REV_ESTILO" />
+							<f:selectItem itemLabel="Traducción" itemValue="TRADUCCION" />							
+						</p:selectOneMenu>
+						
+						<h:outputText value="Idioma"/>
+						<p:selectOneMenu id="SOM_Idioma"
+							value="#{ManejadorSolicitudISBN.proyectoActual.claseEvento}">
+							<f:selectItem itemLabel="Inglés - Americano" itemValue="ING_AMERICANO" />
+							<f:selectItem itemLabel="Inglés - Británico" itemValue="ING_BRITANICO" />				
+						</p:selectOneMenu>
+					</h:panelGrid>				
+				</p:panel>
+				<br/>
+				<p:panel id="informacionArticulo" header="Información Artículo">
+					<h:panelGrid columns="2">
+						<h:outputText value="Título artículo (*):"/>
+						<p:inputTextarea id="ITA_tituloArt"
+							value="#{ManejadorSolicitudISBN.proyectoActual.nombre}" rows="5" cols="60"
+							autoResize="false" maxlength="2000" counter="counter"
+							counterTemplate="{0} caracteres restantes" 
+							required="true"
+							style="width:490px"
+							requiredMessage="El título del artículo es obligatorio" />
+						
+						<h:outputText />
+						<h:outputText id="counter" />				
+						
+						<h:outputText value="Número palabras (*):"/>
+						<p:inputText id="IT_numPalabras"
+							value="#{ManejadorSolicitudISBN.proyectoActual.diaSesion}"
+							size="30"
+							required="true"
+							requiredMessage="El número de palabras es obligatorio"/>
+						
+						<h:outputText value="Resumen artículo (*):"/>
+						<p:inputTextarea id="ITA_resumenArt"
+							value="#{ManejadorSolicitudISBN.proyectoActual.resumen}" rows="5" cols="60"
+							autoResize="false" maxlength="2000" counter="counter2"
+							counterTemplate="{0} caracteres restantes" required="true"
+							style="width:490px"
+							requiredMessage="El resumen del artículo es obligatorio" />
+							
+						<h:outputText />
+						<h:outputText id="counter2" />
+						
+						<h:outputText value="ISSN (*)"/>
+						<p:inputText id="IT_ISSN"
+							value="#{ManejadorSolicitudISBN.proyectoActual.porqueNivelSostenibilidad}"
+							size="30"
+							required="true"
+							requiredMessage="El ISSN es obligatorio"/>
+						
+						<h:outputText value="Área:"/>
+						<p:selectOneMenu id="SOM_area"
+							value="#{ManejadorSolicitudISBN.proyectoActual.observaciones}">
+							<f:selectItems value="#{ManejadorSolicitudISBN.listaAreas}" />				
+						</p:selectOneMenu>
+					</h:panelGrid>				
+				</p:panel>																		 
+				<br/>
+				<p:panel header="Coautores" id="Coautores">
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="PG_Coautores" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelect2"
+							value="#{ManejadorSolicitudISBN.tipoDocumentoCoInv2.id}">
+							<f:selectItems
+								value="#{ManejadorSolicitudISBN.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumento2"
+							value="#{ManejadorSolicitudISBN.documentoCoinv2}" />
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvMain2"
+							value="#{ManejadorSolicitudISBN.tipoInvestigador}">
+							<f:selectItems value="#{ManejadorSolicitudISBN.autores}" />
+							<p:ajax
+								listener="#{ManejadorSolicitudISBN.cambiarVinculacion}"
+								update="pgFormInvesExt2, OP_prueba2" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<p:outputPanel id="OP_prueba2">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt2" cellspacing="5"
+							rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+
+							<h:outputText value="Primer Nombre *"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="primerNombreInvestigador2"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.nombre1}"
+								size="38" requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Nombre"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="segundoNombreInv2"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.nombre2}"
+								size="38"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Primer Apellido *"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="primerApellidoInvestigador2"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.apellido1}"
+								size="38" requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Apellido"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="segundoApellidoInv"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.apellido2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Género"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:selectOneMenu
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.investigadorExterno.genero}"
+								id="idGenero2" style="width:40px">
+								<f:selectItems value="#{ManejadorSolicitudISBN.generoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Institución *"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+							<p:inputText id="insitucionNombre2"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+								value="#{ManejadorSolicitudISBN.insitucionNombre}"
+								size="38" requiredMessage="La institución es obligatoria">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<br />
+					<center>
+						<p:commandButton value="Adicionar investigador"
+							id="botonAdicionarInvestigador2"
+							update="listaParticipantes2, pgFormInvesExt2, OP_prueba2, PG_Coautores"
+							action="#{ManejadorSolicitudISBN.agregarParticipante}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+					<br />
+
+					<p:dataTable var="i" style="width:650px"
+						value="#{ManejadorSolicitudISBN.listaParticipantes}"
+						id="listaParticipantes2">
+
+						<p:column style="width:30%">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText
+								value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Tipo de Autor" />
+							</f:facet>
+							<h:outputText
+								value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton id="botonEliminarIntegrantes2"
+									update="listaParticipantes2" icon="ui-icon-trash"
+									action="#{ManejadorSolicitudISBN.eliminarParticipante}"
+									title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+									<f:setPropertyActionListener value="#{i}"
+										target="#{ManejadorSolicitudISBN.participante}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<br />
+				</p:panel>								
+			</p:outputPanel>
+
+			<p:outputPanel id="mostrarSiArticulosDos"
+				rendered="#{ManejadorSolicitudISBN.mostrarSiArticulosDos}"
+				style="width:100%">
+				
+				<p:panel id="datosContacto" header="Datos de Contacto">
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+						
+						<h:outputText value="Nombre de la revista:" />
+						<p:inputText
+							value="#{ManejadorSolicitudISBN.proyectoActual.involucraMaestriaDoctorado}" 
+							size="70"/>
+
+						<h:outputText value="Nombre Editor:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.tipoDocumentoCoInv.nombre}" />						
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{ManejadorSolicitudISBN.emailPersonaActual}" />
+
+						<h:outputText value="Teléfono de contacto:" />
+						<p:inputText size="20" id="idTelefono"
+							value="#{ManejadorSolicitudISBN.telefono}" />													
+							
+					</h:panelGrid>
+				</p:panel>
+				<br/>								
+				<p:panel id="informacionGeneral" header="Modalidad">
+					<h:panelGrid columns="2">
+						<h:outputText value="Seleccione modalidad: "/>
+						<p:selectOneRadio id="RB_ModArt"
+							value="#{ManejadorSolicitudISBN.proyectoActual.tipoZona}">
+							<f:selectItem itemLabel="Artículo completo" itemValue="ART_COMPLETO" />
+							<f:selectItem itemLabel="Grupo de resumenes" itemValue="GRP_RESUMEN" />
+							<p:ajax update="OP_DatosArtCompleto, OP_DatosGrpResumenes @form" event="change"/>							
+						</p:selectOneRadio>												
+					</h:panelGrid>	
+				</p:panel>
+				<br/>
+				
+				<p:outputPanel id="OP_DatosArtCompleto" 
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.tipoZona == 'ART_COMPLETO'}">
+					<p:panel id="informacionGeneralArtCompleto" header="Información General">
+						<h:panelGrid columns="2">
+							<h:outputText value="Tipo de servicio"/>
+							<p:selectOneMenu id="SOM_TipoServicio_artCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.modalidadEcp}">
+								<f:selectItem itemLabel="Revisión de estilo" itemValue="REV_ESTILO" />							
+							</p:selectOneMenu>
+							
+							<h:outputText value="Idioma"/>
+							<p:selectOneMenu id="SOM_Idioma_ArtCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.claseEvento}">
+								<f:selectItem itemLabel="Inglés - Americano" itemValue="ING_AMERICANO" />
+								<f:selectItem itemLabel="Inglés - Británico" itemValue="ING_BRITANICO" />				
+							</p:selectOneMenu>
+						</h:panelGrid>				
+					</p:panel>
+					<br/>
+					<p:panel id="informacionArticuloArtCompleto" header="Información Artículo">
+						<h:panelGrid columns="2">
+							<h:outputText value="Título artículo (*):"/>
+							<p:inputTextarea id="ITA_tituloArtCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.nombre}" rows="5" cols="60"
+								autoResize="false" maxlength="2000" counter="counter"
+								counterTemplate="{0} caracteres restantes" required="true"
+								requiredMessage="El título del artículo es obligatorio"
+								style="width:490px" />
+							
+							<h:outputText />
+							<h:outputText id="counter" />				
+							
+							<h:outputText value="Número palabras (*):"/>
+							<p:inputText id="IT_numPalabrasArtCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.diaSesion}"
+								size="30"
+								required="true"
+								requiredMessage="El de palabras del artículo es obligatorio"/>
+							
+							<h:outputText value="Resumen artículo (*):"/>
+							<p:inputTextarea id="ITA_resumenArtCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.resumen}" rows="5" cols="60"
+								autoResize="false" maxlength="2000" counter="counter2"
+								counterTemplate="{0} caracteres restantes" required="true"
+								requiredMessage="El resumen del artículo es obligatorio"
+								style="width:490px" />
+								
+							<h:outputText />
+							<h:outputText id="counter2" />
+							
+							<h:outputText value="ISSN (*)"/>
+							<p:inputText id="IT_ISSN_ArtCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.porqueNivelSostenibilidad}"
+								size="30"
+								required="true"
+								requiredMessage="El ISSN es obligatorio"/>
+							
+							<h:outputText value="Área:"/>
+							<p:selectOneMenu id="SOM_area_ArtCompleto"
+								value="#{ManejadorSolicitudISBN.proyectoActual.observaciones}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaAreas}" />				
+							</p:selectOneMenu>
+						</h:panelGrid>				
+					</p:panel>																		 
+					<br/>
+					<p:panel header="Coautores" id="CoautoresArtCompleto">
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="PG_Coautores_ArtCompleto" cellspacing="5">
+	
+							<h:outputText value="Tipo de documento" />
+							<p:selectOneMenu id="tipoDocInvestigadorSelect2"
+								value="#{ManejadorSolicitudISBN.tipoDocumentoCoInv2.id}">
+								<f:selectItems
+									value="#{ManejadorSolicitudISBN.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+	
+							<h:outputText value="No. documento: " />
+							<p:inputText id="numDocumento2"
+								value="#{ManejadorSolicitudISBN.documentoCoinv2}" />
+	
+							<h:outputText value="Tipo de participante:" />
+							<p:selectOneMenu id="tipoInvMain2"
+								value="#{ManejadorSolicitudISBN.tipoInvestigador}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.autores}" />
+								<p:ajax
+									listener="#{ManejadorSolicitudISBN.cambiarVinculacion}"
+									update="pgFormInvesExt3, OP_prueba3" />
+							</p:selectOneMenu>
+	
+						</h:panelGrid>
+	
+						<p:outputPanel id="OP_prueba3">
+	
+							<h:panelGrid columns="2" align="center" cellpadding="5"
+								id="pgFormInvesExt3" cellspacing="5"
+								rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+	
+								<h:outputText value="Primer Nombre *"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+								<p:inputText id="primerNombreInvestigador3"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+									value="#{ManejadorSolicitudISBN.investigadorExterno.nombre1}"
+									size="38" requiredMessage="El Primer Nombre es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+	
+								<h:outputText value="Segundo Nombre"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+								<p:inputText id="segundoNombreInv3"
+									value="#{ManejadorSolicitudISBN.investigadorExterno.nombre2}"
+									size="38"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+	
+								<h:outputText value="Primer Apellido *"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+								<p:inputText id="primerApellidoInvestigador3"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+									value="#{ManejadorSolicitudISBN.investigadorExterno.apellido1}"
+									size="38" requiredMessage="El Primer Apellido es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+	
+								<h:outputText value="Segundo Apellido"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+								<p:inputText id="segundoApellidoInv3"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+									value="#{ManejadorSolicitudISBN.investigadorExterno.apellido2}"
+									size="38">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+	
+								<h:outputText value="Género"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+								<p:selectOneMenu
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+									value="#{ManejadorSolicitudISBN.investigadorExterno.genero}"
+									id="idGenero3" style="width:40px">
+									<f:selectItems value="#{ManejadorSolicitudISBN.generoItem}" />
+								</p:selectOneMenu>
+	
+								<h:outputText value="Institución *"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}" />
+								<p:inputText id="insitucionNombre3"
+									rendered="#{ManejadorSolicitudISBN.esOtraVinculacion}"
+									value="#{ManejadorSolicitudISBN.insitucionNombre}"
+									size="38" requiredMessage="La institución es obligatoria">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+	
+							</h:panelGrid>
+	
+						</p:outputPanel>
+	
+						<br />
+						<center>
+							<p:commandButton value="Adicionar investigador"
+								id="botonAdicionarInvestigador3"
+								update="listaParticipantes3, pgFormInvesExt3, OP_prueba3, PG_Coautores_ArtCompleto"
+								action="#{ManejadorSolicitudISBN.agregarParticipante}"
+								styleClass="ui-priority-primary" />
+						</center>
+	
+						<br />
+						<br />
+	
+						<p:dataTable var="i" style="width:650px"
+							value="#{ManejadorSolicitudISBN.listaParticipantes}"
+							id="listaParticipantes3">
+	
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Nombre" />
+								</f:facet>
+								<h:outputText
+									value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+							</p:column>
+	
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Tipo de Autor" />
+								</f:facet>
+								<h:outputText
+									value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" />
+							</p:column>
+	
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton id="botonEliminarIntegrantes3"
+										update="listaParticipantes3" icon="ui-icon-trash"
+										action="#{ManejadorSolicitudISBN.eliminarParticipante}"
+										title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+										<f:setPropertyActionListener value="#{i}"
+											target="#{ManejadorSolicitudISBN.participante}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						<br />
+					</p:panel>
+				</p:outputPanel>
+				
+				<p:outputPanel id="OP_DatosGrpResumenes"
+					rendered="#{ManejadorSolicitudISBN.proyectoActual.tipoZona == 'GRP_RESUMEN'}">
+					
+					<p:panel id="informacionGeneralGrpResumenes" header="Información General">
+						<h:panelGrid columns="2">
+							<h:outputText value="Tipo de servicio"/>
+							<p:selectOneMenu id="SOM_TipoServicioGrpResumenes"
+								value="#{ManejadorSolicitudISBN.proyectoActual.modalidadEcp}">
+								<f:selectItem itemLabel="Revisión de estilo" itemValue="REV_ESTILO" />
+								<f:selectItem itemLabel="Traducción" itemValue="TRADUCCION" />							
+							</p:selectOneMenu>
+							
+							<h:outputText value="Idioma"/>
+							<p:selectOneMenu id="SOM_IdiomaGrpResumenes"
+								value="#{ManejadorSolicitudISBN.proyectoActual.claseEvento}">
+								<f:selectItem itemLabel="Inglés - Americano" itemValue="ING_AMERICANO" />
+								<f:selectItem itemLabel="Inglés - Británico" itemValue="ING_BRITANICO" />				
+							</p:selectOneMenu>
+						</h:panelGrid>				
+					</p:panel>
+					<br/>
+					<p:panel id="informacionArticuloGrpResumenes" header="Información Artículo">
+						<h:panelGrid columns="2">
+							<h:outputText value="Título del número de Revista (*):"/>
+							<p:inputTextarea id="ITA_tituloArtGrpResumenes"
+								value="#{ManejadorSolicitudISBN.proyectoActual.nombre}" rows="5" cols="60"
+								autoResize="false" maxlength="2000" counter="counter"
+								counterTemplate="{0} caracteres restantes" 
+								required="true"
+								requiredMessage="El título del artículo es obligatorio"
+								style="width:490px" />
+							
+							<h:outputText />
+							<h:outputText id="counter" />				
+							
+							<h:outputText value="Número palabras:"/>
+							<p:inputText id="IT_numPalabrasGrpResumenes"
+								value="#{ManejadorSolicitudISBN.proyectoActual.diaSesion}"
+								size="30"/>														
+							
+							<h:outputText value="ISSN"/>
+							<p:inputText id="IT_ISSN_GrpResumenes"
+								value="#{ManejadorSolicitudISBN.proyectoActual.porqueNivelSostenibilidad}"
+								size="30"/>
+							
+							<h:outputText value="Área:"/>
+							<p:selectOneMenu id="SOM_areaGrpResumenes"
+								value="#{ManejadorSolicitudISBN.proyectoActual.observaciones}">
+								<f:selectItems value="#{ManejadorSolicitudISBN.listaAreas}" />				
+							</p:selectOneMenu>
+						</h:panelGrid>				
+					</p:panel>																		 
+					<br/>
+				</p:outputPanel>
+				<br/>															
+			</p:outputPanel>		
+
+
+
+			<br />
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+			<br />
+
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Salir" id="botonAtras"
+							action="#{ManejadorSolicitudISBN.atras}"
+							styleClass="ui-priority-primary" />
+
+						<p:commandButton value="Guardar y continuar después"
+							id="botonGuardarSalir"
+							action="#{ManejadorSolicitudISBN.salirGuardar}"
+							styleClass="ui-priority-primary" update="@form" />
+
+						<p:commandButton value="Guardar y avanzar"
+							id="botonGuardarSiguiente"
+							action="#{ManejadorSolicitudISBN.siguiente}"
+							styleClass="ui-priority-primary" update="@form" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

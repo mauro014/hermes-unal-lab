@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="formEnviarAlertasMovilidades">
+			<t:div styleClass="contenido-titulo-general-myriad" >Enviar alertas movilidades</t:div>
+			<p:messages id="msgs" /> 
+			<p:panel>
+				<p:panelGrid columns="3" style="width: 100%;" 
+					styleClass="estilo-panelgrid-sinbordes" >
+					<t:div style="width: 150px;">
+						<h:outputText value="Seleccione tipo movilidad:" />
+					</t:div>  
+					<p:selectOneMenu id="car" style="width: 400px;" 
+						panelStyle="width: 400px;"
+						value="#{manejadorEnviarAlertasMovilidades.valorTipoMovilidad}">
+			            <f:selectItem itemLabel="Seleccione uno" itemValue="" />
+			            <f:selectItems 
+			            	value="#{manejadorEnviarAlertasMovilidades.tiposMovilidadItem}" />
+			        </p:selectOneMenu>
+					<p:commandButton 
+						action="#{manejadorEnviarAlertasMovilidades.cargarMovilidades}" 
+						icon="ui-icon-search" value="Cargar"
+						update="@form" ajax="false"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+					</p:commandButton>	 
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Tipo movilidad cargada" style="margin-top: 10px;"
+				rendered="#{!manejadorEnviarAlertasMovilidades.primeraVez and 
+							!empty manejadorEnviarAlertasMovilidades.tipoMovilidadSeleccionada}">
+				<t:div style="font-weight: normal !important;">
+					#{manejadorEnviarAlertasMovilidades.tipoMovilidadSeleccionada[1]}
+				</t:div>
+			</p:panel>
+			<p:panel header="Mensaje a ser enviado" 
+				style="margin-top: 10px; padding-bottom: 10px;"
+				rendered="#{!manejadorEnviarAlertasMovilidades.primeraVez and 
+							!empty manejadorEnviarAlertasMovilidades.tipoMovilidadSeleccionada and 
+							!manejadorEnviarAlertasMovilidades.envioRealizado}">
+					Asunto<br />
+					<p:inputText  
+						value="#{manejadorEnviarAlertasMovilidades.correoPlantilla.asunto}" 
+						style="width: 640px;"/>
+					<br />
+					<br />
+					Mensaje:<br />
+					<p:inputTextarea style="width: 640px; height: 200px;" 
+						value="#{manejadorEnviarAlertasMovilidades.correoPlantilla.cuerpo}" /> 
+			</p:panel>
+			<p:messages id="msgs" />
+			<p:dataTable var="movilidad" style="margin-top: 10px;"
+		 		rendered="#{!manejadorEnviarAlertasMovilidades.primeraVez and 
+						!empty manejadorEnviarAlertasMovilidades.tipoMovilidadSeleccionada and 
+						!manejadorEnviarAlertasMovilidades.envioRealizado}"
+              	emptyMessage="No hay informes de seguimiento pendientes por ingresar en esta modalidad."
+	 		 	value="#{manejadorEnviarAlertasMovilidades.movilidadesEncontradas}" 
+	 		 	rows="15"
+              	paginator="true"
+                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                <f:facet name="header">
+	                <h:outputText 
+	                	value="Movilidades que aun no han registrado informe de seguimiento (#{manejadorEnviarAlertasMovilidades.numeroMovilidadEncontradas})" />
+	            </f:facet>
+                <p:column headerText="Id">
+			    	<h:outputText value="#{movilidad[0]}" />
+			    </p:column>
+                <p:column headerText="Fecha solicitud">
+			    	<h:outputText value="#{movilidad[1]}" />
+			    </p:column>
+                <p:column headerText="Fecha viaje">
+			    	<h:outputText value="#{movilidad[2]}" />
+			    </p:column>
+                <p:column  style="text-align: left;">
+	                <f:facet name="header">
+		                <h:outputText value="Investigador" />
+		            </f:facet>
+			    	<h:outputText value="#{movilidad[3]}" />
+			    </p:column>
+                <p:column  style="text-align: center;">
+	                <f:facet name="header">
+		                <h:outputText value="Número" /><br />
+		                <h:outputText value="de notif." />
+		            </f:facet>
+			    	<h:outputText value="#{movilidad[10]}" />
+			    </p:column>
+                <p:column  style="text-align: center;">
+	                <f:facet name="header">
+		                <h:outputText value="Última" /><br />
+		                <h:outputText value="notif." />
+		            </f:facet>
+			    	<h:outputText value="#{movilidad[11]}" />
+			    </p:column>
+                <p:column style="text-align: center;">
+	                <f:facet name="header">
+		                <h:outputText value="Enviar" /><br />
+		                <h:outputText value="notificación" />
+		            </f:facet>
+			    	<p:selectBooleanCheckbox value="#{movilidad[4]}" />
+			    </p:column>
+            </p:dataTable>
+            <p:dataTable var="movilidad" style="margin-top: 10px;"
+            	rendered="#{manejadorEnviarAlertasMovilidades.envioRealizado}"
+            	rows="15"
+	 		 	value="#{manejadorEnviarAlertasMovilidades.movilidadesEnviadas}"
+              	paginator="true"
+              	emptyMessage="No se han enviado mensajes de notificación."
+                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                
+                <f:facet name="header">
+	                <h:outputText value="Movilidades a las que se ha enviado satisfactoriamente notificación" />
+	            </f:facet>
+                 <p:column headerText="Id">
+			    	<h:outputText value="#{movilidad[0]}" />
+			    </p:column>
+                <p:column headerText="Fecha solicitud">
+			    	<h:outputText value="#{movilidad[1]}" />
+			    </p:column>
+                <p:column headerText="Fecha viaje">
+			    	<h:outputText value="#{movilidad[2]}" />
+			    </p:column>
+                <p:column  style="text-align: left;">
+	                <f:facet name="header">
+		                <h:outputText value="Investigador" />
+		            </f:facet>
+			    	<h:outputText value="#{movilidad[3]}" />
+			    </p:column>
+            </p:dataTable>
+            <t:div style="width: 100%; text-align: center;"
+            	rendered="#{!manejadorEnviarAlertasMovilidades.primeraVez and 
+							!empty manejadorEnviarAlertasMovilidades.tipoMovilidadSeleccionada and
+							!empty manejadorEnviarAlertasMovilidades.movilidadesEncontradas and 
+							!manejadorEnviarAlertasMovilidades.envioRealizado}">
+				<p:commandButton  style="margin-top: 10px;"
+					action="#{manejadorEnviarAlertasMovilidades.enviarNotificaciones}" 
+					icon="ui-icon-carat-1-e" value="Enviar notificaciones"
+					update="@form"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					onclick="if(!confirm('¿Esta seguro de enviar las notificaciones?'))return false">
+				</p:commandButton>	 
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true" header="Acción en proceso">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

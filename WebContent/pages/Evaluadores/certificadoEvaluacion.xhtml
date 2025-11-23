@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">	
+		<t:div styleClass="contenido-titulo-general-myriad">Certificaciones Evaluador</t:div>
+	</ui:define>
+	
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+		
+			<br />
+			<p:panel id="panelRegistro" header="Información del evaluador">
+
+				<h:panelGrid columns="2" cellpadding="10">
+
+					<h:outputText value="Tipo de documento: " style="font-weight: bold" />
+					<h:outputText id="tipoDocInvesti"
+						value="#{manejadorCertificadoEvaluacion.tipoDocumento}" />
+
+					<h:outputText value="Documento de identidad: "
+						style="font-weight: bold" />
+					<h:outputText id="docIdentidadInv"
+						value="#{manejadorCertificadoEvaluacion.documento}" />
+
+					<h:outputText value="Nombre completo: " style="font-weight: bold" />
+					<h:outputText id="primerNombreInvestigador"
+						value="#{manejadorCertificadoEvaluacion.nombreCompletoPersona}" />
+
+					<h:outputText value="Correo electrónico: "
+						style="font-weight: bold" />
+					<h:outputText id="email"
+						value="#{manejadorCertificadoEvaluacion.email}" />
+					
+					<h:outputText value="Sede: " style="font-weight: bold" 
+						rendered="#{manejadorCertificadoEvaluacion.esInterno}"/>
+					<h:outputText id="sede"
+						value="#{manejadorCertificadoEvaluacion.sede}"
+						rendered="#{manejadorCertificadoEvaluacion.esInterno}" />
+
+					<h:outputText value="Facultad: " style="font-weight: bold"
+						rendered="#{manejadorCertificadoEvaluacion.esInterno}" />
+					<h:outputText id="facultad"
+						value="#{manejadorCertificadoEvaluacion.facultad}"
+						rendered="#{manejadorCertificadoEvaluacion.esInterno}" />
+
+					<h:outputText value="Dependencia: " style="font-weight: bold"
+						rendered="#{manejadorCertificadoEvaluacion.esInterno}" />
+					<h:outputText id="dep"
+						value="#{manejadorCertificadoEvaluacion.departamento}"
+						rendered="#{manejadorCertificadoEvaluacion.esInterno}" />
+						
+					<h:outputText value="Institución: " style="font-weight: bold"
+						rendered="#{!manejadorCertificadoEvaluacion.esInterno}" />
+					<h:outputText id="inst"
+						value="#{manejadorCertificadoEvaluacion.institucion}"
+						rendered="#{!manejadorCertificadoEvaluacion.esInterno}" />
+				</h:panelGrid>
+
+			</p:panel>
+
+			<br />
+			
+			<p:panel id="panelCertificaciones" header="Certificaciones">
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+					align="center">
+					<h:outputText
+						value="Por favor seleccione el tipo de certificado que desea generar: " />
+
+					<p:selectOneRadio id="opcionesCertificados"
+						value="#{manejadorCertificadoEvaluacion.opcionesCertificado}">
+						<f:selectItem itemLabel="Certificación por proyecto"
+							itemValue="proyectos" />
+						<f:selectItem itemLabel="Certificación general" itemValue="general" />
+						<p:ajax event="change"
+							update="panelCertificaciones, panelCertificadoProyectos, panelCertificadoGeneral"
+							listener="#{manejadorCertificadoEvaluacion.cambiarTipoBusqueda}" />
+					</p:selectOneRadio>
+
+				</h:panelGrid>
+
+				<br />
+			
+				<p:outputPanel id="panelCertificadoProyectos" 
+					rendered="#{manejadorCertificadoEvaluacion.mostrarCertProyectos}">
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="Por favor seleccione el proyecto del cual desea generar el certificado de evaluación: " />
+						</h:panelGrid>
+						<br />
+						<p:dataTable
+							value="#{manejadorCertificadoEvaluacion.listaEvaluacionesRealizadas}"
+							id="tablaProyectosEvaluados" var="eva" cellpadding="1"
+							cellspacing="15" align="center"
+							tableStyle="width:auto">
+							<p:column headerText="Código">
+								<h:outputText value="#{eva.idProyecto}"></h:outputText>
+							</p:column>
+							<p:column headerText="Nombre">
+								<h:outputText value="#{eva.nombreProyecto}"></h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<t:div>
+										Fecha<br />
+										Evaluación
+			                    	</t:div>
+								</f:facet>
+								<h:outputText value="#{eva.fechaEvaluacion}"></h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<t:div>
+										Generar<br />
+										Certificado
+			                    	</t:div>
+								</f:facet>
+								<center>
+									<h:commandLink value="Generar certificado" target="_blank"
+										action="#{manejadorCertificadoEvaluacion.generarCertificadoProyectos}"
+										styleClass="ui-icon ui-icon-circle-triangle-e"
+										style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+										<f:setPropertyActionListener value="#{eva}"
+											target="#{manejadorCertificadoEvaluacion.proyectoSeleccionado}" />
+									</h:commandLink>
+								</center>
+							</p:column>
+						</p:dataTable>
+					</p:outputPanel>
+					
+					<p:outputPanel id="panelCertificadoGeneral"
+						rendered="#{manejadorCertificadoEvaluacion.mostrarCertGeneral}">
+						
+						<center>
+							<h:commandLink value="Descargar certificado" target="_blank"
+								action="#{manejadorCertificadoEvaluacion.descargarCertificadoGeneral}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+						</center>
+						<br/>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</ui:define>
+</ui:composition>

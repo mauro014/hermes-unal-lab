@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitudes de Semilleros - VIF</t:div>
+			<p:messages id="msgs" />
+			<p:dataTable var="solicitud"
+				emptyMessage="No tiene semilleros para aprobar." paginator="true"
+				value="#{manejadorSemillerosSolicitudVIF.listaSolicitudes}"
+				rows="10" paginatorPosition="bottom">
+				<f:facet name="header">Solicitudes para aprobar: #{manejadorSemillerosSolicitudVIF.totalSolicitudes}</f:facet>
+				<p:column headerText="Datos de Semillero">
+					<h:outputText
+						value="&lt;strong&gt;ID: &lt;/strong&gt; #{solicitud.semillero.id}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Nombre: &lt;/strong&gt; #{solicitud.semillero.nombre}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Solicitante: &lt;/strong&gt; #{solicitud.semillero.lider.nombreCompleto}"
+						escape="false" />
+				</p:column>
+				<p:column headerText="Datos de Solicitud">
+					<h:outputText
+						value="&lt;strong&gt;Tipo: &lt;/strong&gt; #{solicitud.tipo.nombre}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Fecha Solicitud: &lt;/strong&gt; #{solicitud.fechaSolicitud}"
+						escape="false" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="Acciones">
+					<p:commandButton value="Revisar Solicitud"
+						oncomplete="dlgPrincipal.show();" icon="ui-icon-search"
+						action="#{manejadorSemillerosSolicitudVIF.obtenerRequisitos}"
+						update="@form">
+						<f:setPropertyActionListener value="#{solicitud}"
+							target="#{manejadorSemillerosSolicitudVIF.solicitudActual}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:messages id="msgs" />
+			<p:dialog widgetVar="dlgPrincipal" modal="true" resizable="false"
+				width="800" minHeight="500"
+				header="Aprobar Solicitud - #{manejadorSemillerosSolicitudVIF.solicitudActual.tipo.nombre}">
+				<t:div styleClass="panel-interno-tabla" id="frmDialog"
+					style="max-height:460px; overflow: auto;">
+					<p:panelGrid id="panRespuestaSol"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column>ID de Semillero:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.semillero.id}" />
+							</p:column>
+							<p:column rowspan="3" style="text-align: center;">
+								<h:commandLink value="Ver reporte de semillero (PDF)"
+									action="#{manejadorSemillerosSolicitudVIF.reporteSemillero}"
+									target="_popUpWindow1"
+									onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+									style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>ID de Solicitud:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>Nombre:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.semillero.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+						<p:column colspan="3">
+							<p:dataTable style="border:none; margin-top: 10px;" var="archivo"
+								value="#{manejadorSemillerosSolicitudVIF.solicitudActual.semillero.listaArchivos}"
+								emptyMessage="No hay archivos asociados para este semillero."
+								paginator="true" rows="5" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Archivos asociados al Semillero" />
+									</f:facet>
+									<h:outputText value="#{archivo.nombre}" />
+								</p:column>
+								<p:column>
+									<p:commandButton
+										action="#{manejadorSemillerosSolicitudVIF.descargarArchivo}"
+										icon="ui-icon-search" title="Descargar" ajax="false"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorSemillerosSolicitudVIF.archivoActual}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<p:dataTable style="border:none; margin-top: 10px;" var="item"
+									value="#{manejadorSemillerosSolicitudVIF.listaRequisitos}"
+									emptyMessage="No hay requisitos actualmente visibles para revisión de semilleros."
+									paginator="true" rows="5" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Descripción de Requisito" />
+										</f:facet>
+										<h:outputText value="#{item.requisito.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Cumple Requisito" />
+										</f:facet>
+										<p:selectOneRadio value="#{item.cumple}"
+											style="border: 0 none !important;">
+											<f:selectItem itemLabel="Si" itemValue="Y" />
+											<f:selectItem itemLabel="No" itemValue="N" />
+										</p:selectOneRadio>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<p:messages id="msgsModal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>Respuesta:</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu styleClass="selectGrupo" id="selRespuesta"
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id}">
+									<f:selectItems
+										value="#{manejadorSemillerosSolicitudVIF.respuestasSolicitud}" />
+									<p:ajax
+										listener="#{manejadorSemillerosSolicitudVIF.actualizarRespuesta}"
+										update="panRespuestaSol" process="panRespuestaSol" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id != 1}">
+							<p:column colspan="3">
+								<h:outputText
+									rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id eq 5}"
+									value="Al devolver a correcciones a la UAB, el director puede modificar la pertinencia del semillero, pero no puede editar información del semillero."
+									style="color: #F32020; font-weight: bold;" />
+								<h:outputText
+									rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id eq 6}"
+									value="Al devolver a correcciones al docente, él puede modificar información del semillero y volver a realizar la solicitud."
+									style="color: #F32020; font-weight: bold;" />
+								<h:outputText
+									rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id eq 4}"
+									value="Al no aprobar el docente no puede volver a solicitar  la conformación del semillero y el estado queda como no aprobado."
+									style="color: #F32020; font-weight: bold;" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id !=1}">
+							<p:column>Observaciones:</p:column>
+							<p:column colspan="2">
+								<p:inputTextarea style="width: 100%;"
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.comentariosVifDi}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id eq 7}">
+							<p:column>Coordinador de Seguimiento:</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu id="coordinador"
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.semillero.documentoCoordinador}"
+									style="width:420px" panelStyle="width: 400px;">
+									<f:selectItem itemLabel="Seleccione un Coordinador"
+										itemValue="" />
+									<f:selectItems
+										value="#{manejadorSemillerosSolicitudVIF.listaCoordinador}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id != 1}">
+							<p:column colspan="2">
+								<p:fileUpload
+									fileUploadListener="#{manejadorSemillerosSolicitudVIF.agregarArchivo}"
+									mode="advanced" update="panRespuestaSol" auto="true"
+									process="panRespuestaSol"
+									sizeLimit="#{manejadorBase.maximoTamanoArchivos}"
+									label="Incluir Archivo de Soporte">
+								</p:fileUpload>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id != 1}">
+							<p:column colspan="3" style="text-align: center;">
+								<p:commandButton value="Adjuntar Archivo" ajax="false"
+									actionListener="#{manejadorSemillerosSolicitudVIF.agregarArchivo}"
+									update="panRespuestaSol" process="panRespuestaSol" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id != 1}">
+							<p:column colspan="3">
+								<p:dataTable style="border:none; margin-top: 10px;"
+									var="archivo" id="tblArchSol"
+									value="#{manejadorSemillerosSolicitudVIF.solicitudActual.listaArchivosVIF}"
+									emptyMessage="No hay un archivos vinculados a la respuesta de solicitud."
+									paginator="true" rows="5" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Archivos de soporte incluidos" />
+										</f:facet>
+										<h:outputText value="#{archivo.nombre}" />
+									</p:column>
+									<p:column>
+										<p:commandButton
+											action="#{manejadorSemillerosSolicitudVIF.descargarArchivoSol}"
+											icon="ui-icon-search" title="Descargar" ajax="false"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosSolicitudVIF.archivoSolActual}" />
+										</p:commandButton>
+										<p:commandButton
+											action="#{manejadorSemillerosSolicitudVIF.eliminarArchivoSol}"
+											icon="ui-icon-trash" title="Eliminar"
+											onstart="dialogEspere.show()"
+											update="tblArchSol" process="tblArchSol"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosSolicitudVIF.archivoSolActual}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosSolicitudVIF.solicitudActual.respuestaVifDi.id != 1}">
+							<p:column colspan="3" style="text-align: center;">
+								<p:commandButton
+									action="#{manejadorSemillerosSolicitudVIF.actualizarSolicitud}"
+									update="panRespuestaSol" process="panRespuestaSol"
+									icon="ui-icon-disk" value="Actualizar Solicitud">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+				<p:ajax event="close" update="@form"
+					listener="#{manejadorSemillerosSolicitudVIF.validarFinalizado}" />
+			</p:dialog>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

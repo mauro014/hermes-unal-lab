@@ -1,0 +1,350 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Consultar propiedad intelectual</t:div>
+			<p:panel style="margin-top: 20px;" id="busqueda">
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes"
+					id="panelPropiedad">
+					<t:div style="width: 80px;">
+						<h:outputText value="Código propiedad:" />
+					</t:div>
+					<p:inputText id="codigo" style="width:350px;"
+						value="#{manejadorConsultarPropiedadIntelectual.codigo}"
+						converterMessage="El código de la propiedad debe ser un número válido" />
+					<p:commandButton
+						action="#{manejadorConsultarPropiedadIntelectual.buscarPropiedadIntelectual}"
+						value="Consultar" update="@form" process="@form" ajax="false">
+					</p:commandButton>
+					<p:commandButton
+						actionListener="#{manejadorConsultarPropiedadIntelectual.cancelar}"
+						value="Cancelar" update="busqueda" process="@this">
+					</p:commandButton>
+				</p:panelGrid>
+			</p:panel>
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<t:div rendered="#{manejadorConsultarPropiedadIntelectual.ver}"
+				style="margin-top: 20px;">
+				<p:fieldset legend="Información general de la propiedad"
+					style="margin-bottom:20px">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width:25%;">
+								<h:outputText value="Código de la Solicitud: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column style="width:75%;">
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Solicitante: " style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.responsableRegistro.nombreCompletoMinusculas} " />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:25%;">
+								<h:outputText value="Dependencia solicitante: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.dependenciaSolicitante.nombre} " />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha de la Solicitud: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.fechaRegistro}" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo de registro: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.subTipo.tipo.nombre} - " />
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.subTipo.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Estado propiedad: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.subEstado.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorConsultarPropiedadIntelectual.propiedad.radicado != null}">
+							<p:column>
+								<h:outputText value="Radicado: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.radicado}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorConsultarPropiedadIntelectual.propiedad.fechaRadicado != null}">
+							<p:column>
+								<h:outputText value="Fecha de radicado: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.fechaRadicado}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Título: " style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Consultar información: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:commandLink value="Ver reporte" ajax="false"
+									target="_popUpWindow"
+									onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+									action="#{manejadorConsultarPropiedadIntelectual.imprimirPropiedad}"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorConsultarPropiedadIntelectual.propiedad.solicitudIsbn != null and manejadorConsultarPropiedadIntelectual.propiedad.solicitudIsbn != 0}">
+							<p:column>
+								<h:outputText
+									value="Consultar información de solicitud de ISBN:"
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<h:commandLink value="Ver reporte solicitud ISBN"
+									target="popUpWindow7" ajax="false"
+									onclick="javascript: void window.open('', 'popUpWindow7', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+									action="#{manejadorConsultarPropiedadIntelectual.imprimirIsbn}"
+									style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Proyectos relacionados: "
+									style='font-weight: bold' />
+							</p:column>
+							<p:column>
+								<p:dataTable id="proyectos" var="proyecto" style="width:100%"
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.listaProyectos}"
+									align="center"
+									emptyMessage="No se encontraron proyectos relacionados">
+
+									<p:column headerText="Id" style="width:5%;">
+										<h:outputText value="#{proyecto.proyecto.id}" />
+									</p:column>
+
+									<p:column headerText="Tipo" style="width:10%;">
+										<h:outputText value="Inv./Lab."
+											rendered="#{proyecto.tipoProyecto == 1}" />
+										<h:outputText value="Ext."
+											rendered="#{proyecto.tipoProyecto == 2}" />
+									</p:column>
+
+									<p:column headerText="Nombre" style="width:80%;">
+										<h:outputText value="#{proyecto.nombreProyecto}" />
+									</p:column>
+
+									<p:column style="width:5%; text-align:center;" headerText="-">
+										<h:commandLink value="Ver reporte" target="popUpWindow7"
+											ajax="false"
+											onclick="javascript: void window.open('', 'popUpWindow7', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+											action="#{manejadorConsultarPropiedadIntelectual.imprimirProyecto}"
+											style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+											<f:setPropertyActionListener value="#{proyecto.proyecto.id}"
+												target="#{manejadorConsultarPropiedadIntelectual.idProyecto}" />
+										</h:commandLink>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<p:dataTable var="archivo"
+						style="width: 100%; margin-top: 10px; margin-bottom: 10px;"
+						value="#{manejadorConsultarPropiedadIntelectual.propiedad.listaArchivos}"
+						emptyMessage="No existen archivos asociados">
+						<p:column style="width: 2%;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value=" #{archivo.id}" styleClass="normal" />
+						</p:column>
+						<p:column headerText="Trámite" style="width: 10%;">
+							<h:outputText value="Solicitud"
+								rendered="#{archivo.tipo == 'SOL'}" />
+							<h:outputText value="Trámite" rendered="#{archivo.tipo == 'TR'}" />
+						</p:column>
+						<p:column style="width: 70%;">
+							<f:facet name="header">
+								<h:outputText value="Nombre del archivo" />
+							</f:facet>
+							<h:outputText value=" #{archivo.nombre}" styleClass="normal" />
+						</p:column>
+						<p:column style="width: 15%;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+							</f:facet>
+							<h:outputText value=" #{archivo.fechaCreacion}"
+								styleClass="normal" />
+						</p:column>
+						<p:column style="text-align: center; width: 3%;">
+							<f:facet name="header">
+								<h:outputText value="" />
+							</f:facet>
+							<p:commandButton id="descargar"
+								action="#{manejadorConsultarPropiedadIntelectual.descargarArchivo}"
+								icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{archivo}"
+									target="#{manejadorConsultarPropiedadIntelectual.archivoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</p:fieldset>
+				<p:fieldset legend="Histórico de la propiedad">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width:100%;">
+						<p:row>
+							<p:column>
+								<p:dataTable rows="10" id="tableHistorico" var="historico"
+									style="width:100%;" paginator="true"
+									value="#{manejadorConsultarPropiedadIntelectual.listaHistoricoPropiedad}"
+									emptyMessage="No se ha encontrado histórico de este aval."
+									paginatorPosition="bottom" paginatorAlwaysVisible="false"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="5,10,15">
+									<p:column style="width:5%;">
+										<f:facet name="header">
+												Propiedad
+											</f:facet>
+											#{historico.propiedad.id}
+										</p:column>
+									<p:column style="width:10%;">
+										<f:facet name="header">
+												Fecha
+											</f:facet>
+										<h:outputText value="#{historico.fecha}">
+											<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+										</h:outputText>
+									</p:column>
+									<p:column style="width:30%;">
+										<f:facet name="header">
+												Estado
+											</f:facet>			
+											#{historico.estado.nombre}
+								</p:column>
+									<p:column style="width:50%;">
+										<f:facet name="header">
+												Responsable
+											</f:facet>			
+											#{historico.responsable.nombreCompletoMinusculas}
+										</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton action="#" icon="ui-icon-search"
+											oncomplete="dialogHistorico.show();" title="Consultar"
+											update="@form">
+											<f:setPropertyActionListener value="#{historico}"
+												target="#{manejadorConsultarPropiedadIntelectual.historicoPropiedad}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:fieldset>
+				<p:dialog header="Información del cambio de estado"
+					widgetVar="dialogHistorico" modal="true" resizable="false"
+					width="600">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;">
+						<p:row>
+							<p:column style="width:10%;">
+								<h:outputText value="Propiedad intelectual: "
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.propiedad.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Responsable: " style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.historicoPropiedad.responsable.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha: " style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.historicoPropiedad.fecha}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Observaciones: " style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConsultarPropiedadIntelectual.historicoPropiedad.observacion}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:dialog>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Administrar fuentes de financiación</t:div>
+			<p:messages id="message" />
+
+			<p:panel style="text-align: center;" id="buscarFuentes"
+				header="Buscar fuente">
+				<h:panelGrid columns="3" style="text-align: center; margin: auto;">
+
+					<h:outputText value="Nombre (palabra clave):" />
+					<p:inputText size="50"
+						value="#{manejadorFuentesAdministrador.nombreFuente}"
+						maxlenght="20" />
+
+					<p:commandButton
+						action="#{manejadorFuentesAdministrador.buscarFuente}"
+						value="Buscar por nombre" update="@form" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+					
+					
+					<h:outputText value="Nit:"  />
+					<p:inputText size="25"
+						value="#{manejadorFuentesAdministrador.nitFuente}" maxlenght="20" />
+
+					<p:commandButton
+						action="#{manejadorFuentesAdministrador.buscarFuentePorNit}"
+						value="Buscar por nit" update="@form" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+
+				</h:panelGrid>
+
+
+				<br />
+				<center>
+					<p:dataTable id="fuenteTabla" var="fuente"
+						rendered="#{not empty manejadorFuentesAdministrador.fuentes}"
+						value="#{manejadorFuentesAdministrador.fuentes}"
+						emptyMessage="No se han encontrado fuentes" style="width:100%">
+
+						<p:column headerText="Nit">
+							<h:outputText value="#{fuente.nit}" />
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{fuente.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Tipo">
+							<h:outputText value="#{fuente.internaExternaNombre}" />
+						</p:column>
+
+						<p:column headerText="Editar">
+							<p:commandButton
+								action="#{manejadorFuentesAdministrador.editarFuente}"
+								id="editarFuente" update="@form" process="@form"
+								icon="ui-icon-pencil" title="Editar">
+								<f:setPropertyActionListener value="#{fuente}"
+									target="#{manejadorFuentesAdministrador.fuenteSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Eliminar">
+							<p:commandButton
+								action="#{manejadorFuentesAdministrador.eliminarFuente}"
+								id="eliminarFuente" update="fuenteTabla" icon="ui-icon-trash"
+								title="Eliminar">
+								<f:setPropertyActionListener value="#{fuente}"
+									target="#{manejadorFuentesAdministrador.fuenteSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</center>
+				<br />
+				<br />
+			</p:panel>
+
+			<br />
+			<p:panel id="infoFuentes" header="Información de fuentes"
+				rendered="#{manejadorFuentesAdministrador.verEditarFuente}">
+				<br />
+				<p:panelGrid id="editarFuentes" style="width:100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{manejadorFuentesAdministrador.verEditarFuente}">
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Naturaleza:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="SOM_fuentesNuevas1"
+								value="#{manejadorFuentesAdministrador.fuenteActual.naturaleza}"
+								style="width:100%">
+								<f:selectItems
+									value="#{manejadorFuentesAdministrador.tiposNaturalezaFuenteItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="País:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="SOM_paisFuente" filter="true"
+								filterMatchMode="contains"
+								value="#{manejadorFuentesAdministrador.fuenteActual.pais.id}"
+								style="width:100%">
+								<f:selectItems
+									value="#{manejadorFuentesAdministrador.listaPaisesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Carácter:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="SOM_fuentesCaracter"
+								value="#{manejadorFuentesAdministrador.fuenteActual.caracter}"
+								style="width:100%">
+								<f:selectItems
+									value="#{manejadorFuentesAdministrador.caracterFuenteFinanciacionItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Tipo de fuente:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="SOM_fuentesTipoFuente"
+								value="#{manejadorFuentesAdministrador.fuenteActual.tipoFuente}"
+								style="width:100%">
+								<f:selectItems
+									value="#{manejadorFuentesAdministrador.tiposFuenteFinanciacionItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Nombre:" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea
+								value="#{manejadorFuentesAdministrador.fuenteActual.descripcion}"
+								cols="70" rows="3" maxlength="70" style="width:100%" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="NIT:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorFuentesAdministrador.fuenteActual.nit}"
+								maxlength="60" style="width:100%" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Teléfono:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorFuentesAdministrador.fuenteActual.telefono}"
+								maxlength="60" style="width:100%" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Dirección:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorFuentesAdministrador.fuenteActual.direccion}"
+								maxlength="70" style="width:100%" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Tipología:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="tipologiaFuente"
+								value="#{manejadorFuentesAdministrador.fuenteActual.internaExterna}"
+								style="width:100%">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+								<f:selectItems
+									value="#{manejadorFuentesAdministrador.estadosItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Estado:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="estado"
+								value="#{manejadorFuentesAdministrador.fuenteActual.estado}"
+								style="width:100%">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+								<f:selectItem itemLabel="Visible" itemValue="V" />
+								<f:selectItem itemLabel="Oculta" itemValue="O" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column style="width:25%; text-align:right; padding-right:10px;">
+							<h:outputText value="Visible para Aval:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="visibleAval"
+								value="#{manejadorFuentesAdministrador.fuenteActual.visibleAval}"
+								converter="javax.faces.Boolean" style="width:100%">
+								<f:selectItem itemLabel="Sí" itemValue="true" />
+								<f:selectItem itemLabel="No" itemValue="false" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<p:commandButton value="Guardar" update="@form" process="@form"
+								action="#{manejadorFuentesAdministrador.guardarFuente}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+
+			</p:panel>
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+
+			<p:messages id="message2" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

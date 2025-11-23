@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+
+
+		<p:panelGrid columns="2" id="mensaje"
+			styleClass="estilo-panelgrid-sinbordes">
+			<img
+				src="#{facesContext.externalContext.requestContextPath}/images/error.png" />
+			<h:outputText class="panel-titulo-error"
+				value="Reporte de inconveniente presentado en el sistema Hermes" />
+		</p:panelGrid>
+
+		<br></br>
+
+
+		<h:form>
+
+			<p:panel header="Información del solicitante" align="center"
+				id="requerimiento">
+
+				<br />
+				<h:outputText
+					value="Búsqueda de la persona responsable de la solicitud:"
+					styleClass="negrilla" />
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelReq">
+
+					<h:outputLabel value="Tipo de documento:" styleClass="negrilla"
+						for="tipoDoc" />
+					<p:selectOneMenu
+						value="#{ManejadorMensajeErrorAdm.requerimiento.tipoDoc.id}"
+						id="tipoDoc">
+						<f:selectItems
+							value="#{ManejadorMensajeErrorAdm.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Documento: " styleClass="negrilla" />
+					<p:inputText id="personaDoc" maxlength="256" size="20"
+						value="#{ManejadorMensajeErrorAdm.requerimiento.idPersona}">
+					</p:inputText>
+
+					<h:outputText value="" />
+					<p:commandButton action="#{ManejadorMensajeErrorAdm.buscarPersona}"
+						value="Buscar" id="botonBuscar" update="@form" />
+
+				</p:panelGrid>
+
+			</p:panel>
+
+			<br />
+			<p:panel header="Información del inconveniente presentado"
+				align="center" id="requerimiento_form"
+				rendered="#{ManejadorMensajeErrorAdm.mostrarForm}">
+
+				<p:messages id="msgs" />
+
+				<p:panelGrid columns="2" id="formularioError" align="center"
+					styleClass="estilo-panelgrid-sinbordes">
+
+					<h:outputText value="Persona solicitante:  " styleClass="negrilla" />
+					<p:inputText id="personaNombre" maxlength="256" size="70"
+						readonly="true"
+						value="#{ManejadorMensajeErrorAdm.requerimiento.personaRequerimiento}">
+					</p:inputText>
+
+					<h:outputText value="Dependencia del solicitante:"
+						styleClass="negrilla" />
+					<p:inputText id="personaDep" maxlength="256" size="50"
+						readonly="true"
+						value="#{ManejadorMensajeErrorAdm.requerimiento.idDependencia.nombre}">
+					</p:inputText>
+
+					<h:outputText value="Email del solicitante:" styleClass="negrilla" />
+					<p:inputText id="personaEmail" maxlength="256" size="50"
+						readonly="true"
+						value="#{ManejadorMensajeErrorAdm.requerimiento.emailSolicitante}">
+					</p:inputText>
+
+					<h:outputText value="Teléfono/extensión solicitante:"
+						styleClass="negrilla" />
+					<p:inputText id="personaEmail" maxlength="256" size="50"
+						value="#{ManejadorMensajeErrorAdm.requerimiento.telefonoSolicitante}">
+					</p:inputText>
+
+					<p:outputLabel value="Módulo al que corresponde el inconveniente:"
+						for="modulo" styleClass="negrilla" />
+					<p:selectOneMenu
+						value="#{ManejadorMensajeErrorAdm.requerimiento.modulo}"
+						id="modulo" style="width:300px">
+						<f:selectItems value="#{ManejadorMensajeErrorAdm.moduloItems}" />
+						<p:ajax update="formularioError"
+							listener="#{ManejadorMensajeErrorAdm.cargarSubModulo}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Sub-Módulo:" styleClass="negrilla" />
+					<p:selectOneMenu
+						value="#{ManejadorMensajeErrorAdm.requerimiento.subModulo}"
+						id="submodulo" style="width:300px">
+						<f:selectItems value="#{ManejadorMensajeErrorAdm.subModuloItems}" />
+					</p:selectOneMenu>
+
+
+					<h:outputText value="Proceso que estaba realizando:"
+						styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{ManejadorMensajeErrorAdm.requerimiento.proceso}"
+						id="form" rows="2" cols="60">
+					</p:inputTextarea>
+
+					<h:outputText value="Descripción del inconveniente:"
+						styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{ManejadorMensajeErrorAdm.requerimiento.descripcionSolic}"
+						id="descripcion" rows="15" cols="60">
+					</p:inputTextarea>
+
+					<h:outputText value="Prioridad:" styleClass="negrilla" />
+					<p:selectOneMenu
+						value="#{ManejadorMensajeErrorAdm.requerimiento.prioridad}"
+						id="prioridad">
+						<f:selectItems value="#{ManejadorMensajeErrorAdm.prioridadItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="" />
+					<p:commandButton action="#{ManejadorMensajeErrorAdm.guardar}"
+						value="Enviar" id="botonEnviar" />
+
+				</p:panelGrid>
+				<br></br>
+
+				<p:messages id="messages" showDetail="true" autoUpdate="true"
+					closable="true" />
+				<br></br>
+			</p:panel>
+			<br></br>
+			<center>
+				<div class="panel-boton-error">
+					<input type="button" onclick="history.back()"
+						class="boton-regresar" />
+				</div>
+			</center>
+
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

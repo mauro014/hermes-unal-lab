@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Docencia</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />
+		</h:form>
+
+		<h:form id="formLaboratoriosDocencia"
+			styleClass="estilo-panelgrid-sinbordes">
+			
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosDocencia.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosDocencia.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="15" />
+			
+			<p:panel
+				header="#{ManejadorLaboratoriosDocencia.laboratorioActual.nombre} - #{ManejadorLaboratoriosDocencia.laboratorioActual.id}"
+				id="panelLaboratoriosInvestigacion">
+
+				<br />
+				<p:panelGrid columns="1" rendered="#{ManejadorLaboratoriosDocencia.listaAsignaturas != null}">
+
+					<p:dataTable id="asignaturasEnLista" var="asignaturaEnLista"
+						styleClass="pequennio"
+						value="#{ManejadorLaboratoriosDocencia.listaAsignaturas}" rows="10"
+						paginator="true" paginatorPosition="bottom" pageLinks="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} asignaturas, pag: {currentPage}/{totalPages})">
+						<f:facet name="header">
+								Asignaturas asociadas al laboratorio
+						</f:facet>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Periodo" />
+							</f:facet>
+							<h:outputText value=" #{asignaturaEnLista.asignatura.periodo}" styleClass="pequennio"/>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Código" />
+							</f:facet>
+							<h:outputText value=" #{asignaturaEnLista.asignatura.codAsignatura}" styleClass="pequennio"/>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="G" />
+							</f:facet>
+							<h:outputText value=" #{asignaturaEnLista.asignatura.grupo}" styleClass="pequennio"/>
+						</p:column>
+						<p:column style="width:20%">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value=" #{asignaturaEnLista.asignatura.nombreAsignatura}" styleClass="pequennio"/>
+						</p:column>
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Nivel" />
+							</f:facet>
+							<h:outputText value=" #{asignaturaEnLista.asignatura.nivel}" styleClass="pequennio"/>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="NE" />
+							</f:facet>
+							<h:outputText value=" #{asignaturaEnLista.asignatura.inscritos}" styleClass="pequennio"/>
+						</p:column>
+						<p:column style="width:5%">
+							<f:facet name="header">
+								<h:outputText value="PS" />
+							</f:facet>
+							<p:inputText id="numeroPracticas" maxlength="3" size="3"
+								valueChangeListener="#{ManejadorLaboratoriosDocencia.cambiosAsignaturas}"
+								onchange="submit(this);"
+								readonly="#{ManejadorLaboratoriosDocencia.soloLectura}"
+								value="#{asignaturaEnLista.practicasSemanales}">
+							</p:inputText>
+						</p:column>
+						<p:column style="width:5%">
+							<f:facet name="header">
+								<h:outputText value="HS" />
+							</f:facet>
+							<p:inputText id="intensidadHoraria" maxlength="3" size="3"
+								valueChangeListener="#{ManejadorLaboratoriosDocencia.cambiosAsignaturas}"
+								onchange="submit(this);"
+								readonly="#{ManejadorLaboratoriosDocencia.soloLectura}"
+								value="#{asignaturaEnLista.horasSemana}">
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Mod" />
+							</f:facet>
+							<p:selectBooleanCheckbox id="modVirtual" label="Virtual" value="#{asignaturaEnLista.modalidadVirtual}" 
+								valueChangeListener="#{ManejadorLaboratoriosDocencia.cambiosAsignaturas}"/>
+							<h:outputText value="Virtual" styleClass="pequennio" />
+							<br />
+							<p:selectBooleanCheckbox id="modPresencial" label="Presencial" value="#{asignaturaEnLista.modalidadPresencial}" 
+								valueChangeListener="#{ManejadorLaboratoriosDocencia.cambiosAsignaturas}"/>
+							<h:outputText value="Presencial" styleClass="pequennio" />
+						</p:column>
+						<p:column rendered="#{!ManejadorLaboratoriosDocencia.soloLectura}">
+							<f:facet name="header">
+								<h:outputText value="(-)" />
+							</f:facet>
+							<center>
+								<p:commandButton icon="ui-icon-trash"
+									onclick="if(!confirm('¿Está seguro(a) de eliminar la Asignatura?'))return false"
+									action="#{ManejadorLaboratoriosDocencia.eliminarAsignatura}"
+									update="@form">
+									<f:setPropertyActionListener value="#{asignaturaEnLista}"
+										target="#{ManejadorLaboratoriosDocencia.laboratorioDetalleDocenciaSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<h:outputText
+						value="G = Grupo, NE = Número de Estudiantes, PS = Número de prácticas semanales, HS = Horas / Semana, Mod = Modalidad" />
+				</p:panelGrid>
+
+				<center>
+					<p:panelGrid columns="1"
+						rendered="#{!ManejadorLaboratoriosDocencia.soloLectura}">
+						<br />
+						<center>
+							<p:panelGrid columns="3">
+								<p:outputLabel value="Búsqueda Asignaturas por Código:"
+									for="udCodigoAsignatura" />
+								<p:inputText id="udCodigoAsignatura"
+									value="#{ManejadorLaboratoriosDocencia.codigoAsignatura}"
+									maxlength="15" size="20">
+								</p:inputText>
+								<p:commandButton value="Buscar" icon="ui-icon-search"
+									action="#{ManejadorLaboratoriosDocencia.buscarAsignaturasPorCodigo}"
+									update="@form" />
+							</p:panelGrid>
+						</center>
+
+						<p:panelGrid columns="1"
+							rendered="#{ManejadorLaboratoriosDocencia.asignaturasEncontradas != null}">
+							<p:dataTable id="asignaturasEncontradas" var="asignatura"
+								rows="5" paginator="true" paginatorPosition="bottom"
+								paginatorAlwaysVisible="true" pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords} asignaturas encontradas, pag: {currentPage}/{totalPages}"
+								value="#{ManejadorLaboratoriosDocencia.asignaturasEncontradas}">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Sede" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.sede.nombre}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Periodo" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.periodo}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Código" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.codAsignatura}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="G" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.grupo}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.nombreAsignatura}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nivel" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.nivel}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="NE" />
+									</f:facet>
+									<h:outputText value=" #{asignatura.inscritos}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Asociar" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-plusthick"
+											action="#{ManejadorLaboratoriosDocencia.adicionarAsignatura}"
+											update="@form">
+											<f:setPropertyActionListener value="#{asignatura}"
+												target="#{ManejadorLaboratoriosDocencia.vAsignaturasSIAseleccionada}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+							<h:outputText styleClass="pequennio"
+								value="Despues de 2018: 1S - Primer semestre del año, 2S - Segundo semestre del año, 1A - Primer periodo del año, 2A - Segundo periodo del año" />
+						</p:panelGrid>
+
+					</p:panelGrid>
+				</center>
+
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+
+				<br />
+				<center>
+					<p:panelGrid columns="3" rendered="#{!ManejadorLaboratoriosDocencia.soloLectura}">
+						<p:commandButton
+							action="#{ManejadorLaboratoriosInformacionGeneral.volverSolicitud}"
+							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+							value="Volver a la solicitud" 
+							immediate="true" 
+							rendered="#{ManejadorLaboratoriosDocencia.esSolicitudLab}"/>
+						
+						<p:commandButton action="#{ManejadorLaboratoriosDocencia.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" 
+							rendered="#{!ManejadorLaboratoriosDocencia.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosDocencia.salirGuardar}"
+							value="Guardar y continuar después" 
+							rendered="#{!ManejadorLaboratoriosDocencia.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosDocencia.siguiente}"
+							value="Guardar y avanzar" />
+					</p:panelGrid>
+				</center>
+
+			</p:panel>
+			
+			<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+							header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosInformacionGeneral.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

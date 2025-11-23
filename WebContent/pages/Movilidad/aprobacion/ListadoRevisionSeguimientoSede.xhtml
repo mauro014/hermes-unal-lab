@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">
+			Alertas informes de seguimiento</t:div>
+
+			<p:tabView>
+				<p:tab title="Visitantes" titleStyle="font-size:12px">
+					<p:dataTable var="movilidadVisitante"
+						value="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesVisitante}"
+						filteredValue="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesVisitanteFil}"
+						emptyMessage="No existen informes de seguimiento pendientes"
+						paginator="true" paginatorAlwaysVisible="false" rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						style="width: 670px;">
+						<p:column style="font-size:13px; width:5%; text-align: center;"
+							filterBy="#{movilidadVisitante.id}" filterMatchMode="contains"
+							filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="informe" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.segMovFecha}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Solicitud"
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.imprimirMovilidadVisitante}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener value="#{movilidadVisitante}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadVisitanteSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<p:commandButton id="segVisCons" title="Revisar" value="Revisar"
+								icon="ui-icon-search"
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.consultarSeguimientoVisExt}"
+								ajax="false">
+								<f:setPropertyActionListener value="#{movilidadVisitante}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadVisitanteSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Docentes" titleStyle="font-size:12px">
+					<p:dataTable var="movilidadDocente" id="movi"
+						value="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesDocentes}"
+						filteredValue="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesDocentesFil}"
+						emptyMessage="No existen informes de seguimiento pendientes"
+						paginator="true" paginatorAlwaysVisible="false" rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						style="width: 670px; margin-top:10px;">
+						<p:column style="font-size:13px; width:5%; text-align: center;"
+							filterBy="#{movilidadDocente.id}" filterMatchMode="contains"
+							filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadDocente.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{movilidadDocente.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText value="#{movilidadDocente.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="informe" />
+							</f:facet>
+							<h:outputText value="#{movilidadDocente.segMovFecha}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Solicitud"
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.imprimirMovilidadDocentes}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener value="#{movilidadDocente}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadDocentesSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<p:commandButton id="segVisCons" title="Revisar" value="Revisar"
+								icon="ui-icon-search"
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.consultarSeguimientoDoc}"
+								ajax="false">
+								<f:setPropertyActionListener value="#{movilidadDocente}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadDocentesSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Estudiantes eventos" titleStyle="font-size:12px">
+					<p:dataTable var="movilidadEstudiantesEventos"
+						value="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesEstudianteEvento}"
+						filteredValue="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesEstudianteEventoFil}"
+						emptyMessage="No existen informes de seguimiento pendientes"
+						paginator="true" paginatorAlwaysVisible="false" rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						style="width: 670px; margin-top:10px;">
+						<p:column style="font-size:13px; width:5%; text-align: center;"
+							filterBy="#{movilidadEstudiantesEventos.id}"
+							filterMatchMode="contains" filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantesEventos.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantesEventos.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantesEventos.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="informe" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantesEventos.segMovFecha}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Solicitud"
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.imprimirMovilidadEstudiante}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantesEventos}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadEstudiantesSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<p:commandButton id="segVisCons" title="Revisar" value="Revisar"
+								icon="ui-icon-search"
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.consultarSeguimientoEstEventos}"
+								ajax="false">
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantesEventos}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Estudiantes-Pasantías/Residencias"
+					titleStyle="font-size:12px">
+					<p:dataTable var="movilidadEstudiantesPasantia"
+						value="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesEstudiantePasantia}"
+						filteredValue="#{manejadorAprobacionMovilidadSeguimientoSede.listaMovilidadesEstudiantePasantiaFil}"
+						emptyMessage="No existen informes de seguimiento pendientes"
+						paginator="true" paginatorAlwaysVisible="false" rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						style="width: 670px; margin-top:10px;">
+						<p:column style="font-size:13px; width:5%; text-align: center;"
+							filterBy="#{movilidadEstudiantesPasantia.id}"
+							filterMatchMode="contains" filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantesPasantia.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantesPasantia.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantesPasantia.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;font-size:13px;">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="informe" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantesEventos.segMovFecha}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Solicitud"
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.imprimirMovilidadEstudiante}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantesPasantia}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadEstudiantesSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<p:commandButton id="segVisCons" title="Revisar" value="Revisar"
+								icon="ui-icon-search"
+								action="#{manejadorAprobacionMovilidadSeguimientoSede.consultarSeguimientoEstPasantias}"
+								ajax="false">
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantesPasantia}"
+									target="#{manejadorAprobacionMovilidadSeguimientoSede.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:tabView>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="ColeccionGestion" table="HER_COLECCION_GESTION">
+		<id name="id" column="COG_ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_COLECCION_GESTION</param>
+			</generator>
+		</id>
+			
+		<many-to-one name="estado" class="DominioDetalle" lazy="false">
+			<column name="DOM_ESTADO" />
+			<column name="DOMDET_ESTADO" />
+		</many-to-one>
+		
+		<many-to-one name="tipo" class="DominioDetalle" lazy="false">
+			<column name="DOM_TIPO" />
+			<column name="DOMDET_TIPO" />
+		</many-to-one>
+
+		<property name="idColeccion" column="COL_ID" />
+		<property name="fechaRegistro" column="COG_FECHA" />
+		<property name="fechaRevision" column="COG_FECHA_REVISION" />
+		<property name="fechaElimina" column="COG_FECHA_ELIMINA" />
+		<property name="justificacion" column="COG_JUSTIFICACION_GESTION" />
+		<property name="comentariosRevision" column="COG_COMENTARIOS" />
+		<many-to-one name="personaRegistra" class="Persona"
+			not-null="true" lazy="false">
+			<column name="PER_ID" />
+			<column name="TDO_ID" />
+		</many-to-one>
+		
+		<many-to-one name="personaRevisa" class="Persona"
+			lazy="false">
+			<column name="PER_ID_REVISA" />
+			<column name="TDO_ID_REVISA" />
+		</many-to-one>
+		
+		<many-to-one name="autoridad" column="FFI_ID" class="FuenteFinanciacion"
+			lazy="false" />
+		
+		<many-to-one name="personaElimina" class="Persona"
+			lazy="false">
+			<column name="PER_ID_ELIMINA" />
+			<column name="TDO_ID_ELIMINA" />
+		</many-to-one>
+		
+		<many-to-one name="directorAnterior" class="Persona"
+			lazy="false">
+			<column name="PER_ID_DIR_ANTERIOR" />
+			<column name="TDO_ID_DIR_ANTERIOR" />
+		</many-to-one>
+		
+		<many-to-one name="directorNuevo" class="Persona"
+			lazy="false">
+			<column name="PER_ID_DIR_NUEVO" />
+			<column name="TDO_ID_DIR_NUEVO" />
+		</many-to-one>
+		
+		<property name="aceptaPublicacion" column="ACEPTA_PUBLICACION" />
+		
+		<many-to-one name="estadoAutoridad" class="DominioDetalle" lazy="false">
+			<column name="DOM_ESTADO_AUTORIDAD" />
+			<column name="DOMDET_ESTADO_AUTORIDAD" />
+		</many-to-one>
+		
+		<property name="comentariosAutoridad" column="COMENTARIOS_AUTORIDAD" />
+		
+		<set name="requisitos" table="HER_COLECCION_REQUISITO" inverse="true" lazy="false">
+			<key column="COG_ID" />
+			<one-to-many class="ColeccionRequisito" />
+		</set>
+			
+	</class>
+</hibernate-mapping>

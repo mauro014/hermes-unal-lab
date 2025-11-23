@@ -1,0 +1,2377 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitudes</t:div>
+			<p:panel id="panelInformacionLaboratorio">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate; width: 530px;">
+						<h:outputText value="Código: " />
+						<h:outputText value="#{manejadorSolicitudes.proyectoActual.id}"
+							style=' font-weight: bold' />
+						<h:outputText value="Nombre: " />
+						<h:outputText
+							value="#{manejadorSolicitudes.proyectoActual.nombre}"
+							style=' font-weight: bold;' />
+					</p:panelGrid>
+					<p:commandButton
+						action="#{manejadorSolicitudes.verAgregarSolicitud}"
+						icon="ui-icon-plusthick" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()" value="Agregar solicitud"
+						update="@form" ajax="false" />
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:messages id="msgs" />
+			<p:panel rendered="#{manejadorSolicitudes.agregarSolicitud}"
+				id="agregar-solicitud"
+				header="#{manejadorSolicitudes.nuevaSolicitud.id == null ? 'Agregar nueva solicitud':'Modificar solicitud'}">
+
+				<p:panel
+					rendered="#{(manejadorSolicitudes.proyectoActual.esPermisoMarco or manejadorSolicitudes.proyectoActual.esPermisoMarcoAsignatura) and manejadorSolicitudes.tipoSolicitudUsada == '29'}">
+					<t:div style="text-align:justify; color:#FF8000;">
+							Los certificados de movilización tendrán una vigencia de 6 meses después de la fecha de expedición del documento. 
+							Durante este tiempo deberá presentar un informe de las actividades de recolección a través del sistema Hermes.
+						</t:div>
+				</p:panel>
+				<br />
+				<p:panel
+					rendered="#{(manejadorSolicitudes.proyectoActual.esPermisoMarcoAsignatura) and manejadorSolicitudes.tipoSolicitudUsada == '29'}">
+					<t:div style="text-align:justify; color:#FF8000;">
+							Por favor adjunte a la solicitud de certificado de movilización, el excel con la lista de estudiantes de la asignatura (nombre completo, tipo y número de identificación, correo electrónico) que puede generar a través del Sistema de Información Académico SIA
+						</t:div>
+				</p:panel>
+				<br />
+				<p:panel
+					rendered="#{(manejadorSolicitudes.proyectoActual.esPermisoMarco) and manejadorSolicitudes.tipoSolicitudUsada == '29'}">
+					<t:div style="text-align:justify; color:#FF8000;">
+					Recuerde que el listado de personas que aparecen en el certificado de movilización corresponde a los integrantes del equipo de trabajo 
+					del proyecto que se asoció al permiso marco de recolección (PMR). Si desea que alguno sea incluido debe hacer la solicitud de vinculación 
+					de integrantes en ese proyecto. Tener en cuenta <a
+							style="color: blue;" target="_blank"
+							href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=21">este
+							instructivo</a>:
+					</t:div>
+				</p:panel>
+				<br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: inherit;">
+					<h:outputText value="Id: " style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.id != null}" />
+					<h:outputText value="#{manejadorSolicitudes.nuevaSolicitud.id}"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.id != null}" />
+					<h:outputText value="Tipo: " style=' font-weight: bold' />
+					<p:selectOneMenu value="#{manejadorSolicitudes.tipoSolicitudUsada}">
+						<f:selectItems value="#{manejadorSolicitudes.tiposSolicitudItem}" />
+						<p:ajax update="@form" process="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							listener="#{manejadorSolicitudes.detallarSolicitud}" />
+					</p:selectOneMenu>
+					<h:outputText value="Justificación:" style=' font-weight: bold' />
+					<p:inputTextarea cols="70"
+						value="#{manejadorSolicitudes.nuevaSolicitud.descripcion}"
+						maxlength="3500" counter="counterSolicitudDescripcion"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value="" />
+					<h:outputText id="counterSolicitudDescripcion" />
+					<h:outputText value="" style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.detallaRubros and false}" />
+					<h:outputText value="Descripción respuesta: "
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.respuestaTramite != null}"
+						style="font-weight: bold" />
+					<h:outputText
+						value="#{manejadorSolicitudes.nuevaSolicitud.respuestaTramite}"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.respuestaTramite != null}" />
+					<h:outputText value="" />
+					<p:commandLink
+						action="#{manejadorSolicitudes.mostrarHistoricoCambioEstadoSolicitud}"
+						value="Ver histórico de cambio de estado de la solicitud"
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;"
+						oncomplete="dialogHistoricoCambioEstadoSolicitud.show()"
+						update="@form">
+						<f:setPropertyActionListener
+							value="#{manejadorSolicitudes.nuevaSolicitud}"
+							target="#{manejadorSolicitudes.solicitudSeleccionada}" />
+					</p:commandLink>
+					<p:commandButton
+						value="Consultar información financiera actual del proyecto"
+						update="@form" oncomplete="dialogInformacionFinanciera.show();"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.detallaRubros and false}">
+					</p:commandButton>
+					<h:outputText value="Detalle cambios de rubro: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.detallaRubros}" />
+					<p:panel
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.detallaRubros}">
+						<p:dataTable var="cambioRubroAux"
+							value="#{manejadorSolicitudes.nuevaSolicitud.listaDetalleCambioRubro}"
+							emptyMessage="No ha sido agregado ningún cambio de rubro">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Rubro origen" />
+								</f:facet>
+								<h:outputText value="#{cambioRubroAux.gasto.tipoRubro.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Rubro destino" />
+								</f:facet>
+								<h:outputText value="#{cambioRubroAux.tipoRubro.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Valor" />
+								</f:facet>
+								<h:outputText value="#{cambioRubroAux.valor}">
+									<f:convertNumber currencySymbol="$" groupingUsed="true"
+										type="currency" minFractionDigits="0" maxFractionDigits="0" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton
+									action="#{manejadorSolicitudes.eliminarCambioRubro}"
+									value="Eliminar" update="@form">
+									<f:setPropertyActionListener value="#{cambioRubroAux}"
+										target="#{manejadorSolicitudes.detalleCambioRubroSeleccionado}" />
+								</p:commandButton>
+
+							</p:column>
+						</p:dataTable>
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							style="border-collapse: inherit;">
+							<h:outputText value="Fuente gasto : " />
+							<p:selectOneMenu
+								value="#{manejadorSolicitudes.nuevaSolicitud.detalleSolicitud.gasto.financiacion.id}"
+								style="width: 400px;" panelStyle="width: 400px;">
+								<p:ajax update="@form" process="@form"
+									listener="#{manejadorSolicitudes.cargarGastosProyecto}"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+								<f:selectItems
+									value="#{manejadorSolicitudes.fuentesProyectoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="Rubro origen: " />
+							<p:selectOneMenu
+								value="#{manejadorSolicitudes.nuevaSolicitud.detalleSolicitud.gasto.id}"
+								style="width: 400px;">
+								<f:selectItems
+									value="#{manejadorSolicitudes.gastosProyectoItem}"
+									style="width: 400px;" panelStyle="width: 400px;" />
+								<p:ajax update="@form"
+									listener="#{manejadorSolicitudes.cargarRubrosDestino}"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros}" />
+							<h:outputText style="font-weight: bold; color: #FF3300;"
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and (manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id eq 53 or manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022')}"
+								value="RUBRO DEL CATÁLOGO PRESUPUESTAL 2022" />
+							<h:outputText style="font-weight: bold; color: #FF3300;"
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id ne 53 and manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion ne 'GASTOS_CP_2022'}"
+								value="RUBRO PREVIO A CATÁLOGO PRESUPUESTAL 2022" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id ne 53 and manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022'}"
+								style="font-weight: bold;" value="Codigo QUIPU:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id ne 53 and manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022'}"
+								value="#{manejadorSolicitudes.tipoRubroOrigenCambioRubros.codigoQuipu}" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id ne 53 and manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022'}"
+								style="font-weight: bold;" value="Cuenta:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id ne 53 and manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022'}"
+								value="#{manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.padre.nombre}" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id ne 53 and manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022'}"
+								style="font-weight: bold;" value="Objeto:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id eq 53}"
+								style="font-weight: bold;" value="Categoría:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroOrigenCambioRubros and manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.id eq 53 or manejadorSolicitudes.tipoRubroOrigenCambioRubros.descripcion eq 'GASTOS_CP_2022'}"
+								value="#{manejadorSolicitudes.tipoRubroOrigenCambioRubros.padre.nombre}" />
+							<h:outputText value="Rubro destino: " />
+							<p:selectOneMenu
+								value="#{manejadorSolicitudes.nuevaSolicitud.detalleSolicitud.tipoRubro.id}"
+								style="width: 400px;" panelStyle="width: 400px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItems value="#{manejadorSolicitudes.tiposRubroItem}"
+									style="width: 400px;" />
+								<p:ajax update="@form"
+									listener="#{manejadorSolicitudes.cargarInfoRubroDestino}"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros and manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.id ne 53}"
+								style="font-weight: bold;" value="Codigo QUIPU:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros and manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.id ne 53}"
+								value="#{manejadorSolicitudes.tipoRubroDestinoCambioRubros.codigoQuipu}" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros and manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.id ne 53}"
+								style="font-weight: bold;" value="Cuenta:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros and manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.id ne 53}"
+								value="#{manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.padre.nombre}" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros and manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.id ne 53}"
+								style="font-weight: bold;" value="Objeto:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros and manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.id eq 53}"
+								style="font-weight: bold;" value="Categoría:" />
+							<h:outputText
+								rendered="#{not empty manejadorSolicitudes.tipoRubroDestinoCambioRubros}"
+								value="#{manejadorSolicitudes.tipoRubroDestinoCambioRubros.padre.nombre}" />
+							<h:outputText value="Valor cambio: " />
+							<p:inputText
+								value="#{manejadorSolicitudes.nuevaSolicitud.detalleSolicitud.valor}"
+								style="width:100%" maxlength="20" />
+						</p:panelGrid>
+						<t:div style="margin: auto; width: 500px; text-align: center;">
+							<p:commandButton
+								action="#{manejadorSolicitudes.agregarDetalleCambioRubro}"
+								value="Agregar" icon="ui-icon-circle-plus" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</t:div>
+					</p:panel>
+					<h:outputText value="Detalle cambio de investigador principal: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 24}" />
+					<p:panel
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 24}"
+						id="panelNuevoInvestigadorPrincipal">
+						<p:messages id="msgsInvestigadorPrincipal" />
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorSolicitudes.solicitudInvestigadorPrincipal == null}">
+							<p:row>
+								<p:column colspan="2">
+								Por favor ingrese la información del nuevo investigador principal y seleccione la opción '<b>Agregar</b>'
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Tipo de documento:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="width:200px"
+										value="#{manejadorSolicitudes.tipoDocumento}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems
+											value="#{manejadorSolicitudes.tipoDocumentoItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Número de documento:" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{manejadorSolicitudes.documentoIdentidad}"
+										style="width:200px" maxlength="25" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Tiempo de dedicación al proyecto" />
+									<br />
+									<h:outputText value="(horas semanales) - td:" />
+								</p:column>
+								<p:column>
+									<p:inputText
+										value="#{manejadorSolicitudes.tiempoDedicacionSemanal}"
+										converterMessage="La dedicación del director debe ser un valor numérico mayor a cero, ej. 0.5"
+										maxlength="4" style="width:60px" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" style="text-align: center;">
+									<p:commandButton value="Buscar"
+										action="#{manejadorSolicitudes.buscarNuevoInvestigadorPrincipal}"
+										update="panelNuevoInvestigadorPrincipal"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+							<p:row rendered="false">
+								<p:column>
+									<h:outputText value="Función" />
+								</p:column>
+								<p:column>
+									<p:inputTextarea cols="50"
+										value="#{manejadorSolicitudes.funcionNuevoInvestigador}"
+										maxlength="1500" counter="counterFuncionDescripcion"
+										counterTemplate="{0} caracteres restantes." />
+									<h:outputText id="counterFuncionDescripcion" />
+								</p:column>
+							</p:row>
+							<p:row rendered="false">
+								<p:column colspan="2" style="text-align: center;">
+									<p:commandButton value="Agregar"
+										action="#{manejadorSolicitudes.agregarPrincipal}"
+										update="panelNuevoInvestigadorPrincipal"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorSolicitudes.solicitudInvestigadorPrincipal != null}"
+							style="width: 100%;">
+							<p:row>
+								<p:column style="text-align: center;">
+									<b>Fecha final proyecto: </b>
+									<h:outputText
+										value="#{manejadorSolicitudes.fechaFinalProyecto}" />
+								</p:column>
+								<p:column style="text-align: center;">
+									<b>Nuevo investigador principal seleccionado: </b>
+									<h:outputText
+										value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.investigador.nombreCompletoMinusculas}" />
+								</p:column>
+								<p:column style="text-align: center;">
+									<b>Meses de dedicación: </b>
+									<h:outputText
+										value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.numeroMeses}" />
+								</p:column>
+								<p:column style="text-align: center;">
+									<b>Función: </b>
+									<h:outputText
+										value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.funcion}" />
+								</p:column>
+								<p:column style="text-align: center;">
+									<b>Valor de dedicación: </b>
+									<h:outputText
+										value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.valorPagar}">
+										<f:convertNumber currencySymbol="$" groupingUsed="true"
+											type="currency" minFractionDigits="0" maxFractionDigits="0" />
+									</h:outputText>
+									<br />
+									<h:outputText
+										value="(Tiene en cuenta la dedicación semanal por el número de meses que faltan para finalizar el proyecto, si el nuevo investigador hace parte del equipo de trabajo se ha sumado el valor correspondiente a los meses de ejecución que lleva el proyecto.)" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align: center;">
+									<p:commandButton value="Cambiar"
+										action="#{manejadorSolicitudes.limpiarInvestigadorPrincipal}"
+										update="panelNuevoInvestigadorPrincipal"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<h:outputText value="Detalle cambio de integrantes: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 5}" />
+					<p:panel rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 5}"
+						id="panelNuevoCambioIntegrantes">
+						<p:messages id="msgsCambioIntegranteAgregar" />
+						<p:panel header="Investigadores a agregar al proyecto"
+							id="panelNuevoCambioIntegrantes">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								style="width: 100%;">
+								<p:row>
+									<p:column colspan="2">
+									Por favor ingrese la información por cada integrante que desea agregar al proyecto y seleccione la opción 'Agregar':
+								</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2">
+										<t:div style="color:#464646; text-align:justify;">
+									Recuerde que:
+									<br />
+									- Para los docentes que se integran al proyecto se realiza el cálculo de tiempo de acuerdo al tiempo de dedicación al proyecto.
+									<br />
+									- Para los docentes que se retiran del proyecto se realiza el recálculo del tiempo hasta la fecha de su desvinculación.
+								</t:div>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tipo de vinculación:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu style="width:240px" panelStyle="width:240px"
+											value="#{manejadorSolicitudes.tipoInvestigador}"
+											id="listaTiposVinculacionInvestigador">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorSolicitudes.tiposInvestigadorItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tipo de documento:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu style="width:200px"
+											value="#{manejadorSolicitudes.tipoDocumento}"
+											id="listaTiposDocumentoInvestigador"
+											disabled="#{manejadorSolicitudes.mostrarInformacionExterno}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorSolicitudes.tipoDocumentoItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Número de documento:" />
+									</p:column>
+									<p:column>
+										<p:inputText
+											value="#{manejadorSolicitudes.documentoIdentidad}"
+											style="width:200px" maxlength="25"
+											disabled="#{manejadorSolicitudes.mostrarInformacionExterno}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tiempo de dedicación al proyecto" />
+										<br />
+										<h:outputText value="(horas semanales) - td:" />
+									</p:column>
+									<p:column>
+										<p:inputText
+											value="#{manejadorSolicitudes.tiempoDedicacionSemanal}"
+											maxlength="4" style="width:60px" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tiempo total de dedicación al proyecto" />
+										<br />
+										<h:outputText value="(meses) - tt:" />
+									</p:column>
+									<p:column>
+										<p:inputText
+											value="#{manejadorSolicitudes.tiempoDedicacionTotal}"
+											style="width:60px" maxlength="2" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Función" />
+									</p:column>
+									<p:column>
+										<p:inputTextarea cols="50"
+											value="#{manejadorSolicitudes.funcionNuevoInvestigador}"
+											maxlength="1500" counter="counterFuncionDescripcion"
+											counterTemplate="{0} caracteres restantes." />
+										<br />
+										<h:outputText id="counterFuncionDescripcion" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column>
+										<h:outputText value="Primer nombre *:" />
+									</p:column>
+									<p:column>
+										<p:inputText value="#{manejadorSolicitudes.primerNombre}"
+											style="width:160px" maxlength="20" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column>
+										<h:outputText value="Segundo nombre:" />
+									</p:column>
+									<p:column>
+										<p:inputText value="#{manejadorSolicitudes.segundoNombre}"
+											style="width:160px" maxlength="20" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column>
+										<h:outputText value="Primer apellido * :" />
+									</p:column>
+									<p:column>
+										<p:inputText value="#{manejadorSolicitudes.primerApellido}"
+											style="width:160px" maxlength="20" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column>
+										<h:outputText value="Segundo apellido:" />
+									</p:column>
+									<p:column>
+										<p:inputText value="#{manejadorSolicitudes.segundoApellido}"
+											style="width:160px" maxlength="20" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column>
+										<h:outputText value="Género:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu value="#{manejadorSolicitudes.genero}">
+											<f:selectItem itemValue="" itemLabel="" />
+											<f:selectItems
+												value="#{manejadorSolicitudes.tiposGeneroItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column>
+										<h:outputText value="Correo electrónico:" />
+									</p:column>
+									<p:column>
+										<p:inputText value="#{manejadorSolicitudes.correoElectronico}"
+											style="width:140px" maxlength="60" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column colspan="2" style="text-align: center;">
+										<p:commandButton value="Agregar"
+											action="#{manejadorSolicitudes.agregarIntegranteExterno}"
+											update="@form" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+										</p:commandButton>
+										<p:commandButton value="Cancelar"
+											action="#{manejadorSolicitudes.cancelarExterno}"
+											update="@form" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{!manejadorSolicitudes.mostrarInformacionExterno}">
+									<p:column colspan="2" style="text-align: center;">
+										<p:commandButton value="Agregar"
+											action="#{manejadorSolicitudes.agregarIntegrante}"
+											update="@form" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align: center;">
+										<p:dataTable var="solicitudInvestigador"
+											id="tablaNuevosIntegrantes"
+											value="#{manejadorSolicitudes.listaInvestigadoresNuevos}"
+											style="margin-top: 10px;"
+											emptyMessage="No se han agregado nuevos integrantes a la solicitud.">
+											<p:column headerText="Nombre">
+												<h:outputText
+													value="#{solicitudInvestigador.investigador.nombreCompletoMinusculas}" />
+											</p:column>
+											<p:column headerText="Tipo de vinculación">
+												<h:outputText value="#{solicitudInvestigador.tipo.nombre}" />
+											</p:column>
+											<p:column headerText="Función">
+												<h:outputText value="#{solicitudInvestigador.funcion}" />
+											</p:column>
+											<p:column headerText="td">
+												<h:outputText
+													value="#{solicitudInvestigador.dedicacionHorasSemana}" />
+											</p:column>
+											<p:column headerText="tt">
+												<h:outputText value="#{solicitudInvestigador.numeroMeses}" />
+											</p:column>
+											<p:column style="text-align: center;">
+												<f:facet name="header">
+													<h:outputText value="Valor " />
+													<br />
+													<h:outputText value="(dedicación-$)" />
+												</f:facet>
+												<h:outputText id="valorContrapartidaDocente"
+													value="#{solicitudInvestigador.valorPagar}">
+													<f:convertNumber currencySymbol="$" groupingUsed="true"
+														type="currency" minFractionDigits="0"
+														maxFractionDigits="0" />
+												</h:outputText>
+											</p:column>
+											<p:column>
+												<p:commandButton
+													action="#{manejadorSolicitudes.eliminarIntegrante}"
+													icon="ui-icon-trash" title="Quitar de la lista"
+													update="@form" onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()">
+													<f:setPropertyActionListener
+														value="#{solicitudInvestigador}"
+														target="#{manejadorSolicitudes.solicitudInvestigadorSeleccionada}" />
+												</p:commandButton>
+											</p:column>
+										</p:dataTable>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panel>
+						<p:messages id="msgsCambioIntegranteEliminar" />
+						<p:panel header="Investigadores a eliminar del proyecto"
+							id="panelNuevoCambioIntegrantes" style="margin-top: 10px;">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{!empty manejadorSolicitudes.investigadoresProyectoItem}"
+								style="width: 100%;">
+								<p:row>
+									<p:column style="text-align: center;">
+										Seleccione investigador que desea eliminar del proyecto y seleccione la opción 'Agregar para eliminar':
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="text-align: center;">
+										<p:selectOneMenu style="width:400px" panelStyle="width:400px"
+											id="selectListaInvestigadoresActuales"
+											value="#{manejadorSolicitudes.investigadorProyecto}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorSolicitudes.investigadoresProyectoItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="text-align: center;">
+										<p:commandButton
+											action="#{manejadorSolicitudes.agregarIntegranteEliminar}"
+											value="Agregar investigador para eliminar" update="@form"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:dataTable var="solicitudInvestigador"
+											id="tablaNuevosIntegrantes"
+											value="#{manejadorSolicitudes.listaInvestigadoresEliminarProyecto}"
+											style="margin-top: 10px;"
+											emptyMessage="No se han agregado integrantes para eliminar del proyectoa la solicitud.">
+											<p:column headerText="Nombre">
+												<h:outputText
+													value="#{solicitudInvestigador.investigador.nombreCompletoMinusculas}" />
+											</p:column>
+											<p:column headerText="Tipo de vinculación">
+												<h:outputText value="#{solicitudInvestigador.tipo.nombre}" />
+											</p:column>
+											<p:column headerText="td">
+												<h:outputText
+													value="#{solicitudInvestigador.dedicacionHorasSemana}" />
+											</p:column>
+											<p:column headerText="Total meses vinculado">
+												<h:outputText value="#{solicitudInvestigador.numeroMeses}" />
+											</p:column>
+											<p:column style="text-align: center;">
+												<f:facet name="header">
+													<h:outputText value="Valor dedicación - " />
+													<br />
+													<h:outputText value="(tiempo vinculado)" />
+												</f:facet>
+												<h:outputText id="valorContrapartidaDocente"
+													value="#{solicitudInvestigador.valorPagar}">
+													<f:convertNumber currencySymbol="$" groupingUsed="true"
+														type="currency" minFractionDigits="0"
+														maxFractionDigits="0" />
+												</h:outputText>
+											</p:column>
+											<p:column>
+												<p:commandButton
+													action="#{manejadorSolicitudes.eliminarIntegranteAEliminar}"
+													icon="ui-icon-trash" title="Quitar de la lista"
+													update="@form" onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()">
+													<f:setPropertyActionListener
+														value="#{solicitudInvestigador}"
+														target="#{manejadorSolicitudes.solicitudInvestigadorSeleccionada}" />
+												</p:commandButton>
+											</p:column>
+										</p:dataTable>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{empty manejadorSolicitudes.investigadoresProyectoItem}"
+								style="width: 100%;">
+								<p:row>
+									<p:column style="text-align: center;">
+										Actualmente el proyecto no cuenta con integrantes para eliminar.
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panel>
+					</p:panel>
+
+					<h:outputText value="Adición presupuestal:"
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 8}" />
+					<p:panel rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 8}"
+						id="panelAdicionPrespuestal">
+						<p:messages id="msgsAdicionPresupuestalAgregar" />
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							style="width: 100%;">
+							<p:row>
+								<p:column>
+									<h:outputText value="Fuente de Financiación:" />
+								</p:column>
+
+								<p:column>
+									<p:selectOneMenu style="width:400px" panelStyle="width:400px"
+										value="#{manejadorSolicitudes.financiacionSolicitudAdicionPresupuestal.id}"
+										id="listaFinanciacion"
+										disabled="#{manejadorSolicitudes.bloquearValorTotalAdicion}">
+										<f:selectItems
+											value="#{manejadorSolicitudes.fuentesProyectoItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Valor de adición presupuestal:" />
+								</p:column>
+
+								<p:column>
+									<p:inputText
+										value="#{manejadorSolicitudes.valorSolicitudAdicionPresupuestal}"
+										disabled="#{manejadorSolicitudes.bloquearValorTotalAdicion}"
+										style="width: 100%;" maxlength="20" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Rubro:" />
+								</p:column>
+
+								<p:column>
+									<p:selectOneMenu
+										value="#{manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id}"
+										style="width: 400px;" panelStyle="width: 400px;" filter="true"
+										filterMatchMode="contains">
+										<f:selectItems value="#{manejadorSolicitudes.tiposRubroItem}"
+											style="width: 400px;" />
+										<p:ajax update="@form"
+											listener="#{manejadorSolicitudes.cargarInfoRubroDestinoAP}"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{not empty manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id and manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id ne 0 and manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.padre.id ne 53}">
+								<p:column>
+									<h:outputText style="font-weight: bold;" value="Codigo QUIPU:" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.codigoQuipu}" />
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{not empty manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id and manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id ne 0 and manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.padre.id ne 53}">
+								<p:column>
+									<h:outputText style="font-weight: bold;" value="Cuenta:" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.padre.padre.nombre}" />
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{not empty manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id and manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.id ne 0}">
+								<p:column>
+									<h:outputText
+										rendered="#{manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.padre.id ne 53}"
+										style="font-weight: bold;" value="Objeto:" />
+									<h:outputText
+										rendered="#{manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.padre.id eq 53}"
+										style="font-weight: bold;" value="Categoría:" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorSolicitudes.tipoRubroAuxSolAdicionPresupuesto.padre.nombre}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Valor a adicionar en el rubro destino:" />
+								</p:column>
+
+								<p:column>
+									<p:inputText
+										value="#{manejadorSolicitudes.valorRubroSolAdicionPresupuesto}"
+										style="width: 100%;" maxlength="20" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+
+						<br />
+
+						<t:div style="margin: auto; width: 500px; text-align: center;">
+							<p:commandButton
+								action="#{manejadorSolicitudes.agregarAdicionRubro}"
+								value="Agregar" icon="ui-icon-circle-plus" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								disabled="#{manejadorSolicitudes.bloquearAgregarAdicionRubro}" />
+						</t:div>
+
+						<br />
+
+						<p:dataTable var="detalleAdicionPresupuesto"
+							value="#{manejadorSolicitudes.adicionPresupuesto.listaDetallesAdicionPresupuesto}"
+							emptyMessage="No ha sido agregada una adición de presupuesto">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Rubro" />
+								</f:facet>
+								<h:outputText
+									value="#{detalleAdicionPresupuesto.tipoRubro.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Valor adición" />
+								</f:facet>
+								<h:outputText
+									value="#{detalleAdicionPresupuesto.valorAdicionRubro}"
+									style="text-align:right;">
+									<f:convertNumber currencySymbol="$" groupingUsed="true"
+										type="currency" minFractionDigits="0" maxFractionDigits="0" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Valor anterior" />
+									<br />
+									<h:outputText value="a la adición" />
+								</f:facet>
+
+								<h:outputText
+									value="#{detalleAdicionPresupuesto.valorRubroAntesAdicion}"
+									style="text-align:right;">
+									<f:convertNumber currencySymbol="$" groupingUsed="true"
+										type="currency" minFractionDigits="0" maxFractionDigits="0" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Valor posterior" />
+									<br />
+									<h:outputText value="a la adición" />
+								</f:facet>
+								<h:outputText
+									value="#{detalleAdicionPresupuesto.valorRubroDespuesAdicion}"
+									style="text-align:right;">
+									<f:convertNumber currencySymbol="$" groupingUsed="true"
+										type="currency" minFractionDigits="0" maxFractionDigits="0" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton
+									action="#{manejadorSolicitudes.eliminarDetalleAdicionPresupuesto}"
+									value="Eliminar" update="@form">
+									<f:setPropertyActionListener
+										value="#{detalleAdicionPresupuesto}"
+										target="#{manejadorSolicitudes.detalleAdicionPresupuestoSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+					<h:outputText value="Contenido que desea cambiar: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 4}" />
+					<p:selectOneMenu style="width:200px"
+						value="#{manejadorSolicitudes.tipoCambioContenidoSeleccionado}"
+						id="listaTiposDocumentoInvestigador"
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 4}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorSolicitudes.tiposCambioContenido}" />
+						<p:ajax update="@form" process="@form" />
+					</p:selectOneMenu>
+					<h:outputText id="labelTipoLab" value=""
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 4 and manejadorSolicitudes.tipoCambioContenidoSeleccionado == '5'}" />
+					<p:selectOneRadio id="tipoSolLabRadio" converter="ConvertidorTipos"
+						value="#{manejadorSolicitudes.nuevaSolicitud.tipoSolLab}"
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 4 and manejadorSolicitudes.tipoCambioContenidoSeleccionado == '5'}">
+						<f:selectItems value="#{manejadorSolicitudes.tipoSolicitudLabs}" />
+					</p:selectOneRadio>
+					<h:outputText value="Descripción cambio de contenido: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 4}" />
+					<p:inputTextarea
+						value="#{manejadorSolicitudes.nuevaSolicitud.descripcionCambioContenido}"
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 4}"
+						cols="70" maxlength="3000" />
+					<h:outputText value="Detalle de solicitud de prórroga: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 22}" />
+					<p:panel
+						rendered="#{manejadorSolicitudes.tipoSolicitudUsada == 22}"
+						id="panelNuevoInvestigadorPrincipal">
+						<p:messages id="msgsInvestigadorPrincipal" />
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorSolicitudes.solicitudInvestigadorPrincipal == null}">
+							<p:row>
+								<p:column>
+									Por favor seleccione la fecha propuesta para la finalización del proyecto (debe ser mayor a la fecha de finalización actual):
+								</p:column>
+								<p:column>
+									<p:calendar id="idFechaPropuestaTerminacion" pages="1"
+										locale="es" readonlyInput="true" pattern="dd/MM/yyyy"
+										disabled="#{not empty manejadorSolicitudes.listaInvestigadoresProrroga}"
+										navigator="true"
+										value="#{manejadorSolicitudes.nuevaSolicitud.fechaEsperadaTerminacion}"
+										mindate="#{manejadorSolicitudes.fechaFinalProyecto}">
+										<p:ajax event="dateSelect"
+											listener="#{manejadorSolicitudes.agregarDirectorProrroga}"
+											update="@form" process="@form" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" />
+									</p:calendar>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<br />
+						<p:panelGrid id="investigadoresProrroga"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="text-align: center;" colspan="2">
+										Seleccione los investigadores que continuarán el proyecto durante la prórroga e indique la cantidad de semanas adicionales que estarán vinculados al proyecto.
+										El tiempo de prórroga se cuenta automáticamente para el docente investigador principal del proyecto.
+									</p:column>
+							</p:row>
+							<p:row style="witdh:15%">
+								<p:column>
+									<h:outputText value="Investigador: " />
+								</p:column>
+								<p:column style="text-align: center; witdh:85%;">
+									<p:selectOneMenu style="width:300px" panelStyle="width:30px"
+										id="selectListaInvestigadoresInternosActuales"
+										value="#{manejadorSolicitudes.investigadorInternoProyecto}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems
+											value="#{manejadorSolicitudes.investigadoresInternosProyectoItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText
+										value="Semanas adicionales de dedicación al proyecto:" />
+								</p:column>
+								<p:column>
+									<p:inputText
+										value="#{manejadorSolicitudes.semanasAdicionalesInvProrroga}"
+										style="width:70px" maxlength="4" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align: center;" colspan="2">
+									<p:commandButton
+										action="#{manejadorSolicitudes.agregarIntegranteProrroga}"
+										value="Agregar investigador a prórroga" update="@form"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:dataTable var="solicitudInvestigadorInterno"
+										id="tablaNuevosIntegrantesProrroga"
+										value="#{manejadorSolicitudes.listaInvestigadoresProrroga}"
+										style="margin-top: 10px;"
+										emptyMessage="No se han agregado integrantes en la solicitud de prórroga.">
+										<p:column headerText="Nombre">
+											<h:outputText
+												value="#{solicitudInvestigadorInterno.investigador.nombreCompletoMinusculas}" />
+										</p:column>
+										<p:column headerText="Tipo de vinculación">
+											<h:outputText
+												value="#{solicitudInvestigadorInterno.tipo.nombre}" />
+										</p:column>
+										<p:column headerText="Horas semana">
+											<h:outputText
+												value="#{solicitudInvestigadorInterno.dedicacionHorasSemana}" />
+										</p:column>
+										<p:column headerText="Semanas adicionales">
+											<h:outputText
+												value="#{solicitudInvestigadorInterno.numeroSemanasAdicional}" />
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Valor adicional " />
+												<br />
+												<h:outputText value="(dedicación-$)" />
+											</f:facet>
+											<h:outputText id="valorContrapartidaDocente"
+												value="#{solicitudInvestigadorInterno.valorPagar}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													type="currency" minFractionDigits="0" maxFractionDigits="0" />
+											</h:outputText>
+										</p:column>
+										<p:column>
+											<p:commandButton
+												action="#{manejadorSolicitudes.eliminarIntegranteProrroga}"
+												icon="ui-icon-trash" title="Quitar de la lista"
+												update="@form" onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()">
+												<f:setPropertyActionListener
+													value="#{solicitudInvestigadorInterno}"
+													target="#{manejadorSolicitudes.solicitudInvestigadorProSeleccionada}" />
+											</p:commandButton>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+
+
+
+					<h:outputText value="Número de especímenes: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+					<p:inputText id="numero_especimenes"
+						value="#{manejadorSolicitudes.nuevaSolicitud.numeroEspecimenes}"
+						converterMessage="El número de especímenes debe ser un entero consistente en uno o más dígitos."
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+					<h:outputText
+						value="Especímenes objeto de recolección y movilización: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+					<p:inputTextarea cols="70" id="especimenes_recoleccion"
+						value="#{manejadorSolicitudes.nuevaSolicitud.familiaTaxonomica}"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}"
+						maxlength="800" counter="counterEspecimenes"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value=""
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+					<h:outputText id="counterEspecimenes"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+					<h:outputText
+						value="Ubicación recolecta (Departamento y municipio): "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.nuevaSolicitud.ubicacion!=null}" />
+					<p:inputTextarea cols="70" id="ubicacion_recolecta"
+						value="#{manejadorSolicitudes.nuevaSolicitud.ubicacion}"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.nuevaSolicitud.ubicacion!=null}"
+						maxlength="800" counter="counterUbicacion"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value=""
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.nuevaSolicitud.ubicacion!=null}" />
+					<h:outputText id="counterUbicacion"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.nuevaSolicitud.ubicacion!=null}" />
+					<h:outputText value="Ubicación de recolección: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+
+					<p:panel
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}">
+						<p:panelGrid align="center" style="width: 100%;"
+							id="ciudadesAgregar">
+							<p:row>
+								<p:column>
+									<h:outputText value="Departamento (de recolección):"
+										rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="width:250px"
+										rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}"
+										value="#{manejadorSolicitudes.departamentoSeleccionado}"
+										effect="fade" id="deptoSR" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems
+											value="#{manejadorSolicitudes.listaDepartamentos}" />
+										<p:ajax update="depSR"
+											listener="#{manejadorSolicitudes.cambiarCiudad}"></p:ajax>
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Municipio (de recolección):"
+										rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="width:250px"
+										rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}"
+										value="#{manejadorSolicitudes.ciudadSeleccionada}"
+										effect="fade" id="depSR" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{manejadorSolicitudes.ciudadItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row style="text-align:center;">
+								<p:column colspan="2" style="text-align:center;">
+									<p:commandButton icon="ui-icon-plus" value="Agregar Municipio"
+										action="#{manejadorSolicitudes.agregarCiudad}"
+										update="tabla-ciudades" process="ciudadesAgregar" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:messages for="ubicacion" autoUpdate="true" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:dataTable
+										value="#{manejadorSolicitudes.nuevaSolicitud.listaCiudades}"
+										id="tabla-ciudades" var="ciudad"
+										emptyMessage="No ha sido asociado ninguna ciudad a la solicitud.">
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Departamento" />
+											</f:facet>
+											<h:outputText value="#{ciudad.ciudad.departamento.nombre}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Municipio" />
+											</f:facet>
+											<h:outputText value="#{ciudad.ciudad.nombre}" />
+										</p:column>
+										<p:column style="width: 50px;"
+											rendered="#{!manejadorSolicitudAvalHome.esConsulta}">
+											<t:div style="text-align: center;">
+												<p:commandButton
+													action="#{manejadorSolicitudes.eliminarCiudad}"
+													onclick="if(!confirm('¿Esta seguro que desea eliminar esta ciudad?'))return false"
+													icon="ui-icon-trash" update="tabla-ciudades"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()">
+													<f:setPropertyActionListener value="#{ciudad}"
+														target="#{manejadorSolicitudes.ciudad}" />
+												</p:commandButton>
+											</t:div>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<h:outputText value="Periodo en el que va a utilizar el permiso: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+
+					<p:panel
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}">
+						<p:panelGrid align="center" style="width: 100%;" id="fechas">
+							<p:row>
+								<p:column>
+									<h:outputText value="Fecha inicial:"
+										rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+								</p:column>
+								<p:column>
+									<p:calendar id="idFecharecollecta" pages="1" locale="es"
+										readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+										value="#{manejadorSolicitudes.nuevaSolicitud.fechaInicioRecoleccion}"
+										mindate="#{manejadorSolicitudes.fechaMinPermiso}"
+										maxdate="#{manejadorSolicitudes.fechaFinalProyecto}">
+										<p:ajax event="dateSelect"
+											listener="#{manejadorSolicitudes.calcularFechaFinalPermiso}"
+											update="@form" process="@form" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" />
+									</p:calendar>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Fecha final:"
+										rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+								</p:column>
+								<p:column>
+									<p:calendar id="idFecharecollectaFinal" pages="1" locale="es"
+										readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+										value="#{manejadorSolicitudes.nuevaSolicitud.fechaEsperadaTerminacion}"
+										mindate="#{manejadorSolicitudes.fechaMinPermiso}"
+										maxdate="#{manejadorSolicitudes.fechaMaximaPermiso}">
+									</p:calendar>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+
+					<h:outputText value="Sede destino: " style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}" />
+					<p:selectOneMenu id="opcionSede"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29}"
+						value="#{manejadorSolicitudes.nuevaSolicitud.sede}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{manejadorSolicitudes.listaSedesItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Detalle estudiantes: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.proyectoActual.esPermisoMarcoAsignatura}" />
+					<p:panel
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.proyectoActual.esPermisoMarcoAsignatura}"
+						id="panelIntegrantes">
+						<p:messages id="msgsIntegranteAgregar" />
+						<p:panel header="Estudiantes" id="panelEstudiantes">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								style="width: 100%;">
+								<p:row>
+									<p:column colspan="2">
+									Por favor ingrese la información por cada estudiantes que desea agregar al certificado de movilización y seleccione la opción 'Agregar':
+								</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tipo de vinculación:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu style="width:240px" panelStyle="width:240px"
+											value="#{manejadorSolicitudes.tipoInvestigador}"
+											id="listaTiposVinculacionInvestigador">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorSolicitudes.tiposInvestigadorItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tipo de documento:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu style="width:200px"
+											value="#{manejadorSolicitudes.tipoDocumento}"
+											id="listaTiposDocumentoInvestigador"
+											disabled="#{manejadorSolicitudes.mostrarInformacionExterno}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorSolicitudes.tipoDocumentoItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Número de documento:" />
+									</p:column>
+									<p:column>
+										<p:inputText
+											value="#{manejadorSolicitudes.documentoIdentidad}"
+											style="width:200px" maxlength="25"
+											disabled="#{manejadorSolicitudes.mostrarInformacionExterno}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align: center;">
+										<p:commandButton value="Agregar"
+											action="#{manejadorSolicitudes.agregarIntegrante}"
+											update="@form" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align: center;">
+										<p:dataTable var="estudiante" id="tablaNuevosIntegrantes"
+											value="#{manejadorSolicitudes.listaInvestigadoresNuevos}"
+											style="margin-top: 10px;"
+											emptyMessage="No se han agregado estudiantes a la solicitud.">
+											<p:column headerText="Documento" style="width:35%;">
+												<h:outputText
+													value="#{estudiante.investigador.id.tipoDocumento} - #{estudiante.investigador.id.documento}" />
+											</p:column>
+											<p:column headerText="Nombre" style="width:60%;">
+												<h:outputText
+													value="#{estudiante.investigador.nombreCompletoMinusculas}" />
+											</p:column>
+											<p:column headerText="Tipo de vinculación" style="width:35%;">
+												<h:outputText value="#{estudiante.tipo.nombre}" />
+											</p:column>
+											<p:column headerText="E-mail" style="width:35%;">
+												<h:outputText value="#{estudiante.investigador.email}" />
+											</p:column>
+											<p:column style="width:5%;">
+												<p:commandButton
+													action="#{manejadorSolicitudes.eliminarIntegrante}"
+													icon="ui-icon-trash" title="Quitar de la lista"
+													update="@form" onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()">
+													<f:setPropertyActionListener value="#{estudiante}"
+														target="#{manejadorSolicitudes.solicitudInvestigadorSeleccionada}" />
+												</p:commandButton>
+											</p:column>
+										</p:dataTable>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panel>
+					</p:panel>
+
+					<h:outputText value="Institución nacional de apoyo: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32}" />
+					<p:inputText id="nombreIna" size="25" style="width:95%"
+						value="#{manejadorSolicitudes.nuevaSolicitud.otraInstitucionNacionalApoyo}"
+						maxlength="550"
+						validatorMessage="El nombre de la institución nacional de apoyo debe tener máximo 500 caracteres"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32}">
+					</p:inputText>
+
+					<h:outputText value="Institución nacional de apoyo: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33}" />
+					<p:selectOneMenu id="opcionInstitucion"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33}"
+						value="#{manejadorSolicitudes.nuevaSolicitud.institucionApoyoBiodiversidad.identificador.tipo}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorSolicitudes.institucionesApoyoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 34 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 35}"
+						value="Documentos requeridos:" style=' font-weight: bold' />
+					<t:div
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de solicitud debidamente diligenciado " />
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/biodiversidad/F413-formato-ministerio-ambiente-desarrollo-sostenible.docx"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+							<li><h:outputText
+									value=" Carta de compromiso de la Institución Nacional de Apoyo." />
+							</li>
+							<li><h:outputText
+									value=" Documento que avale la recolección de los especímenes si aplica (Permiso de recolección contratos accesorios con el proveedor del recurso, o la certificación de la colección biológica de donde proviene el recurso)." />
+							</li>
+							<li><h:outputText
+									value=" Acta de protocolización de la consulta previa cuando aplique." />
+							</li>
+							<li><h:outputText
+									value=" Copia del documento de identidad del responsable técnico." />
+							</li>
+							<li><h:outputText
+									value=" Hojas de vida resumidas del responsable técnico y del equipo de trabajo." />
+							</li>
+							<li><h:outputText
+									value=" Certificación de presencia o no de grupos éticos en el área de influencia de un proyecto, obra o actividad, si aplica " />
+								<h:outputLink
+									value="http://www.mininterior.gov.co/mision/direccion-de-consulta-previa/certificacion-de-presencia-de-grupos-etnicos-ano-2013-mayo/certificaciones-de-presencia-de-grupos-etnicos"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+							<li><h:outputText
+									value=" En caso de firmar un contrato para amnistía (según lo dispuesto en el artículo 252 de la Ley 1753 de 2015), por favor adjuntar todas las publicaciones derivadas y/o un informe de las actividades desarrolladas hasta el momento." />
+							</li>
+						</ul>
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de solicitud debidamente diligenciado " />
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/biodiversidad/F413-formato-ministerio-ambiente-desarrollo-sostenible.docx"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+							<li><h:outputText
+									value=" Documento que avale la recolección de los especímenes si aplica (Permiso de recolección contratos accesorios con el proveedor del recurso, o la certificación de la colección biológica de donde proviene el recurso)." />
+							</li>
+							<li><h:outputText
+									value=" Acta de protocolización de la consulta previa cuando aplique." />
+							</li>
+							<li><h:outputText
+									value=" Copia del documento de identidad del responsable técnico." />
+							</li>
+							<li><h:outputText
+									value=" Hojas de vida resumidas del responsable técnico y del equipo de trabajo." />
+							</li>
+							<li><h:outputText
+									value=" Certificación de presencia o no de grupos éticos en el área de influencia de un proyecto, obra o actividad, si aplica " />
+								<h:outputLink
+									value="http://www.mininterior.gov.co/mision/direccion-de-consulta-previa/certificacion-de-presencia-de-grupos-etnicos-ano-2013-mayo/certificaciones-de-presencia-de-grupos-etnicos"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+						</ul>
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 34}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de liquidación debidamente diligenciado " />
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/biodiversidad/solicitud-liquidacion-servicio-evaluacion-permisos.doc"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+							<li><h:outputText
+									value=" Diligenciamiento de los numerales del 8 al 35 del formulario de solicitud para la expedición del permiso de exportación/importación de especímenes no listados en los apéndices cites con fines investigación científica. Para la casilla 33 por favor relacionar el tipo de muestra con las cantidades y unidades de medida (ejemplo: 6 ejemplares en tubos de vidrio de 5 ml.)" />
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/biodiversidad/formato-exportacion-2016.xlsx"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+							<li><h:outputText
+									value=" Adjuntar un memorial donde se especifique: la metodología y propósito del proyecto, la metodología de la recolección, la forma de empaque y envío, el propósito de la exportación y la importación, y especificar el destino final (depósito, destrucción o devolución)" />
+							</li>
+							<li><h:outputText
+									value=" Adjuntar la documentación que acredite la obtención legal y procedencia de los especímenes, tales como permisos o autorizaciones de aprovechamiento, registro de plantación forestal, salvoconductos de movilización, contrato de acceso a recurso genético, consulta previa, entre otros. " />
+							</li>
+							<li><h:outputText
+									value=" Convenio entre la Universidad Nacional de Colombia y quien recibe la muestra y/o carta de intención en español. En caso de envío de muestras para secuenciación por favor allegar la factura o la orden de servicio y documento que certifique la destrucción de las muestras." />
+							</li>
+						</ul>
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 35}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de liquidación debidamente diligenciado " />
+								<h:outputLink
+									value="http://www.suit.gov.co/VisorSUIT/index.jsf?FI=30157"
+									target="_blank"
+									style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+									<h:outputText value="(descargar)." />
+								</h:outputLink></li>
+							<li><h:outputText
+									value=" Adjuntar los siguientes documentos, en caso de no haberlo realizado con anterioridad:" />
+								<ul>
+									<li><h:outputText
+											value=" Documento de identidad del responsable del proyecto." />
+									</li>
+									<li><h:outputText
+											value=" Curriculum vitae del responsable del proyecto y su equipo de trabajo." />
+									</li>
+									<li><h:outputText
+											value=" De ser el caso, acto administrativo de levantamiento de vedas." />
+									</li>
+									<li><h:outputText
+											value=" Formato de recolección de solicitud de autorización de recolección de especies amenazadas, vedadas o endémicas debidamente diligenciado y firmado." />
+									</li>
+									<li><h:outputText
+											value=" Certificación del Ministerio del Interior sobre la presencia o no de grupos étnicos en el territorio en las localidades propuestas para la recolección de especímenes." />
+									</li>
+									<li><h:outputText
+											value=" Acta de protocolización de la consulta previa cuando sea necesaria." />
+									</li>
+								</ul></li>
+						</ul>
+					</t:div>
+
+					<h:outputText value="Fecha: " style=' font-weight: bold' />
+					<h:outputText value="#{manejadorSolicitudes.fechaActual}" />
+
+					<h:outputText value="Tipo de documento: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 34 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 35}" />
+					<p:selectOneMenu id="tipo-documento-solicitud"
+						rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 34 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 35}"
+						value="#{manejadorSolicitudes.tipoArchivo}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{manejadorSolicitudes.tipoArchivoItem}" />
+						<p:ajax process="@form" />
+					</p:selectOneMenu>
+
+
+					<h:outputText value="Documentos adjuntos: "
+						style=' font-weight: bold' />
+					<p:panel>
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							style="border-collapse: inherit;" id="panelArchivos">
+							<p:dataTable
+								value="#{manejadorSolicitudes.nuevaSolicitud.listaDocumentos}"
+								id="tabla-archivos-solicitud" var="documento"
+								emptyMessage="No tiene archivos adjuntos"
+								style="border: 1px solid #A6C9E2; width: 500px;">
+								<p:column>
+									<h:outputText value="#{documento.id}" />
+								</p:column>
+								<p:column
+									rendered="#{manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 32 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 33 
+								or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 34 or manejadorSolicitudes.nuevaSolicitud.tipoSolicitud.id == 35}">
+									<h:outputText value="#{documento.tipo.nombre}"
+										rendered="#{documento.tipo.id != null and documento.tipo.id != 0}" />
+									<h:outputText value="Otro"
+										rendered="#{documento.tipo.id == null or documento.tipo.id == 0}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{documento.nombre}" />
+								</p:column>
+								<p:column style="text-align: center;">
+
+									<p:commandButton
+										action="#{manejadorSolicitudes.descargarDocumento}"
+										icon="ui-icon-arrow-1-s" title="Descargar" ajax="false">
+										<f:setPropertyActionListener value="#{documento}"
+											target="#{manejadorSolicitudes.archivoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+								<p:column style="text-align: center;">
+									<p:commandButton
+										action="#{manejadorSolicitudes.eliminarDocumento}"
+										icon="ui-icon-trash" title="Eliminar" update="@form">
+										<f:setPropertyActionListener value="#{documento}"
+											target="#{manejadorSolicitudes.archivoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitudes.guardarArchivo}"
+								mode="advanced" auto="true" update="panelArchivos,msgs"
+								process="agregar-solicitud,msgs" multiple="true"
+								sizeLimit="3000000" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" label="Seleccionar archivo" />
+						</p:panelGrid>
+					</p:panel>
+				</p:panelGrid>
+				<t:div style="width: 600px; margin-top: 15px; text-align: center;">
+					<p:commandButton action="#{manejadorSolicitudes.guardarDespues}"
+						icon="ui-icon-disk" value="Guardar y continuar después"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						update="@form" process="@all" ajax="false" />
+					<p:commandButton action="#{manejadorSolicitudes.guardarEnviar}"
+						icon="ui-icon-disk" value="Guardar y enviar"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						update="@form" process="@all" />
+					<p:commandButton
+						action="#{manejadorSolicitudes.verAgregarSolicitud}"
+						icon="ui-icon-closethick" value="Cancelar"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						update="@form" />
+				</t:div>
+			</p:panel>
+			<p:panel rendered="#{manejadorSolicitudes.existeVistaSolicitud}"
+				id="id-existeVistaSolicitud">
+				<p:messages id="msgs" />
+				<t:div
+					rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta=='G'}"
+					style="width: 100%; text-align: center; height: 30px;">
+					<h:outputText
+						value="Esta solicitud aún no ha sido enviada para revisión
+								por parte del coordinador de seguimiento."
+						style="color: #FF8000;" />
+				</t:div>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: inherit;">
+					<h:outputText value="Id: " style=' font-weight: bold' />
+					<h:outputText value="#{manejadorSolicitudes.vistaSolicitud.id}" />
+					<h:outputText value="Tipo solicitud: " style=' font-weight: bold' />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.nombre}" />
+					<h:outputText value="Número de especímenes: "
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}"
+						style='font-weight: bold' />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.numeroEspecimenes}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}" />
+					<h:outputText
+						value="Especímenes objeto de recolección y movilización: "
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}"
+						style='font-weight: bold' />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.familiaTaxonomica}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}" />
+					<h:outputText value="Ubicación:"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.vistaSolicitud.ubicacion!=null}"
+						style='font-weight: bold' />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.ubicacion}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.vistaSolicitud.ubicacion!=null}" />
+					<h:outputText value="Ubicación de recolección: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}" />
+
+					<p:panel
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}">
+						<p:panelGrid align="center" style="width: 100%;" id="ciudades">
+							<p:row>
+								<p:column>
+									<p:dataTable
+										value="#{manejadorSolicitudes.vistaSolicitud.listaCiudades}"
+										id="tabla-ciudades-consulta" var="ciudad"
+										emptyMessage="No ha sido asociado ninguna ciudad a la solicitud.">
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Departamento" />
+											</f:facet>
+											<h:outputText value="#{ciudad.ciudad.departamento.nombre}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Municipio" />
+											</f:facet>
+											<h:outputText value="#{ciudad.ciudad.nombre}" />
+										</p:column>
+									</p:dataTable>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<h:outputText value="Sede destino: "
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}"
+						style='font-weight: bold' />
+					<p:selectOneMenu id="opcionSede"
+						value="#{manejadorSolicitudes.vistaSolicitud.sede}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29}"
+						disabled="true">
+						<f:selectItems value="#{manejadorSolicitudes.listaSedesItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Institución nacional de apoyo: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 32}" />
+					<p:inputText id="nombreInaConsulta" size="25" style="width:95%"
+						value="#{manejadorSolicitudes.vistaSolicitud.otraInstitucionNacionalApoyo}"
+						maxlength="550"
+						validatorMessage="El nombre de la institución nacional de apoyo debe tener máximo 500 caracteres"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 32}"
+						disabled="true">
+					</p:inputText>
+					<h:outputText value="Institución nacional de apoyo: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 33}" />
+					<p:selectOneMenu id="opcionInstitucionConsulta" disabled="true"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 33}"
+						value="#{manejadorSolicitudes.vistaSolicitud.institucionApoyoBiodiversidad.identificador.tipo}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorSolicitudes.institucionesApoyoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Detalle estudiantes: "
+						style=' font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.proyectoActual.esPermisoMarcoAsignatura}" />
+					<p:panel
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 29 and manejadorSolicitudes.proyectoActual.esPermisoMarcoAsignatura}"
+						id="panelIntegrantesConsulta">
+						<p:panel header="Estudiantes" id="panelEstudiantesConsulta">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								style="width: 100%;">
+								<p:row>
+									<p:column colspan="2" style="text-align: center;">
+										<p:dataTable var="estudiante"
+											id="tablaNuevosIntegrantesConsulta"
+											value="#{manejadorSolicitudes.listaInvestigadoresNuevos}"
+											style="margin-top: 10px;"
+											emptyMessage="No se han agregado nuevos integrantes a la solicitud.">
+											<p:column headerText="Nombre" style="width:60%;">
+												<h:outputText
+													value="#{estudiante.investigador.nombreCompletoMinusculas}" />
+											</p:column>
+											<p:column headerText="Tipo de vinculación" style="width:35%;">
+												<h:outputText value="#{estudiante.tipo.nombre}" />
+											</p:column>
+										</p:dataTable>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panel>
+					</p:panel>
+
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 32 or manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 33 or manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 34 or manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 35}"
+						value="Documentos requeridos:" style=' font-weight: bold' />
+					<t:div
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 32}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de solicitud debidamente diligenciado " />
+							</li>
+							<li><h:outputText
+									value=" Carta de compromiso de la Institución Nacional de Apoyo." />
+							</li>
+							<li><h:outputText
+									value=" Documento que avale la recolección de los especímenes si aplica (Permiso de recolección contratos accesorios con el proveedor del recurso, o la certificación de la colección biológica de donde proviene el recurso)." />
+							</li>
+							<li><h:outputText
+									value=" Acta de protocolización de la consulta previa cuando aplique." />
+							</li>
+							<li><h:outputText
+									value=" Copia del documento de identidad del responsable técnico." />
+							</li>
+							<li><h:outputText
+									value=" Hojas de vida resumidas del responsable técnico y del equipo de trabajo." />
+							</li>
+							<li><h:outputText
+									value=" En caso de firmar un contrato para amnistía (según lo dispuesto en el artículo 252 de la Ley 1753 de 2015), por favor adjuntar todas las publicaciones derivadas y/o un informe de las actividades desarrolladas hasta el momento." />
+							</li>
+						</ul>
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 33}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de solicitud debidamente diligenciado. " />
+							</li>
+							<li><h:outputText
+									value=" Documento que avale la recolección de los especímenes si aplica (Permiso de recolección contratos accesorios con el proveedor del recurso, o la certificación de la colección biológica de donde proviene el recurso)." />
+							</li>
+							<li><h:outputText
+									value=" Acta de protocolización de la consulta previa cuando aplique." />
+							</li>
+							<li><h:outputText
+									value=" Copia del documento de identidad del responsable técnico." />
+							</li>
+							<li><h:outputText
+									value=" Hojas de vida resumidas del responsable técnico y del equipo de trabajo." />
+							</li>
+						</ul>
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 34}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de liquidación debidamente diligenciado " />
+							</li>
+							<li><h:outputText
+									value=" Diligenciamiento de los numerales del 8 al 35 del formulario de solicitud para la expedición del permiso de exportación/importación de especímenes no listados en los apéndices cites con fines investigación científica. Para la casilla 33 por favor relacionar el tipo de muestra con las cantidades y unidades de medida (ejemplo: 6 ejemplares en tubos de vidrio de 5 ml.)" />
+							</li>
+							<li><h:outputText
+									value=" Adjuntar un memorial donde se especifique: la metodología y propósito del proyecto, la metodología de la recolección, la forma de empaque y envío, el propósito de la exportación y la importación, y especificar el destino final (depósito, destrucción o devolución)" />
+							</li>
+							<li><h:outputText
+									value=" Adjuntar la documentación que acredite la obtención legal y procedencia de los especímenes, tales como permisos o autorizaciones de aprovechamiento, registro de plantación forestal, salvoconductos de movilización, contrato de acceso a recurso genético, consulta previa, entre otros. " />
+							</li>
+							<li><h:outputText
+									value=" Convenio entre la Universidad Nacional de Colombia y quien recibe la muestra y/o carta de intención en español. En caso de envío de muestras para secuenciación por favor allegar la factura o la orden de servicio y documento que certifique la destrucción de las muestras." />
+							</li>
+						</ul>
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 35}">
+						<ul>
+							<li><h:outputText
+									value=" Formulario de liquidación debidamente diligenciado " />
+							</li>
+							<li><h:outputText
+									value=" Adjuntar los siguientes documentos, en caso de no haberlo realizado con anterioridad:" />
+								<ul>
+									<li><h:outputText
+											value=" Documento de identidad del responsable del proyecto." />
+									</li>
+									<li><h:outputText
+											value=" Curriculum vitae del responsable del proyecto y su equipo de trabajo." />
+									</li>
+									<li><h:outputText
+											value=" De ser el caso, acto administrativo de levantamiento de vedas." />
+									</li>
+									<li><h:outputText
+											value=" Formato de recolección de solicitud de autorización de recolección de especies amenazadas, vedadas o endémicas debidamente diligenciado y firmado." />
+									</li>
+									<li><h:outputText
+											value=" Certificación del Ministerio del Interior sobre la presencia o no de grupos étnicos en el territorio en las localidades propuestas para la recolección de especímenes." />
+									</li>
+									<li><h:outputText
+											value=" Acta de protocolización de la consulta previa cuando sea necesaria." />
+									</li>
+								</ul></li>
+						</ul>
+					</t:div>
+					<h:outputText value="Fecha: " style='font-weight: bold' />
+					<h:outputText value="#{manejadorSolicitudes.vistaSolicitud.fecha}" />
+					<h:outputText value="Respuesta: " style='font-weight: bold' />
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta=='A'}"
+						value="Aprobada" />
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta=='R'}"
+						value="Rechazada" />
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta=='G'}"
+						value="Ingresando" />
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta=='T'}"
+						value="En estudio/trámite" />
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta=='C'}"
+						value="Devuelto para correcciones" />
+					<h:outputText
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuesta == null}"
+						value="Sin respuesta" />
+					<h:outputText value="Descripción respuesta: "
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuestaTramite != null}"
+						style="font-weight: bold" />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.respuestaTramite}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.respuestaTramite != null}" />
+					<h:outputText value="" />
+					<p:commandLink
+						action="#{manejadorSolicitudes.mostrarHistoricoCambioEstadoSolicitud}"
+						value="Ver histórico de cambio de estado de la solicitud"
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;"
+						oncomplete="dialogHistoricoCambioEstadoSolicitud.show()"
+						update="@form">
+						<f:setPropertyActionListener
+							value="#{manejadorSolicitudes.vistaSolicitud}"
+							target="#{manejadorSolicitudes.solicitudSeleccionada}" />
+					</p:commandLink>
+					<h:outputText value="Justificación: " style='font-weight: bold' />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.descripcion}" />
+					<h:outputText value="Documentos adjuntos: "
+						style='font-weight: bold' />
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: inherit;">
+						<p:dataTable
+							value="#{manejadorSolicitudes.vistaSolicitud.listaDocumentos}"
+							var="documento" emptyMessage="No tiene archivos adjuntos"
+							style="border: 1px solid #A6C9E2; width: 500px;">
+							<p:column>
+								<h:outputText value="#{documento.id}" />
+							</p:column>
+							<p:column
+								rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 32 or manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 33}">
+								<h:outputText value="#{documento.tipo.nombre}"
+									rendered="#{documento.tipo.id != null and documento.tipo.id != 0}" />
+								<h:outputText value="Otro"
+									rendered="#{documento.tipo.id == null or documento.tipo.id == 0}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{documento.nombre}" />
+							</p:column>
+							<p:column style="text-align:center;">
+								<p:commandButton
+									action="#{manejadorSolicitudes.descargarDocumento}"
+									value="Descargar" ajax="false">
+									<f:setPropertyActionListener value="#{documento}"
+										target="#{manejadorSolicitudes.archivoSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<h:outputText value="Detalle cambios de rubro: "
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.detallaRubros}" />
+					<p:dataTable var="cambioRubroAux"
+						value="#{manejadorSolicitudes.vistaSolicitud.listaDetalleCambioRubro}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.detallaRubros}"
+						emptyMessage="Ningún rubro fue agregado" style="width: 500px;">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Rubro origen" />
+							</f:facet>
+							<h:outputText value="#{cambioRubroAux.gasto.tipoRubro.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Rubro destino" />
+							</f:facet>
+							<h:outputText value="#{cambioRubroAux.tipoRubro.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
+							<h:outputText value="#{cambioRubroAux.valor}" />
+						</p:column>
+					</p:dataTable>
+					<h:outputText value="Nuevo investigador principal:"
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 24 and manejadorSolicitudes.solicitudInvestigadorPrincipal != null}" />
+					<h:outputText
+						value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.investigador.nombreCompletoMinusculas}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 24 and manejadorSolicitudes.solicitudInvestigadorPrincipal != null}" />
+					<h:outputText value="Tiempo de dedicación(horas semanales) - td:"
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 24 and manejadorSolicitudes.solicitudInvestigadorPrincipal != null}" />
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: inherit;"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 24 and manejadorSolicitudes.solicitudInvestigadorPrincipal != null}">
+						<t:div style="width: 100px;">
+							<h:outputText
+								value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.dedicacionHorasSemana}" />
+						</t:div>
+						<t:div style="width: 145px;">
+							<h:outputText
+								value="Tiempo total de dedicación al proyecto (meses) - tt:"
+								style='font-weight: bold' />
+						</t:div>
+						<h:outputText
+							value="#{manejadorSolicitudes.solicitudInvestigadorPrincipal.numeroMeses}" />
+					</p:panelGrid>
+					<h:outputText value="Detalle solicitud de cambio integrantes:"
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 5}" />
+					<p:dataTable
+						value="#{manejadorSolicitudes.listaInvestigadoresConsulta}"
+						id="tabla-archivos-solicitud-integrantes" var="solicitud"
+						emptyMessage="No tiene detalles de cambio asociados."
+						style="border: 1px solid #A6C9E2; width: 500px;"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 5}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo de" />
+								<br />
+								<h:outputText value="solicitud" />
+							</f:facet>
+							<h:outputText rendered="#{solicitud.tipoSolicitud == 'A'}"
+								value="Agregar" />
+							<h:outputText rendered="#{solicitud.tipoSolicitud == 'R'}"
+								value="Eliminar" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Documento de" />
+								<br />
+								<h:outputText value="identidad" />
+							</f:facet>
+							<h:outputText
+								value="#{solicitud.investigador.id.tipoDocumento} - #{solicitud.investigador.id.documento}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText
+								value="#{solicitud.investigador.nombreCompletoMinusculas}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo de" />
+								<br />
+								<h:outputText value="vinculación" />
+							</f:facet>
+							<h:outputText value="#{solicitud.tipo.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="td" />
+							</f:facet>
+							<h:outputText value="#{solicitud.dedicacionHorasSemana}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="tt" />
+							</f:facet>
+							<h:outputText value="#{solicitud.numeroMeses}" />
+						</p:column>
+					</p:dataTable>
+					<h:outputText value="" style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 5}" />
+					<h:outputText
+						value="td: Tiempo de dedicación al proyecto (horas semanales), tt: Tiempo total de dedicación al proyecto (meses) "
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 5}" />
+					<h:outputText
+						value="Fecha propuesta para la finalización del proyecto:"
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 22 and manejadorSolicitudes.vistaSolicitud.fechaEsperadaTerminacion != null}" />
+					<h:outputText
+						value="#{manejadorSolicitudes.vistaSolicitud.fechaEsperadaTerminacion}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 22 and manejadorSolicitudes.vistaSolicitud.fechaEsperadaTerminacion != null}" />
+					<h:outputText value="Integrantes incluidos en la prórroga: " style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 22 and not empty manejadorSolicitudes.listaInvestigadoresProrroga}" />
+
+
+					<p:dataTable var="solicitudInvestigadorInterno"
+						id="tablaNuevosIntegrantesProrrogaConsulta"
+						value="#{manejadorSolicitudes.listaInvestigadoresProrroga}"
+						style="margin-top: 10px;"
+						emptyMessage="No se han agregado integrantes en la solicitud de prórroga."
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 22 and not empty manejadorSolicitudes.listaInvestigadoresProrroga}">
+						<p:column headerText="Nombre">
+							<h:outputText
+								value="#{solicitudInvestigadorInterno.investigador.nombreCompletoMinusculas}" />
+						</p:column>
+						<p:column headerText="Tipo de vinculación">
+							<h:outputText value="#{solicitudInvestigadorInterno.tipo.nombre}" />
+						</p:column>
+						<p:column headerText="Horas semana">
+							<h:outputText
+								value="#{solicitudInvestigadorInterno.dedicacionHorasSemana}" />
+						</p:column>
+						<p:column headerText="Semanas adicionales">
+							<h:outputText
+								value="#{solicitudInvestigadorInterno.numeroSemanasAdicional}" />
+						</p:column>
+						<p:column style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText value="Valor adicional " />
+								<br />
+								<h:outputText value="(dedicación-$)" />
+							</f:facet>
+							<h:outputText id="valorContrapartidaDocente"
+								value="#{solicitudInvestigadorInterno.valorPagar}">
+								<f:convertNumber currencySymbol="$" groupingUsed="true"
+									type="currency" minFractionDigits="0" maxFractionDigits="0" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+
+					<h:outputText value="Fuente de Financiación: "
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 8}" />
+					<h:outputText
+						value="#{manejadorSolicitudes.adicionPresupuesto.financiacion.fuente.descripcion}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 8}" />
+					<h:outputText value="Valor Adición: " style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 8}" />
+					<h:outputText
+						value="#{manejadorSolicitudes.adicionPresupuesto.valorAdicionSolicitud}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 8}">
+						<f:convertNumber currencySymbol="$" groupingUsed="true"
+							type="currency" minFractionDigits="0" maxFractionDigits="0" />
+					</h:outputText>
+					<h:outputText value="Valor Adición Rubros: "
+						style='font-weight: bold'
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 8}" />
+					<p:dataTable var="detalleAdicionPresupuesto"
+						value="#{manejadorSolicitudes.adicionPresupuesto.listaDetallesAdicionPresupuesto}"
+						rendered="#{manejadorSolicitudes.vistaSolicitud.tipoSolicitud.id == 8}"
+						emptyMessage="Ningún rubro fue agregado" style="width: 500px;">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Rubro" />
+							</f:facet>
+							<h:outputText
+								value="#{detalleAdicionPresupuesto.tipoRubro.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor adición" />
+							</f:facet>
+							<h:outputText
+								value="#{detalleAdicionPresupuesto.valorAdicionRubro}"
+								style="text-align:right;">
+								<f:convertNumber currencySymbol="$" groupingUsed="true"
+									type="currency" minFractionDigits="0" maxFractionDigits="0" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor anterior" />
+								<br />
+								<h:outputText value="a la adición" />
+							</f:facet>
+
+							<h:outputText
+								value="#{detalleAdicionPresupuesto.valorRubroAntesAdicion}"
+								style="text-align:right;">
+								<f:convertNumber currencySymbol="$" groupingUsed="true"
+									type="currency" minFractionDigits="0" maxFractionDigits="0" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor posterior" />
+								<br />
+								<h:outputText value="a la adición" />
+							</f:facet>
+							<h:outputText
+								value="#{detalleAdicionPresupuesto.valorRubroDespuesAdicion}"
+								style="text-align:right;">
+								<f:convertNumber currencySymbol="$" groupingUsed="true"
+									type="currency" minFractionDigits="0" maxFractionDigits="0" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<t:div styleClass="estilo-propio" id="panelPropio">
+				<p:dataTable
+					value="#{manejadorSolicitudes.listaSolicitudesProyecto}" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					paginatorAlwaysVisible="false"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					var="solicitud" style="margin-left: 5px;"
+					emptyMessage="No tiene solicitudes registradas">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value="#{solicitud.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{solicitud.tipoSolicitud.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{solicitud.fecha}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText rendered="#{solicitud.respuesta=='A'}"
+							value="Aprobada" />
+						<h:outputText rendered="#{solicitud.respuesta=='R'}"
+							value="Rechazada" />
+						<h:outputText rendered="#{solicitud.respuesta=='G'}"
+							value="Ingresando" style="color:#FF0000; font-weight: bold;" />
+						<h:outputText rendered="#{solicitud.respuesta=='T'}"
+							value="En estudio/Trámite" id="estudio" />
+						<h:outputText rendered="#{solicitud.respuesta=='C'}"
+							value="Devuelta para correcciones" />
+						<p:tooltip for="estudio" styleClass="tooltip-mesage"
+							trackMouse="true">
+							<t:div style="text-align: left; float:left;">
+								<h:outputText value="En estudio ante la entidad competente." />
+							</t:div>
+						</p:tooltip>
+						<h:outputText rendered="#{solicitud.respuesta == null}"
+							value="Sin respuesta" />
+					</p:column>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Opciones" />
+						</f:facet>
+						<p:commandButton action="#{manejadorSolicitudes.verSolicitud}"
+							icon="ui-icon-search" update="@form"
+							rendered="#{solicitud.respuesta!='G' and solicitud.respuesta!='C'}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							title="Consultar" ajax="false">
+							<f:setPropertyActionListener value="#{solicitud}"
+								target="#{manejadorSolicitudes.solicitudSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorSolicitudes.editarSolicitudTabla}"
+							icon="ui-icon-pencil" update="@form"
+							rendered="#{solicitud.respuesta=='G' or solicitud.respuesta=='C'}"
+							title="Editar" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" ajax="false">
+							<f:setPropertyActionListener value="#{solicitud}"
+								target="#{manejadorSolicitudes.solicitudSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorSolicitudes.eliminarSolicitudTabla}"
+							icon="ui-icon-trash" update="@form"
+							rendered="#{solicitud.respuesta=='G'}" title="Eliminar solicitud"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							ajax="false"
+							onclick="if(!confirm('¿Esta seguro de eliminar esta solicitud?'))return false">
+							<f:setPropertyActionListener value="#{solicitud}"
+								target="#{manejadorSolicitudes.solicitudSeleccionada}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+			<p:dialog header="Información financiera del proyecto"
+				widgetVar="dialogInformacionFinanciera" modal="true"
+				resizable="false" width="600">
+				<p:dataTable style="border:none; margin-top: 10px;"
+					var="detalleCambioRubro"
+					value="#{manejadorSolicitudes.detallesCambiosRubro}"
+					emptyMessage="No tiene detalles de cambio de rubro">
+					<f:facet name="header">
+						<h:outputText
+							value="Cambios de rubros aprobados por el coordinador de seguimiento" />
+					</f:facet>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Solicitud" />
+						</f:facet>
+								#{detalleCambioRubro.id}
+							</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fuente" />
+							<br />
+							<h:outputText value="financiaión" />
+						</f:facet>
+								#{detalleCambioRubro.gasto.financiacion.fuente.descripcion}
+							</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Rubro" />
+							<br />
+							<h:outputText value="origen" />
+						</f:facet>
+								#{detalleCambioRubro.gasto.tipoRubro.nombre}
+							</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Rubro" />
+							<br />
+							<h:outputText value="destino" />
+						</f:facet>
+								#{detalleCambioRubro.tipoRubro.nombre}
+							</p:column>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Valor" />
+						</f:facet>
+						<h:outputText value="#{detalleCambioRubro.valor}">
+							<f:convertNumber currencySymbol="$" groupingUsed="true"
+								maxFractionDigits="0" type="currency" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+				<p:panel header="Información financiera actualizada"
+					style="margin-top: 20px;">
+					<p:accordionPanel var="financiacion" id="acordeonFinanciacion"
+						value="#{manejadorSolicitudes.informacionFinaciera}"
+						emptyMessage="No existe financiacion del proyecto.">
+						<p:tab title="#{financiacion[0].fuente.descripcion}">
+							<p:dataTable style="border:none; margin-top: 10px;" var="gasto"
+								value="#{financiacion[1]}" id="tablaRubros"
+								emptyMessage="No tiene gastos asociados">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Rubro" />
+									</f:facet>
+									<div class="panel-interno-tabla">
+										<h:panelGrid columns="1"
+											styleClass="estilo-panelgrid-sinbordes">
+											<h:outputText value="#{gasto[0].tipoRubro.nombre}"
+												style="font-weight: bold" />
+											<h:outputText value="#{gasto[0].descripcion}" />
+										</h:panelGrid>
+									</div>
+								</p:column>
+								<p:column style="text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Valor" />
+										<br />
+										<h:outputText value="aprobado" />
+									</f:facet>
+									<h:outputText value="#{gasto[0].sumaCampos}">
+										<f:convertNumber currencySymbol="$" groupingUsed="true"
+											maxFractionDigits="0" type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Creditos" />
+										<br />
+										<h:outputText value="(+)" />
+									</f:facet>
+									<h:outputText value="#{gasto[1]}">
+										<f:convertNumber currencySymbol="$" groupingUsed="true"
+											maxFractionDigits="0" type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Contracreditos" />
+										<br />
+										<h:outputText value="(-)" />
+									</f:facet>
+									<h:outputText value="#{gasto[2]}">
+										<f:convertNumber currencySymbol="$" groupingUsed="true"
+											maxFractionDigits="0" type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Valor" />
+										<br />
+										<h:outputText value="actual" />
+									</f:facet>
+									<h:outputText
+										value="#{(gasto[0].sumaCampos + gasto[1] - gasto[2])}">
+										<f:convertNumber currencySymbol="$" groupingUsed="true"
+											maxFractionDigits="0" type="currency" />
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:accordionPanel>
+				</p:panel>
+			</p:dialog>
+			<p:dialog header="Histórico de cambio de estado de solicitud"
+				widgetVar="dialogHistoricoCambioEstadoSolicitud" modal="true"
+				resizable="false" width="600"
+				id="dialogHistoricoCambioEstadoSolicitudId"
+				paginatorPosition="bottom">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelGridHistoricoEstadoSolicitud" columns="1"
+					style="width: 100%;">
+					<t:div>
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridHistoricoEstadoSolicitud" columns="4"
+							style="width: 100%;">
+							<h:outputText value="Codigo proyecto:" style="font-weight: bold;" />
+							<h:outputText
+								value="#{manejadorSolicitudes.solicitudSeleccionada.proyecto.id}" />
+							<h:outputText value="Codigo solicitud:"
+								style="font-weight: bold;" />
+							<h:outputText
+								value="#{manejadorSolicitudes.solicitudSeleccionada.id}" />
+						</p:panelGrid>
+					</t:div>
+					<p:dataTable var="historico"
+						value="#{manejadorSolicitudes.historicoEstadoSolicitudes}"
+						rows="15" paginatorAlwaysVisible="false"
+						id="dataTableHistoricoEstadoSolicitud" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						emptyMessage="No existe un histórico de esta solicitud">
+						<p:column headerText="Fecha">
+							<h:outputText value="#{historico.fecha}">
+								<f:convertDateTime pattern="dd-MM-yyyy hh:mm aaa" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Responsable">
+							<h:outputText
+								value="#{historico.responsable.nombreCompletoMinusculas}" />
+						</p:column>
+						<p:column headerText="Estado">
+							<h:outputText value="Sin respuesta"
+								rendered="#{historico.respuesta == ''}" />
+							<h:outputText value="Sin respuesta"
+								rendered="#{historico.respuesta == null}" />
+							<h:outputText value="Devuelta para correcciones"
+								rendered="#{historico.respuesta == 'C'}" />
+							<h:outputText value="Aprobada"
+								rendered="#{historico.respuesta == 'A'}" />
+							<h:outputText value="Rechazada"
+								rendered="#{historico.respuesta == 'R'}" />
+							<h:outputText value="En estudio/trámite"
+								rendered="#{historico.respuesta == 'T'}" />
+						</p:column>
+						<p:column headerText="Comentarios">
+							<h:outputText value="#{historico.comentarios}" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

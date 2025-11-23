@@ -1,0 +1,761 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Curso Escuela Internacional</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<p:panel id="panelInformacionAcademica"
+				header="I. INFORMACIÓN GENERAL" toggleable="true" toggleSpeed="500"
+				closeSpeed="500">
+
+				<p:accordionPanel id="panelUnoInfAcad" multiple="false"
+					activeIndex="">
+
+					<p:tab title="Información General del Curso" id="infoGeneralCurso">
+
+						<h:panelGrid columns="2" cellpadding="10" align="center">
+
+							<h:outputText value="Nombre del curso propuesto"
+								styleClass="legend2" />
+							<p:inputTextarea rows="5" cols="65" autoResize="false"
+								counter="counterTitulo" maxlength="1000"
+								counterTemplate="{0} caracteres restantes." required="true"
+								id="Titulo"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.nombre}"
+								requiredMessage="El título del proyecto es obligatorio" />
+							<h:outputText id="countTitulo" value="" />
+							<h:outputText id="counterTitulo" />
+							
+							<h:outputText value="Justificación sobre la relación entre el tema del curso y 
+							el tema global de la Escuela Internacional de Investigación que es Biodiversidad y Desarrollo Sostenible"
+								styleClass="legend20" />
+							<p:inputTextarea rows="5" cols="65" autoResize="false"
+								counter="counterJustificacion2" maxlength="4000"
+								counterTemplate="{0} caracteres restantes." required="true"
+								id="justificacion2"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.marcoTeorico}"
+								requiredMessage="Esta justificación es obligatoria" />
+							<h:outputText id="countJustificacion2" value="" />
+							<h:outputText id="counterJustificacion2" />
+							
+							<h:outputText
+								value="Descripción del curso (resumen corto - Máx. 4000 caracteres)" />
+								
+							<p:inputTextarea id="Resumen" autoResize="false"
+								counter="counterResumen" maxlength="1000"
+								counterTemplate="{0} caracteres restantes."
+								value="#{ManejadorEscuelaInternacional.proyectoActual.resumen}"
+								rows="10" cols="65" required="false">
+							</p:inputTextarea>
+							<h:outputText id="countRes" value="" />
+							<h:outputText id="counterResumen" />
+
+							<h:outputText
+								value="Motivación y Justificación del curso (resumen corto - Máx. 4000 caracteres):" />
+							<p:inputTextarea id="motivacion" autoResize="false"
+								counter="counterJustificacion" maxlength="1000"
+								counterTemplate="{0} caracteres restantes."
+								validatorMessage="La Motivación debe estar entre 1 - 4000 caracteres"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.justificacion}"
+								rows="10" cols="65">
+							</p:inputTextarea>
+							<h:outputText id="countJustificacion" value="" />
+							<h:outputText id="counterJustificacion" />
+
+							<h:outputText
+								value="Objeto/Objetivo principal (Máx. 4000 caracteres):" />
+							<p:inputTextarea id="objeto" autoResize="false"
+								counter="counterObjeto" maxlength="1000"
+								counterTemplate="{0} caracteres restantes."
+								validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.objetivoGeneral}"
+								rows="10" cols="65">
+							</p:inputTextarea>
+							<h:outputText id="countObj" value="" />
+							<h:outputText id="counterObjeto" />
+
+						</h:panelGrid>
+						<br />
+						<p:separator></p:separator>
+						<br />
+						<center>
+							<h:outputText value="Objetivos específicos"
+								style='font-weight: bold;' />
+						</center>
+
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+							align="center">
+
+							<h:outputText value="Por favor ingrese el objetivo específico"></h:outputText>
+							<p:inputTextarea
+								value="#{ManejadorEscuelaInternacional.objetivoEspecifico}"
+								rows="3" id="objetoEspecifico" cols="70"
+								binding="#{ManejadorEscuelaInternacional.objetoEspecifico}"
+								validatorMessage="El objetivo específico debe estar entre 1 - 2000 caracteres">
+								<f:validateLength minimum="1" maximum="2000"
+									for="objetoEspecifico"></f:validateLength>
+							</p:inputTextarea>
+							<p:message id="msgObjEsp" for="objetoEspecifico"
+								showSummary="false"></p:message>
+						</h:panelGrid>
+						<br />
+						<center>
+
+							<p:commandButton
+								action="#{ManejadorEscuelaInternacional.insertarObjetivo}"
+								value="Adicionar objetivo" icon="ui-icon-plus"
+								update="objetivoEspTable, objetoEspecifico, msgObjEsp" />
+
+						</center>
+						<br />
+						<p:dataTable id="objetivoEspTable"
+							value="#{ManejadorEscuelaInternacional.listaObjetivos}" var="obj"
+							emptyMessage="No se encuentran objetivos específicos registrados"
+							editable="true">
+
+							<p:column style="width:80%">
+								<f:facet name="header">
+									<h:outputText value="Objetivo Específico" />
+								</f:facet>
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{obj.nombre}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{obj.nombre}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Editar" />
+								</f:facet>
+								<p:rowEditor />
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton id="selectButton" update="objetivoEspTable"
+										icon="ui-icon-trash"
+										action="#{ManejadorEscuelaInternacional.eliminarObjetivo}"
+										title="Eliminar objetivo específico">
+										<f:setPropertyActionListener value="#{obj}"
+											target="#{ManejadorEscuelaInternacional.objetivoTabla}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						<br />
+
+					</p:tab>
+
+					<p:tab title="Docentes Proponente y Participantes de la UN"
+						id="infoGeneralDocUN">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInves" cellspacing="5">
+
+							<h:outputText value="Tipo de documento" />
+							<p:selectOneMenu id="tipoDocInvestigadorSelect"
+								style="width:160px"
+								value="#{ManejadorEscuelaInternacional.tipoDocumentoCoInv2.id}">
+								<f:selectItems
+									value="#{ManejadorEscuelaInternacional.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="No. documento: " />
+							<p:inputText id="numDocumento"
+								value="#{ManejadorEscuelaInternacional.documentoCoinv2}" />
+
+							<h:outputText value="Tipo de participante:" />
+							<p:selectOneMenu id="tipoInvMain" style="width:160px"
+								value="#{ManejadorEscuelaInternacional.tipoInvestigador}">
+								<f:selectItems
+									value="#{ManejadorEscuelaInternacional.docentesUN}" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+						<br />
+						<center>
+							<p:commandButton value="Adicionar docente UN"
+								id="botonAdicionarInvestigador"
+								update="listaParticipantes, pgFormInves"
+								action="#{ManejadorEscuelaInternacional.agregarParticipante}"
+								styleClass="ui-priority-primary" />
+						</center>
+
+						<br />
+						<br />
+						<center>
+							<p:dataTable var="i" style="width:550px"
+								value="#{ManejadorEscuelaInternacional.listaParticipantes}"
+								id="listaParticipantes">
+
+								<p:column style="width:80%">
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText
+										value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+								</p:column>
+
+								<p:column style="width:10%">
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText
+										value="#{i.tipo.id == 'PIEI' ? 'Docente UN':(i.tipo.id == 'PEEI' ? 'Docente Invitado':( i.tipo.id == 'P' ? 'Principal - Docente proponente':''))}" />
+								</p:column>
+
+								<p:column style="width:10%">
+									<f:facet name="header">
+										<h:outputText value="Eliminar" />
+									</f:facet>
+									<center>
+										<p:commandButton id="botonEliminarIntegrantes"
+											update="listaParticipantes" icon="ui-icon-trash"
+											action="#{ManejadorEscuelaInternacional.eliminarParticipante}"
+											title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+											<f:setPropertyActionListener value="#{i}"
+												target="#{ManejadorEscuelaInternacional.participante}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+
+						</center>
+						<br />
+					</p:tab>
+
+
+					<p:tab title="Docentes Invitados Nacionales e Internacionales"
+						id="in">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt" cellspacing="5">
+
+							<h:outputText value="Tipo de documento" />
+							<p:selectOneMenu id="tipoDocInvestigadorSelectExt"
+								style="width:160px"
+								value="#{ManejadorEscuelaInternacional.tipoDocumentoInvExt.id}">
+								<f:selectItems
+									value="#{ManejadorEscuelaInternacional.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="No. documento: " />
+							<p:inputText id="numDocumentoExt"
+								value="#{ManejadorEscuelaInternacional.documentoInvExt}" />
+
+							<h:outputText value="Tipo de participante:" />
+							<p:selectOneMenu id="tipoInvExt" style="width:160px"
+								value="#{ManejadorEscuelaInternacional.tipoInvestigadorInvExt}">
+								<f:selectItems
+									value="#{ManejadorEscuelaInternacional.docentesInvitados}" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+						<br />
+						<center>
+							<p:commandButton value="Buscar Investigador"
+								id="botonBuscarInvestigadorExterno" update="panelIE"
+								action="#{ManejadorEscuelaInternacional.buscarParticipanteExterno}"
+								styleClass="ui-priority-primary" />
+						</center>
+
+						<br />
+
+						<p:outputPanel id="panelIE">
+
+							<h:panelGrid columns="2" align="center" cellpadding="5"
+								id="pgFormInvesExt" cellspacing="5"
+								rendered="#{ManejadorEscuelaInternacional.mostrarFormIE}">
+
+								<h:outputText value="Primer Nombre *" />
+								<p:inputText id="primerNombreInvestigador"
+									value="#{ManejadorEscuelaInternacional.investigadorExterno.nombre1}"
+									size="38" requiredMessage="El Primer Nombre es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Segundo Nombre" />
+								<p:inputText id="segundoNombreInv"
+									value="#{ManejadorEscuelaInternacional.investigadorExterno.nombre2}"
+									size="38">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Primer Apellido *" />
+								<p:inputText id="primerApellidoInvestigador"
+									value="#{ManejadorEscuelaInternacional.investigadorExterno.apellido1}"
+									size="38" requiredMessage="El Primer Apellido es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Segundo Apellido" />
+								<p:inputText id="segundoApellidoInv"
+									value="#{ManejadorEscuelaInternacional.investigadorExterno.apellido2}"
+									size="38">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Género" />
+								<p:selectOneMenu
+									value="#{ManejadorEscuelaInternacional.investigadorExterno.genero}"
+									id="idGenero" style="width:40px">
+									<f:selectItems
+										value="#{ManejadorEscuelaInternacional.generoItem}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Institución *" />
+								<p:inputText id="insitucionNombre"
+									value="#{ManejadorEscuelaInternacional.insitucionNombre}"
+									size="38" requiredMessage="La institución es obligatoria">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Correo electrónico *" />
+								<p:inputText id="correoExt"
+									value="#{ManejadorEscuelaInternacional.investigadorExterno.email}"
+									size="38"
+									requiredMessage="El correo electrónico es obligatorio">
+								</p:inputText>
+
+								<h:outputText value="País de procedencia" id="paisText" />
+								<p:selectOneMenu value="#{ManejadorEscuelaInternacional.pais}"
+									effect="fade" id="pais" filter="true" required="true"
+									validatorMessage="Por favor seleccione un país">
+									<f:selectItems
+										value="#{ManejadorEscuelaInternacional.paisItem}" />
+									<f:validateRegex pattern="[A-Z][A-Z]" />
+									<p:ajax event="change"
+										update="departamento, deptoText, ciudad, panelDeptoCiud"
+										listener="#{ManejadorEscuelaInternacional.cargarDepto}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid id="panelDeptoCiud" columns="2" align="center"
+								cellpadding="5" cellspacing="5">
+								<h:outputText value="Departamento:" id="deptoText"
+									rendered="#{ManejadorEscuelaInternacional.pais == 'CO'}" />
+								<p:selectOneMenu
+									value="#{ManejadorEscuelaInternacional.departamento}"
+									effect="fade" id="departamento" filter="true"
+									rendered="#{ManejadorEscuelaInternacional.pais == 'CO'}">
+									<f:selectItems
+										value="#{ManejadorEscuelaInternacional.departamentoItemList}" />
+									<p:ajax update="ciudad, ciudText" event="change"
+										listener="#{ManejadorEscuelaInternacional.cargarCiudad}" />
+								</p:selectOneMenu>
+
+
+								<h:outputText value="Ciudad:" id="ciudText"
+									rendered="#{ManejadorEscuelaInternacional.pais == 'CO'}" />
+								<p:selectOneMenu value="#{ManejadorEscuelaInternacional.ciudad}"
+									effect="fade" id="ciudad" filter="true"
+									rendered="#{ManejadorEscuelaInternacional.pais == 'CO'}">
+									<f:selectItems
+										value="#{ManejadorEscuelaInternacional.ciudadItemList}" />
+								</p:selectOneMenu>
+
+							</h:panelGrid>
+
+							<br />
+							<center>
+								<p:commandButton value="Adicionar docente invitado"
+									rendered="#{ManejadorEscuelaInternacional.mostrarGuardarIE}"
+									id="botonGuardarInvestigadorExterno" ajax="false"
+									update="panelIE, pgFormInvesExt, listaParticipantesExternos, in, panelIEInt"
+									action="#{ManejadorEscuelaInternacional.guardarParticipanteExterno}"
+									styleClass="ui-priority-primary" />
+							</center>
+
+
+						</p:outputPanel>
+
+						<p:outputPanel id="panelIEInt">
+
+							<br />
+							<center>
+								<p:dataTable var="e" style="width:550px"
+									value="#{ManejadorEscuelaInternacional.listaParticipantesExternos}"
+									id="listaParticipantesExternos">
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText
+											value="#{e.invExt.nombre1} #{e.invExt.nombre2} #{e.invExt.apellido1} #{e.invExt.apellido2}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Tipo" />
+										</f:facet>
+										<h:outputText
+											value="#{e.invExtProyecto.tipo.id == 'IIEI' ? 'Invitado internacional':(e.invExtProyecto.tipo.id == 'INEI' ? 'Invitado nacional':'')}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Institución" />
+										</f:facet>
+										<h:outputText value="#{e.nombreInstitucion}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Pais procedencia" />
+										</f:facet>
+										<h:outputText value="#{e.nombrePais}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Email" />
+										</f:facet>
+										<h:outputText value="#{e.invExt.email}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Eliminar" />
+										</f:facet>
+										<center>
+											<p:commandButton id="botonEliminarIntegrantesInvitados"
+												update="listaParticipantesExternos" icon="ui-icon-trash"
+												action="#{ManejadorEscuelaInternacional.eliminarParticipanteExterno}"
+												title="Eliminar">
+												<f:setPropertyActionListener value="#{e}"
+													target="#{ManejadorEscuelaInternacional.participanteExternoSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+
+								</p:dataTable>
+
+							</center>
+							<br />
+
+
+						</p:outputPanel>
+
+
+
+					</p:tab>
+
+
+				</p:accordionPanel>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="panelInformacionFinanciera"
+				header="II. INFORMACIÓN FINANCIERA DEL PROYECTO" toggleable="true"
+				toggleSpeed="500" closeSpeed="500">
+
+				<p:accordionPanel id="panelUnoInfFin" multiple="true" activeIndex="">
+					<p:tab title="Información Financiera" id="infoFinanciera">
+
+						<p:dataTable cellpadding="6" cellspacing="3"
+							value="#{ManejadorEscuelaInternacional.listaFinanciaciones}"
+							var="financiacion" id="listaFuentesFinan"
+							rendered="#{not empty ManejadorEscuelaInternacional.listaFinanciaciones}">
+							<p:column style="width:40%"
+								headerText="FUENTE DE FINANCIACIÓN INTERNA">
+								<h:outputText value="#{financiacion.fuente.descripcion}" />
+							</p:column>
+
+							<p:column style="width:20%" headerText="VALOR">
+								<p:inputText id="valorFinanciacion"
+									value="#{financiacion.valor}" required="true" />
+							</p:column>
+
+							<p:column style="width:20%" headerText="AGREGAR RUBROS">
+								<p:commandButton id="agregarRubInt" icon="ui-icon-plusthick"
+									action="#{ManejadorEscuelaInternacional.agregarRubroaFuentesI}"
+									title="Adicionar" update=":form:panelInformacionFinanciera">
+									<f:setPropertyActionListener
+										target="#{ManejadorEscuelaInternacional.fuenteSeleccionadaParaRubroI}"
+										value="#{financiacion}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+
+						<br />
+						<p:panelGrid id="panelGridFuentesExternas" columns="1"
+							cellpadding="5" cellspacing="5"
+							styleClass="estilo-panelgrid-sinbordes">
+
+							<p:commandButton value="Agregar fuente externa"
+								action="#{ManejadorEscuelaInternacional.agregarFuenteExterna}"
+								update=":form:panelInformacionFinanciera">
+							</p:commandButton>
+
+							<h:outputText value=""
+								rendered="#{ManejadorEscuelaInternacional.verFuenteExterna}" />
+
+
+							<p:panelGrid id="addFuenteExterna" border="1" style="width:70%"
+								rendered="#{ManejadorEscuelaInternacional.verFuenteExterna}">
+								<p:row>
+									<p:column colspan="1">
+										<h:outputText value="1. AGREGAR FUENTE EXTERNA EXISTENTE" />
+									</p:column>
+
+									<p:column colspan="1">
+										<p:panelGrid columns="3" id="consultaFuentes">
+											<h:outputText
+												value="Ingrese una palabra clave de la fuente externa a agregar" />
+											<p:inputText
+												value="#{ManejadorEscuelaInternacional.nombreExterna}"
+												size="40" />
+											<p:commandButton id="nuevaFuenteConsulta"
+												action="#{ManejadorEscuelaInternacional.consultarFuentesExternas}"
+												value="Consultar" update="consultaFuentes" />
+											<h:outputText
+												rendered="#{not empty ManejadorEscuelaInternacional.listaFuentesExternas}" />
+											<p:dataTable id="fuentesExternasTabla" var="externas"
+												value="#{ManejadorEscuelaInternacional.listaFuentesExternas}"
+												rendered="#{not empty ManejadorEscuelaInternacional.listaFuentesExternas}"
+												paginator="true" rows="10" paginatorPosition="bottom"
+												cellpadding="6" cellspacing="3" align="center" border="1">
+												<h:outputText
+													rendered="#{not empty ManejadorEscuelaInternacional.listaFuentesExternas}" />
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Fuente" />
+													</f:facet>
+													<h:outputText value="#{externas.descripcion}" />
+												</p:column>
+
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Adicionar" />
+													</f:facet>
+
+													<p:commandButton id="fuenteExternaAgregar"
+														icon="ui-icon-plusthick"
+														action="#{ManejadorEscuelaInternacional.agregarFuentesExternas}"
+														title="Adicionar" immediate="true"
+														update=":form:panelInformacionFinanciera">
+
+														<f:setPropertyActionListener
+															target="#{ManejadorEscuelaInternacional.fuenteFinanciacionSeleccionada}"
+															value="#{externas}" />
+
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+											<h:outputText />
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column colspan="1">
+										<h:outputText value="2. CREAR NUEVA FUENTE EXTERNA" />
+									</p:column>
+									<p:column colspan="1">
+										<h:outputText
+											value="Nota: Por favor antes de agregar una nueva fuente de financiación externa verifique que NO exista en el sistema" />
+										<p:panelGrid columns="3"
+											styleClass="estilo-panelgrid-sinbordes">
+											<h:outputText value="Nombre Fuente" style='width:50%' />
+											<p:inputText
+												value="#{ManejadorEscuelaInternacional.nombreFuenteExterna}"
+												size="50" />
+											<p:commandButton id="fuenteExternaAgregar"
+												action="#{ManejadorEscuelaInternacional.agregarNuevaFuentesExterna}"
+												icon="ui-icon-plusthick" value="Adicionar"
+												update=":form:panelInformacionFinanciera">
+											</p:commandButton>
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+
+						</p:panelGrid>
+
+						<br />
+
+						<p:dataTable cellpadding="6" cellspacing="3"
+							value="#{ManejadorEscuelaInternacional.listaFuentesExternasAdicionadas}"
+							var="financiacionExt" id="listaFuentesFinanExt">
+							<p:column style="width:40%">
+								<f:facet name="header">
+									<h:outputText value="FUENTES DE FINANCIACIÓN EXTERNA" />
+								</f:facet>
+								<h:outputText value="#{financiacionExt.fuente.descripcion}" />
+							</p:column>
+
+							<p:column style="width:20%">
+								<f:facet name="header">
+									<h:outputText value="VALOR" />
+								</f:facet>
+								<p:inputText id="valorFinanciacion"
+									value="#{financiacionExt.valor}" />
+							</p:column>
+
+							<p:column style="width:20%" headerText="AGREGAR RUBROS">
+								<p:commandButton id="agregarRubExt" icon="ui-icon-plusthick"
+									action="#{ManejadorEscuelaInternacional.agregarRubroaFuentesE}"
+									title="Adicionar" update=":form:panelInformacionFinanciera">
+									<f:setPropertyActionListener
+										target="#{ManejadorEscuelaInternacional.fuenteSeleccionadaParaRubroE}"
+										value="#{financiacionExt}" />
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+						<br />
+
+
+						<p:panelGrid columns="2" id="panelGastos"
+							rendered="#{ManejadorEscuelaInternacional.verRubros}"
+							styleClass="estilo-panelgrid-sinbordes">
+
+							<h:outputText value="Tipo de rubro" />
+							<p:selectOneMenu
+								value="#{ManejadorEscuelaInternacional.idTipoRubro}"
+								id="selectTipoRubro">
+								<f:selectItems
+									value="#{ManejadorEscuelaInternacional.tiposRubroItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Año" />
+							<p:spinner value="#{ManejadorEscuelaInternacional.vigenciaGasto}"
+								min="1" max="10" size="2" />
+
+							<h:outputText value="Valor" />
+							<p:inputText id="valorRubro"
+								value="#{ManejadorEscuelaInternacional.valorGasto}">
+								<f:validateLength minimum="1" />
+							</p:inputText>
+
+							<h:outputText value="Descripción" />
+							<p:inputTextarea id="gastosDescripcion"
+								value="#{ManejadorEscuelaInternacional.descripcionGasto}"
+								rows="4" cols="50" autoResize="false" maxlenght="3000" />
+
+
+						</p:panelGrid>
+
+						<center>
+							<p:commandButton id="botonAgregarGasto"
+								rendered="#{ManejadorEscuelaInternacional.verRubros}"
+								action="#{ManejadorEscuelaInternacional.agregarGasto}"
+								value="Agregar"
+								update="dataTableGastoVista, panelGastos, infoFinanciera" />
+						</center>
+
+						<br />
+
+
+						<p:dataTable id="dataTableGastoVista" var="gasto"
+							value="#{ManejadorEscuelaInternacional.listaGastos}"
+							rendered="#{!empty ManejadorEscuelaInternacional.listaGastos }">
+
+
+							<p:column headerText="FUENTE">
+								<h:outputText value="#{gasto.financiacion.fuente.descripcion}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="RUBRO" />
+								</f:facet>
+
+								<h:outputText value="#{gasto.tipoRubro.nombre}" />
+
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="AÑO" />
+								</f:facet>
+
+								<h:outputText value="#{gasto.vigencia}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="DESCRIPCIÓN" />
+								</f:facet>
+								<h:outputText value="#{gasto.descripcion}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="VALOR" />
+								</f:facet>
+								<h:outputText value="#{gasto.valor}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="ELIMINAR" />
+								</f:facet>
+								<p:commandButton id="eliminarGastoBoton"
+									action="#{ManejadorEscuelaInternacional.eliminarGasto}"
+									icon="ui-icon-trash" update=":form:panelInformacionFinanciera">
+									<f:setPropertyActionListener
+										target="#{ManejadorEscuelaInternacional.gastoSeleccionado}"
+										value="#{gasto}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</p:tab>
+
+				</p:accordionPanel>
+
+			</p:panel>
+
+			<br />
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<br />
+
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Salir" id="botonAtras"
+							action="#{ManejadorEscuelaInternacional.atras}"
+							styleClass="ui-priority-primary" />
+
+						<p:commandButton value="Guardar y continuar después"
+							id="botonGuardarSalir"
+							action="#{ManejadorEscuelaInternacional.salirGuardar}"
+							styleClass="ui-priority-primary" update="@form" />
+
+						<p:commandButton value="Guardar y avanzar"
+							id="botonGuardarSiguiente" ajax="false"
+							action="#{ManejadorEscuelaInternacional.siguiente}"
+							styleClass="ui-priority-primary" update="@form" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

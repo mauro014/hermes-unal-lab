@@ -1,0 +1,1713 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="formEncabezado">
+			<t:div styleClass="contenido-titulo-general-myriad">Servicios</t:div>
+			
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="labels_proyecto" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="labels_proyecto" />
+						<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+							style="text-decoration:none; color: #16A8E2;font-weight: bold;">
+							<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:menubar value="Formularios Laboratorios" model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />			
+		</h:form>
+		
+		<p:panel id="panelLaboratoriosEnsayosYServicios"
+			header="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.nombre} - #{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.id}">
+			
+			<t:div style="width: 100%; text-align: right; margin-bottom: 5px;">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=295"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Prestación de servicios en los laboratorios</a>
+			</t:div>
+		
+		<h:form id="formES">
+		
+		<p:spacer height="20" />
+				
+		<p:tabView id="tabView">	
+				
+			<p:tab title="Servicios" id="panelEnsayosServicios" titleStyle="font-size:11px">
+			
+				<p:growl id="growlAgregarES" for="botonAgregarEnsayoServicio" life="6000" severity="info"/>
+				<p:growl id="growlEditarES" for="botonEditarEnsayoServicio" life="6000" severity="info"/>
+				
+				<p:spacer height="5" />	 
+				
+				<p:panelGrid 
+					styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+					rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}">
+					<p:spacer height="10" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">
+						<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.tipoOperación == 'C' ? 'Agregar servicio' : 'Editar servicio' }"/>
+					</t:div>
+					<p:spacer height="20"/>
+				</p:panelGrid>
+			
+				<p:panelGrid style="width:100%" styleClass="estilo-panelgrid-sinbordes" rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}">
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="info" icon="ui-icon-info" />
+							<p:tooltip for="info" styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Ingrese toda la información relacionada con el servicio.<br /> 
+								       	Preste atención a los campos que son obligatorios, los cuales están marcados por el simbolo (*).<br />
+								       	Al ingresar toda la información, haga clic en el botón AGREGAR.<br />
+								       	En la tabla de la parte inferior puede ver todos los servicios registrados en el laboratorio.<br />
+								       	Si desea agregar un nuevo servicio, repita este mismo procedimiento.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText
+								value=" Ingrese la información del servicio y haga clic en el botón AGREGAR" />
+						</p:column>
+					</p:row>	
+				</p:panelGrid>
+				
+				<br />
+				
+				<p:panel id="panelAgregarEnsayoServicio" rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}">
+					
+					<p:panelGrid
+						styleClass="estilo-panelgrid-sinbordes" 
+						cellpadding="5"
+						cellspacing="5"
+						style="width:100%;">
+						<!--Nombre(*): -->
+						<p:row>
+							<p:column style="width:5%;">
+								<p:commandButton id="infoNombreEnsayo" icon="ui-icon-info" />
+
+								<p:tooltip for="infoNombreEnsayo" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el nombre del servicio
+									</t:div>
+								</p:tooltip>
+
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Nombre(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:70%;">
+								<p:inputText 
+									id="nombreEnsayo" style="width: 100%;" maxlength="500"
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.nombre}" />
+							</p:column>
+						</p:row>
+						<!--Descripcion: -->
+						<p:row>
+							<p:column style="width:5%;">
+								<p:commandButton id="infoDescEnsayo" icon="ui-icon-info" />
+								<p:tooltip for="infoDescEnsayo" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese una descripción breve del servicio
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Descripción del servicio:" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:70%;">
+								<p:inputTextarea id="descripcionServicio" rows="2" style="width: 100%;"
+									autoResize="false" maxlength="990"
+									readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.descripcion}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:panelGrid
+						styleClass="estilo-panelgrid-sinbordes" 
+						cellpadding="5"
+						cellspacing="5"
+						style="width:100%;">
+						<p:row>
+							<p:column style="width:5%;">
+								<p:commandButton id="infoMEEnsayo" icon="ui-icon-info" />
+								<p:tooltip for="infoMEEnsayo" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Seleccionar el tipo del servicio
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:20%;">
+								<h:outputText value="Tipo(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:30%;">
+								<p:selectOneMenu
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo}"
+									converter="ConvertidorTipos"
+									style="width:95%;">
+									<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.tipoEnsayoItem}" />
+<!-- 									<p:ajax update=":formES:tabView:panelOtroServicio, -->
+<!-- 													:formES:tabView:panelInfoEspecifica, -->
+<!-- 													:formES:tabView:panelMedFisica3Ext, -->
+<!-- 													:formES:tabView:panelMedFisica3Int" /> -->
+									<p:ajax update="@form" process="@form"/>
+								</p:selectOneMenu>
+							</p:column>
+							<p:column style="width:5%;">
+								<p:commandButton id="infoValorEnsayo" icon="ui-icon-info" />
+								<p:tooltip for="infoValorEnsayo" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el valor del servicio
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:20%;">
+								<h:outputText value="Valor(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:inputText id="valorEnsayoServicio" maxlength="8" size="15"
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.valorServicio}">
+									<f:validateLongRange minimum="0" maximum="999999999" for="valorEnsayoServicio" />
+								</p:inputText>
+							</p:column>								
+						</p:row>
+					</p:panelGrid>
+					
+					<p:panelGrid id="panelOtroServicio" styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5" cellspacing="5" style="width:100%;">
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7246'}">
+							<p:column style="width:5%;">
+								<p:commandButton id="infoOtrosServicios" icon="ui-icon-info" />
+								<p:tooltip for="infoOtrosServicios" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Indique a que otro tipo de servicio corresponde
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="¿Cuál(es)?:" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:70%;">
+								<p:inputText id="OtrosServicios" style="width: 100%;"
+									maxlength="500" value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayoOtros}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:panelGrid
+						styleClass="estilo-panelgrid-sinbordes" 
+						cellpadding="5"
+						cellspacing="5"
+						style="width:100%;">
+						<!--Dedicación(*): -->
+						<p:row>
+							<p:column style="width:5%;">
+								<p:commandButton id="infoDedicacionEnsayo" icon="ui-icon-info" />
+								<p:tooltip for="infoDedicacionEnsayo" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el tipo de dedicación del servicio (Investigación, Extensión o Docencia)
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Dedicación(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:70%;">
+								<p:selectBooleanCheckbox id="checkDoc" label="Docencia"
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.docencia}"/>
+								<h:outputText value=" Docencia" />
+								<p:spacer width="30" />
+								<p:selectBooleanCheckbox id="checkInv" label="Investigación"
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.investigacion}"/>
+								<h:outputText value=" Investigacion" />
+								<p:spacer width="30" />
+								<p:selectBooleanCheckbox id="checkExt" label="Extensión"
+									value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.extension}"/>
+								<h:outputText value=" Extension" />
+							</p:column>
+						</p:row>
+						<!--Equipos -->
+						<p:row>
+							<p:column style="width:5%;">
+								<p:commandButton id="infoEquiposEnsayo" icon="ui-icon-info" />
+								<p:tooltip for="infoEquiposEnsayo" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Seleccione los equipos asociados al servicio
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Equipos:" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:70%;">
+								<p:selectCheckboxMenu
+									value="#{ManejadorLaboratoriosEnsayosServicios.equiposSeleccionadosItem}"
+									label="Haga clic y seleccione los equipos asociados al servicio" 
+									style="width: 100%;"
+									panelStyle="width: 400px;" 
+									filter="true"
+									filterMatchMode="contains">
+									<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.equiposUsadosItem}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						</p:panelGrid>
+						
+						<p:panelGrid id="panel2"
+								styleClass="estilo-panelgrid-sinbordes" 
+								cellpadding="5"
+								cellspacing="5"
+								style="width:100%;">
+							<p:row>
+								<!--Norma Técnica -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoTipoNorma" icon="ui-icon-info" />
+									<p:tooltip for="infoTipoNorma" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left; width:250px" >
+										 	Seleccione el tipo de la norma técnica. Si desea agregar otra opción a la lista, por favor solicitar la adición al correo hermes@unal.edu.co.
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:20%;">
+									<h:outputText value="Tipo Norma Técnica:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:30%;">
+									<p:selectOneMenu
+										id="tipoNormaTec"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoNormaTecnica}"
+										converter="ConvertidorTipos"
+										style="width:95%;">
+										<f:selectItems
+											value="#{ManejadorLaboratoriosEnsayosServicios.tiposNormaLista}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column style="width:5%;">
+									<p:commandButton id="infoNumeroNorma" icon="ui-icon-info" />
+	
+									<p:tooltip for="infoNumeroNorma" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Ingrese el número de la norma técnica
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:20%;">
+									<h:outputText value="Número Norma Técnica:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:25%;">
+									<p:inputText id="numeroNormaTec" maxlength="25" size="15"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.numeroNormaTecnica}">
+									</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<!--Valor -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoVersionNorma" icon="ui-icon-info" />
+									<p:tooltip for="infoVersionNorma" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Seleccione el año o versión de norma técnica
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:20%;">
+									<h:outputText value="Versión norma técnica:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:30%;">
+									<p:selectOneMenu
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.versionNormaTecnica}"
+										style="width:95%;" effect="fade">
+										<f:selectItem itemLabel="Ninguno" itemValue="0" />
+										<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.annioItems}" />
+									</p:selectOneMenu>
+								</p:column>								
+								<!--Servicios por mes -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoEMEnsayo" icon="ui-icon-info" />
+									<p:tooltip for="infoEMEnsayo" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Ingrese el número de servicios por mes
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:20%;">
+									<h:outputText value="Servicios por mes(*):" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:25%;">
+									<p:inputText id="ensayosMes" maxlength="5" size="15"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.ensayosMes}">
+										<f:validateLongRange minimum="0" maximum="99999" for="ensayosMes"  />
+									</p:inputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						
+						<p:panelGrid id="panel3"
+								styleClass="estilo-panelgrid-sinbordes" 
+								cellpadding="5"
+								cellspacing="5"
+								style="width:100%;">
+							<p:row>
+								<!--Tiempo Estimado -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoTEEnsayo" icon="ui-icon-info" />
+									<p:tooltip for="infoTEEnsayo" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Ingrese el tiempo estimado del servicio
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:16%;">
+									<h:outputText value="T. Estimado(*):" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:5%;">
+									<p:inputText id="TEEnsayoServicio" maxlength="5" size="3"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tiempoTotalEstimado}">
+										<f:validateLongRange minimum="0" maximum="9999999" for="TEEnsayoServicio"  />
+									</p:inputText>
+								</p:column>	
+								<p:column style="width:19%;">	
+									<p:selectOneMenu
+										id="unidadTiempo"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.unidadTiempoTotalEstimado}"
+										converter="ConvertidorTipos"
+										style="width:90%;"
+										panelStyle="width: 200px">
+										<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.unidadesTiempoItem}" />
+									</p:selectOneMenu>
+								</p:column>
+								<!--Personas -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoPersonasEnsayo" icon="ui-icon-info" />
+									<p:tooltip for="infoPersonasEnsayo" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Ingrese el número de personas involucradas en la prestación del servicio
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:15%;">
+									<h:outputText value="Personas(*):" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:15%;">
+									<p:inputText id="personasEnsayoServicio" maxlength="3" size="15"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.personas}">
+										<f:validateLongRange minimum="0" maximum="999" for="personasEnsayoServicio"  />
+									</p:inputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						
+						<p:panelGrid id="panelAcreditado" styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5" cellspacing="5" style="width:100%;">
+							<p:row>
+								<!-- Acreditado -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoAcreditadoEnsayo" icon="ui-icon-info" />
+									<p:tooltip for="infoAcreditadoEnsayo" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Seleccione si el servicio se encuentra acreditado.
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:16%;">
+									<h:outputText value="¿Acreditado?:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:70%;">
+									<p:selectBooleanCheckbox id="checkAcreditado"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.acreditado}">
+										<p:ajax update=":formES:tabView:panelAcreditadoOrganismo" />
+									</p:selectBooleanCheckbox>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panelGrid id="panelAcreditadoOrganismo" styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5" cellspacing="5" style="width:100%;" >
+							<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.acreditado}">
+								<!-- Acreditado Organismo-->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoAcreditadoOrg" icon="ui-icon-info"/>
+									<p:tooltip for="infoAcreditadoOrg" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Seleccione el organismo que otorga la acreditación. Si el organismo no aparece en la lista por favor envíe correo a hermes@unal.edu.co
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:16%;">
+									<h:outputText id="acreditadoOrgLabel" value="Organismo:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:70%;">
+									<p:selectOneMenu
+										id="acreditadoOrg"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.acreditadoOrganismo}"
+										converter="ConvertidorTipos"
+										style="width:100%;"
+										panelStyle="width: 500px"
+										>
+										<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.acreditadoOrgItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panelGrid id="panelInfoEspecifica" styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5" cellspacing="5" style="width:100%;" >
+							<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244' or ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7243'}">
+								<p:column style="width:100%;" colspan="3">
+									<p:spacer height="10" />
+									<t:div styleClass="contenido-titulo-general-ancizar-left" >
+										<h:outputText value="Información específica para tipo 
+											#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244' ? 'Calibración' 
+											: ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7243' ? 'Ensayo' 
+											: 'NA' }"/>
+									</t:div>
+									<p:spacer height="10"/>
+								</p:column>
+							</p:row>
+							
+							<!-- CALIBRACION-->
+							<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244'}">
+								<!-- Magnitud Area -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoCalibMagnitud" icon="ui-icon-info"/>
+									<p:tooltip for="infoCalibMagnitud" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Seleccione la Magnitud del servicio de calibración  y que se muestra esta lista desplegable
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:16%;">
+									<h:outputText value="Magnitud o Área(*):"/>
+								</p:column>
+								<p:column style="width:70%;">
+									<p:selectOneMenu
+										id="calibMagnitudArea"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.calibMagnitudArea}"
+										converter="ConvertidorTipos"
+										style="width:100%;"
+										>
+										<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.magnitudAreaItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244'}">
+								<!-- Equipos -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoCalibEqipo" icon="ui-icon-info"/>
+									<p:tooltip for="infoCalibEqipo" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Registre los instrumentos o equipos para los cuales se ofrece el servicio de calibración
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column style="width:16%;">
+									<h:outputText value="Equipo o instrumento a calibrar(*):"/>
+								</p:column>
+								<p:column style="width:70%;">
+									<p:inputTextarea id="calibEquipos" rows="2" style="width: 100%;"
+										autoResize="false" maxlength="1950"
+										value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.calibEquipo}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						
+						<!--ENSAYO Y CALIBRACION -->
+						
+						<!-- Intervalo o Punto de Medición -->
+						<p:panelGrid
+							id="panelMedFisica3Ext" columns="1" 
+							style="width:100%;" styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244'}">
+							<f:facet name="header">
+								Intervalo o Punto de Medición
+							</f:facet>
+							<p:panelGrid
+								id="panelMedFisica3Int" styleClass="estilo-panelgrid-sinbordes"
+								cellpadding="5" cellspacing="5">
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIntervaloPuntoMedMinimo" icon="ui-icon-info" />
+										<p:tooltip for="infoIntervaloPuntoMedMinimo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el valor Mínimo para Intervalo o Punto de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Minimo:" />
+									</p:column>
+									<p:column style="width:30%;">
+										<p:inputText id="textIntervaloPuntoMedMinimo" maxlength="15" style="width: 100%;"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.intervaloPuntoMedMinimo}">
+										</p:inputText>
+									</p:column>
+									<p:column style="width:6px;">
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIntervaloPuntoMedMaximo" icon="ui-icon-info" />
+										<p:tooltip for="infoIntervaloPuntoMedMaximo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el valor Máximo para Intervalo o Punto de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Máximo:" />
+									</p:column>
+									<p:column style="width:30%;">
+										<p:inputText id="textIntervaloPuntoMedMaximo" maxlength="15" style="width: 100%;"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.intervaloPuntoMedMaximo}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panelGrid>
+						
+						<!--Unidades del intervalo: -->
+						<p:panelGrid 
+							id="panelMedFisica4Ext" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244'}">
+							<f:facet name="header">
+								Unidades del intervalo
+							</f:facet>
+							<p:panelGrid 
+								id="panelMedFisica4Int" styleClass="estilo-panelgrid-sinbordes"
+								cellpadding="5" cellspacing="5">
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoUnidadesIntervaloPrefijo" icon="ui-icon-info" />
+										<p:tooltip for="infoUnidadesIntervaloPrefijo" styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Prefijo para Unidades del intervalo
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Prefijo:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											id="selectUnidadesIntervaloPrefijo"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.unidadesIntervaloPrefijo}"
+											converter="ConvertidorTipos"
+											filter="true"
+											filterMatchMode="contains"
+											effect="fade"
+											style="width: 120px;"
+											panelStyle="width: 180px;">
+											<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.selectItemUnidIntPrefijo}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:1px;">
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoUnidadesIntervaloUnidad" icon="ui-icon-info" />
+										<p:tooltip for="infoUnidadesIntervaloUnidad" styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la Unidad para Unidades del intervalo
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Unidad:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											id="selectUnidadesIntervaloUnidad"
+											converter="ConvertidorTipos"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.unidadesIntervaloUnidad}"
+											filter="true"
+											filterMatchMode="contains"
+											effect="fade"
+											style="width: 120px;"
+											panelStyle="width: 250px;">
+											<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.selectItemUnidIntUnidad}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:1px;">
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoUnidadesIntervaloSimbolo" icon="ui-icon-info" />
+										<p:tooltip for="infoUnidadesIntervaloSimbolo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el simbolo para Unidades del intervalo
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Simbolo:" />
+									</p:column>
+									<p:column>
+										<p:inputText 
+											id="textUnidadesIntervaloSimbolo" maxlength="15" style="width: 50px;"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.unidadesIntervaloSimbolo}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panelGrid>
+
+						<!--Incertidumbre de Medición: -->
+
+						<p:panelGrid 
+							id="panelMedFisica5Ext" columns="1" style="width:100%;" styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.nuevoES.tipoEnsayo.id == '7244'}">
+							<f:facet name="header">
+								Incertidumbre de Medición
+							</f:facet>
+							<p:panelGrid
+								id="panelMedFisica5Int" styleClass="estilo-panelgrid-sinbordes"
+								cellpadding="5" cellspacing="5">
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIncertidumbreMedicionIncertidumbre" icon="ui-icon-info" />
+										<p:tooltip for="infoIncertidumbreMedicionIncertidumbre" styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la Incertidumbre de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Incertidumbre:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											id="selectIncertidumbreMedicionIncertidumbre"
+											converter="ConvertidorTipos"
+											filter="true"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.incertidumbreMedicionIncertidumbre}"
+											filterMatchMode="contains"
+											effect="fade"
+											style="width: 100px;"
+											panelStyle="width: 200px;">
+											<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.selectItemIncertMedIncert}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:1px;">
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIncertidumbreMedicionValor" icon="ui-icon-info" />
+										<p:tooltip for="infoIncertidumbreMedicionValor"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el valor para Incertidumbre de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Valor:" />
+									</p:column>
+									<p:column>
+										<p:inputText 
+											id="textIncertidumbreMedicionValor" maxlength="15" style="width: 100px;"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.incertidumbreMedicionValor}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIncertidumbreMedicionPrefijo" icon="ui-icon-info" />
+										<p:tooltip for="infoIncertidumbreMedicionPrefijo" styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Prefijo para Incertidumbre de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Prefijo:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											id="selectIncertidumbreMedicionPrefijo"
+											filter="true"
+											converter="ConvertidorTipos"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.incertidumbreMedicionPrefijo}"
+											filterMatchMode="contains"
+											effect="fade"
+											style="width: 100px;"
+											panelStyle="width: 180px;">
+											<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.selectItemIncertMedPrefijo}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:1px;">
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIncertidumbreMedicionUnidad" icon="ui-icon-info" />
+										<p:tooltip for="infoIncertidumbreMedicionUnidad" styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la unidad para Incertidumbre de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Unidad:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											id="selectIncertidumbreMedicionUnidad"
+											filter="true"
+											converter="ConvertidorTipos"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.incertidumbreMedicionUnidad}"
+											filterMatchMode="contains"
+											effect="fade"
+											style="width: 100px;"
+											panelStyle="width: 250px;">
+											<f:selectItems value="#{ManejadorLaboratoriosEnsayosServicios.selectItemIncertMedUnidad}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:1px;">
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoIncertidumbreMedicionSimbolo" icon="ui-icon-info" />
+										<p:tooltip for="infoIncertidumbreMedicionSimbolo" styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el simbolo para Incertidumbre de Medición
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Simbolo:" />
+									</p:column>
+									<p:column>
+										<p:inputText 
+											id="textIncertidumbreMedicionSimbolo" maxlength="15" style="width: 50px;"
+											value="#{ManejadorLaboratoriosEnsayosServicios.nuevoES.incertidumbreMedicionSimbolo}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panelGrid>	
+					<br />
+					<center>
+						<p:commandButton 
+							id="botonAgregarEnsayoServicio"
+							action="#{ManejadorLaboratoriosEnsayosServicios.agregarEditarEnsayoServicio}"
+							value="#{ManejadorLaboratoriosEnsayosServicios.tipoOperación == 'C' ? 'Agregar' : 'Editar' }"
+							update="@form"
+							icon="#{ManejadorLaboratoriosEnsayosServicios.tipoOperación == 'C' ? 'ui-icon-plusthick' : 'ui-icon-pencil' }" 
+							rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+							onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"/>
+						<p:spacer width="15" height="15" />
+						<p:commandButton 
+							id="botonCancelarEdicion"
+							rendered="#{ManejadorLaboratoriosEnsayosServicios.tipoOperación == 'E' and not ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+							action="#{ManejadorLaboratoriosEnsayosServicios.cancelarModoEdicion}"
+							value="Cancelar"
+							update="@form"
+							icon="ui-icon-close" 
+							onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"/>
+					</center>
+					<br />
+				</p:panel>
+				
+				<p:messages id="messages" autoUpdate="true" closable="true" />				
+				
+				<p:separator rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"/>
+
+				<center>
+					<p:dataTable id="tablaEnsayosServicios" 
+						var="ensayoServicio"
+						styleClass="pequennio"
+						value="#{ManejadorLaboratoriosEnsayosServicios.listaEnsayos}"
+						rows="15" paginator="true" 
+						paginatorPosition="bottom"
+						pageLinks="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+						emptyMessage="No hay servicios asociados"
+						filteredValue="#{ManejadorLaboratoriosEnsayosServicios.listaEnsayosFiltrados}">
+
+						<f:facet name="header">
+							SERVICIOS ASOCIADOS AL LABORATORIO
+						</f:facet>
+
+						<p:column style="width:50%;"
+							sortBy="#{ensayoServicio.nombre}"
+							filterBy="#{ensayoServicio.nombre}" 
+							filterMatchMode="contains"
+							filterStyle="width: 80%;">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{ensayoServicio.nombre}"
+								style="font-size:12px;" />
+						</p:column>
+						
+						<p:column style="width:15%;"
+							sortBy="#{ensayoServicio.tipoEnsayo.nombre}"
+							filterBy="#{ensayoServicio.tipoEnsayo.nombre}" 
+							filterMatchMode="contains"
+							filterStyle="width: 80%;">
+							<f:facet name="header">
+								<h:outputText value="Tipo" />
+							</f:facet>
+							<h:outputText value="#{ensayoServicio.tipoEnsayo.nombre}" style="font-size:12px;" />
+						</p:column>
+						
+						<p:column sortBy="#{ensayoServicio.acreditado}" style="width:10%;">
+							<f:facet name="header">
+								<h:outputText value="Acreditado" />
+							</f:facet>
+							<center>
+								<h:outputText value="SI" rendered="#{ensayoServicio.acreditado}" style="font-size:12px;" />
+								<h:outputText value="NO" rendered="#{!ensayoServicio.acreditado}" style="font-size:12px;" />
+							</center>
+						</p:column>
+
+						<p:column headerText="Info." style="width:5%;">
+							<center>		
+								<p:commandButton 
+									title="Ver información detallada"
+									update="@form"
+									process="@form"
+									icon="ui-icon-search"
+									oncomplete="ensayoServicioDetalles.show()">
+										<f:setPropertyActionListener value="#{ensayoServicio}" 
+											target="#{ManejadorLaboratoriosEnsayosServicios.consultaES}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+						
+						<p:column headerText="Edit." style="width:5%;" rendered="#{!ManejadorLaboratoriosEnsayosServicios.soloLectura}">
+							<center>									
+								<p:commandButton
+									id="botonEditarEnsayoServicio"
+									icon="ui-icon-pencil"
+									rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+									action="#{ManejadorLaboratoriosEnsayosServicios.editarEnsayoServicio}"
+									update="@form"
+									title="Editar información del servicio #{ensayoServicio.nombre}"
+									onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()"
+									onclick="if(!confirm('¿Está seguro de editar el servicio?'))return false">
+									<f:setPropertyActionListener value="#{ensayoServicio}"
+										target="#{ManejadorLaboratoriosEnsayosServicios.editaES}" />
+								</p:commandButton>		
+							</center>
+						</p:column>
+
+						<p:column headerText="(-)" rendered="#{!ManejadorLaboratoriosEnsayosServicios.soloLectura}" style="width:5%;">
+							<center>
+								<p:commandButton icon="ui-icon-trash"
+									onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+									action="#{ManejadorLaboratoriosEnsayosServicios.eliminarEnsayoServicio}"
+									update="@form">
+									<f:setPropertyActionListener value="#{ensayoServicio}"
+										target="#{ManejadorLaboratoriosEnsayosServicios.consultaES}" />
+								</p:commandButton>
+							</center>
+						</p:column>		
+					</p:dataTable>
+				</center>
+				</p:tab>
+				
+				<p:tab title="Horarios y tarifas" id="panelHorariosTarifas" titleStyle="font-size:11px">
+					<p:spacer height="15" />
+					<p:panel>
+						<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes">
+							<p:commandButton id="infohorarioAtencion" icon="ui-icon-info" >
+								<p:tooltip for="infohorarioAtencion" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: justify; float:left;">
+									       	Por favor ingrese el horario de atención en que el laboratorio presta los servicios <br />
+									</t:div>
+								</p:tooltip>
+							</p:commandButton>
+							<h:outputLabel for="horarioAtencion" value="Horario de Atención:"
+								styleClass="labels_proyecto" />
+							<p:inputText id="horarioAtencion" maxlength="200" size="60"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.horarioAtencion}"
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}" />
+							
+							<p:commandButton id="infousuariosActuales" icon="ui-icon-info" >
+								<p:tooltip for="infousuariosActuales" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: justify; float:left;">
+									       	Por favor ingrese los usuarios actuales para los servicios que presta el laboratorio <br />
+									</t:div>
+								</p:tooltip>
+							</p:commandButton>
+							<h:outputLabel for="usuariosActuales" value="Usuarios actuales:"
+								styleClass="labels_proyecto" />
+							<p:inputTextarea id="usuariosActuales" rows="2" cols="60"
+								autoResize="false" maxlength="900"
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.ensayosUsuariosActuales}" />
+							
+							<p:commandButton id="infousuariosPotenciales" icon="ui-icon-info" >
+								<p:tooltip for="infousuariosPotenciales" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: justify; float:left;">
+									       	Por favor ingrese los usuarios potenciales para los servicios que presta el laboratorio <br />
+									</t:div>
+								</p:tooltip>
+							</p:commandButton>
+							<h:outputLabel for="usuariosPotenciales"
+								value="Usuarios potenciales:" styleClass="labels_proyecto" />
+							<p:inputTextarea id="usuariosPotenciales" rows="2" cols="60"
+								autoResize="false" maxlength="900"
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.ensayosUsuariosPotenciales}" />
+						</p:panelGrid>
+					</p:panel>
+					
+					<p:spacer height="20" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">Acto administrativo tarifas</t:div>
+					<p:spacer height="20" />
+							
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" id="panelGridAdctoAdminTarifas">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						
+							<h:outputText value="Tipo" styleClass="negrilla" />
+							<p:inputText id="tipoActoAdminTarifas"
+								title="Oficio, Resolución, Acuerdo, Acta, etc."
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								maxlength="32"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.tipoActoAdminTarifas}">
+							</p:inputText>
+
+							<h:outputText value="Número" styleClass="negrilla" />
+							<p:inputText id="numeroActoAdminTarifas"
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								maxlength="20"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.numeroActoAdminTarifas}">
+							</p:inputText>
+	
+							<h:outputText value="Fecha" styleClass="negrilla" />
+							<p:calendar readonlyInput="true"
+								disabled="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.fechaActoAdminTarifas}"
+								id="fechaActoAdminTarifas" locale="es" pattern="dd/MM/yyyy" navigator="true"/>
+							
+							<h:outputText value="Emitido por" styleClass="negrilla" />
+							<p:inputText id="emitidoActoAdminTarifas" size="50"
+								title="Dependencia o Entidad."
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								maxlength="100"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.emitidaActoAdminTarifas}">
+							</p:inputText>
+								
+							<p:spacer height="20" />
+							<p:spacer height="20" />
+							
+							<h:outputText value="Acto administrativo tarifas (PDF)" styleClass="negrilla" />
+							<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+								id="pgAdjuntosActoAdminTarifas">
+								
+								<p:fileUpload label="Agregar" update="dtArchivosTarifas"
+									fileUploadListener="#{ManejadorLaboratoriosEnsayosServicios.subirArchivoTarifas}"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB"
+									allowTypes="/(\.|\/)(pdf)$/"
+									invalidFileMessage="El archivo debe ser de formato PDF." 
+									rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"/>
+								
+								<p:dataTable var="archivoLaboratorioTarifas" id="dtArchivosTarifas"
+									value="#{ManejadorLaboratoriosEnsayosServicios.listaArchivosEnsayosServicios}"
+									rows="6" paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+									emptyMessage="No existen archivos registrados."
+									style="width: 500px">
+									<p:column>
+										<f:facet name="header" style="width:25%">
+											<h:outputText value="Fecha" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorioTarifas.fechaArchivo}"
+											styleClass="pequennio">
+											<f:convertDateTime pattern="yyyy-MM-dd" />
+										</h:outputText>
+									</p:column>
+									<p:column style="width:65%">
+										<f:facet name="header">
+											<h:outputText value="Nombre" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorioTarifas.nombreArchivo}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column rendered="false">
+										<f:facet name="header">
+											<h:outputText value="Tipo" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorioTarifas.tipoArchivo.nombre}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="D" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+												action="#{ManejadorLaboratoriosEnsayosServicios.descargarArchivoTarifas}">
+												<f:setPropertyActionListener value="#{archivoLaboratorioTarifas}"
+													target="#{ManejadorLaboratoriosEnsayosServicios.archivoLaboratorioTarifasSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									<p:column
+										rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+										style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="(-)" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-trash" update="dtArchivosTarifas"
+												action="#{ManejadorLaboratoriosEnsayosServicios.eliminarArchivoTarifas}"
+												onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorioTarifas.nombreArchivo}?.'))return false">
+												<f:setPropertyActionListener value="#{archivoLaboratorioTarifas}"
+													target="#{ManejadorLaboratoriosEnsayosServicios.archivoLaboratorioTarifasSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+							</p:dataTable>
+								
+							</p:panelGrid>
+							
+						</p:panelGrid>
+					
+					</p:panelGrid>
+					
+					<p:spacer height="20" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">Portafolio de servicios</t:div>
+					<p:spacer height="20" />
+							
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" id="panelGridBrochure">
+						<p:panelGrid style="width:100%" styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width:10%;">
+									<p:commandButton id="infoBrochure" icon="ui-icon-info" />
+									<p:tooltip for="infoBrochure" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: justify; float:left;">
+										       	Si el laboratorio cuenta con un portafolio de servicios (PDF) o un link externo 
+										       	con información de los servicios ofrecidos, por favor ingrese la información 
+										       	en los siguientes campos, esta se verá reflejada en el buscador de laboratorios 
+										       	del Sistema HERMES<br />
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column colspan="2" style="width:90%;">
+									<h:outputText
+										value="Si el laboratorio cuenta con un portafolio de servicios (PDF) o un link externo 
+										       	con información de los servicios ofrecidos, por favor ingrese la información 
+										       	en los siguientes campos, esta se verá reflejada en el buscador de laboratorios 
+										       	del Sistema HERMES" />
+								</p:column>
+							</p:row>	
+						</p:panelGrid>
+						<br />
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Link" styleClass="negrilla" />
+							<p:inputText id="linkBrochu"
+								title="Enlace en el caso de tener el portafolio de servicios en algún servicio en la nube como Google Drive, Dropbox o en otra página web"
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								maxlength="900"
+								style="width: 100%"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.linkBrochure}">
+							</p:inputText>
+							<p:spacer height="20" />
+							<p:spacer height="20" />
+							<h:outputText value="Portafolio de servicios (PDF)" styleClass="negrilla" />
+							<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" id="pgAdjuntosBrochure">
+								<p:fileUpload label="Agregar" update="dtArchivosBrochure"
+									fileUploadListener="#{ManejadorLaboratoriosEnsayosServicios.subirArchivoBrochure}"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="12145728" invalidSizeMessage="Tamaño máximo: 12 MB"
+									allowTypes="/(\.|\/)(pdf)$/"
+									invalidFileMessage="El archivo debe ser de formato PDF." 
+									rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"/>
+								<p:dataTable id="dtArchivosBrochure" var="archivoBrochure"
+									value="#{ManejadorLaboratoriosEnsayosServicios.listaArchivosEnsayosServiciosBrochure}"
+									rows="6" paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+									emptyMessage="No existen archivos registrados."
+									style="width: 500px">
+									<p:column>
+										<f:facet name="header" style="width:25%">
+											<h:outputText value="Fecha" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoBrochure.fechaArchivo}"
+											styleClass="pequennio">
+											<f:convertDateTime pattern="yyyy-MM-dd" />
+										</h:outputText>
+									</p:column>
+									<p:column style="width:65%">
+										<f:facet name="header">
+											<h:outputText value="Nombre" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoBrochure.nombreArchivo}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column rendered="false">
+										<f:facet name="header">
+											<h:outputText value="Tipo" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoBrochure.tipoArchivo.nombre}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="D" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+												action="#{ManejadorLaboratoriosEnsayosServicios.descargarArchivoBrochure}">
+												<f:setPropertyActionListener value="#{archivoBrochure}"
+													target="#{ManejadorLaboratoriosEnsayosServicios.archivoLaboratorioBrochureSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									<p:column
+										rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+										style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="(-)" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-trash" update="dtArchivosBrochure"
+												action="#{ManejadorLaboratoriosEnsayosServicios.eliminarArchivoBrochure}"
+												onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoBrochure.nombreArchivo}?.'))return false">
+												<f:setPropertyActionListener value="#{archivoBrochure}"
+													target="#{ManejadorLaboratoriosEnsayosServicios.archivoLaboratorioBrochureSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+								</p:dataTable>	
+							</p:panelGrid>
+						</p:panelGrid>
+					</p:panelGrid>
+					
+					<p:spacer height="20" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">Condiciones prestacion de servicio</t:div>
+					<p:spacer height="20" />
+							
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+						<p:panelGrid style="width:100%" styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width:10%;">
+									<p:commandButton id="infoCondiciones" icon="ui-icon-info" />
+									<p:tooltip for="infoCondiciones" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: justify; float:left;">
+										       	Si usted cuenta con un protocolo o procedimiento (PDF) o un link externo con las condiciones para la <br />
+										       	prestacion del servicio, para la recepción de muestras u otros, por favor ingrese la información <br />
+										       	en los siguientes campos. Esta se verá reflejada en el buscador de laboratorios del Sistemas Hermes. <br />
+										</t:div>
+									</p:tooltip>
+								</p:column>
+								<p:column colspan="2" style="width:90%;">
+									<h:outputText
+										value="Si usted cuenta con un protocolo o procedimiento (PDF) o un link externo con las condiciones para la
+										       	prestacion del servicio, para la recepción de muestras u otros, por favor ingrese la información 
+										       	en los siguientes campos. Esta se verá reflejada en el buscador de laboratorios del Sistemas Hermes." />
+								</p:column>
+							</p:row>	
+						</p:panelGrid>
+						<br />
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Link" styleClass="negrilla" />
+							<p:inputText
+								title="Enlace en el caso de tener la información en algún servicio en la nube como Google Drive, Dropbox o en otra página web"
+								readonly="#{ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+								maxlength="900"
+								style="width: 100%"
+								value="#{ManejadorLaboratoriosEnsayosServicios.laboratorioActual.linkCondiciones}">
+							</p:inputText>
+							<p:spacer height="20" />
+							<p:spacer height="20" />
+							<h:outputText value="Condiciones (PDF)" styleClass="negrilla" />
+							<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+								<p:fileUpload label="Agregar" update="dtArchivosCondiciones"
+									fileUploadListener="#{ManejadorLaboratoriosEnsayosServicios.subirArchivoCondiciones}"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB"
+									allowTypes="/(\.|\/)(pdf)$/"
+									invalidFileMessage="El archivo debe ser de formato PDF." 
+									rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"/>
+								<p:dataTable id="dtArchivosCondiciones" var="archivo"
+									value="#{ManejadorLaboratoriosEnsayosServicios.listaArchivosEnsayosServiciosCondiciones}"
+									rows="6" paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+									emptyMessage="No existen archivos registrados."
+									style="width: 500px">
+									<p:column>
+										<f:facet name="header" style="width:25%">
+											<h:outputText value="Fecha" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivo.fechaArchivo}"
+											styleClass="pequennio">
+											<f:convertDateTime pattern="yyyy-MM-dd" />
+										</h:outputText>
+									</p:column>
+									<p:column style="width:65%">
+										<f:facet name="header">
+											<h:outputText value="Nombre" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivo.nombreArchivo}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column rendered="false">
+										<f:facet name="header">
+											<h:outputText value="Tipo" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivo.tipoArchivo.nombre}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="D" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+												action="#{ManejadorLaboratoriosEnsayosServicios.descargarArchivoCondiciones}">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{ManejadorLaboratoriosEnsayosServicios.archivoLaboratorioCondicionesSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									<p:column
+										rendered="#{not ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+										style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="(-)" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-trash" update="dtArchivosCondiciones"
+												action="#{ManejadorLaboratoriosEnsayosServicios.eliminarArchivoCondiciones}"
+												onclick="if(!confirm('Está seguro de eliminar el archivo #{archivo.nombreArchivo}?.'))return false">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{ManejadorLaboratoriosEnsayosServicios.archivoLaboratorioCondicionesSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+								</p:dataTable>	
+							</p:panelGrid>
+						</p:panelGrid>
+					</p:panelGrid>
+				</p:tab>
+			</p:tabView>
+			<br />
+			<br />
+			
+			<center>
+			<p:panelGrid columns="4"
+				rendered="#{!ManejadorLaboratoriosEnsayosServicios.soloLectura}"
+				styleClass="estilo-panelgrid-sinbordes">
+				<p:commandButton
+					action="#{ManejadorLaboratoriosEnsayosServicios.salir}"
+					onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+					value="Salir" />
+				<p:commandButton
+					action="#{ManejadorLaboratoriosEnsayosServicios.salirGuardar}"
+					value="Guardar y continuar después" />
+				<p:commandButton
+					action="#{ManejadorLaboratoriosEnsayosServicios.siguiente}"
+					value="Guardar y avanzar" />
+			</p:panelGrid>
+			</center>
+			
+<!-- 				Sección oculta mientras se define que va a pasar con METRORED/SEP 2018 -->
+				
+<!-- 				<p:panelGrid columns="3" rendered="#{!ManejadorLaboratoriosEnsayosServicios.soloLectura}" styleClass="estilo-panelgrid-sinbordes"> -->
+<!-- 					<p:commandButton -->
+<!-- 							action="#{ManejadorLaboratoriosInformacionGeneral.volverSolicitud}" -->
+<!-- 							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false" -->
+<!-- 							value="Volver a la solicitud"  -->
+<!-- 							immediate="true"  -->
+<!-- 							rendered="#{ManejadorLaboratoriosEnsayosServicios.esSolicitudLab}"/> -->
+					
+<!-- 					<p:commandButton
+						action="#{ManejadorLaboratoriosEnsayosServicios.salir}"
+						onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+						value="Salir"
+						immediate="true"
+						rendered="#{!ManejadorLaboratoriosEnsayosServicios.esSolicitudLab}"/>
+					<p:commandButton
+						action="#{ManejadorLaboratoriosEnsayosServicios.salirGuardar}"
+						value="Guardar y continuar después"
+						rendered="#{!ManejadorLaboratoriosEnsayosServicios.esSolicitudLab}"/>
+ -->						
+<!-- 					<p:commandButton -->
+<!-- 						rendered="#{ManejadorLaboratoriosEnsayosServicios.esSolicitudLab}" -->
+<!-- 						action="#{ManejadorLaboratoriosEnsayosServicios.siguienteVolverASolicitud}" -->
+<!-- 						value="Guardar y volver a la solicitud"  -->
+<!-- 						immediate="true"/> -->
+					
+<!-- 				</p:panelGrid> -->			
+			<p:dialog 
+				widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+				header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosEnsayosServicios.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+			
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+				Por favor espere...
+			</p:dialog>	
+			
+			<p:dialog 
+				header="INFORMACIÓN DETALLADA" widgetVar="ensayoServicioDetalles"
+				modal="true" resizable="false" width="600">
+				<t:div styleClass="panel-interno-tabla" id="ensayoServicioDetallesDiv" style="max-height:700px; overflow: auto;">
+					<p:panelGrid style="width:100%;" cellpadding="5" cellspacing="5">
+						<p:row>
+							<p:column colspan="3">
+								<h:outputText value="SERVICIO" style="font-weight: bold;" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 25%;">
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3" style="width: 75%;">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Descripción:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.descripcion}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo:" style="font-weight: bold;" />	
+							</p:column>
+							<p:column>
+								<h:outputText
+									value=" #{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7246'}" >
+							<p:column>
+								<h:outputText value="Otros servicios:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText value=" #{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayoOtros}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Valor:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.valorServicio}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Servicios por mes:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.ensayosMes}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tiempo estimado:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tiempoTotalEstimado}" />
+								<h:outputText value=" #{ManejadorLaboratoriosEnsayosServicios.consultaES.unidadTiempoTotalEstimado.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Número peronas:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.personas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Acreditado:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="SI" rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.acreditado}" />
+								<h:outputText value="NO" rendered="#{!ManejadorLaboratoriosEnsayosServicios.consultaES.acreditado}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.acreditado}">
+							<p:column>
+								<h:outputText value="Organismo(*):" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.acreditadoOrganismo.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<p:spacer height="20" />
+								<h:outputText value="DEDICACIÓN" style="font-weight: bold;" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Docencia:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="SI" rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.docencia}" />
+								<h:outputText value="NO" rendered="#{!ManejadorLaboratoriosEnsayosServicios.consultaES.docencia}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Investigación:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="SI" rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.investigacion}" />
+								<h:outputText value="NO" rendered="#{!ManejadorLaboratoriosEnsayosServicios.consultaES.investigacion}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Extensión:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="SI" rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.extension}" />
+								<h:outputText value="NO" rendered="#{!ManejadorLaboratoriosEnsayosServicios.consultaES.extension}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<p:spacer height="20" />
+								<h:outputText value="NORMA TÉCNICA" style="font-weight: bold;" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoNormaTecnica.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Número:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.numeroNormaTecnica}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Versión:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.versionNormaTecnica}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}" >
+							<p:column colspan="3">
+								<h:outputText value="INFORMACIÓN ESPECÍFICA PARA TIPO  
+											#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244' ? 'CALIBRACIÓN' 
+											: ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' ? 'ENSAYO' 
+											: 'NA' }" style="font-weight: bold;"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Magnitud o área:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.calibMagnitudArea.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Equipo o instrumento a calibrar:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.calibEquipo}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column colspan="2">
+								<p:spacer height="20" />
+								<h:outputText value="INTERVALO O PUNTO DE MEDICIÓN" style="font-weight: bold;" />	
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Mínimo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.intervaloPuntoMedMinimo}" />
+							</p:column>
+						</p:row>
+
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Maximo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.intervaloPuntoMedMaximo}" />
+							</p:column>
+						</p:row>
+
+						<!-- 								Unidades del intervalo: -->
+
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column colspan="2">
+								<p:spacer height="20" />
+								<h:outputText value="UNIDADES DEL INTERVALO"
+									style="font-weight: bold;" />	
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Prefijo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.unidadesIntervaloPrefijo.nombre}" />
+							</p:column>
+						</p:row>
+
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Unidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.unidadesIntervaloUnidad.nombre}" />
+							</p:column>
+						</p:row>
+
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Simbolo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.unidadesIntervaloSimbolo}" />
+							</p:column>
+						</p:row>
+
+						<!-- 								Incertidumbre de Medición -->
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column colspan="2">
+								<p:spacer height="20" />
+								<h:outputText value="INCERTIDUMBRE DE MEDICIÓN"
+									style="font-weight: bold;" />	
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Incertidumbre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.incertidumbreMedicionIncertidumbre.nombre}" />
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Valor:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.incertidumbreMedicionValor}" />
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Prefijo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.incertidumbreMedicionPrefijo.nombre}" />
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Unidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.incertidumbreMedicionUnidad.nombre}" />
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7243' or ManejadorLaboratoriosEnsayosServicios.consultaES.tipoEnsayo.id == '7244'}">
+							<p:column>
+								<h:outputText value="Simbolo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.incertidumbreMedicionSimbolo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<br />
+								<p:dataList 
+									value="#{ManejadorLaboratoriosEnsayosServicios.consultaES.listaEquipos}"
+									var="equipo" 
+									type="unordered" 
+									itemType="none" 
+									paginator="true" 
+									rows="10" 
+									styleClass="paginated">
+							        <f:facet name="header">
+							            Equipos asociados al servicio
+							        </f:facet>
+							        <h:outputText value="#{equipo.placa} - #{equipo.equipo}" style="display:inline-block" styleClass="pequennio"/>    
+							    </p:dataList>
+								<br />
+							</p:column>
+						</p:row>
+						
+					</p:panelGrid>					
+				</t:div>
+		</p:dialog>
+			
+		</h:form>
+		
+		</p:panel>
+			
+	</ui:define>
+</ui:composition>

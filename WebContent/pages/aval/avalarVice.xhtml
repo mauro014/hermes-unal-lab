@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Aval Institucional
+				Vicerrectoría</t:div>
+			<br />
+
+			<p:dataTable 
+				var="aval"
+				style="width:100%; font-size: 13px;"
+				value="#{manejadorSolicitarAvalVice.listaAval}"
+				emptyMessage="No tiene avales para revisión."
+				paginator="true"
+				rows="15"
+				paginatorPosition="top"
+				filteredValue="#{manejadorSolicitarAvalVice.filteredAvales}">
+				<f:facet name="header">Avales pendientes por revisión</f:facet>
+				<p:column 
+					style="text-align: center; width: 5%"
+					filterBy="#{aval.aviId}"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					sortBy="#{aval.aviId}">
+					<f:facet name="header">
+						<h:outputText value="Código" />
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{aval.aviId}" style='font-weight: bold;'/>
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 10%"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.nombreTipo}"
+					sortBy="#{aval.nombreTipo}">
+					<f:facet name="header">
+						<h:outputText value="Tipo"/>
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="JI - " rendered="#{aval.aviNumeroConvocatoria == '775'}"/>
+					<h:outputText value="#{aval.nombreTipo}" />
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 10%"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.aviNaturalezaConvocatoria}"
+					sortBy="#{aval.aviNaturalezaConvocatoria}">
+					<f:facet name="header">
+						<h:outputText value="Naturaleza" />
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{aval.aviNaturalezaConvocatoria}" />
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 10%" 
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.aviNumeroConvocatoria}"
+					sortBy="#{aval.aviNumeroConvocatoria}">
+					<f:facet name="header">
+						Convocatoria
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{aval.aviNumeroConvocatoria}" rendered="#{aval.tipo != 'SR'}" />
+					<h:outputText value="No aplica" rendered="#{aval.tipo == 'SR'}" />
+				</p:column>
+				<p:column
+					style="text-align: center; width: 10%"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.fechaUltimoEnvio}"
+					sortBy="#{aval.fechaUltimoEnvio}">
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+						<br />
+						<h:outputText value="solicitud" />
+					</f:facet>
+					<h:outputText value="#{aval.fechaUltimoEnvio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 10%"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.aviFechaAvalCoor}"
+					sortBy="#{aval.aviFechaAvalCoor}">
+					<f:facet name="header">
+						<h:outputText value="Fec. aprobación" />
+						<br />
+						<h:outputText value="dirección" />
+					</f:facet>
+					<h:outputText value="#{aval.aviFechaAvalCoor}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 25%" 
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.nombreInvestigador}"
+					sortBy="#{aval.nombreInvestigador}">
+					<f:facet name="header">
+						<h:outputText value="Solicitado por" />
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{aval.nombreInvestigador}" />
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 15%"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{aval.dependencia.sede.nombre}"
+					sortBy="#{aval.dependencia.sede.nombre}">
+					<f:facet name="header">
+						<h:outputText value="Sede" />
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{aval.dependencia.sede.nombre}" />
+				</p:column>
+				<p:column style="text-align: center;">
+					<p:commandButton action="#{manejadorSolicitarAvalVice.editarAval}"
+						icon="ui-icon-search">
+						<f:param name="idAval" value="#{aval.aviId}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{manejadorSolicitarAvalVice.tamañoLista} avales</f:facet>
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">
+				Comité de selección
+			</t:div>
+			<p:panel id="panelEvaluaciones">
+				Por favor coloque en las observaciones los criterios que definidos en los términos de referencia de la convocatoria, 
+				así como los criterios adicionales que definió el comité de selección como argumento de la decisión que soporte la calificación.
+				<br />
+				<br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Título del proyecto: "
+						style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.proyecto.nombre}" />
+					<h:outputText value="Código: " style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.proyecto.id}" />
+				</p:panelGrid>
+			</p:panel>
+			<p:panel rendered="#{!empty manejadorSeleccionProyectosComite.evaluacionProyecto.documentoEvaluador}"
+				style="margin-top: 20px; text-align: center;">
+				<h:commandLink
+					action="#{manejadorSeleccionProyectosComite.descargarDocumentoEvaluacionSeleccion}"
+					value="Ver documento anexo de selección cargado"
+					style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+					target="_blank">
+				</h:commandLink>
+			</p:panel>
+			<p:panel header="Cargar archivo anexo de selección"
+				rendered="#{manejadorSeleccionProyectosComite.evaluacionProyecto.proyecto.modalidad.documentoEvaluacion == 'Y' or 
+			   			manejadorSeleccionProyectosComite.evaluacionProyecto.proyecto.modalidad.documentoEvaluacion == 'A'}"
+				style="margin-top: 20px;">
+
+				<p:messages showDetail="true" />
+				<p:fileUpload value="#{manejadorSeleccionProyectosComite.archivoSubir}"
+					mode="simple" />
+				<p:commandButton value="Cargar archivo" ajax="false"
+					actionListener="#{manejadorSeleccionProyectosComite.guardarArchivo}" />
+			</p:panel>
+
+			<p:panel style="margin-top: 20px;"
+				id="panelEvaGeneral">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;" id="pGEvaGeneral">
+					<h:outputText value="Calificación:" />
+					<p:inputText id="calificacion"
+						value="#{manejadorSeleccionProyectosComite.calificacionSeleccion}"
+						readonly="#{manejadorSeleccionProyectosComite.esConsulta}" />
+						
+					<h:outputText value="" />
+					<h:outputText 
+						value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.proyecto.modalidad.informacionAdicionalMesa}"
+						escape="false" />
+					<h:outputText value="Criterios establecidos para la selección y observaciones:" />
+					<p:inputTextarea id="observacion"
+						value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.observacionesSeleccion}"
+						rows="8" cols="70" maxlength="4000"
+						readonly="#{manejadorSeleccionProyectosComite.esConsulta}" />
+				</p:panelGrid>
+			</p:panel>
+			<p:panel
+				style="margin-top: 20px; text-align: center;">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Decisión:" />
+					<p:selectOneRadio id="concepto" required="true"
+						layout="lineDirection"
+						disabled="#{manejadorSeleccionProyectosComite.esConsulta}"
+						value="#{manejadorSeleccionProyectosComite.idEstadoSeleccionado}">
+						<f:selectItems
+							value="#{manejadorSeleccionProyectosComite.listaEstadosProyectoItem}" />
+					</p:selectOneRadio>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel style="margin-top: 20px;"
+				rendered="#{manejadorSeleccionProyectosComite.esConsultaSeleccion}"
+				id="panelEvaGenConsulta">
+				<!-- 
+				<h:outputText value="#{manejadorSeleccionProyectosComite.eventualidad}" />
+				 -->
+				<h:outputText value="Selección del proyecto: " />
+				<h:outputText
+					value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.proyecto.nombre}"
+					style="font-weight: bold;" />
+				<h:outputText
+					value="se guardó satisfactoriamente con los siguientes datos:" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Calificación:" />
+					<h:outputText
+						value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.calificacionFinalSeleccion}" />
+					<h:outputText value="Observaciones:" />
+					<h:outputText
+						value="#{manejadorSeleccionProyectosComite.evaluacionProyecto.observacionesSeleccion}" />
+					<h:outputText value="Decisión:" />
+					<h:outputText
+						value="#{manejadorSeleccionProyectosComite.nombreEstadoSeleccionado}" />
+				</p:panelGrid>
+			</p:panel>
+			<br/>
+			<div style="width: 100%; text-align: center;">
+				<p:commandButton
+					action="#{manejadorSeleccionProyectosComite.guardarDatosSeleccion}" value="Guardar"
+					update="@form" 
+					rendered="#{!manejadorSeleccionProyectosComite.esConsulta}" />
+			</div>
+			<div style="width: 100%; text-align: center; padding-top: 20px;">
+				<p:commandButton action="proyectosConvocatoria" value="Regresar"
+					ajax="false" rendered="false" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

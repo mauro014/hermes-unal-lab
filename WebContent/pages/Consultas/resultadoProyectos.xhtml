@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+<!--@ taglib prefix="ig" uri="http://www.infragistics.com/faces/netadvantage"%>-->
+
+
+<h:form>
+<br /><center>
+ <h:outputText value="Han sido encontrados #{manejadorConsultas.tamañoListaProyectos} proyectos con la frase " styleClass="titulo"/>
+ <h:outputText value="'#{manejadorConsultas.claveBusqueda}'" styleClass="textoResaltado"/>
+ </center><br />
+  	
+  <t:buffer into= "#{tablaProyectos}">         
+	 
+	 <h:dataTable id="tablaResultado"
+	 			  styleClass    = "tablaSimple"                
+                  headerClass   = "cabeceraSimple"
+                
+	              value         = "#{manejadorConsultas.listaProyectos}" 
+	              var           = "proyecto"
+	              binding       = "#{manejadorConsultas.tablaConsultas}"
+	              rows		  	= "20"
+	              border		="1">	 	                 
+	              
+	   <h:column>
+	    <f:facet name="header">
+  	      <h:outputText value="Título del proyecto" styleClass="titulo"/>
+	    </f:facet>                
+	     <h:commandLink action="#{manejadorConsultas.setObjetoActual}" styleClass="linkSimple">
+	       <h:outputText value="#{proyecto.nombre}"/>
+	     </h:commandLink>                
+	   </h:column>
+	   <h:column>
+	    <f:facet name="header">
+  	      <h:outputText value="Dependencia" styleClass="titulo"/>
+	    </f:facet>                
+	       <h:outputText value="#{proyecto.dependenciaPrincipal.nombre}"/>
+	   </h:column>	  	  
+	   <h:column>
+	    <f:facet name="header">
+  	      <h:outputText value="Sede" styleClass="titulo"/>
+	    </f:facet>                
+	       <h:outputText value="#{proyecto.dependenciaPrincipal.sede.nombre}"/>
+	   </h:column>	  	  
+	   <h:column>
+	    <f:facet name="header">
+  	      <h:outputText value="Estado" styleClass="titulo"/>
+	    </f:facet>                
+	       <h:outputText value="#{proyecto.estadoProyecto.nombre}"/>
+	   </h:column>		  	  
+	 </h:dataTable>
+  </t:buffer>	 
+  
+   <t:buffer into="#{tablaScroller}">
+	<h:panelGrid columns="1" >
+       <t:dataScroller id="scrollProyectos"
+                       for="tablaResultado"
+                       fastStep="5"
+                       pageCountVar="pageCount"
+                       pageIndexVar="pageIndex"
+                       paginator="true"
+                       paginatorMaxPages="9"
+                       paginatorTableClass="paginator"
+                       paginatorActiveColumnStyle="font-weight:bold;">
+			<f:facet name="first">
+				<t:outputText  value = "<<"/>
+	        </f:facet>
+	        
+	        <f:facet name="previous">
+				<t:outputText  value = "<"/>
+	        </f:facet>
+
+			<f:facet name="next">
+				<t:outputText  value = ">"/>
+	        </f:facet>
+	        
+	        <f:facet name="last">
+				<t:outputText  value = ">>"/>
+	        </f:facet>
+
+		</t:dataScroller>
+
+	</h:panelGrid>
+  </t:buffer>
+ 
+ <center> 
+  <h:outputText value="#{tablaScroller}" escape="false"/>
+  <h:outputText value="#{tablaProyectos}" escape="false"/>
+  <h:outputText value="#{tablaScroller}" escape="false"/>
+	 
+	 
+	 <br />
+	 <h:commandLink action="#{manejadorConsultas.volver_busqueda}" styleClass="linkResaltado">
+	    <h:outputText value="[Nueva búsqueda]"/>
+	 </h:commandLink>
+   
+</center>
+
+
+
+</h:form>
+
+</h:form>
+</ui:define>
+</ui:composition>

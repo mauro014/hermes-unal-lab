@@ -1,0 +1,675 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">INFORMACIÓN GENERAL</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Información General</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<h:panelGrid id="mostrarSiConvocatoriaFichaMinima"
+				rendered="#{!manejadorFichaMinimaProyectos.mostrarSiConvocatoriaEventos}"
+				style="width:100%">
+
+				<p:panel id="panelInformacionAcademica"
+					header="I. INFORMACIÓN ACADÉMICO - ADMINISTRATIVA DEL PROYECTO"
+					toggleable="true" toggleSpeed="500" closeSpeed="500">
+
+					<p:accordionPanel id="panelUnoInfAcad" multiple="false"
+						activeIndex="">
+						<p:tab title="Información general" id="infoGeneral"
+							rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+
+							<br />
+
+
+							<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+								id="panelGridDescrGeneral">
+
+								<h:outputText value="Título del proyecto: " />
+								<p:inputTextarea
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.nombre}"
+									id="titulo" readonly="true"
+									validatorMessage="Título debe estar entre 1 - 3000 caracteres"
+									rows="3" cols="70">
+									<f:validateLength minimum="1" maximum="3000" for="titulo"></f:validateLength>
+								</p:inputTextarea>
+								<p:message for="titulo" display="icon" />
+								
+								<h:outputText
+									value="Objeto/Objetivo principal (Máx. 4000 caracteres):" />
+								<p:inputTextarea
+									validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.objetivoGeneral}" readonly="true"
+									rows="3" id="objeto" cols="70">
+									<f:validateLength minimum="1" maximum="4000" for="objeto"></f:validateLength>
+								</p:inputTextarea>
+								<p:message for="objeto" display="icon" />
+
+							</h:panelGrid>
+
+							<br />
+							<center>
+								<h:outputText value="Productos esperados"
+									style='font-weight: bold;' />
+							</center>
+
+							<br />
+
+
+
+							<h:panelGrid columns="1" id="panelProductos" align="center">
+
+
+								<h:panelGrid columns="1" align="left"
+									id="panelProductosAdicionados" style="width:600px">
+
+									<p:dataTable id="tablaProductos"
+										value="#{manejadorFichaMinimaProyectos.proyectoActual.listaProductosProyecto}"
+										var="proyectoProducto" cellpadding="6" cellspacing="3"
+										border="0"
+										emptyMessage="No existen productos asociados al proyecto">
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="PRODUCTOS ADICIONADOS" />
+											</f:facet>
+											<h:outputText value="#{proyectoProducto.producto.nombre}" />
+										</p:column>
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="CANTIDAD" />
+											</f:facet>
+											<h:outputText value="#{proyectoProducto.cantidad}" />
+										</p:column>
+
+
+									</p:dataTable>
+
+								</h:panelGrid>
+							</h:panelGrid>
+
+						</p:tab>
+
+						<p:tab title="Clasificación y duración"
+							id="duracionClasificacion">
+							<br />
+							<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+								id="panelDurac">
+
+								<h:outputText value="Area de la ciencia principal:"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}" />
+								<p:selectOneMenu style="width:160px"
+									value="#{manejadorFichaMinimaProyectos.areaCiencia}"
+									id="areaCiencia"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.areaCienciaItems}" />
+								</p:selectOneMenu>
+								<p:message for="areaCiencia" display="icon" />
+
+								<h:outputText value="Area de la ciencia secundaria:"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}" />
+								<p:selectOneMenu style="width:160px"
+									value="#{manejadorFichaMinimaProyectos.areaCienciaSec}"
+									id="areaCiencia1"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.areaCienciaItems}" />
+								</p:selectOneMenu>
+								<p:message for="areaCiencia" display="icon" />
+
+
+								<h:outputText value="Objetivo socioeconómico:"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}" />
+								<p:selectOneMenu id="socioeconomico" style="width:160px"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.objetivoSocioeconomico}">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.objSocioeconomicoItems}" />
+								</p:selectOneMenu>
+								<p:message for="socioeconomico" display="icon" />
+
+								<h:outputText value="Duración (Meses):" />
+								<h:outputText
+									value="#{ manejadorFichaMinimaProyectos.proyectoActual.duracion}"
+									id="horam">
+								</h:outputText>
+								<p:message for="horam" display="icon" />
+
+
+							</h:panelGrid>
+
+
+
+
+							<br />
+						</p:tab>
+
+						<p:tab title="Palabras clave" id="palabrasClave"
+							rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+
+							<br />
+							<p:outputPanel id="grupoListaPalabras" align="center">
+								<p:dataTable id="palabrasTable"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.listaPalabrasES}"
+									var="pal"
+									emptyMessage="No se encuentran palabras clave registradas">
+
+									<p:column style="width:25%">
+										<f:facet name="header">
+											<h:outputText value="Palabra Clave" />
+										</f:facet>
+										<h:outputText value="#{pal.palabraVista}" />
+									</p:column>
+
+
+								</p:dataTable>
+							</p:outputPanel>
+							<br />
+
+						</p:tab>
+
+						<p:tab title="Equipo de trabajo UN" id="equipoTrabajo">
+
+							<br />
+							<br />
+
+							<center>
+								<h:outputText value="Director"
+									style='font-weight: bold;' />
+							</center>
+							<br />
+
+							<center>
+								<p:dataTable id="directorTabla" var="coinvestigador"
+									value="#{manejadorFichaMinimaProyectos.listaDirector}"
+									emptyMessage="No se ha agregado el director" style="width:80%">
+
+									<p:column headerText="Director">
+										<h:outputText
+											value="#{coinvestigador.investigador.nombre1} #{coinvestigador.investigador.apellido1}" />
+									</p:column>
+									<p:column headerText="Documento">
+										<h:outputText
+											value="#{coinvestigador.investigador.id.documento}" />
+									</p:column>
+
+									<p:column headerText="Unidad">
+										<h:outputText
+											value="#{coinvestigador.investigador.dependencia.nombre}" />
+									</p:column>
+
+									<p:column headerText="td" style="width:60%">
+										<h:outputText value=" #{coinvestigador.dedicacionHorasSemana}" />
+									</p:column>
+
+									<p:column headerText="Valor(dedicación-$)" style="width:60%">
+										<h:outputText value=" #{coinvestigador.valorPagar}" />
+									</p:column>
+
+
+								</p:dataTable>
+							</center>
+							<br />
+
+
+
+							<br />
+							<p:separator></p:separator>
+							<br />
+							<center>
+								<h:outputText value="Participantes:"
+									style='font-weight: bold;' />
+							</center>
+							<br />
+
+							<center>
+								<p:dataTable id="participantesTabla" var="coinvestigadorPart"
+									value="#{manejadorFichaMinimaProyectos.listaParticipantes}"
+									emptyMessage="No se han agregado participantes"
+									style="width:80%">
+
+									<p:column headerText="Participante">
+										<h:outputText
+											value="#{coinvestigadorPart.investigador.nombre1} #{coinvestigadorPart.investigador.apellido1}" />
+									</p:column>
+									<p:column headerText="Documento">
+										<h:outputText
+											value=" #{coinvestigadorPart.investigador.id.documento}" />
+									</p:column>
+
+									<p:column headerText="Unidad">
+										<h:outputText
+											value="#{coinvestigadorPart.investigador.dependencia.nombre}" />
+									</p:column>
+
+									<p:column headerText="Tipo Vinculación" style="width:60%">
+										<h:outputText value="#{coinvestigadorPart.tipo.nombre}" />
+									</p:column>
+
+									<p:column headerText="td" style="width:60%">
+										<h:outputText
+											value=" #{coinvestigadorPart.dedicacionHorasSemana}" />
+									</p:column>
+
+
+									<p:column headerText="Valor(dedicación-$)" style="width:60%"
+										rendered="false">
+										<h:outputText value="" />
+									</p:column>
+
+
+								</p:dataTable>
+							</center>
+							<br />
+
+
+						</p:tab>
+
+					</p:accordionPanel>
+
+				</p:panel>
+				<br />
+
+				<p:panel id="panelInformacionFinanciera"
+					header="II. INFORMACIÓN FINANCIERA DEL PROYECTO" toggleable="true"
+					toggleSpeed="500" closeSpeed="500">
+
+					<p:accordionPanel id="panelUnoInfFin" multiple="true"
+						activeIndex="">
+
+						<p:tab title="Aspectos generales" id="aspectosGenerales"
+							rendered="false">
+
+							<h:panelGrid columns="2" id="gridUnidadEjecutora" align="center"
+								cellpadding="5" cellspacing="5">
+								<h:outputText value="Unidad ejecutora" />
+								<p:selectOneMenu
+									value="#{manejadorFichaMinimaProyectos.unidadEjecutora}"
+									id="dependenciasUN" style="width:300px" filter="true">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.dependenciaItem}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Genera Servicios Académicos Remunerados?" />
+								<p:selectOneMenu id="remunerados"
+									value="#{manejadorFichaMinimaProyectos.serviciosAcademicos}"
+									style="width:20%">
+									<f:selectItem itemLabel="NO" itemValue="NO" />
+									<f:selectItem itemLabel="SI" itemValue="SI" />
+								</p:selectOneMenu>
+
+							</h:panelGrid>
+						</p:tab>
+
+						<p:tab title="Información financiera" id="infoFinanciera">
+
+							<p:dataTable cellpadding="6" cellspacing="3"
+								value="#{manejadorFichaMinimaProyectos.listaFinanciaciones}"
+								var="financiacion" id="listaFuentesFinan"
+								rendered="#{not empty manejadorFichaMinimaProyectos.listaFinanciaciones}">
+								<p:column style="width:40%">
+									<f:facet name="header">
+										<h:outputText value="FUENTE DE FINANCIACIÓN" />
+									</f:facet>
+									<h:outputText value="#{financiacion.fuente.descripcion}" />
+								</p:column>
+
+								<p:column style="width:20%">
+									<f:facet name="header">
+										<h:outputText value="VALOR" />
+									</f:facet>
+									<h:outputText id="valorFinanciacion"
+										value="#{financiacion.valor}" />
+								</p:column>
+
+							</p:dataTable>
+
+							<br />
+
+
+							<p:outputPanel id="grupoGastos" align="center">
+
+								<p:dataTable id="dataTableGastoVista" var="gasto"
+									value="#{manejadorFichaMinimaProyectos.listaGastos}"
+									align="center" border="1" cellpadding="4" cellspacing="0"
+									rendered="#{!empty manejadorFichaMinimaProyectos.listaGastos }">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="RUBRO ADICIONADO" />
+										</f:facet>
+
+										<h:outputText value="#{gasto.tipoRubro.nombre}" />
+
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="AÑO" />
+										</f:facet>
+
+										<h:outputText value="#{gasto.vigencia}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="DESCRIPCIÓN" />
+										</f:facet>
+										<h:outputText value="#{gasto.descripcion}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="VALOR" />
+										</f:facet>
+										<h:outputText value="#{gasto.valor}" />
+									</p:column>
+
+								</p:dataTable>
+
+							</p:outputPanel>
+
+						</p:tab>
+
+
+					</p:accordionPanel>
+
+				</p:panel>
+				<br />
+
+			</h:panelGrid>
+
+			<h:panelGrid id="mostrarSiConvocatoriaEventos" align="center"
+				rendered="#{manejadorFichaMinimaProyectos.mostrarSiConvocatoriaEventos}"
+				style="width:100%">
+
+				<p:panel id="informacionGeneralEventos" header="Información General">
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del docente:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Sede:" />
+						<h:outputText value="#{manejadorFichaMinimaProyectos.nombreSede}" />
+
+						<h:outputText value="Facultad/Instituto:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.nombreFacultad}" />
+
+						<h:outputText value="Departamento:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.nombreDepartamento}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.emailPersonaActual}" />
+
+						<h:outputText value="Teléfono de contacto:" />
+						<h:outputText size="20" id="idTelefono"
+							value="#{manejadorFichaMinimaProyectos.telefono}" />
+
+
+
+					</h:panelGrid>
+
+				</p:panel>
+
+				<br />
+
+				<p:panel id="informacionDelEvento" header="Información del evento">
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del evento:" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							counter="counter" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." required="true"
+							id="nombreEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.nombre}"
+							requiredMessage="El nombre del evento es obligatorio" readonly="true"/>
+						<h:outputText id="count" value="" />
+						<h:outputText id="counter" />
+						
+						<h:outputText value="Número de estudiantes que apoyan el evento:" />
+						<p:inputText size="20" id="numeroEstudiantes"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.maxAsistentes}"
+							converterMessage="Debe ingresar un número entero válido mayor a 0 (cero)" readonly="true" >
+							<f:validateLongRange minimum="1" maximum="10000000000000"
+											for="valorSolicitadoReg" />
+						</p:inputText>
+
+						<h:outputText value="Fecha de inicio del evento:" />
+						<p:calendar
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.fechaTentativaInicio}"
+							id="popupButtonCalFecIni" locale="es" readonly="true"/>
+
+						<h:outputText value="Fecha de terminación del evento:" />
+						<p:calendar
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.fechaFinalizacion}"
+							id="popupButtonCalFecFin" locale="es" readonly="true"/>
+
+						<h:outputText value="Lugar de realización del evento:" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false" readonly="true"
+							counter="counterLugar" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." required="true"
+							id="lugarEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.lugar}"
+							requiredMessage="El lugar de realización del evento es obligatorio" />
+						<h:outputText id="idCounterLugar" value="" />
+						<h:outputText id="counterLugar" />
+
+						<h:outputText value="Justificación:" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false" readonly="true"
+							counter="counterJusti" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." required="true"
+							id="justifiEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.justificacion}"
+							requiredMessage="La justificación del evento es obligatorio" />
+						<h:outputText id="countJust" value="" />
+						<h:outputText id="counterJusti" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneralEnti">
+
+						<h:outputText
+							value="Dependencias de la UN organizadoras del evento:" />
+						<h:outputText value="" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" align="center" id="dependenciasPanelGrid">
+
+						<p:dataTable id="dependenciasDataTable"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.listaDependenciasAreaResponsabilidad}"
+							var="dependenciaArea" cellpadding="6" cellspacing="3" border="0"
+							emptyMessage="No existen dependencias asociadas al proyecto">
+
+							<f:facet name="header">
+								<h:outputText value="DEPENDENCIAS ASOCIADAS" />
+							</f:facet>
+
+							<p:column width="300">
+								<h:outputText value="#{dependenciaArea.dependencia.nombre}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneralTipoEv">
+						<h:outputText
+							value="Instituciones externas organizadoras del evento:" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false" readonly="true"
+							counter="counterEntExt" maxlength="1000"
+							counterTemplate="{0} caracteres restantes."
+							id="entidadesParticipantes"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.entidadesParticipantes}" />
+						<h:outputText id="countEntExt" value="" />
+						<h:outputText id="counterEntExt" />
+
+						<h:outputText value="Tipo de evento:" />
+						<p:selectOneMenu readonly="true"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.claseEvento}"
+							id="tipoEvento">
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.tipoEventoItems}" />
+							<p:ajax
+								listener="#{manejadorFichaMinimaProyectos.cambiarTipoEvento}"
+								update="panOtroTipEve" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<h:panelGrid id="panOtroTipEve" columns="2" cellpadding="5"
+						cellspacing="5">
+						<h:outputText value="Otro tipo - Cuál?:" id="otroEventotxt"
+							rendered="#{manejadorFichaMinimaProyectos.mostrarOtroTipoEvento}" />
+						<p:inputText size="40" id="otroEvento" readonly="true"
+							rendered="#{manejadorFichaMinimaProyectos.mostrarOtroTipoEvento}"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.otroClaseEvento}" />
+					</h:panelGrid>
+
+				</p:panel>
+
+				<br />
+
+				<p:panel id="presupuestoDelEvento" header="Presupuesto">
+
+					<p:dataTable cellpadding="6" cellspacing="3"
+						value="#{manejadorFichaMinimaProyectos.listaFinanciaciones}"
+						var="financiacion" id="listaFuentesFinan"
+						rendered="#{not empty manejadorFichaMinimaProyectos.listaFinanciaciones}">
+						<p:column style="width:40%">
+							<f:facet name="header">
+								<h:outputText value="FUENTE DE FINANCIACIÓN" />
+							</f:facet>
+							<h:outputText value="#{financiacion.fuente.descripcion}" />
+						</p:column>
+
+						<p:column style="width:20%">
+							<f:facet name="header">
+								<h:outputText value="VALOR" />
+							</f:facet>
+							<p:inputText id="valorFinanciacion" value="#{financiacion.valor}"
+								required="true" readonly="true"/>
+						</p:column>
+
+					</p:dataTable>
+
+					<br />
+
+
+					<p:outputPanel id="grupoGastos" align="center">
+
+						<p:dataTable id="dataTableGastoVista" var="gasto"
+							value="#{manejadorFichaMinimaProyectos.listaGastos}"
+							align="center" border="1" cellpadding="4" cellspacing="0"
+							rendered="#{!empty manejadorFichaMinimaProyectos.listaGastos }">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="RUBRO ADICIONADO" />
+								</f:facet>
+
+								<h:outputText value="#{gasto.tipoRubro.nombre}" />
+
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="AÑO" />
+								</f:facet>
+
+								<h:outputText value="#{gasto.vigencia}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="DESCRIPCIÓN" />
+								</f:facet>
+								<h:outputText value="#{gasto.descripcion}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="VALOR" />
+								</f:facet>
+								<h:outputText value="#{gasto.valor}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</p:outputPanel>
+
+				</p:panel>
+
+				<br />
+
+				<p:panel id="productosDelEvento" header="Productos Esperados">
+
+					<h:panelGrid columns="1" id="panelProductosEventos" align="center">
+
+
+
+						<h:panelGrid columns="1" align="left"
+							id="panelProductosAdicionadosEventos" style="width:600px">
+
+							<p:dataTable id="tablaProductosEventos"
+								value="#{manejadorFichaMinimaProyectos.proyectoActual.listaProductosProyecto}"
+								var="proyectoProducto" cellpadding="6" cellspacing="3"
+								border="0"
+								emptyMessage="No existen productos asociados al proyecto">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="PRODUCTOS ADICIONADOS" />
+									</f:facet>
+									<h:outputText value="#{proyectoProducto.producto.nombre}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="CANTIDAD" />
+									</f:facet>
+									<h:outputText value="#{proyectoProducto.cantidad}" />
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+					</h:panelGrid>
+
+				</p:panel>
+
+			</h:panelGrid>
+
+
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

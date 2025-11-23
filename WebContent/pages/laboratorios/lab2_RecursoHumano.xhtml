@@ -1,0 +1,929 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Recurso Humano</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />
+		</h:form>
+
+		<h:form id="RecursoHumanoLaboratorio">
+		
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;
+									        ">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="15" />
+
+			<p:panel id="panelRecursoHumanoLaboratorio"
+				header="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.nombre} - #{ManejadorLaboratoriosRecursoHumano.laboratorioActual.id}">
+				
+				<p:spacer height="15" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Asociar persona</t:div>
+				<p:spacer height="15" />
+
+				<p:panel>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+						<p:row>
+							<p:column style="width:12%;">
+								<h:outputText value="Documento" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:30%">
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"
+									value="#{ManejadorLaboratoriosRecursoHumano.idPersonaBuscar.tipoDocumento}"
+									style="width:95%;">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRecursoHumano.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:inputText id="numDocumento"
+									value="#{ManejadorLaboratoriosRecursoHumano.idPersonaBuscar.documento}"
+									title="Documento de la persona a buscar (Omitir puntos, comas y otros caracteres extraños)"
+									size="15" maxlength="25"
+									readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}" />
+							</p:column>
+							<p:column style="width:10%;text-align: center">
+								<h:outputText value="Tipo" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:25%">
+								<p:selectOneMenu
+									id="listaTipoPersonaLab"
+									value="#{ManejadorLaboratoriosRecursoHumano.tipoPersonaSeleccionado}"
+									converter="ConvertidorTipos"
+									style="width:95%;"
+									panelStyle="width: 250px"
+									disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}">
+									<f:selectItems value="#{ManejadorLaboratoriosRecursoHumano.listaTiposPersona}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column style="width:10%;text-align:right">
+								<p:commandButton value="Buscar" icon="ui-icon-search"
+									update="RecursoHumanoLaboratorio"
+									disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"
+									action="#{ManejadorLaboratoriosRecursoHumano.buscarPersona}"
+									onstart="dlg.show()" oncomplete="dlg.hide()" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				
+					<p:spacer height="15" />
+					
+					<p:panel style="width:100%;" styleClass="mypanel" rendered="#{ManejadorLaboratoriosRecursoHumano.mostrarDatosPersona}">
+						<h:outputText
+								value="Los campos que se encuentran bloqueados se consultan a través de una vista al sistema de Talento Humano SARA (Docentes y administrativos UN)
+									o sistema de información académica SIA (Estudiantes),
+									por lo que cualquier inconsistencia debe comunicarse con dicho sistema." 
+								style="font-size:12px"/>
+					</p:panel>
+					
+					<p:panelGrid styleClass="panelgrid-sinbordes-padding" rendered="#{ManejadorLaboratoriosRecursoHumano.mostrarDatosPersona and ManejadorLaboratoriosRecursoHumano.esExterno}">
+						<p:row>
+							<p:column style="width:15%">
+								<h:outputText value="Documento" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:35%">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.persona.id.tipoDocumento} #{ManejadorLaboratoriosRecursoHumano.persona.id.documento}"/>
+							</p:column>
+							<p:column style="width:15%">
+								<h:outputText value="Tipo asociación" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:35%">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.tipoPersonaSeleccionado.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Primer nombre" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="primerNombre" size="20" maxlength="30"
+									value="#{ManejadorLaboratoriosRecursoHumano.persona.nombre1}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Segundo nombre" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="segundoNombre" size="20" maxlength="30"
+									value="#{ManejadorLaboratoriosRecursoHumano.persona.nombre2}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Primer apellido" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="primerApellido" size="20" maxlength="30"
+									value="#{ManejadorLaboratoriosRecursoHumano.persona.apellido1}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Segundo apellido" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="segundoApellido" size="20" maxlength="30"
+									value="#{ManejadorLaboratoriosRecursoHumano.persona.apellido2}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Correo" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="emailPersona" size="20" maxlength="30"
+									value="#{ManejadorLaboratoriosRecursoHumano.persona.email}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Teléfono" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputMask id="telefonoPersona" maxlength="64" size="20"
+									title="Por favor para ingresar la información del teléfono, el formato recomendado es (+57 2) 3165000 Ext. 10605"
+									value="#{ManejadorLaboratoriosRecursoHumano.telefonoPersona}"
+									mask="(99 9) 9999999? Ext.99999">
+							</p:inputMask>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Sexo biológico" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="idGenero" value="#{ManejadorLaboratoriosRecursoHumano.persona.genero}">
+									<f:selectItem itemLabel="Mujer - Femenino" itemValue="F" />
+									<f:selectItem itemLabel="Hombre - Masculino" itemValue="M" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nivel formación" styleClass="labels_proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="siNivFormacion" style="width:95%"
+									value="#{ManejadorLaboratoriosRecursoHumano.nivelFormacionSeleccionada}">
+									<f:selectItem itemLabel="Seleccione" itemValue="." />
+									<f:selectItems value="#{ManejadorLaboratoriosRecursoHumano.selectItemNivelFormacion}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:panelGrid styleClass="panelgrid-sinbordes-padding" rendered="#{ManejadorLaboratoriosRecursoHumano.mostrarDatosPersona and !ManejadorLaboratoriosRecursoHumano.esExterno}">
+						<p:row>
+							<p:column style="width:15%">
+								<h:outputText value="Documento" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:35%">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.persona.id.tipoDocumento} #{ManejadorLaboratoriosRecursoHumano.persona.id.documento}"/>
+							</p:column>
+							<p:column style="width:15%">
+								<h:outputText value="Tipo asociación" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:35%">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.tipoPersonaSeleccionado.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Nombre" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.persona.nombreCompleto}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Correo" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.persona.email}"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Teléfono" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<p:inputMask id="telefonoPersona" maxlength="64" size="20"
+									title="Por favor para ingresar la información del teléfono, el formato recomendado es (+57 2) 3165000 Ext. 10605"
+									readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"
+									value="#{ManejadorLaboratoriosRecursoHumano.telefonoPersona}"
+									mask="(99 9) 9999999? Ext.99999">
+							</p:inputMask>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEmpleadoUN}">
+							<p:column>
+								<h:outputText value="Sede" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.dependencia.sede.nombre}"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.dependencia.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEmpleadoUN}">
+							<p:column>
+								<h:outputText value="Departamento" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.dependencia.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEmpleadoUN}">
+							<p:column>
+								<h:outputText value="Nivel formación" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.tipoFormacion.nombre}"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo vinculación" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.tipoVinculacion.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEmpleadoUN}">
+							<p:column>
+								<h:outputText value="Dedicación" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.tipoDedicacion.nombre}"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Cargo" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.investigadorInterno.tipoCargo.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEstudiante}">
+							<p:column>
+								<h:outputText value="Sede" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.estudiante.dependencia.sede.nombre}"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.estudiante.dependencia.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEstudiante}">
+							<p:column>
+								<h:outputText value="Departamento" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.estudiante.dependencia.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorLaboratoriosRecursoHumano.esEstudiante}">
+							<p:column>
+								<h:outputText value="Plan estudios" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorLaboratoriosRecursoHumano.estudiante.plan.nombre}"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nivel formación" styleClass="labels_proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="siNivFormacion" style="width:95%"
+									value="#{ManejadorLaboratoriosRecursoHumano.nivelFormacionSeleccionada}">
+									<f:selectItem itemLabel="Seleccione" itemValue="." />
+									<f:selectItems value="#{ManejadorLaboratoriosRecursoHumano.selectItemNivelFormacion}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:panelGrid styleClass="panelgrid-sinbordes-padding" 
+						rendered="#{ManejadorLaboratoriosRecursoHumano.mostrarDatosPersona}">
+						<p:row>
+							<p:column style="width:15%">
+								<h:outputText value="Rol" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:50%">
+								<p:selectOneMenu id="rolSI"
+									disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"
+									value="#{ManejadorLaboratoriosRecursoHumano.rolSeleccionado.id}"
+									style="width:95%;">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRecursoHumano.rolSelectItem}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column style="text-align: right">
+								<p:commandLink id="ajax" onstart="descripcionRoles.show()"
+									style="text-decoration:none; color: #16A8E2;font-weight: bold;">
+									<h:outputText value="Ver descripción de cada rol" />
+								</p:commandLink>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:spacer height="15" />
+					
+					<center>
+						<p:panelGrid style="width:100%;font-size: 12px" styleClass="estilo-panelgrid-sinbordes" 
+							rendered="#{ManejadorLaboratoriosRecursoHumano.mostrarDatosPersona and ManejadorLaboratoriosRecursoHumano.esExterno}">
+							<p:row>
+								<p:column style="width:30%">
+									<h:outputText value="¿Acepta tratamiento de datos?" />
+								</p:column>
+								<p:column style="width:15%">
+									<p:selectOneRadio id="tipoAceptaTratDatos" value="#{ManejadorLaboratoriosRecursoHumano.aceptaTratamientoDatos}">
+							            <f:selectItem itemValue="S" itemLabel="Si" />
+							            <f:selectItem itemValue="N" itemLabel="No" />
+							            <p:ajax update="RecursoHumanoLaboratorio:botonAsociar"/>
+							        </p:selectOneRadio>
+								</p:column>
+								<p:column style="text-align: right">
+									<p:commandLink id="ajax" onstart="politicaDatos.show()"
+										style="text-decoration:none; color: #16A8E2;font-weight: bold;">
+										<h:outputText value="Ver aviso de privacidad" />
+									</p:commandLink>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{ManejadorLaboratoriosRecursoHumano.mostrarDatosPersona}">
+								<p:commandButton id="infoRecursoHumano" icon="ui-icon-info" />
+								<p:tooltip for="infoRecursoHumano" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left; width:450px">
+									 	El coordinador de laboratorio puede asignar a una o varias de las personas asociadas al laboratorio para que puedan editar, consultar o no darles acceso al sistema Hermes. Es responsabilidad del coordinador de laboratorio tener actualizada esta información y asignar los permisos que considere
+									</t:div>
+								</p:tooltip>
+								<p:commandButton value="Asociar" icon="ui-icon-plus"
+									id="botonAsociar"
+									update="@form"
+									action="#{ManejadorLaboratoriosRecursoHumano.asociarPersona}"
+									onclick="if(!confirm('Está seguro de asociar a #{ManejadorLaboratoriosRecursoHumano.persona.nombre1} #{ManejadorLaboratoriosRecursoHumano.persona.apellido1}?'))return false"
+									onstart="dlg.show()" oncomplete="dlg.hide()" 
+									disabled="#{ManejadorLaboratoriosRecursoHumano.esExterno and ManejadorLaboratoriosRecursoHumano.aceptaTratamientoDatos == 'N'}"/>
+						</p:panelGrid>
+					</center>
+				</p:panel>
+				
+				<p:message for="numDocumento" />
+				<p:message for="siNivFormacion" />
+				<p:message for="primerNombre" />
+				<p:message for="primerApellido" />
+				<p:message for="emailPersona" />
+				<p:message for="rolSI" />
+				<p:message for="listaTipoPersonaLab" />
+				<p:message for="TablaPersonal" />
+				
+				<p:spacer height="5" />
+				
+<!-- 				<p:separator/> -->
+
+				<p:spacer height="15" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Personas asociadas</t:div>
+				<p:spacer height="15" />
+				
+				<p:dataTable var="personaLaboratorio" id="TablaPersonal"
+					value="#{ManejadorLaboratoriosRecursoHumano.listaPersonasLaboratorio}"
+					rows="10" 
+					paginator="true" 
+					paginatorPosition="bottom" 
+					pageLinks="10"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No existen personas asociadas al laboratorio">
+					
+					<p:column headerText="Documento" style="width: 10%;">
+						<h:outputText styleClass="pequennio"
+							value="#{personaLaboratorio.persona.id.tipoDocumento} #{personaLaboratorio.persona.id.documento}" />
+					</p:column>
+					<p:column headerText="Nombre" style="width: 30%;">
+						<h:outputText value="#{personaLaboratorio.persona.nombreCompleto}" />
+					</p:column>
+					<p:column headerText="Rol" style="width: 15%;">
+						<h:outputText value="#{personaLaboratorio.rol.nombre}" styleClass="pequennio" />
+					</p:column>
+					<p:column headerText="Vinculación" style="width: 15%;">
+						<h:outputText value="#{personaLaboratorio.tipoVinculacion.nombre}" styleClass="pequennio" />
+					</p:column>
+					<p:column headerText="Tel." style="width: 5%;">
+						<h:outputText value="#{personaLaboratorio.extension}" styleClass="pequennio" />
+					</p:column>
+					<p:column headerText="Permisos" style="width: 15%;">
+						<p:selectBooleanCheckbox id="checkConsulta" label="Consultar" value="#{personaLaboratorio.permisoConsulta}"
+							disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura 
+								or !ManejadorLaboratoriosRecursoHumano.puedeModPermisosPersonal
+								or personaLaboratorio.rol.id == 'CO'}">
+							<p:ajax listener="#{ManejadorLaboratoriosRecursoHumano.cambiosEnPermisos}" />
+							<p:tooltip for="checkConsulta" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left; width:300px">
+								 	Sólo el coordinador del laboratorio, la DNIL y la dirección de sede pueden modificar estos permisos.
+								</t:div>
+							</p:tooltip>
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Consultar" styleClass="pequennio" />
+						<br />
+						<p:selectBooleanCheckbox id="checkEdicion" label="Editar" value="#{personaLaboratorio.permisoEdicion}"
+							disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura 
+								or !ManejadorLaboratoriosRecursoHumano.puedeModPermisosPersonal
+								or personaLaboratorio.rol.id == 'CO'}">
+							<p:ajax listener="#{ManejadorLaboratoriosRecursoHumano.cambiosEnPermisos}" />
+							<p:tooltip for="checkEdicion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left; width:300px">
+								 	Sólo el coordinador del laboratorio, la DNIL y la dirección de sede pueden modificar estos permisos.
+								</t:div>
+							</p:tooltip>
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Editar" styleClass="pequennio" />
+					</p:column>
+					
+					<p:column headerText="Arc." style="width: 5%;">
+						<center>
+							<p:commandButton title="Registrar/Modificar archivos adjuntos"
+								action="#{ManejadorLaboratoriosRecursoHumano.modificarArchivosPersonaLaboratorio}"
+								update="@form" onstart="dlg.show()"
+								icon="ui-icon-pencil"
+								oncomplete="dlg.hide(),archivosPersonaLaboratorio.show()">
+									<f:param name="tipoDocumento" value="#{personaLaboratorio.persona.id.tipoDocumento}" />
+									<f:param name="idDocumento" value="#{personaLaboratorio.persona.id.documento}" />
+								<f:setPropertyActionListener value="#{personaLaboratorio}" target="#{ManejadorLaboratoriosRecursoHumano.personaSeleccionada}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<p:column rendered="#{!ManejadorLaboratoriosRecursoHumano.soloLectura}" style="width: 5%;">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="@form"
+								action="#{ManejadorLaboratoriosRecursoHumano.eliminarPersona}"
+								onclick="if(!confirm('Está seguro de eliminar a #{personaLaboratorio.persona.nombreCompleto}? Recuerde que para eliminar la persona primero es necesario borrar todos los archivos asociados'))return false"
+								rendered="#{ManejadorLaboratoriosRecursoHumano.rolSeleccionadoLabs == 'DL'
+									or (ManejadorLaboratoriosRecursoHumano.rolSeleccionadoLabs == 'LS' and personaLaboratorio.rol.id != 'CO')
+									or (ManejadorLaboratoriosRecursoHumano.rolSeleccionadoLabs == 'LF' and personaLaboratorio.rol.id != 'CO')
+									or (ManejadorLaboratoriosRecursoHumano.rolSeleccionadoLabs == 'LD' and personaLaboratorio.rol.id != 'CO')
+									or (ManejadorLaboratoriosRecursoHumano.rolSeleccionadoLabs == 'CO' and personaLaboratorio.rol.id != 'CO')
+									or (ManejadorLaboratoriosRecursoHumano.esPersonalLaboratorio and personaLaboratorio.rol.id != 'CO' )
+									}"
+								title="Eliminar persona del laboratorio">
+								<f:setPropertyActionListener value="#{personaLaboratorio}"
+									target="#{ManejadorLaboratoriosRecursoHumano.personaSeleccionada}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+
+				<p:spacer height="15" />
+				
+				<p:pieChart 
+					value="#{ManejadorLaboratoriosRecursoHumano.pieModel}" 
+					legendPosition="e" 
+					diameter="200"
+					sliceMargin="4"
+					showDataLabels="true"
+					showDataTip="true"
+					dataFormat="value"
+					style="width:100%;height:250px"
+				/>
+				
+				<p:spacer height="15" />
+				
+				<p:panelGrid columns="4" style="width: 60%;text-align: center " styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Personal Calificado: " styleClass="labels_proyecto" />
+					<p:selectBooleanCheckbox id="personalCalificado"
+						disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"
+						value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.personalCalificado}">
+					</p:selectBooleanCheckbox>
+
+					<h:outputText value="Suficiente Personal: " styleClass="labels_proyecto" />
+					<p:selectBooleanCheckbox id="personalSuficiente"
+						disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"
+						value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.personalSuficiente}">
+					</p:selectBooleanCheckbox>
+				</p:panelGrid>
+				
+<!-- 				OBSERVACIONES -->
+				<p:spacer height="25" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">
+					<h:outputText value="Observaciones"/>
+				</t:div>
+				<p:spacer height="25"/>
+				
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%">
+					<p:row rendered="#{!ManejadorLaboratoriosRecursoHumano.soloLectura}">
+						<p:column style="width:80%; text-align:right">
+							<p:inputTextarea
+								value="#{ManejadorLaboratoriosRecursoHumano.observacionSel.descripcion}"
+								rows="3" id="observacionTxt"
+								style="width: 90%"
+								validatorMessage="La observacion debe estar entre 1 - 2000 caracteres"
+								counter="counterObservacion" maxlength="2000"
+								counterTemplate="{0} caracteres restantes.">
+							</p:inputTextarea><br/>
+							<h:outputText id="counterObservacion"/>
+						</p:column>
+						<p:column style="width:20%; ; text-align:right">
+							<p:commandButton
+								action="#{ManejadorLaboratoriosRecursoHumano.insertarObservacion}"
+								value="Agregar" icon="ui-icon-plus"
+								update="observacionTable,observacionTxt"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="width:100%;">
+							<p:spacer height="15"/>
+							<p:dataTable id="observacionTable"
+								value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.listaObservacionesXTipo}"
+								var="obs"
+								emptyMessage="No se hay observaciones registradas"
+								style="width:100%;"
+								sortBy="#{obs.fecha}"
+								sortOrder="descending">
+								<p:column style="width:60%;" styleClass="pequennio">
+									<f:facet name="header">
+										<h:outputText value="Observación" />
+									</f:facet>
+									<h:outputText value="#{obs.descripcion}" />
+								</p:column>
+								<p:column style="width:30%;" styleClass="pequennio">
+									<f:facet name="header">
+										<h:outputText value="Responsable" />
+									</f:facet>
+									<h:outputText value="#{obs.persona.nombreCompleto}" />
+								</p:column>
+								<p:column style="width:10%;" sortBy="#{obs.fecha}" styleClass="pequennio">
+									<f:facet name="header">
+										<h:outputText value="Fecha" />
+									</f:facet>
+									<h:outputText value="#{obs.fecha}" />
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				
+				<p:spacer height="30"/>
+
+<!-- 				<p:panelGrid columns="2" style="width: 100%;" styleClass="estilo-panelgrid-sinbordes"> -->
+
+<!-- 					<h:outputText value="Número de Funcionarios:" styleClass="labels_proyecto" /> -->
+
+<!-- 					<p:panelGrid columns="2" align="left"> -->
+
+<!-- 						<h:outputText value="Planta:" styleClass="labels_proyecto" /> -->
+<!-- 						<p:inputText id="planta" -->
+<!-- 							converterMessage="El Número de Funcionarios debe ser un número entero no negativo." -->
+<!-- 							validatorMessage="El Número de Funcionarios debe ser un número entero no negativo." -->
+<!-- 							value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.funcionariosPlanta}" -->
+<!-- 							readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"> -->
+<!-- 							<f:validateLongRange minimum="0" /> -->
+<!-- 						</p:inputText> -->
+
+<!-- 						<h:outputText value="Provisional:" styleClass="labels_proyecto" /> -->
+<!-- 						<p:inputText id="provisional" -->
+<!-- 							converterMessage="El Número de Funcionarios debe ser un número entero no negativo." -->
+<!-- 							validatorMessage="El Número de Funcionarios debe ser un número entero no negativo." -->
+<!-- 							value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.funcionariosProvisionales}" -->
+<!-- 							readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"> -->
+<!-- 							<f:validateLongRange minimum="0" /> -->
+<!-- 						</p:inputText> -->
+
+<!-- 						<h:outputText value="ODS:" styleClass="labels_proyecto" /> -->
+<!-- 						<p:inputText id="ODS" -->
+<!-- 							converterMessage="El Número de Funcionarios debe ser un número entero no negativo." -->
+<!-- 							validatorMessage="El Número de Funcionarios debe ser un número entero no negativo." -->
+<!-- 							readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}" -->
+<!-- 							value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.funcionariosODS}"> -->
+<!-- 							<f:validateLongRange minimum="0" /> -->
+
+<!-- 						</p:inputText> -->
+<!-- 					</p:panelGrid> -->
+
+<!-- 					<h:outputText value="Estudiantes:" styleClass="labels_proyecto" /> -->
+
+<!-- 					<p:panelGrid columns="2"> -->
+
+<!-- 						<h:outputText value="Auxiliar:" styleClass="labels_proyecto" /> -->
+<!-- 						<p:inputText id="auxiliares" -->
+<!-- 							converterMessage="El Número de Estudiantes debe ser un número entero no negativo." -->
+<!-- 							validatorMessage="El Número de Estudiantes debe ser un número entero no negativo." -->
+<!-- 							value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.estudiantesAuxiliares}" -->
+<!-- 							readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"> -->
+<!-- 							<f:validateLongRange minimum="0" /> -->
+<!-- 						</p:inputText> -->
+
+<!-- 						<h:outputText value="Becario:" styleClass="labels_proyecto" /> -->
+<!-- 						<p:inputText id="becarios" -->
+<!-- 							converterMessage="El Número de Estudiantes debe ser un número entero no negativo." -->
+<!-- 							validatorMessage="El Número de Estudiantes debe ser un número entero no negativo." -->
+<!-- 							value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.estudiantesBecarios}" -->
+<!-- 							readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"> -->
+<!-- 							<f:validateLongRange minimum="0" /> -->
+<!-- 						</p:inputText> -->
+
+<!-- 						<h:outputText value="Monitor:" styleClass="labels_proyecto" /> -->
+<!-- 						<p:inputText id="monitores" -->
+<!-- 							converterMessage="El Número de Estudiantes debe ser un número entero no negativo." -->
+<!-- 							validatorMessage="El Número de Estudiantes debe ser un número entero no negativo." -->
+<!-- 							value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.estudiantesMonitores}" -->
+<!-- 							readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}"> -->
+<!-- 							<f:validateLongRange minimum="0" /> -->
+<!-- 						</p:inputText> -->
+
+<!-- 					</p:panelGrid> -->
+
+<!-- 					<h:outputText value="Personal Calificado" -->
+<!-- 						styleClass="labels_proyecto" /> -->
+<!-- 					<p:selectBooleanCheckbox id="personalCalificado" -->
+<!-- 						disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}" -->
+<!-- 						value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.personalCalificado}"> -->
+<!-- 					</p:selectBooleanCheckbox> -->
+
+<!-- 					<h:outputText value="Suficiente Personal" -->
+<!-- 						styleClass="labels_proyecto" /> -->
+<!-- 					<p:selectBooleanCheckbox id="personalSuficiente" -->
+<!-- 						disabled="#{ManejadorLaboratoriosRecursoHumano.soloLectura}" -->
+<!-- 						value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.personalSuficiente}"> -->
+<!-- 					</p:selectBooleanCheckbox> -->
+
+<!-- 					<h:outputText value="Observaciones:" styleClass="labels_proyecto" /> -->
+
+<!-- 					<p:inputTextarea rows="3" cols="70" autoResize="false" -->
+<!-- 						counter="counterObservaciones" maxlength="1000" -->
+<!-- 						counterTemplate="{0} caracteres restantes" -->
+<!-- 						readonly="#{ManejadorLaboratoriosRecursoHumano.soloLectura}" -->
+<!-- 						value="#{ManejadorLaboratoriosRecursoHumano.laboratorioActual.observaciones}" /> -->
+<!-- 					<h:outputText /> -->
+<!-- 					<h:outputText id="counterObservaciones" -->
+<!-- 						rendered="#{!ManejadorLaboratoriosRecursoHumano.soloLectura}" -->
+<!-- 						styleClass="pequennio" /> -->
+<!-- 				</p:panelGrid> -->
+
+				<br />
+
+				<p:messages id="messages" autoUpdate="true" closable="true" redisplay="false" />
+
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" rendered="#{!ManejadorLaboratoriosRecursoHumano.soloLectura}">
+						<p:commandButton
+							action="#{ManejadorLaboratoriosRecursoHumano.volverSolicitud}"
+							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+							value="Volver a la solicitud" 
+							immediate="true" 
+							rendered="#{ManejadorLaboratoriosRecursoHumano.esSolicitudLab}"/>
+							
+						<p:commandButton
+							action="#{ManejadorLaboratoriosRecursoHumano.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" update="RecursoHumanoLaboratorio" 
+							immediate="true" 
+							rendered="#{!ManejadorLaboratoriosRecursoHumano.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosRecursoHumano.salirGuardar}"
+							value="Guardar y continuar después"
+							update="RecursoHumanoLaboratorio"
+							rendered="#{!ManejadorLaboratoriosRecursoHumano.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosRecursoHumano.siguiente}"
+							value="Guardar y avanzar" update="RecursoHumanoLaboratorio" />
+					</p:panelGrid>
+				</center>
+			</p:panel>
+
+			<p:dialog header="Hermes" widgetVar="dlg" resizable="false"
+				closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+				<h:outputText value="Por favor espere..." />
+			</p:dialog>
+			
+			<p:dialog
+				header="Archivos"
+				id="archivosPersonaLaboratorio"
+				widgetVar="archivosPersonaLaboratorio" modal="true"
+				resizable="false" width="600"
+				dynamic="true">
+
+				<p:panelGrid columns="1"
+							id="panelArchivosLab"
+							styleClass="estilo-panelgrid-sinbordes"
+							style="width:100%;">
+							
+					<h:outputText value="Archivos correspondientes a la persona seleccionada"/>
+					
+					<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+								value="#{ManejadorLaboratoriosRecursoHumano.listaArchivos}" rows="10"
+								paginator="true" paginatorPosition="bottom"
+								paginatorAlwaysVisible="false" pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen registros."
+								style="width:100%;">
+
+								<p:column>
+									<f:facet name="header">
+									Nombre
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+									Tipo
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.tipoArchivo.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Descargar" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+											action="#{ManejadorLaboratoriosRecursoHumano.descargarArchivo}">
+											<f:setPropertyActionListener value="#{archivoLaboratorio}"
+												target="#{ManejadorLaboratoriosRecursoHumano.archivoLaboratorioSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+								<p:column
+									rendered="#{not ManejadorLaboratoriosRecursoHumano.soloLectura}">
+									<f:facet name="header">
+										<h:outputText value="Eliminar" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+											action="#{ManejadorLaboratoriosRecursoHumano.eliminarArchivo}"
+											onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}? Esta acción NO se podrá deshacer.'))return false">
+											<f:setPropertyActionListener value="#{archivoLaboratorio}"
+												target="#{ManejadorLaboratoriosRecursoHumano.archivoLaboratorioSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+						
+							<font color="FF8000"><b>Restricción: Máximo 3 MB por archivo.</b></font>
+						
+								
+							<p:panelGrid columns="3" id="panelSubirDocumentos2" style="width:300px;" rendered="#{not ManejadorLaboratoriosRecursoHumano.soloLectura}">
+								<h:outputText value="Tipo de archivo" styleClass="negrilla" />
+								<p:selectOneMenu converter="ConvertidorTipos"
+									style="width:180px;"
+									value="#{ManejadorLaboratoriosRecursoHumano.tipoArchivoSeleccionado}"
+									id="somTipoArchivo">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRecursoHumano.tipoArchivoSelectItem}" />
+									<p:ajax listener="#{ManejadorLaboratoriosRecursoHumano.seleccionarTipos}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+									
+
+							<p:fileUpload label="Agregar" update="@parent"
+								fileUploadListener="#{ManejadorLaboratoriosRecursoHumano.subirArchivo}"
+								auto="true" mode="advanced" showButtons="false"
+								sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB" 
+								rendered="#{not ManejadorLaboratoriosRecursoHumano.soloLectura}"/>
+								
+					</p:panelGrid>	
+
+			</p:dialog>
+			
+			<p:dialog header="Roles asociados al personal del laboratorio"
+				id="descripcionRoles" widgetVar="descripcionRoles"
+				modal="true" resizable="false" width="600" height="480">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+								<strong style="color: #012259;">Coordinador laboratorio:</strong>
+									<br />
+									Usuario: Docente de la universidad, a excepción de los laboratorios de las sedes de presencia nacional donde podrá ser un administrativo de planta.
+									Será el máximo cargo del laboratorio, tendrá total acceso a la información de su(s) laboratorio(s) registrado(s) en el Sistema Hermes, 
+									pudiendo agregar, editar y/o eliminar información suministrada, será el responsable del laboratorio ante la Dirección de Laboratorios de 
+									su Sede o quien haga sus veces, la Coordinación de Laboratorios de Facultad y el Sistema Nacional de Laboratorios.
+									<br /><br />
+									Asignará los roles y otorgará los permisos para acceder o modificar la información de su laboratorio en el sistema.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Coordinador/jefe técnico laboratorio:</strong>
+									<br />
+									Usuario: Docente o administrativo de la universidad o un contratista, es el responsable de los aspectos técnicos del laboratorio, 
+									como pueden ser el aseguramiento de la calidad de los resultados, selección y validación de métodos de ensayos, entre otros.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Coordinador/líder de calidad laboratorio:</strong>
+									<br />
+									Usuario: Docente o administrativo de la universidad o un contratista, es el responsable de la implementación o la gestión del sistema de calidad del laboratorio.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Laboratorista:</strong>
+									<br />
+									Usuario: Administrativo de la universidad o contratista, es el responsable de la operación de los equipos, realiza los ensayos, calibraciones y otros servicios 
+									que se ofertan en el laboratorio. Reporta las fallas que afectan la prestación del servicio, por ejemplo, mal funcionamiento de los equipos, daños en la 
+									infraestructura del laboratorio, carencia de insumos, etc.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Investigador/Docente:</strong>
+									<br />
+									Usuarios: Docentes que realizan actividades de formación en el laboratorio, realicen actividades de investigación permanente o que apoyan la actividad operativa del laboratorio.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Estudiante Investigador:</strong>
+									<br />
+									Usuarios: Estudiantes de pregrado o posgrado que realizan actividades de investigación en el marco de un proyecto de tesis.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Estudiante Auxiliar:</strong>
+									<br />
+									Usuarios: Estudiante de pregrado o posgrado que realiza actividades de apoyo en el laboratorio para las cuales fue contratado bajo esta figura.
+						 			<br />
+								<br />
+								<strong style="color: #012259;">Personal de apoyo:</strong>
+									<br />
+									Usuario: Administrativo de la universidad o contratista, encargado de los procesos administrativos y de comunicación del laboratorio, 
+									como por ejemplo el manejo de las comunicaciones, divulgación de servicios, entre otros.
+						 			<br />
+								<br />
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			
+			<p:dialog header="Aviso de privacidad" id="politicaDatos" widgetVar="politicaDatos"
+				modal="true" resizable="false" width="600" height="480">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+									Para registro de información, le recomendamos tener en cuenta la Cláusula de Autorización de Tratamiento de Datos Personales 
+									de la Universidad Nacional de Colombia. En este caso la información de los datos de externos, se utilizan para información 
+									del proceso de investigación y para entregar indicadores a las instituciones que así lo requieran.
+								<br />
+								<br />
+									<strong style="color: #012259;">AVISO DE PRIVACIDAD:</strong>
+									<br />
+									La Universidad Nacional de Colombia, como responsable del tratamiento de información de datos personales, informa que los datos 
+									suministrados serán tratados de acuerdo con la ley 1581 de 2012, y a nuestra Política de Datos Personales, bajo las finalidades 
+									correspondientes al uso de los datos personales de terceros y podrá informar a los titulares de la información que pueden ejercer 
+									sus derechos como titulares mediante el canal protecdatos_na@unal.edu.co. DE ACUERDO A LA LEY 1581 DE 2012 DE PROTECCIÓN DE DATOS 
+									PERSONALES, HA LEÍDO, ENTENDIDO Y ACEPTA, LOS TÉRMINOS DESCRITOS EN LA POLÍTICA DE TRATAMIENTO DE DATOS PERSONALES
+								<br />
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			
+			<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+							header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosRecursoHumano.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

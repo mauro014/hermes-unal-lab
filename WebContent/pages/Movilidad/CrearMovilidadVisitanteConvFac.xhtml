@@ -1,0 +1,568 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadVisitante" enctype="multipart/form-data">
+
+			<p:panel header="Movilidad Visitante" id="identificacion">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<p:panelGrid columns="3">
+						<h:outputText value="Tipo de documento del docente UN" />
+						<p:selectOneMenu
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.tipoDocumento.id}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+						<h:outputText />
+
+						<h:outputText value="Número de documento del docente UN" />
+						<p:inputText id="Numero"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.documento}"
+							size="20">
+						</p:inputText>
+						<p:commandButton icon="ui-icon-search"
+							update="formCrearMovilidadVisitante"
+							action="#{ManejadorCrearEditarMovilidadVisitanteConvFac.buscarPersona}"
+							value="Buscar" />
+					</p:panelGrid>
+
+					<center>
+						<h:outputText id="panelNoExiste"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelNoExiste }"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.noExiste }"
+							styleClass="mensajeerror" />
+					</center>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<br />
+			<p:panel header="Apoyo a Visitantes Extranjeros"
+				id="fsApoyoVisitantesExtranjeros"
+				styleClass="estilo-panelgrid-sinbordes"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.mostrarDatosEvento}">
+				<p:panelGrid columns="1" id="evento"
+					rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.mostrarDatosEvento}">
+					<p:panelGrid columns="2">
+
+						<h:outputText value="Lider del grupo" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.nombreLider}" />
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorGrupo}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[0]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorGrupo}" />
+
+						<h:outputText value="Grupo que hace la solicitud" />
+						<p:selectOneMenu id="somGrupo" style="width:90%;"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.idgrupo}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.listaGrupos}" />
+							<p:ajax update="formCrearMovilidadVisitante"
+								listener="#{ManejadorCrearEditarMovilidadVisitanteConvFac.validarGrupo}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+
+					<p:panelGrid columns="2"
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.mostrarDatosEventoGrupo}">
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorPrograma}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[1]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorPrograma}" />
+						<h:outputText
+							value="Nombre del programa Académico asociado a la visita" />
+						<p:selectOneMenu style="width:90%;"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.idPrograma}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.programas}" />
+						</p:selectOneMenu>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDocente}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[2]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDocente}" />
+
+						<h:outputText value="Nombre del investigador visitante" />
+						<p:inputText id="nombreDocente"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.nombreDocente}"
+							size="60">
+						</p:inputText>
+						
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.bErrorEmail}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[14]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.bErrorEmail}" />
+						
+						<h:outputText value="Correco electrónico del visitante" />
+						<p:inputText id="emailDocente"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.emailVisitante}"
+							size="60" validatorMessage="Dirección de E-mail no válida"	> 
+							<f:validateRegex
+								pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+						</p:inputText>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDocumento}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[3]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDocumento}" />
+
+						<h:outputText value="Pasaporte" />
+						<p:inputText id="documentoVisitante"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.documentoVisitante}"
+							size="40">
+						</p:inputText>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorNacionalidad}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[4]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorNacionalidad}" />
+
+						<h:outputText value="Nacionalidad del visitante extranjero" />
+						<p:inputText id="nacionalidad"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.nacionalidad}"
+							size="38">
+						</p:inputText>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorPais}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[5]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorPais}" />
+
+						<h:outputText value="País de procedencia" />
+						<p:selectOneMenu
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.paisProcedencia}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.paises}" />
+						</p:selectOneMenu>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorInstitucion}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[6]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorInstitucion}" />
+
+						<h:outputText
+							value="Institución a la que pertenece el  visitante extranjero" />
+						<p:inputText id="institucion"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.institucion}"
+							size="60">
+						</p:inputText>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorRuta}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[7]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorRuta}" />
+
+						<h:outputText rendered="true" />
+
+						<h:outputText
+							value="Por favor registrar únicamente país-ciudad (origen) y país-ciudad (destino)"
+							rendered="true" />
+
+						<h:outputText value="Ruta del viaje" />
+						<p:inputTextarea forceId="true" id="ruta"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.ruta}" rows="2"
+							cols="50">
+						</p:inputTextarea>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaIncorrecta}" />
+						<h:outputText
+							value="La fecha del viaje debe ser superior a la fecha actual en 30 días calendario."
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaIncorrecta}" />
+
+						<h:outputText value="Fecha de inicio del viaje" />
+						<p:calendar id="fechainicio" pages="2" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaInicioEvento}">
+							<p:ajax event="dateSelect"
+								listener="#{ManejadorCrearEditarMovilidadVisitanteConvFac.validarFecha}"
+								update="fsApoyoVisitantesExtranjeros"
+								process="fsApoyoVisitantesExtranjeros" />
+						</p:calendar>
+
+						<h:outputText id="panelMasDatos" />
+						<h:outputText
+							value="La fecha de finalización viaje no es válida. La fecha debe ser superior a la fecha de inicio y no mayor a 100 días de la fecha inicial."
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaIncorrecta2}" />
+						<h:outputText
+							rendered="#{!ManejadorCrearEditarMovilidadVisitanteConvFac.fechaIncorrecta2}" />
+
+						<h:outputText value="Fecha de finalización del viaje"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos}" />
+						<p:calendar id="fechafin" pages="2" locale="es"
+							mindate="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaInicioEvento}"
+							readonlyInput="true" pattern="dd/MM/yyyy"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaFinEvento}"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos}">
+							<p:ajax event="dateSelect"
+								listener="#{ManejadorCrearEditarMovilidadVisitanteConvFac.validarFechaLlegada}"
+								update="formCrearMovilidadVisitante" />
+						</p:calendar>
+
+					</p:panelGrid>
+
+				</p:panelGrid>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel header="Inserción de Actividades"
+				id="grupoInsercionActividades"
+				styleClass="estilo-panelgrid-sinbordes"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos2}">
+
+				<h:outputText
+					rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorActividades}" />
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[8]}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorActividades}" />
+
+				<p:panelGrid columns="1" style="width: 650px;">
+
+					<p:panelGrid columns="2">
+
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.errorDescripcion}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.BErrorDescripcion}" />
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.BErrorDescripcion}" />
+
+						<h:outputText value="Tipo de actividad" />
+						<p:selectOneMenu
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.actividadSel}" 
+							style="width:420px;"
+							panelStyle="width: 420px;" >
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.actividadSelItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Descripción" />
+						<p:inputTextarea id="descripcion"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.descripcion}"
+							cols="40" rows="2" autoResize="false" maxlength="2000">
+						</p:inputTextarea>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.BErrorFecha}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.errorFecha}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.BErrorFecha}" />
+
+						<h:outputText value="Fecha de inicio" />
+						<p:calendar id="fechaactividad" pages="2" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.fecha}"
+							mindate="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaInicioEvento}"
+							maxdate="#{ManejadorCrearEditarMovilidadVisitanteConvFac.fechaFinEvento}" />
+
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.errorDuracion}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.BErrorDuracion}" />
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.BErrorDuracion}" />
+
+						<h:outputText value="Duración de la actividad (días)" />
+						<p:inputText id="duracion"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.temp.duracion}"
+							size="4" />
+					</p:panelGrid>
+
+					<p:commandButton value="Adicionar"
+						update="formCrearMovilidadVisitante"
+						actionListener="#{ManejadorCrearEditarMovilidadVisitanteConvFac.adicionarActividad}" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+
+					<p:dataTable var="actividadMovilidad"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.listaActividades}"
+						emptyMessage="No existen actividades.">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.tipoActividad.id}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descripción" />
+							</f:facet>
+
+							<p:inputTextarea readonly="true"
+								value="#{actividadMovilidad.descripcion}" cols="30" rows="3">
+							</p:inputTextarea>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Duración" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.duracion}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha" /><br />
+								<h:outputText value="de inicio" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.fecha}" />
+						</p:column>
+
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-trash" ajax="false"
+								update="formCrearMovilidadVisitante"
+								action="#{ManejadorCrearEditarMovilidadVisitanteConvFac.eliminarActividad}"
+								onclick="if(!confirm('Esta seguro de eliminar la Actividad?'))return false">
+								<f:setPropertyActionListener value="#{actividadMovilidad}"
+									target="#{ManejadorCrearEditarMovilidadVisitanteConvFac.actividadMovilidadVESeleccionada}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<br />
+
+			<p:panel header="Datos del Evento"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos3}"
+				styleClass="estilo-panelgrid-sinbordes">
+				<p:panelGrid columns="2">
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorEvento}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[9]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorEvento}" />
+
+					<h:outputText value="Evento de difusión asociado a la visita" />
+					<p:inputTextarea id="eventoDifusion"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.eventoDifusion}"
+						rows="3" cols="50">
+					</p:inputTextarea>
+
+					<h:outputText value="Sede" />
+					<p:selectOneMenu id="selectSede"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.sede}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.sedeItem}" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+				
+				
+				
+			</p:panel>
+
+			<br />
+			
+
+			<br />
+
+			<p:panel header="Apoyo Económico"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos3}"
+				styleClass="estilo-panelgrid-sinbordes">
+				<p:panelGrid columns="2">
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorTiquete}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[10]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorTiquete}" />
+
+					<h:outputText />
+					<p:message for="valorTiquete" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+
+					<h:outputText value="Valor del tiquete (pesos colombianos)" />
+					<p:inputText id="valorTiquete"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.costoTiquetes}"
+						rendered="true">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorMonto}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[11]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorMonto}" />
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errorMontoDiario}" />
+					<h:outputText
+						value="El costo es superior al tope máximo del monto diario"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errorMontoDiario}" />
+
+					<h:outputText />
+					<p:message for="montoDiario" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+
+					<h:outputText value="Gastos de estadía diarios" />
+					<p:inputText id="montoDiario"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.montoDiario}"
+						rendered="true">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDias}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[12]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDias}" />
+
+					<h:outputText />
+					<p:message for="numeroDias" styleClass="mensajeerror"
+						showDetail="false" showSummary="true" />
+
+					<h:outputText
+						value="Número de días a financiar por concepto de gastos de estadía" />
+					<p:inputText id="numeroDias"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.numeroDias}" validatorMessage="Debes ingresar un número válido"
+						rendered="true" maxlength="3" >
+						<f:validateDoubleRange minimum="0" maximum="99" />
+					</p:inputText>
+					
+					<h:outputText
+						value="Por favor indicar las entidades o dependencias y las cantidades de dinero que estas van a aportar en caso de existir (Entidad - cantidad a aportar)"
+						styleClass="labels_proyecto"
+						rendered="true" />
+					<p:inputTextarea id="valorOtrosAportes"
+						value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.valorOtrosAportes}"
+						rows="3" cols="50" autoResize="false">
+					</p:inputTextarea>
+				</p:panelGrid>
+			</p:panel>
+
+
+			<h:outputText
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDocumentos}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.errores[13]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.BErrorDocumentos}" />
+
+			<br />
+
+			<p:panel header="Documentos Obligatorios:"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos3}"
+				styleClass="estilo-panelgrid-sinbordes">
+
+				<p:panelGrid columns="1">
+
+					<p:panelGrid columns="3">
+						<p:outputLabel for="somTipoDocumento" value="Tipos de documentos" />
+						<p:selectOneMenu id="somTipoDocumento"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.tipoDocumentoSel}">
+							<f:selectItems
+								value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.tipoDocumentoSelItem}" />
+							<p:ajax update="dtArchivosObligatorios,fileUpload2"
+								listener="#{ManejadorCrearEditarMovilidadVisitanteConvFac.seleccionarTipoDocumento}" />
+						</p:selectOneMenu>
+						<p:fileUpload label="Adjuntar" multiple="true" showButtons="false" id="fileUpload2"
+							fileUploadListener="#{ManejadorCrearEditarMovilidadVisitanteConvFac.guardarArchivoObligatorio}"
+							mode="advanced" auto="true" process="formCrearMovilidadVisitante"
+							update="dtArchivosObligatorios"
+							disabled="#{!ManejadorCrearEditarMovilidadVisitanteConvFac.puedeSubirArchivos}" />
+
+					</p:panelGrid>
+
+					<p:panelGrid columns="1">
+
+						<p:dataTable var="archivoResumen1" id="dtArchivosObligatorios"
+							value="#{ManejadorCrearEditarMovilidadVisitanteConvFac.listaArchivosObligatoriosSel}"
+							emptyMessage="No existen archivos.">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<h:outputText value="#{archivoResumen1.tipoArchivo.id}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<h:outputText value="#{archivoResumen1.nombre}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton icon="ui-icon-trash" ajax="false"
+									update="dtArchivosObligatorios"
+									action="#{ManejadorCrearEditarMovilidadVisitanteConvFac.eliminarArchivoObligatorio}"
+									onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+									<f:setPropertyActionListener value="#{archivoResumen1}"
+										target="#{ManejadorCrearEditarMovilidadVisitanteConvFac.archivoMovilidadVESeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:messages id="msg" autoUpdate="true" closable="true" />
+
+			<center>
+				<br />
+				<p:commandButton value="Guardar" icon="ui-icon-check"
+					action="#{ManejadorCrearEditarMovilidadVisitanteConvFac.guardar}"
+					update="formCrearMovilidadVisitante"
+					rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos3 and !ManejadorCrearEditarMovilidadVisitanteConvFac.esConvocatoriaFacultad}"  onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"/>
+					
+			<p:commandButton value="Guardar convocatoria facultad" icon="ui-icon-check"
+				action="#{ManejadorCrearEditarMovilidadVisitanteConvFac.guardarConvocatoriaFacultad}"
+				update="formCrearMovilidadVisitante"
+				rendered="#{ManejadorCrearEditarMovilidadVisitanteConvFac.panelMasDatos3 and ManejadorCrearEditarMovilidadVisitanteConvFac.esConvocatoriaFacultad}"  onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"/>
+			</center>
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<SCRIPT LANGUAGE="JavaScript">
+function cierraWindow() 
+ {
+window.close();
+ }
+</SCRIPT>
+	<title>Sistema de Información de la Investigación - HERMES</title>
+	<meta name="author" content="Unimedios" />
+	<meta name="DC.Creator" content="Unimedios" />
+	<meta name="distribution" content="all" />
+	<meta name="revisit" content="1 days" />
+	<meta name="robots" content="all" />
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="last-modified" content="" />
+	<link
+		href="#{facesContext.externalContext.requestContextPath}/css/her-general.css"
+		rel="stylesheet" type="text/css" />
+	<link
+		href="#{facesContext.externalContext.requestContextPath}/css/her-footer.css"
+		rel="stylesheet" type="text/css" />
+	<link
+		href="#{facesContext.externalContext.requestContextPath}/css/her-buscadores.css"
+		rel="stylesheet" type="text/css" />
+	<link rel="shortcut icon"
+		href="#{facesContext.externalContext.requestContextPath}/images/her-general/favicon.ico" />
+	<link rel="stylesheet" type="text/css"
+		href="#{facesContext.externalContext.requestContextPath}/css/her-footer.css">
+	</link>
+	<link rel="stylesheet" type="text/css"
+		href="#{facesContext.externalContext.requestContextPath}/css/menuhermes.css">
+	</link>
+	<link
+		href="#{facesContext.externalContext.requestContextPath}/css/her-error.css"
+		rel="stylesheet" type="text/css" />
+	<script language="JavaScript" type="text/javascript">
+			var paginaError="/pages/html/ErrorDefecto.html"
+			function redireccionarError() 
+			{
+				location.href= "http://" + document.domain + paginaError
+			} 
+		</script>
+	<script type="text/javascript">
+			PrimeFaces.locales['es'] = {
+			                closeText: 'Cerrar',
+			                prevText: 'Anterior',
+			                nextText: 'Siguiente',
+			                currentText: 'Inicio',
+			                monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 
+
+'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			                monthNamesShort: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+
+'Julio','Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+			                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+			                dayNamesMin: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+			                weekHeader: 'Semana',
+			                firstDay: 1,
+			                isRTL: false,
+			                showMonthAfterYear: false,
+			                yearSuffix: '',
+			                timeOnlyTitle: 'Sólo hora',
+			                timeText: 'Tempo',
+			                hourText: 'Hora',
+			                minuteText: 'Minuto',
+			                secondText: 'Segundo',
+			                currentText: 'Fecha actual',
+			                ampm: false,
+			                month: 'Mes',
+			                week: 'Semana',
+			                day: 'Día',
+			                allDayText : 'Todo el día'
+			            };
+		</script>
+</h:head>
+<body>
+	<t:div id="principal" rendered="#{!manejadorAutenticacion.error}">
+		<div id="contenido">
+			<div class="contenido-informacion-interno">
+				<img
+					src="#{facesContext.externalContext.requestContextPath}/images/Cabezote_Contenido_Home.png"
+					name="image2" border="0" id="image2" />
+				<div class="contenedor-informacion">
+
+					<h:form id="ieForm">
+
+						<p:messages id="messagesDatosBasicos" showDetail="false"
+							autoUpdate="true" closable="true" />
+
+						<p:panel header="Insercion de Investigador Externo"
+							id="insertInvExt"
+							rendered="#{!manejadorInvestigadorExterno.investigadorExiste}">
+
+
+
+							<h:panelGrid columns="3" id="pgIe" align="center" cellpadding="5"
+								cellspacing="5">
+
+
+								<h:outputText value="Institución" />
+								<p:autoComplete id="idInstitucion"
+									value="#{manejadorInvestigadorExterno.insitucionNombre}"
+									completeMethod="#{manejadorInvestigadorExterno.obtenerListaInstituciones}"
+									minQueryLength="1" size="38" required="true" maxResults="10"
+									requiredMessage="La institución es obligatoria">
+									<f:validateLength maximum="100" />
+								</p:autoComplete>
+								<p:message id="errorIdInstitucion" for="idInstitucion" />
+
+								<h:outputText value="Tipo de Documento" />
+								<p:selectOneMenu
+									value="#{manejadorInvestigadorExterno.tipoDocumento.id}"
+									id="idTipoDocumento">
+									<f:selectItems
+										value="#{manejadorInvestigadorExterno.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+								<p:message id="errorIdTipoDocumento" for="idTipoDocumento" />
+
+								<h:outputText value="Número de Documento *" />
+								<p:inputText id="documentoInvestigador"
+									value="#{manejadorInvestigadorExterno.documento}" size="20"
+									required="true"
+									requiredMessage="El Número de Documento es obligatorio">
+									<f:validateLength maximum="15" />
+								</p:inputText>
+								<p:message id="errorDocumentoInvestigador"
+									for="documentoInvestigador" />
+
+								<h:outputText value="Primer Nombre *" />
+								<p:inputText id="primerNombreInvestigador"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.nombre1}"
+									size="38" required="true"
+									requiredMessage="El Primer Nombre es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+								<p:message id="errorPrimerNombreInvestigador"
+									for="primerNombreInvestigador" />
+
+								<h:outputText value="Segundo Nombre" />
+								<p:inputText id="segundoNombreInv"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.nombre2}"
+									size="38">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+								<p:message id="errorSegundoNombreInv" for="segundoNombreInv" />
+
+								<h:outputText value="Primer Apellido *" />
+								<p:inputText id="primerApellidoInvestigador"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.apellido1}"
+									size="38" required="true"
+									requiredMessage="El Primer Apellido es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+								<p:message id="errorPrimerApellidoInvestigador"
+									for="primerApellidoInvestigador" />
+
+								<h:outputText value="Segundo Apellido" />
+								<p:inputText id="segundoApellidoInv"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.apellido2}"
+									size="38">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+								<p:message id="errorSegundoApellidoInv" for="segundoApellidoInv" />
+
+
+								<h:outputText value="Género" />
+								<p:selectOneMenu
+									value="#{manejadorInvestigadorExterno.investigadorExterno.genero}"
+									id="idGenero">
+									<f:selectItems
+										value="#{manejadorInvestigadorExterno.generoItem}" />
+								</p:selectOneMenu>
+								<p:message id="errorIdGenero" for="idGenero" />
+
+
+								<h:outputText value="Fecha de Nacimiento" />
+								<p:calendar id="fechaNacimiento" locale="es"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.fechaNacimiento}" />
+								<p:message id="errorFechaNacimientol" for="fechaNacimiento" />
+
+
+								<h:outputText value="Dirección *" />
+								<p:inputText id="direccionInvestigador"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.direccion}"
+									size="38" required="true"
+									requiredMessage="La Dirección es obligatoria">
+									<f:validateLength maximum="100" />
+								</p:inputText>
+								<p:message id="errorDireccionInvestigador"
+									for="direccionInvestigador" />
+
+								<h:outputText value="Departamento de Domicilio" />
+								<p:selectOneMenu
+									value="#{manejadorInvestigadorExterno.departamentoActual.id}"
+									effect="fade" id="depto" filter="true" required="true">
+									<f:selectItems
+										value="#{manejadorDatosBasicos.departamentoItem}" />
+									<p:ajax update="ciudad, pgIe"
+										listener="#{manejadorInvestigadorExterno.cambiarDepartamento}" />
+								</p:selectOneMenu>
+								<p:message id="errorDepto" for="depto" />
+
+								<h:outputText value="Ciudad de Domicilio" />
+								<p:selectOneMenu
+									value="#{manejadorInvestigadorExterno.ciudadActual.id}"
+									effect="fade" id="ciudad" filter="true">
+									<f:selectItems
+										value="#{manejadorInvestigadorExterno.ciudadItem}" />
+								</p:selectOneMenu>
+								<p:message id="errorCiudad" for="ciudad" />
+
+
+								<h:outputText value="Teléfono Casa *" />
+								<p:inputText id="telefonoInvestigador"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.telefono}"
+									size="38" required="true"
+									requiredMessage="El Teléfono Casa es obligatorio">
+									<f:validateLength maximum="15" />
+								</p:inputText>
+								<p:message id="errorTelefonoInvestigador"
+									for="telefonoInvestigador" />
+
+
+								<h:outputText value="E-mail *" />
+								<p:inputText id="emailInvestigador"
+									value="#{manejadorInvestigadorExterno.investigadorExterno.email}"
+									size="38" required="true"
+									requiredMessage="El E-mail es obligatorio">
+									<f:validateLength maximum="60" />
+								</p:inputText>
+								<p:message id="errorEmailInvestigador" for="emailInvestigador" />
+							</h:panelGrid>
+
+							<h:panelGroup>
+								<center>
+									<h:panelGrid columns="2">
+										<p:commandButton value="Guardar Investigador Externo"
+											id="botonGuardarIE" update="pgIe, ieForm"
+											action="#{manejadorInvestigadorExterno.insertarInvestigadorExterno}"
+											styleClass="ui-priority-primary" />
+
+										<p:commandButton value="Cancelar" id="botonCancelarID"
+											action="#{manejadorInvestigadorExterno.salir}"
+											onclick="return cierraWindow();"
+											styleClass="ui-priority-primary" />
+									</h:panelGrid>
+								</center>
+							</h:panelGroup>
+						</p:panel>
+
+						<h:panelGrid columns="1"
+							rendered="#{manejadorInvestigadorExterno.mostrarBotonSalir}"
+							align="center">
+							<p:commandButton value="Cerrar Ventana" id="botonCerrarVentana"
+								action="#{manejadorInvestigadorExterno.salir}"
+								onclick="return cierraWindow();"
+								styleClass="ui-priority-primary" />
+						</h:panelGrid>
+					</h:form>
+
+				</div>
+				<div class="final-contenedor-informacion" />
+			</div>
+		</div>
+	</t:div>
+</body>
+</html>

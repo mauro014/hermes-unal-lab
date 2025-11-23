@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad" >Consulta asignación proyecto</t:div>
+			<p:panel id="panelConsultaProyectos"
+				rendered="#{!manejadorConsultaHistoricos.codigoSesion}">
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;">
+					<p:outputLabel for="codigoProyecto" value="Código del proyecto:" />
+					<p:inputText id="codigoProyecto" 
+						value="#{manejadorConsultaHistoricos.codigo}" size="7"
+						paginatorAlwaysVisible="false">
+						<f:validateDoubleRange minimum="0" maximum="100000" />
+						<f:validateLength maximum="7" />
+					</p:inputText>
+					<p:commandButton update="@form" ajax="false"
+						action="#{manejadorConsultaHistoricos.buscarAsignacionProyectos}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						value="Buscar" icon="ui-icon-search"/>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel id="panelConsultaProyectos"
+				rendered="#{manejadorConsultaHistoricos.codigoSesion}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 150px;">
+						<h:outputText value="Código proyecto:"  style="font-weight: bold;"/>
+					</t:div>
+					<h:outputText value="#{manejadorConsultaHistoricos.codigo}" />
+				</p:panelGrid>
+			</p:panel>
+			<p:dataTable 
+				rows="10"
+				id="tableHistoricoEstadoProyecto" var="historico"
+				style="margin-top: 20px;"	paginator="true"
+				value="#{manejadorConsultaHistoricos.listaHistoricoAsignacionProyecto}"
+				rendered="#{!manejadorConsultaHistoricos.primerBusquedaHistoricoAsginacion}"
+				emptyMessage="No se ha encontrado historico de este proyecto."
+				paginatorPosition="bottom"
+				paginatorAlwaysVisible="false"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15"
+                >
+				<p:column >
+					<f:facet name="header">
+						Proyecto
+					</f:facet>
+					<h:outputText value="#{historico.proyecto.id}" />
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Fecha
+					</f:facet>
+					<h:outputText value="#{historico.fecha}" >
+		              	<f:convertDateTime pattern="dd/MM/yyyy" />
+					 </h:outputText>
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Asesor
+					</f:facet>
+					<h:outputText value="#{historico.asesor.nombreCompleto}" />
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Coordinador asignado
+					</f:facet>
+					<h:outputText value="#{historico.coordinador.nombreCompleto}" />
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Tipo coordinador
+					</f:facet>
+					<h:outputText value="Evaluación" rendered="#{historico.tipo == 'E'}" />
+					<h:outputText value="Seguimiento" rendered="#{historico.tipo == 'S'}" />
+					<h:outputText value="Requisitos" rendered="#{historico.tipo == 'R' and manejadorConsultaHistoricos.proyectoActual.modalidad.id!=10}" />
+					<h:outputText value="Legalización" rendered="#{historico.tipo == 'R' and manejadorConsultaHistoricos.proyectoActual.modalidad.id==10}" />
+				</p:column>
+			</p:dataTable>			
+			<p:messages showSummary="true" autoUpdate="true" closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+	<ui:define name="title">FORMULARIO DE PREINSCRIPCIÓN</ui:define>
+
+	<ui:define name="content">
+
+		<img
+			src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+			style="padding-bottom: 10px;" />
+
+		<h:form id="form">
+
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-informacion-pagina-buscador">
+					<h:outputText value="Preinscripción actividades de investigación" />
+				</t:div>
+				<t:div styleClass="contenedor-informacion">
+				
+					<h:panelGrid columns="1" style="width: 100%; align: center;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/her-ext-ecp/CongresoInnovacion_banner_formulario.png"
+							style="padding-bottom: 5px;" height="181" width="678"/>
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" style="width: 100%">
+
+						<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+
+						<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+							closable="true" showSummary="true" showDetail="true" />
+
+					</h:panelGrid>
+
+					<!-- 1. PANEL INFORMACION DOCUMENTO DE IDENTIFICACION -->
+					<p:panel header="Documento de identificación" id="panel1">
+
+						<h:panelGrid columns="3" align="center" cellspacing="5">
+
+							<h:outputText value="Tipo de Documento" for="tipo_doc" />
+							<p:selectOneMenu value="#{ManejadorPreinscripcionECP.tipo_doc}"
+								effect="fade" id="tipo_doc">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionECP.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Número de Documento" />
+							<p:inputText id="documento"
+								value="#{ManejadorPreinscripcionECP.documento}" maxlength="25"
+								required="true" requiredMessage="Campo obligatorio"
+								validateMessage="Sólo puede tener números"
+								readonly="#{ManejadorPreinscripcionECP.habilita_doc}"
+								converter="#{Number}">
+								<f:validateLongRange minimum="0" maximum="999999999999" />
+								<p:tooltip for="documento" showEvent="focus" hideEvent="blur"
+									showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="Ingrese su número de documento para realizar la preinscripcion. 
+	                									 Si ya hizo este procedimiento previamente, puede actualizar los datos." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:inputText>
+							<p:message for="documento" />
+
+							<h:outputText value="" />
+							<h:outputText value="" />
+							<h:outputText value="" />
+
+						</h:panelGrid>
+
+						<br />
+
+						<h:panelGrid columns="2" align="center">
+
+							<p:commandButton value="Continuar" id="continuar"
+								action="#{ManejadorPreinscripcionECP.buscarPreinscripcion}"
+								icon="ui-icon-triangle-1-e" styleClass="ui-priority-primary"
+								update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+
+							<p:commandButton id="volver" value="Salir"
+								styleClass="ui-priority-primary" rendered="false"
+								action="#{ManejadorPreinscripcionECP.volver}" immediate="true" />
+
+						</h:panelGrid>
+
+					</p:panel>
+					<br />
+					<p:panel header="Información general" id="panel2"
+						rendered="#{ManejadorPreinscripcionECP.ins_act != 'N'}">
+
+						<h:panelGrid columns="3" id="panelInfoInicial" cellspacing="8">
+
+							<h:outputText value="Primer nombre" for="primer_nombre" />
+							<p:inputText id="primer_nombre"
+								value="#{ManejadorPreinscripcionECP.primer_nombre}"
+								maxlength="80" required="true"
+								requiredMessage="El nombre es un campo obligatorio"
+								readonly="#{ManejadorPreinscripcionECP.ins_act == 'A'}"
+								size="35" />
+							<p:message for="primer_nombre" styleClass="texto" />
+
+							<h:outputText value="Segundo nombre" for="segundo_nombre" />
+							<p:inputText id="segundo_nombre"
+								value="#{ManejadorPreinscripcionECP.segundo_nombre}"
+								maxlength="80"
+								readonly="#{ManejadorPreinscripcionECP.ins_act == 'A'}"
+								size="35" />
+							<p:message for="segundo_nombre" styleClass="texto" />
+
+							<h:outputText value="Primer Apellido" for="primer_apellido" />
+							<p:inputText id="primer_apellido"
+								value="#{ManejadorPreinscripcionECP.primer_apellido}"
+								maxlength="50" required="true"
+								requiredMessage="El primer apellido es un campo obligatorio"
+								readonly="#{ManejadorPreinscripcionECP.ins_act == 'A'}"
+								size="35" />
+							<p:message for="primer_apellido" />
+
+							<h:outputText value="Segundo Apellido" for="segundo_apellido" />
+							<p:inputText id="segundo_apellido"
+								value="#{ManejadorPreinscripcionECP.segundo_apellido}"
+								maxlength="50" required="true"
+								requiredMessage="El segundo apellido es un campo obligaorio"
+								readonly="#{ManejadorPreinscripcionECP.ins_act == 'A'}"
+								size="35" />
+							<p:message for="segundo_apellido" />
+
+							<h:outputText value="Correo Electrónico" for="correo_electronico" />
+							<p:inputText id="correo_electronico"
+								value="#{ManejadorPreinscripcionECP.correo_electronico}"
+								maxlength="80" required="true"
+								requiredMessage="El correo es un campo obligatorio"
+								validatorMessage="Correo inválido" size="35">
+								<f:validateRegex
+									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+							</p:inputText>
+							<p:message for="correo_electronico" />
+
+							<h:outputText value="Teléfono fijo" for="tel_fijo" />
+							<p:inputText id="tel_fijo"
+								value="#{ManejadorPreinscripcionECP.tel_fijo}"
+								converter="javax.faces.Long"
+								converterMessage="El teléfono fijo debe contener sólo numeros"
+								maxlength="20">
+								<f:validateLength minimum="7" />
+							</p:inputText>
+							<p:message for="tel_fijo" />
+
+							<h:outputText value="Teléfono móvil" for="tel_movil" />
+							<p:inputText id="tel_movil"
+								value="#{ManejadorPreinscripcionECP.tel_movil}" required="true"
+								requiredMessage="El teléfono móvil es un campo obligatorio"
+								validateMessage="El teléfono móvil sólo puede tener números"
+								converter="javax.faces.Long"
+								converterMessage="El teléfono movil debe contener sólo numeros"
+								maxlength="20">
+								<f:validateLength minimum="10" />
+							</p:inputText>
+							<p:message for="tel_movil" />
+
+							<h:outputText value="Dirección" for="direccion" />
+							<p:inputText id="direccion"
+								value="#{ManejadorPreinscripcionECP.direccion}" maxlength="80"
+								size="30" />
+							<p:message for="direccion" />
+
+							<h:outputText value="Entidad" for="empresa" />
+							<p:inputText id="empresa"
+								value="#{ManejadorPreinscripcionECP.empresa}" maxlength="80"
+								size="50" />
+							<p:message for="empresa" />
+
+							<h:outputText value="Cargo" for="cargo" />
+							<p:inputText id="cargo"
+								value="#{ManejadorPreinscripcionECP.cargo}" maxlength="80"
+								size="50" />
+							<p:message for="cargo" />
+
+							<h:outputText value="Ciudad de domicilio:" id="ciudText"
+								rendered="false" />
+							<p:selectOneMenu value="#{ManejadorPreinscripcionECP.ciudad}"
+								rendered="false" effect="fade" id="ciudad" filter="true"
+								style="width: 255px" filterMatchMode="contains">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionECP.ciudadItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" rendered="false" />
+
+							<h:outputText value="Sector de la entidad" for="tipo_vinculacion"/>
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionECP.tipo_vinculacion}"
+								effect="fade" id="tipo_vinculacion" required="true" requiredMessage="El sector de la entidad es un campo obligatorio"
+								style="width: 255px">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{ManejadorPreinscripcionECP.tipoSectorEntidadPreinscritoItemList}" />
+							</p:selectOneMenu>
+							<p:message for="tipo_vinculacion" />
+
+						</h:panelGrid>
+
+
+
+					</p:panel>
+
+					<br />
+
+					<h:panelGrid id="panelGuardar" columns="3" align="center"
+						rendered="#{ManejadorPreinscripcionECP.ins_act != 'N'}">
+						<p:commandButton value="Guardar" id="guardar"
+							actionListener="#{ManejadorPreinscripcionECP.guardarPreinscripcionInvestigacion}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</h:panelGrid>
+
+					<br />
+
+				</t:div>
+				<t:div styleClass="final-contenedor-informacion" />
+			</t:div>
+
+		</h:form>
+
+		<t:div styleClass="contenido-menu">
+			<t:div styleClass="menu-superior">
+				<t:div styleClass="cabezote-derecho-menu">
+					<h:outputText value="Acerca del curso" />
+				</t:div>
+				<t:div styleClass="menu">
+
+					<ul>
+						<li><h:form>
+								<p:commandLink action="#{ManejadorPreinscripcionECP.volver}"
+									ajax="false">
+									<h:outputText value="Salir" />
+								</p:commandLink>
+							</h:form></li>
+
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

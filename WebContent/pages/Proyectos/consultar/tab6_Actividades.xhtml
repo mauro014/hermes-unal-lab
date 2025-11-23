@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Actividades</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorActividades.inicioTitulo}"
+						style="font-weight: bold" />
+				</t:div>
+			</h:panelGrid>
+			<br />
+			<p:panel header="#{manejadorActividades.titulo}"
+				id="grupoInsercionActividades"
+				rendered="#{!manejadorActividades.esProyectoLaboratorios and !manejadorActividades.mostrarActividadesObjetivosMetas}">
+				<p:dataTable cellpadding="6" cellspacing="3"
+					value="#{manejadorActividades.listaActividades}" var="actividad"
+					border="0" binding="#{manejadorActividades.tablaActividades}">
+					<p:column style="width:33%;">
+						<f:facet name="header">
+							<h:outputText value="DESCRIPCIÓN DE LA ACTIVIDAD" />
+						</f:facet>
+						<h:outputText value="#{actividad.descripcion}" />
+					</p:column>
+					<p:column style="width:33%;">
+						<f:facet name="header">
+							<h:outputText value="DURACIÓN" />
+						</f:facet>
+						<h:outputText
+							value="&lt;b&gt;Mes inicial: &lt;/b&gt;#{actividad.mesInicial}"
+							escape="false" />
+						<br />
+						<h:outputText
+							value="&lt;b&gt;Duración en meses: &lt;/b&gt;#{actividad.duracionMeses}"
+							escape="false" />
+					</p:column>
+					<p:column
+						rendered="#{manejadorActividades.proyectoActual.modalidad.tipo.id!='SE'}">
+						<f:facet name="header">
+							<h:outputText value="RESPONSABLE" />
+						</f:facet>
+						<h:outputText value="#{actividad.responsable}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel header="#{manejadorActividades.titulo}"
+				id="grupoInsercionActividadesMetas" style="width:680px;"
+				rendered="#{manejadorActividades.esProyectoLaboratorios}">
+				<br />
+				<p:dataTable id="tablaActividadesMetasResultados2" cellpadding="1"
+					cellspacing="1" value="#{manejadorActividades.listaActividades}"
+					var="actividad"
+					emptyMessage="No existen actividades asociadas al proyecto"
+					style="width:100%;" rows="10" paginator="true"
+					paginatorPosition="bottom" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} Laboratorios, Pagina: {currentPage}/{totalPages})"
+					sortBy="#{actividad.metaObjeto.objetivo.numeroOrden} . #{actividad.metaObjeto.numeroOrden} . #{actividad.numeroOrden}">
+					<p:column
+						style="width:10%; text-align: center;font-weight: bold;font-size: 11px;"
+						sortBy="#{actividad.metaObjeto.objetivo.numeroOrden} . #{actividad.metaObjeto.numeroOrden} . #{actividad.numeroOrden}">
+						<f:facet name="header">
+							<h:outputText value="N°" />
+						</f:facet>
+						<h:outputText
+							value="#{actividad.metaObjeto.objetivo.numeroOrden} . #{actividad.metaObjeto.numeroOrden} . #{actividad.numeroOrden}" />
+					</p:column>
+					<p:column style="width:30%; font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="Actividad / Meta /Resultado" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid cellpadding="6" cellspacing="3"
+								styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="Actividad:" style="font-weight: bold;" />
+									</p:column>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="#{actividad.descripcion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="Meta:" style="font-weight: bold;" />
+									</p:column>
+									<p:column style="vertical-align: top;">
+										<h:outputText
+											value="#{actividad.metaObjeto.objetivo.numeroOrden}.#{actividad.metaObjeto.numeroOrden} - #{actividad.metaObjeto.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="Resultado:" style="font-weight: bold;" />
+									</p:column>
+									<p:column style="vertical-align: top;">
+										<h:outputText
+											value="#{actividad.resultado.numeroOrden} - #{actividad.resultado.descripcion}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column style="width:20%; font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="Duración" />
+						</f:facet>
+						<h:outputText
+							value="&lt;b&gt;Mes inicial: &lt;/b&gt;#{actividad.mesInicial}"
+							escape="false" />
+						<br />
+						<h:outputText
+							value="&lt;b&gt;Duración en meses: &lt;/b&gt;#{actividad.duracionMeses}"
+							escape="false" />
+					</p:column>
+					<p:column style="width:20%; font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{actividad.responsable}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel header="#{manejadorActividades.titulo}"
+				id="grupoInsercionActividades2" style="width:680px;"
+				rendered="#{manejadorActividades.mostrarActividadesObjetivosMetas}">
+				<p:dataTable id="tablaActividades2" cellpadding="1" cellspacing="1"
+					value="#{manejadorActividades.listaActividades}" var="actividad"
+					border="0" binding="#{manejadorActividades.tablaActividades2}"
+					emptyMessage="No existen actividades asociadas al proyecto"
+					style="width:100%;">
+					<p:column style="width:25%;">
+						<f:facet name="header">
+							<h:outputText value="DURACIÓN" />
+						</f:facet>
+						<h:outputText
+							value="&lt;b&gt;Mes inicial: &lt;/b&gt;#{actividad.mesInicial}"
+							escape="false" />
+						<br />
+						<h:outputText
+							value="&lt;b&gt;Duración en meses: &lt;/b&gt;#{actividad.duracionMeses}"
+							escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="INFORMACIÓN ACTIVIDAD" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid style="width: 100%;"
+								styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="width: 33%;">
+										<b><h:outputText value="DESCRIPCIÓN:" /></b>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{actividad.descripcion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="META:" /></b>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{actividad.meta}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="OBJETIVO ASOCIADO:" /></b>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{actividad.objetivoEspecifico.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="RESPONSABLE:" /></b>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{actividad.responsable}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

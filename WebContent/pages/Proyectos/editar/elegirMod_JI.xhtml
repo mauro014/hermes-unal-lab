@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Elegir modalidad Convocatoria Jóvenes Investigadores</t:div>
+			<p:panel>
+				<h:outputText
+						value="El grupo de Colciencias seleccionado es :" />
+					<br/>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;" id="panelGrupo">
+						<h:outputText value="Nombre del Grupo:"
+							style="font-weight: bold; margin-top: 10px;" />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.grupo.nombre}"
+							style="width: 340px;" />
+				
+						<h:outputText value="Código Colciencias del Grupo:"
+							style="font-weight: bold; margin-top: 10px;" />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.grupo.idColciencias}"
+							style="width: 340px;" />				
+				
+						<h:outputText value="Categoría Colciencias del Grupo:"
+							style="font-weight: bold; margin-top: 10px;" />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.grupo.categoria.id}"
+							style="width: 340px;" />	
+					
+				</p:panelGrid>
+			</p:panel>
+			<br/>
+			<p:panel>
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto; ">
+					
+					<br />
+					<h:outputText
+						value="A continuación ingrese el tipo de inscripción que desea realizar. Los tipos de inscripción contemplados son :" />
+					<br/>
+					<h:outputText
+						value="- Asignación automática a grupo de investigación categoría A1: Asignación automática al grupo de Investigación sin haber participado en la convocatoria  645 de Colciencias de Jóvenes investigadores."/>
+					<h:outputText
+						value="- Asignación por participación de convocatoria 645: Asignación a los grupos de Investigación que participaron y ganaron en la convocatoria 645 de Colciencias de Jóvenes investigadores." />	
+					<br/>
+					
+					
+					<p:selectOneButton
+						value="#{ManejadorElegirMod_JI_SEM_2014.tipoBusqueda}" 	rendered="#{!ManejadorElegirMod_JI_SEM_2014.mostrarBotonGrupo}">
+						<f:selectItem itemLabel="Participación de convocatoria 645(Aval Asociado)" itemValue="Aval" />
+						<p:ajax event="change" update="@form"
+							listener="#{ManejadorElegirMod_JI_SEM_2014.cambiarForm}" />
+					</p:selectOneButton>
+					
+					<p:selectOneButton
+						value="#{ManejadorElegirMod_JI_SEM_2014.tipoBusqueda}" 	rendered="#{ManejadorElegirMod_JI_SEM_2014.mostrarBotonGrupo}">
+						<f:selectItem itemLabel="Grupo de investigación Categoría A1" itemValue="Grupo" />
+						<f:selectItem itemLabel="Participación de convocatoria 645(Aval Asociado)" itemValue="Aval" />
+						<p:ajax event="change" update="@form"
+							listener="#{ManejadorElegirMod_JI_SEM_2014.cambiarForm}" />
+					</p:selectOneButton>
+					<br/>
+				</p:panelGrid>
+			</p:panel>
+
+			<br />
+
+			<p:panel rendered="#{ManejadorElegirMod_JI_SEM_2014.panelAval}">
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+					align="center"
+					rendered="#{ManejadorElegirMod_JI_SEM_2014.panelAval}">
+					<h:outputText
+						value="Por favor seleccione el Aval que desea vincular: "></h:outputText>
+					<p:inputText id="idPry" size="6"
+						value="#{ManejadorElegirMod_JI_SEM_2014.codigoAval}"
+						rendered="false"></p:inputText>
+					<p:selectOneMenu
+						value="#{ManejadorElegirMod_JI_SEM_2014.avalSeleccionado}"
+						style="width: 600px;" panelStyle="width: 355px;">
+						<f:selectItems
+							value="#{ManejadorElegirMod_JI_SEM_2014.avalesInvestigador}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<t:div style="width: 100%; text-align: center; margin-top: 20px;">
+
+					<br />
+					<p:commandButton value="Cargar información Aval"
+						id="botonBuscarAval"
+						action="#{ManejadorElegirMod_JI_SEM_2014.buscarAval}"
+						update="proyectoInfo, messages" ajax="false"
+						styleClass="ui-priority-primary" />
+				</t:div>
+
+			</p:panel>
+			<br />
+			<p:panel rendered="#{ManejadorElegirMod_JI_SEM_2014.panelInfoAval}">
+				<t:div style="width: 100%; margin-top: 20px;">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;" id="panelTipoAval"
+						rendered="#{ManejadorElegirMod_JI_SEM_2014.panelAval}">
+						<h:outputText value="Código de Aval:"
+							style="font-weight: bold; margin-top: 10px;" />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.avalAsociar.aviId}"
+							style="width: 340px;" />
+						<h:outputText value="Nombre del aval:"
+							style="font-weight: bold; margin-top: 10px;" />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.avalAsociar.aviTitulo}"
+							style="width: 340px;" />
+						<h:outputText value="Proyecto Asociado:"
+							style="font-weight: bold; margin-top: 10px;" />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.avalAsociar.idProyecto}"
+							style="width: 340px;" />
+						<h:outputText />
+						<h:outputText
+							value="#{ManejadorElegirMod_JI_SEM_2014.avalAsociar.nombreProyecto}"
+							style="width: 340px;" />
+					</p:panelGrid>
+
+				</t:div>
+			</p:panel>
+			<br />
+			<center><p:commandButton
+				value="Continuar con el formulario de inscripción"
+				rendered="#{ManejadorElegirMod_JI_SEM_2014.panelInfoAval}"
+				id="botonProyectoJI"
+				action="#{ManejadorElegirMod_JI_SEM_2014.registrarProyectoAval}"
+				ajax="false" styleClass="ui-priority-primary" /></center>
+
+			<center><p:commandButton
+				value="Continuar con el formulario de inscripción"
+				rendered="#{ManejadorElegirMod_JI_SEM_2014.mostrarGuardarPryGrupo}"
+				id="botonProyectoJI"
+				action="#{ManejadorElegirMod_JI_SEM_2014.registrarProyectoGrupo}"
+				ajax="false" styleClass="ui-priority-primary" /></center>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

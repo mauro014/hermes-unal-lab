@@ -1,0 +1,1432 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">
+				<h:outputText
+					value="Información Semillero  #{manejadorSemillerosCoordinador.semilleroActual.id}" />
+			</t:div>
+			<p:messages id="msgs" />
+			<p:panelGrid style="width: 100%;"
+				styleClass="estilo-panelgrid-sinbordes">
+				<p:row>
+					<p:column style="font-weight: bold;">
+
+					</p:column>
+				</p:row>
+
+			</p:panelGrid>
+			<p:messages id="msgs" />
+
+			<t:div styleClass="panel-interno-tabla" id="frmDialog"
+				style="width:100%; overflow: auto;">
+				<p:panelGrid style="width:100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Semillero:&lt;/strong&gt; #{manejadorSemillerosCoordinador.semilleroActual.id} - #{manejadorSemillerosCoordinador.semilleroActual.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Director(a):&lt;/strong&gt;#{manejadorSemillerosCoordinador.semilleroActual.lider.nombreCompleto} (#{manejadorSemillerosCoordinador.semilleroActual.lider.id.tipoDocumento} - #{manejadorSemillerosCoordinador.semilleroActual.lider.id.documento})"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Unidad Académica Básica:&lt;/strong&gt; #{manejadorSemillerosCoordinador.semilleroActual.lider.dependencia.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Sede:&lt;/strong&gt; #{manejadorSemillerosCoordinador.semilleroActual.lider.dependencia.sede.nombre} / &lt;strong&gt;Facultad:&lt;/strong&gt; #{manejadorSemillerosCoordinador.semilleroActual.lider.dependencia.facultad.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Estado Actual:&lt;/strong&gt; #{manejadorSemillerosCoordinador.semilleroActual.estadoActual.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Fecha Activación:&lt;/strong&gt; #{empty manejadorSemillerosCoordinador.semilleroActual.fechaActivacion ? 'No Aplica' : manejadorSemillerosCoordinador.semilleroActual.fechaActivacion}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Coordinador: &lt;/strong&gt; #{empty manejadorSemillerosCoordinador.semilleroActual.coordinador ? 'No Aplica' : manejadorSemillerosCoordinador.semilleroActual.coordinador.nombreCompleto}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.coordinador.id.documento and manejadorSemillerosCoordinador.personaActual.id.tipoDocumento eq manejadorSemillerosCoordinador.semilleroActual.coordinador.id.tipoDocumento and manejadorSemillerosCoordinador.semilleroActual.activoSinInforme}">
+						<p:column colspan="3" style="color: #FF3300; text-align: justify;">
+							<h:outputText
+								value="El semillero está activo y pasaron 15 días sin crearse un informe por parte del coordinador." />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador and manejadorSemillerosCoordinador.tieneInformeVencido}">
+						<p:column colspan="3" style="color: #FF3300; text-align: justify;">
+							<h:outputText
+								value="El semillero tiene al menos un informe cuya fecha de compromiso está vencida." />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panel style="margin-top: 10px;" header="Consultas">
+					<t:div
+						style="width: 100%; text-align: left; margin-top: 15px; margin-top: 15px;">
+						<p:accordionPanel id="tabViewConsultas"
+							style="margin-top: 10px; margin-bottom: 10px;" activeIndex="-1"
+							multiple="false">
+							<p:tab id="tabReporte" title="Reporte">
+								<h:commandLink value="Ver reporte de semillero (PDF)"
+									action="#{manejadorSemillerosCoordinador.reporteSemillero}"
+									target="_popUpWindow1"
+									onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+									style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								</h:commandLink>
+							</p:tab>
+							<p:tab id="tabDocumentos" title="Documentos asociados">
+								<p:panelGrid style="width: 100%;" id="histArchivos"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+										<p:column>
+											<p:messages id="msgsModal" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:dataTable var="archivo"
+												value="#{manejadorSemillerosCoordinador.semilleroActual.listaArchivos}"
+												emptyMessage="No hay archivos asociados a este semillero.">
+												<f:facet name="header">
+													<h:outputText value="Archivos vinculados" />
+												</f:facet>
+												<p:column>
+													<h:outputText value=" #{archivo.nombre}" />
+												</p:column>
+												<p:column>
+													<p:commandButton
+														action="#{manejadorSemillerosCoordinador.descargarArchivo}"
+														ajax="false" update="histArchivos" icon="ui-icon-search"
+														title="Descargar">
+														<f:setPropertyActionListener value="#{archivo}"
+															target="#{manejadorSemillerosCoordinador.archivoDescargar}" />
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+										<p:column>
+											<p:fileUpload
+												fileUploadListener="#{manejadorSemillerosCoordinador.agregarArchivo}"
+												id="uploadArchivoProyecto" mode="advanced"
+												invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+												update="histArchivos" sizeLimit="3145728" auto="true"
+												label="Adjuntar archivo al Semillero" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:tab>
+							<p:tab id="tabHistoricos" title="Históricos">
+								<p:dataTable id="histEstados" var="historico" paginator="true"
+									rows="2" paginatorPosition="bottom" widgetVar="histEstados"
+									value="#{manejadorSemillerosCoordinador.historicoEstados}"
+									emptyMessage="No hay histórico asociado a este semillero."
+									style="width:100%; margin-top: 20px;">
+									<f:facet name="header">
+										<h:outputText value="Histórico Estado de Semillero" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha" />
+										</f:facet>
+										<h:outputText value="#{historico.fecha}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Estado" />
+										</f:facet>
+										<h:outputText value=" #{historico.estado.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Comentarios" />
+										</f:facet>
+										<h:outputText value=" #{historico.motivo}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Responsable" />
+										</f:facet>
+										<h:outputText value=" #{historico.responsable.nombreCompleto}" />
+									</p:column>
+								</p:dataTable>
+								<p:dataTable id="histIntegrantes" var="historico"
+									paginator="true" rows="2" paginatorPosition="bottom"
+									value="#{manejadorSemillerosCoordinador.historicoIntegrantes}"
+									emptyMessage="No hay histórico asociado a este semillero."
+									style="width:100%; margin-top: 20px;">
+									<f:facet name="header">
+										<h:outputText value="Histórico Integrantes" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Documento de Identidad" />
+										</f:facet>
+										<h:outputText value="#{historico.documento}:" />
+										<br />
+										<h:outputText value="#{historico.integrante.id.documento}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText value="#{historico.integrante.nombreCompleto}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Tipo de Integrante" />
+										</f:facet>
+										<h:outputText
+											rendered="#{historico.tipoVinculacionGrupo != 'N/A'}"
+											value="#{historico.tipoVinculacionGrupo} - #{historico.tipo}" />
+										<h:outputText
+											rendered="#{historico.tipoVinculacionGrupo == 'N/A'}"
+											value="N/A" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Datos Adicionales" />
+										</f:facet>
+										<h:outputText
+											rendered="#{historico.tipoVinculacionGrupo == 'Externo' or historico.tipoVinculacionGrupo == 'N/A'}"
+											value="N/A" />
+										<h:outputText rendered="#{!empty historico.dependencia}"
+											style="font-weight: bold;" value="Facultad: " />
+										<h:outputText rendered="#{!empty historico.dependencia}"
+											value="#{historico.dependencia.nombre}" />
+										<ui:fragment rendered="#{!empty historico.dependencia}">
+											<br />
+										</ui:fragment>
+										<h:outputText rendered="#{!empty historico.sede}"
+											style="font-weight: bold;" value="Sede: " />
+										<h:outputText rendered="#{!empty historico.sede}"
+											value="#{historico.sede.nombre}" />
+										<ui:fragment rendered="#{!empty historico.sede}">
+											<br />
+										</ui:fragment>
+										<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+											style="font-weight: bold;"
+											value="Tipo de Vinculación a la UN: " />
+										<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+											value="#{historico.tipoVinculacion.nombre}" />
+										<ui:fragment rendered="#{!empty historico.tipoVinculacion}">
+											<br />
+										</ui:fragment>
+										<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+											style="font-weight: bold;" value="Dedicación: " />
+										<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+											value="#{historico.tipoDedicacion.nombre}" />
+										<ui:fragment rendered="#{!empty historico.tipoDedicacion}">
+											<br />
+										</ui:fragment>
+										<h:outputText rendered="#{!empty historico.tipoFormacion}"
+											style="font-weight: bold;" value="Máximo nivel de estudios: " />
+										<h:outputText rendered="#{!empty historico.tipoFormacion}"
+											value="#{historico.tipoFormacion.nombre}" />
+										<ui:fragment rendered="#{!empty historico.tipoFormacion}">
+											<br />
+										</ui:fragment>
+										<h:outputText rendered="#{!empty historico.planEstudios}"
+											style="font-weight: bold;" value="Programa Académico: " />
+										<h:outputText rendered="#{!empty historico.planEstudios}"
+											value="#{historico.planEstudios.nombre}" />
+										<ui:fragment rendered="#{!empty historico.planEstudios}">
+											<br />
+										</ui:fragment>
+										<h:outputText rendered="#{!empty historico.semestreActual}"
+											style="font-weight: bold;" value="Semestre: " />
+										<h:outputText rendered="#{!empty historico.semestreActual}"
+											value="#{historico.semestreActual}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha Ingreso" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaIngreso}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha Retiro" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaRetiro}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+								<p:dataTable style="border:none; margin-top: 10px;"
+									id="histFacultades" var="historico"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaFacultades}"
+									emptyMessage="No hay un histórico de facultades para este semillero."
+									paginator="true" rows="2" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<f:facet name="header">
+										<h:outputText value="Histórico Facultades Asociadas" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText value="#{historico.facultad.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Vinculación" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaRegistro}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Retiro" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaBorrado}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+								<p:dataTable style="border:none; margin-top: 10px;"
+									id="histSedes" var="historico"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaSedes}"
+									emptyMessage="No hay un histórico de sedes para este semillero."
+									paginator="true" rows="2" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<f:facet name="header">
+										<h:outputText value="Histórico Sedes Asociadas" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText value="#{historico.sede.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Vinculación" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaRegistro}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Retiro" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaBorrado}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+								<p:dataTable style="border:none; margin-top: 10px;"
+									id="histGrupos" var="historico"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaGrupos}"
+									emptyMessage="No hay un histórico de grupos para este semillero."
+									paginator="true" rows="2" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<f:facet name="header">
+										<h:outputText value="Histórico Grupos Asociados" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Sede" />
+										</f:facet>
+										<h:outputText value="#{historico.grupo.sede.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText value="#{historico.grupo.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Vinculación" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaRegistro}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Retiro" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaBorrado}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+								<p:dataTable style="border:none; margin-top: 10px;"
+									id="histLaboratorios" var="historico"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaLaboratorios}"
+									emptyMessage="No hay un histórico de laboratorios para este semillero."
+									paginator="true" rows="2" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<f:facet name="header">
+										<h:outputText value="Histórico Laboratorios Asociados" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Sede" />
+										</f:facet>
+										<h:outputText value="#{historico.laboratorio.sede.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText value="#{historico.laboratorio.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Vinculación" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaRegistro}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha de Retiro" />
+										</f:facet>
+										<h:outputText value="#{historico.fechaBorrado}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+								<p:dataTable style="border:none; margin-top: 10px;"
+									id="histCambios" var="historico"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaHistoricoCambios}"
+									emptyMessage="No hay un histórico de cambios para este semillero."
+									paginator="true" rows="2" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<f:facet name="header">
+										<h:outputText value="Histórico Cambios" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha" />
+										</f:facet>
+										<h:outputText value="#{historico.fecha}">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Descripción" />
+										</f:facet>
+										<h:outputText value="#{historico.descripcion}" escape="false" />
+									</p:column>
+								</p:dataTable>
+							</p:tab>
+							<p:tab id="tabProyectos" title="Proyectos">
+								<p:dataTable id="histProyectos" paginator="true" rows="5"
+									paginatorPosition="bottom" var="sp"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaProyectos}"
+									emptyMessage="No hay proyectos asociados a este semillero."
+									style="width:100%; margin-top: 20px;">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="ID" />
+										</f:facet>
+										<h:outputText value="#{sp.proyecto.id}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Nombre" />
+										</f:facet>
+										<h:outputText value="#{sp.proyecto.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Estado Actual" />
+										</f:facet>
+										<h:outputText value="#{sp.proyecto.estadoProyecto.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Convocatoria" />
+										</f:facet>
+										<h:outputText value="#{sp.proyecto.modalidad.padre.titulo}" />
+									</p:column>
+									<p:column>
+										<h:commandLink
+											action="#{manejadorSemillerosCoordinador.reporteProyecto}"
+											value="Consultar proyecto" target="_blank"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+											<f:setPropertyActionListener value="#{sp.proyecto.id}"
+												target="#{manejadorSemillerosCoordinador.idProyecto}" />
+										</h:commandLink>
+									</p:column>
+								</p:dataTable>
+							</p:tab>
+						</p:accordionPanel>
+					</t:div>
+				</p:panel>
+				<p:panel style="margin-top: 10px;" header="Trámites">
+					<t:div
+						style="width: 100%; text-align: left; margin-top: 15px; margin-top: 15px;">
+						<p:accordionPanel id="tabViewTramites"
+							style="margin-top: 10px; margin-bottom: 10px;" activeIndex="-1"
+							multiple="false">
+							<p:tab id="tabSolicitudes" title="Solicitudes">
+								<p:dataTable id="histProyectos" paginator="true" rows="5"
+									paginatorPosition="bottom" var="solicitud"
+									value="#{manejadorSemillerosCoordinador.semilleroActual.listaSolicitudes}"
+									emptyMessage="No hay solicitudes asociadas a este semillero."
+									style="width:100%; margin-top: 20px;">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="ID" />
+										</f:facet>
+										<h:outputText value="#{solicitud.id}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha Solicitud" />
+										</f:facet>
+										<h:outputText value="#{solicitud.fechaSolicitud}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha Revisión" />
+										</f:facet>
+										<h:outputText value="#{solicitud.fechaRespuestaCoordinador}"
+										rendered="#{solicitud.tipo.id != 1}"  />
+										<h:outputText value="UAB: #{solicitud.fechaRespuestaUAB}"
+											rendered="#{solicitud.tipo.id == 1}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Tipo" />
+										</f:facet>
+										<h:outputText value="#{solicitud.tipo.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Estado" />
+										</f:facet>
+										<h:outputText value="UAB: #{solicitud.respuestaUAB.nombre}"
+											rendered="#{solicitud.tipo.id == 1 or solicitud.tipo.id == 5}" />
+										<t:div
+											rendered="#{solicitud.tipo.id == 1 or solicitud.tipo.id == 5}">
+											<br />
+										</t:div>
+										<h:outputText
+											value="VIF / DI: #{solicitud.respuestaVifDi.nombre}"
+											rendered="#{not empty solicitud.respuestaVifDi}" />
+										<t:div rendered="#{not empty solicitud.respuestaVifDi}">
+											<br />
+										</t:div>
+										<h:outputText
+											value="Coordinador: #{solicitud.respuestaCoordinador.nombre}"
+											rendered="#{not empty solicitud.respuestaCoordinador}" />
+									</p:column>
+									<p:column
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+										<p:commandButton value="Revisar Solicitud"
+											rendered="#{solicitud.respuestaCoordinador.id eq 1}"
+											oncomplete="dlgPrincipal.show();" icon="ui-icon-search"
+											action="#{manejadorSemillerosCoordinador.cargarSolicitud}"
+											update="@form">
+											<f:setPropertyActionListener value="#{solicitud}"
+												target="#{manejadorSemillerosCoordinador.solicitudActual}" />
+										</p:commandButton>
+										<p:commandButton value="Generar Reporte" icon="ui-icon-print"
+											action="#{manejadorSemillerosCoordinador.reporteSolicitudSemillero}"
+											ajax="false"
+											rendered="#{solicitud.respuestaCoordinador.id eq 1 or solicitud.respuestaCoordinador.id eq 7}">
+											<f:setPropertyActionListener value="#{solicitud.id}"
+												target="#{manejadorSemillerosCoordinador.idSolicitudSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<p:panelGrid style="width: 100%;"
+									rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}"
+									styleClass="estilo-panelgrid-sinbordes">
+								</p:panelGrid>
+							</p:tab>
+							<p:tab id="tabInformes" title="Informes">
+								<p:panelGrid style="width: 100%;" id="histInformes"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+										<p:column colspan="3">
+											<p:messages id="msgsModal" />
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+										<p:column colspan="3"
+											style="color: #FF3300; text-align: justify;">
+											<p:panel>
+												<t:div style="color:#464646; text-align:justify;">
+									NOTA: Recuerde que el sistema programa automáticamente el compromiso del informe de seguimiento semestral del semillero, al momento de revisar el informe, por lo que esta programación de informe es solo si no cuenta con compromisos pendientes de entregar o informes pendientes de revisar.
+									</t:div>
+											</p:panel>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador and manejadorSemillerosCoordinador.semilleroActual.activoSinInforme}">
+										<p:column colspan="3"
+											style="color: #FF3300; text-align: justify;">
+											<h:outputText
+												value="El semillero está activo y pasaron 15 días sin crearse un informe por parte suya." />
+											<p:panel>
+												<t:div style="color:#464646; text-align:justify;">
+									Recuerde que según la resolución 670 de 2020 el semillero debe entregar un informe de seguimiento semestral de las actividades realizadas por el semillero, para lo cual usted como coordinador 
+									debe realizar la programación del informe.
+									</t:div>
+											</p:panel>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador and manejadorSemillerosCoordinador.tieneInformeProgramado}">
+										<p:column colspan="3"
+											style="color: #FF3300; text-align: justify;">
+											<p:panel>
+												<t:div style="color:#464646; text-align:justify;">
+									NOTA:  Se recomienda que el docente entregue el informe pendiente de entregar antes de programar un nuevo compromiso de informe o  Se recomienda que el coordinador revise el informe pendiente antes de programar un nuevo compromiso de informe.
+									</t:div>
+											</p:panel>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+										<p:column colspan="3"
+											rendered="#{not manejadorSemillerosCoordinador.informeNuevo}">
+											<p:commandButton value="Programar Informe"
+												update="histInformes"
+												action="#{manejadorSemillerosCoordinador.nuevoInforme}"
+												process="histInformes" icon="ui-icon-plus"
+												disabled="#{manejadorSemillerosCoordinador.tieneInformeProgramado}" />
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.informeNuevo}">
+										<p:column colspan="3"
+											style="color: #FF3300; text-align: justify;">
+											<h:outputText
+												value="Recuerde que puede realizar la programación de uno o varios informes." />
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.informeNuevo}">
+										<p:column style="width: 50%;">
+											<h:outputText value="Fecha de Compromiso:" />
+										</p:column>
+										<p:column style="width: 50%;">
+											<p:calendar readonlyInput="true"
+												mindate="#{manejadorSemillerosCoordinador.today}"
+												value="#{manejadorSemillerosCoordinador.informeActual.fechaCompromiso}"
+												locale="es" pattern="dd/MM/yyyy" navigator="true" />
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSemillerosCoordinador.informeNuevo}">
+										<p:column>
+											<p:commandButton value="Añadir Informe a Semillero"
+												action="#{manejadorSemillerosCoordinador.agregarInforme}"
+												update="histInformes" process="histInformes"
+												icon="ui-icon-plus" />
+											<p:commandButton value="Cancelar" update="histInformes"
+												action="#{manejadorSemillerosCoordinador.cancelarInforme}"
+												process="histInformes" icon="ui-icon-times" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable id="histInformes2" var="informe"
+												value="#{manejadorSemillerosCoordinador.semilleroActual.listaInformesCompleta}"
+												paginator="true" rows="6" paginatorPosition="bottom"
+												emptyMessage="No hay informes asociados a este semillero."
+												style="width:100%; margin-top: 20px;">
+												<f:facet name="header">
+													<h:outputText value="Informes asociados al semillero" />
+												</f:facet>
+												<p:column>
+													<f:facet name="header"> 
+														<h:outputText value="ID" />
+													</f:facet>
+													<h:outputText value="#{informe.id}" />
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Fecha Compromiso" />
+													</f:facet>
+													<h:outputText value="#{informe.fechaCompromiso}">
+														<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+													</h:outputText>
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Notificaciones" />
+													</f:facet>
+													<h:outputText
+														value="&lt;strong&gt;Cantidad:&lt;/strong&gt; #{informe.numeroNotificaciones}"
+														escape="false" />
+													<br />
+													<h:outputText
+														value="&lt;strong&gt;Última Notificación:&lt;/strong&gt; #{empty informe.ultimaNotificacion? 'No Aplica' : informe.ultimaNotificacion}"
+														escape="false" />
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Cumplimiento" />
+													</f:facet>
+													<h:outputText
+														value="&lt;strong&gt;Fecha Entrega:&lt;/strong&gt; #{empty informe.entrega ? 'No Aplica' : informe.entrega}"
+														escape="false" />
+													<br />
+													<h:outputText
+														value="&lt;strong&gt;Cumple:&lt;/strong&gt; #{informe.cumple ? 'Si' : 'No'}"
+														escape="false" />
+													<br />
+													<h:outputText rendered="#{informe.guardadoParcial !=null and informe.guardadoParcial == 'N' }"
+														value="&lt;strong&gt;Estado:&lt;/strong&gt; #{informe.respuesta.nombre}"
+														escape="false" />
+													<h:outputText rendered="#{informe.guardadoParcial == null or informe.guardadoParcial == 'S' }"
+														value="&lt;strong&gt;Estado:&lt;/strong&gt; Pendiente por registrar"
+														escape="false" />
+													<br />
+													<h:outputText
+														value="&lt;strong&gt;Fecha de Revisión:&lt;/strong&gt; #{empty informe.fechaAprobacion ? 'No Aplica' : informe.fechaAprobacion}"
+														escape="false" />
+
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Acciones" />
+													</f:facet>
+													<p:commandButton icon="ui-icon-pencil"
+														value="Reprogramar Inf."
+														rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador and (informe.respuesta.id eq 1 or informe.respuesta.id eq null ) and informe.guardadoParcial ne 'N'}"
+														oncomplete="dlgEditInf.show();" update="@form">
+														<f:setPropertyActionListener value="#{informe}"
+															target="#{manejadorSemillerosCoordinador.informeActual}" />
+													</p:commandButton>
+													<p:commandButton icon="ui-icon-check" value="Revisar"
+														action="#{manejadorSemillerosCoordinador.cargarInforme}"
+														rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador and informe.guardadoParcial eq 'N' and informe.respuesta.id ne 4 and informe.respuesta.id ne 7}"
+														onstart="dialogEspere.show()"
+														oncomplete="dlgRevisarInforme.show();" update="@form">
+														<f:setPropertyActionListener value="#{informe}"
+															target="#{manejadorSemillerosCoordinador.informeActual}" />
+													</p:commandButton>
+													<p:commandButton icon="ui-icon-clock" value="Histórico"
+														oncomplete="dlgHistInf.show();" update="@form">
+														<f:setPropertyActionListener value="#{informe}"
+															target="#{manejadorSemillerosCoordinador.informeActual}" />
+													</p:commandButton>
+													<p:commandButton value="Generar Reporte"
+														icon="ui-icon-print"
+														action="#{manejadorSemillerosCoordinador.reporteInformeSemillero}"
+														ajax="false"
+														rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador and informe.guardadoParcial eq 'N'}">
+														<f:setPropertyActionListener value="#{informe.id}"
+															target="#{manejadorSemillerosCoordinador.idInformeSeleccionado}" />
+													</p:commandButton>
+													<p:commandButton icon="ui-icon-clock"
+														value="Ver archivos adjuntos"
+														oncomplete="dlgAdjuntosInforme.show();" update="@form">
+														<f:setPropertyActionListener value="#{informe}"
+															target="#{manejadorSemillerosCoordinador.informeActual}" />
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:tab>
+							<p:tab id="tabEstados" title="Cambio de Estado"
+								rendered="#{manejadorSemillerosCoordinador.personaActual.id.documento eq manejadorSemillerosCoordinador.semilleroActual.documentoCoordinador}">
+								<p:panelGrid style="width: 100%;" id="estados"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column colspan="2">
+											<p:messages id="msgsModal" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2">
+											<p:panel>
+												<t:div style="color:#464646; text-align:justify;">
+												Nota: Recuerde que de acuerdo a la resolución 670 de 202, el no registro de actividades por dos períodos consecutivos supondrá la inactivación del semillero de investigación.
+												<br/><br/>
+												Si cambia el estado del semillero a <strong
+										style="color: #FF0000;">INACTIVO</strong> y el semillero tiene compromisos pendientes de informe y se eliminarán.
+												</t:div>
+											</p:panel>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Nuevo estado: " />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu id="est" style="width: 200px;"
+												panelStyle="width: 200px;"
+												value="#{manejadorSemillerosCoordinador.estadoSeleccionado}">
+												<f:selectItems
+													value="#{manejadorSemillerosCoordinador.estadosItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Justificación: " />
+										</p:column>
+										<p:column>
+											<p:inputTextarea
+												value="#{manejadorSemillerosCoordinador.justificacion}"
+												style="width: 450px;" maxlength="500" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align:center;">
+											<p:commandButton
+												action="#{manejadorSemillerosCoordinador.guardarNuevoEstado}"
+												value="Guardar" update="@form" onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()">
+											</p:commandButton>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2">
+											<p:dataTable id="histEstados" var="historico"
+												value="#{manejadorSemillerosCoordinador.historicoEstados}"
+												paginator="true" rows="5" paginatorPosition="bottom"
+												emptyMessage="No hay historico de estados asociado a este semillero."
+												style="width:100%; margin-top: 20px;" editable="true">
+												<f:facet name="header">
+													<h:outputText
+														value="Histórico de estados asociados al semillero" />
+												</f:facet>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Fecha de Cambio" />
+													</f:facet>
+													<h:outputText value="#{historico.fecha}">
+													</h:outputText>
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Estado" />
+													</f:facet>
+													<h:outputText value="#{historico.estado.nombre}" />
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Justificación" />
+													</f:facet>
+													<h:outputText value="#{historico.motivo}" />
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Responsable" />
+													</f:facet>
+													<h:outputText
+														value="#{historico.responsable.nombreCompleto}" />
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:tab>
+						</p:accordionPanel>
+					</t:div>
+				</p:panel>
+			</t:div>
+			<p:dialog
+				header="Histórico de Informe - ID: #{manejadorSemillerosCoordinador.informeActual.id}"
+				widgetVar="dlgHistInf" modal="true" resizable="false" width="800">
+				<p:dataTable paginator="true" rows="5" paginatorPosition="bottom"
+					emptyMessage="No hay histórico asociado a este informe."
+					value="#{manejadorSemillerosCoordinador.informeActual.listaHistorico}"
+					style="width:100%; margin-top: 20px;" var="historico">
+					<f:facet name="header">
+						<h:outputText value="Histórico Cambios en Informe" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaAjuste}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Compromiso" />
+						</f:facet>
+						<h:outputText value="#{historico.compromiso}" escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText value="#{historico.estado.nombre}" escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios" />
+						</f:facet>
+						<h:outputText value="#{historico.comentarios}" escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{historico.responsable.nombreCompleto}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+			<p:dialog
+				header="Archivos adjuntos - ID: #{manejadorSemillerosCoordinador.informeActual.id}"
+				widgetVar="dlgAdjuntosInforme" modal="true" resizable="false"
+				width="800">
+				<p:dataTable style="border:none; margin-top: 10px;" var="archivo"
+					value="#{manejadorSemillerosCoordinador.informeActual.listaArchivos}"
+					emptyMessage="No hay archivos asociados para este semillero."
+					paginator="true" rows="5" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivos asociados al informe" />
+						</f:facet>
+						<h:outputText value="#{archivo.nombre}" />
+					</p:column>
+					<p:column>
+						<p:commandButton
+							action="#{manejadorSemillerosCoordinador.descargarArchivoInf}"
+							icon="ui-icon-search" title="Descargar" ajax="false"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							<f:setPropertyActionListener value="#{archivo}"
+								target="#{manejadorSemillerosCoordinador.archivoInf}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+			</p:dialog>
+			<p:dialog
+				header="Editar Informe - ID: #{manejadorSemillerosCoordinador.informeActual.id}"
+				widgetVar="dlgEditInf" modal="true" resizable="false" width="800">
+				<p:panelGrid style="width: 100%;" id="pnlEditInforme"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column colspan="2">
+							<p:messages id="msgsModal" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Por favor, indique la nueva fecha de compromiso para el informe:" />
+						</p:column>
+						<p:column>
+							<p:calendar readonlyInput="true"
+								value="#{manejadorSemillerosCoordinador.informeActual.fechaCompromiso}"
+								mindate="#{manejadorSemillerosCoordinador.today}" locale="es"
+								pattern="dd/MM/yyyy" navigator="true" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align: center;">
+							<p:commandButton icon="ui-icon-check" value="Actualizar Informe"
+								onComplete="dlgDetalles.show();" update="pnlEditInforme"
+								action="#{manejadorSemillerosCoordinador.actualizarInformes}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog widgetVar="dlgPrincipal" modal="true" resizable="false"
+				id="dlgPrincipal" width="800" header="Aprobar Solicitud">
+				<t:div styleClass="panel-interno-tabla" id="frmDialog"
+					style="max-height:460px; overflow: auto;">
+					<p:panelGrid style="width: 100%;"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column>ID de Semillero:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.solicitudActual.semillero.id}" />
+							</p:column>
+							<p:column rowspan="3" style="text-align: center;">
+								<h:commandLink value="Ver reporte de semillero (PDF)"
+									action="#{manejadorSemillerosCoordinador.reporteSemillero}"
+									target="_popUpWindow1"
+									onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+									style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>Nombre:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.solicitudActual.semillero.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>ID de Solicitud:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.solicitudActual.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>Tipo de Solicitud:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.solicitudActual.tipo.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>Justificación:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.solicitudActual.justificacion}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.tipo.id eq 2}">
+							<p:column>Nuevo Estado del Semillero:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.nuevoEstado}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.tipo.id eq 3}">
+							<p:column>Contenido a Modificar:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.nuevoEstado}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.tipo.id eq 5}">
+							<p:column>Nuevo Lider del Semillero:</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorSemillerosCoordinador.nuevoLider.nombreCompleto}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.tipo.id eq 1}">
+							<p:column colspan="3">
+								<p:dataTable style="border:none; margin-top: 10px;"
+									var="archivo"
+									value="#{manejadorSemillerosCoordinador.solicitudActual.semillero.listaArchivos}"
+									emptyMessage="No hay archivos asociados para este semillero."
+									paginator="true" rows="5" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Archivos asociados al Semillero" />
+										</f:facet>
+										<h:outputText value="#{archivo.nombre}" />
+									</p:column>
+									<p:column>
+										<p:commandButton
+											action="#{manejadorSemillerosCoordinador.descargarArchivo}"
+											icon="ui-icon-search" title="Descargar" ajax="false"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosCoordinador.archivoActual}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.listaArchivosSolicitud != null}">
+							<p:column colspan="3">
+								<p:dataTable style="border:none; margin-top: 10px;"
+									var="archivo"
+									value="#{manejadorSemillerosCoordinador.solicitudActual.listaArchivosSolicitud}"
+									emptyMessage="No hay archivos asociados para esta solicitud."
+									paginator="true" rows="5" paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Archivos asociados a la Solicitud" />
+										</f:facet>
+										<h:outputText value="#{archivo.nombre}" />
+									</p:column>
+									<p:column>
+										<p:commandButton
+											action="#{manejadorSemillerosCoordinador.descargarArchivoSolicitud}"
+											icon="ui-icon-search" title="Descargar" ajax="false"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosCoordinador.archivoSolicitud}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<p:panelGrid style="width: 100%;" id="panRespuestaSol"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="2">
+								<p:messages id="msgsModal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>Respuesta:</p:column>
+							<p:column>
+								<p:selectOneMenu styleClass="selectGrupo"
+									value="#{manejadorSemillerosCoordinador.solicitudActual.respuestaCoordinador.id}">
+									<f:selectItems
+										value="#{manejadorSemillerosCoordinador.respuestasSolicitud}" />
+									<p:ajax update="panRespuestaSol" process="panRespuestaSol" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{(manejadorSemillerosCoordinador.solicitudActual.tipo.id eq 3 or manejadorSemillerosCoordinador.solicitudActual.tipo.id eq 4) and manejadorSemillerosCoordinador.solicitudActual.respuestaCoordinador.id eq 7}">
+							<p:column colspan="2"
+								style="color: #FF3300; text-align: justify;">Al aprobar la solicitud esos campos quedan editables para el docente</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.respuestaCoordinador.id ne 1}">
+							<p:column>Observaciones:</p:column>
+							<p:column>
+								<p:inputTextarea style="width: 100%;"
+									value="#{manejadorSemillerosCoordinador.solicitudActual.comentariosCoordinador}"
+									counter="outObservaciones" maxlength="4000"
+									counterTemplate="{0} caracteres restantes." autoResize="false" />
+								<h:outputText id="outObservaciones" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosCoordinador.solicitudActual.respuestaCoordinador.id != 1}">
+							<p:column colspan="2" style="text-align: center;">
+								<p:commandButton
+									action="#{manejadorSemillerosCoordinador.actualizarSolicitud}"
+									update="panRespuestaSol" process="panRespuestaSol"
+									icon="ui-icon-disk" value="Actualizar Solicitud">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+				<p:ajax event="close" update="@form"
+					listener="#{manejadorSemillerosCoordinador.validarFinalizado}" />
+			</p:dialog>
+			<p:dialog
+				header="Revisión de Informe - ID #{manejadorSemillerosCoordinador.informeActual.id}"
+				widgetVar="dlgRevisarInforme" modal="true" resizable="false"
+				width="800" height="400">
+				<t:div styleClass="panel-interno-tabla"
+					id="frmDialogInformeRegistro">
+					<p:panelGrid style="width: 100%;" id="panInforme"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="2">
+								<p:messages id="msgsModal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="¿Desea realizar la revisión del presente informe?" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneRadio
+									value="#{manejadorSemillerosCoordinador.revisarInforme}">
+									<f:selectItem itemLabel="Si" itemValue="true" />
+									<f:selectItem itemLabel="No" itemValue="false" />
+									<p:ajax event="change" update="frmDialogInformeRegistro"
+										process="frmDialogInformeRegistro" />
+								</p:selectOneRadio>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:panel
+									style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+									id="tblActividades">
+									<f:facet name="header">
+										<h:outputText
+											value="Avance de actividades del plan de trabajo" />
+									</f:facet>
+									<p:dataTable id="actividadesTabla" var="actividad"
+										value="#{manejadorSemillerosCoordinador.informeActual.listaActividades}"
+										emptyMessage="No se han agregado actividades"
+										style="width:100%; margin-top: 20px;">
+										<p:column headerText="Actividad" style="width:50%">
+											<h:outputText value="#{actividad.actividad.descripcion}" />
+										</p:column>
+										<p:column headerText="Avance de actividad" style="width:50%">
+											<h:outputText
+												value="Porcentaje: #{actividad.porcentajeAvance}%" />
+											<br />
+											<h:outputText value="Comentarios: #{actividad.avance}" />
+										</p:column>
+									</p:dataTable>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:panel
+									style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+									id="addResultadoProducto">
+									<f:facet name="header">
+										<h:outputText value="Avance de resultados y productos" />
+									</f:facet>
+									<p:panelGrid style="width: 100%;" id="panResultados"
+										styleClass="estilo-panelgrid-sinbordes">
+										<p:row>
+											<p:column colspan="2" style="text-align: center;">
+												<p:dataTable id="resultadosTabla" var="resultado"
+													emptyMessage="No se han agregado resultados"
+													value="#{manejadorSemillerosCoordinador.informeActual.listaResultados}"
+													style="margin-top: 20px;">
+													<p:column headerText="Resultado" style="width:33%">
+														<h:outputText
+															value="&lt;strong&gt;Resultado: &lt;/strong&gt; #{resultado.resultado.resultado}"
+															escape="false" />
+														<br />
+														<h:outputText
+															value="&lt;strong&gt;Avance: &lt;/strong&gt; #{resultado.avanceResultado}"
+															escape="false" />
+													</p:column>
+													<p:column headerText="Producto" style="width:34%">
+														<h:outputText
+															value="&lt;strong&gt;Tipo Producto: &lt;/strong&gt; #{resultado.producto.nombre}"
+															escape="false" />
+														<br />
+														<h:outputText
+															value="&lt;strong&gt;Producto: &lt;/strong&gt; #{resultado.nombreProducto}"
+															escape="false" />
+													</p:column>
+													<p:column headerText="Lugar depósito">
+														<h:outputText value="#{resultado.lugarDeposito}"
+															escape="false" />
+													</p:column>
+													<p:column headerText="Protección">
+														<h:outputText value="#{resultado.proteccion}"
+															escape="false" />
+													</p:column>
+													<p:column headerText="Fecha">
+														<h:outputText value="#{resultado.fechaEntrega}"
+															escape="false" />
+													</p:column>
+												</p:dataTable>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:panel
+									style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+									id="panProyectos">
+									<f:facet name="header">
+										<h:outputText value="Proyectos asociados" />
+									</f:facet>
+									<p:panelGrid style="width: 100%;" id="panResultados"
+										styleClass="estilo-panelgrid-sinbordes">
+										<p:row>
+											<p:column colspan="2">
+												<p:selectManyCheckbox layout="pageDirection" disabled="true"
+													rendered="#{not empty manejadorSemillerosCoordinador.listaProyectos}"
+													value="#{manejadorSemillerosCoordinador.proyectosSeleccionados}"
+													style="width:100%;">
+													<f:selectItems
+														value="#{manejadorSemillerosCoordinador.listaProyectos}" />
+												</p:selectManyCheckbox>
+												<h:outputText
+													rendered="#{empty manejadorSemillerosCoordinador.listaProyectos}"
+													value="No hay proyectos asociados a este semillero" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:panel
+									style="margin-top: 10px; margin-bottom: 20px; width: 100%;">
+									<f:facet name="header">
+										<h:outputText value="Periodo del Informe" />
+									</f:facet>
+									<p:panelGrid style="width: 100%;"
+										styleClass="estilo-panelgrid-sinbordes">
+										<p:row>
+											<p:column style="width: 25%;">
+												<h:outputText value="* Desde:" />
+											</p:column>
+											<p:column style="width: 25%;">
+												<h:outputText
+													value="#{manejadorSemillerosCoordinador.informeActual.fechaDesde}" />
+											</p:column>
+											<p:column style="width: 25%;">
+												<h:outputText value="* Hasta:" />
+											</p:column>
+											<p:column style="width: 25%;">
+												<h:outputText
+													value="#{manejadorSemillerosCoordinador.informeActual.fechaHasta}" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documentos Adjuntos:" />
+							</p:column>
+							<p:column colspan="3">
+								<p:fileUpload label="Seleccionar Archivo"
+									update="tblArchivosInf" style="max-width:666px;" auto="true"
+									mode="advanced" showButtons="false" sizeLimit="3145728"
+									invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+									fileUploadListener="#{manejadorSemillerosCoordinador.agregarArchivoInf}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:dataTable var="archivo" id="tblArchivosInf"
+									value="#{manejadorSemillerosCoordinador.informeActual.listaArchivos}"
+									emptyMessage="No hay archivos asociados a esta solicitud.">
+									<f:facet name="header">
+										<h:outputText value="Archivos vinculados" />
+									</f:facet>
+									<p:column>
+										<h:outputText value=" #{archivo.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Acciones" />
+										</f:facet>
+										<p:commandButton ajax="false" update="tblArchivosInf"
+											icon="ui-icon-search" title="Descargar"
+											action="#{manejadorSemillerosCoordinador.descargarArchivoInf}">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosCoordinador.archivoInf}" />
+										</p:commandButton>
+										<p:commandButton update="tblArchivosInf" icon="ui-icon-trash"
+											title="Eliminar"
+											action="#{manejadorSemillerosCoordinador.eliminarArchivoInf}">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosCoordinador.archivoInf}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorSemillerosCoordinador.revisarInforme}">
+							<p:column colspan="4">
+								<p:panel id="frmRespuestaInforme"
+									style="margin-top: 10px; margin-bottom: 20px; width: 100%;">
+									<f:facet name="header">
+										<h:outputText value="Revisión del Informe" />
+									</f:facet>
+									<p:panelGrid style="width: 100%;"
+										styleClass="estilo-panelgrid-sinbordes">
+										<p:row>
+											<p:column>Respuesta:</p:column>
+											<p:column>
+												<p:selectOneMenu styleClass="selectGrupo"
+													value="#{manejadorSemillerosCoordinador.informeActual.respuesta.id}">
+													<f:selectItems
+														value="#{manejadorSemillerosCoordinador.respuestasSolicitud}" />
+													<p:ajax update="frmRespuestaInforme"
+														process="frmRespuestaInforme" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row
+											rendered="#{manejadorSemillerosCoordinador.informeActual.respuesta.id ne 1}">
+											<p:column>* Observaciones:</p:column>
+											<p:column>
+												<p:inputTextarea style="width: 100%;"
+													value="#{manejadorSemillerosCoordinador.informeActual.observaciones}"
+													counter="outObservacionesInf" maxlength="4000"
+													counterTemplate="{0} caracteres restantes."
+													autoResize="false" />
+												<h:outputText id="outObservacionesInf" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2">
+												<p:messages id="msgsModal" />
+											</p:column>
+										</p:row>
+										<p:row
+											rendered="#{manejadorSemillerosCoordinador.informeActual.respuesta.id ne 1}">
+											<p:column colspan="4">
+												<p:commandButton value="Guardar Revisión" update="@form"
+													process="@form" oncomplete="dlgRevisarInforme.show();"
+													icon="ui-icon-disk"
+													action="#{manejadorSemillerosCoordinador.actualizarInforme}"
+													rendered="#{manejadorSemillerosCoordinador.mostrarBtnRevisionInforme}" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:dialog>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+                            Por favor espere...
+            </p:dialog>
+            <p:ajaxStatus onstart="dialogEspere.show();" onsuccess="dialogEspere.hide();" />
+		</h:form>
+	</ui:define>
+</ui:composition>

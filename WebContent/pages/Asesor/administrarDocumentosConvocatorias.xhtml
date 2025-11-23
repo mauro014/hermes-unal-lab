@@ -1,0 +1,488 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Documentos Convocatoria</t:div>
+			<p:messages id="msgs" />
+
+			<p:outputPanel id="panelBusquedaConvocatoria">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width: 120px;">
+						<h:outputText value="Nombre convocatoria:" />
+					</t:div>
+					<t:div>
+						<p:inputText id="numCom" style="width:418px;"
+							value="#{manejadorGenerarDocumentosConvocatorias.nombreConvocatoriaBusqueda}" />
+						<p:commandButton
+							actionListener="#{manejadorGenerarDocumentosConvocatorias.consultarConvocatorias}"
+							value="Consultar" update="@form">
+						</p:commandButton>
+					</t:div>
+					<h:outputText value="Convocatoria:" />
+					<p:selectOneMenu style="width:520px;" filter="true"
+						filterMatchMode="contains"
+						value="#{manejadorGenerarDocumentosConvocatorias.idConvocaPadre}"
+						id="somConvocatoriaPadre" panelStyle="width: 520px;">
+						<f:selectItems
+							value="#{manejadorGenerarDocumentosConvocatorias.convocatoriaPadreItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+				<p:outputPanel id="panelBusquedaProyectosxConvocatoria"
+					rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiConvPadreExiste}">
+
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText
+							value="Por favor seleccione el tipo de documento a generar:" />
+						<p:selectOneMenu id="seleTipoDoc"
+							value="#{manejadorGenerarDocumentosConvocatorias.tipoDocumento}">
+							<f:selectItem itemValue=""
+								itemLabel="Por favor seleccione una opción" />
+							<f:selectItem itemValue="1"
+								itemLabel="Oficio lista de proyectos que cumplen requisitos (elegibles)" />
+							<f:selectItem itemValue="2"
+								itemLabel="Oficio o resolución de lista de proyectos financiables (aprobados)" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+
+					<div
+						style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+						<p:commandButton value="Continuar"
+							update="panelProyectosElegibles, panelProyectosAprobados"
+							ajax="false"
+							actionListener="#{manejadorGenerarDocumentosConvocatorias.validarTipoDocumento}" />
+					</div>
+				</p:outputPanel>
+
+				<p:panel id="panelProyectosElegibles"
+					header="Oficio lista de proyectos que cumplen requisitos (elegibles)"
+					style="margin-bottom:20px"
+					rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiProyectosElegibles}">
+
+					<p:panelGrid columns="2" id="pgCorteElegibles"
+						styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Corte"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarCorteConvocatoria}" />
+						<p:selectOneMenu id="seleNumCorte"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarCorteConvocatoria}"
+							value="#{manejadorGenerarDocumentosConvocatorias.numeroCorteConvocatoria}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorGenerarDocumentosConvocatorias.selItemCortesConvocatoria}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<br />
+					<h:panelGrid columns="2" cellpadding="3" align="center">
+						<p:commandButton
+							action="#{manejadorGenerarDocumentosConvocatorias.mostrarListaElegibles}"
+							value="Mostrar lista de propuestas elegibles" update="@form" />
+						<p:commandButton
+							action="#{manejadorGenerarDocumentosConvocatorias.mostrarGenerarOficioElegibles}"
+							value="Generar documento para publicación de lista"
+							update="@form" />
+					</h:panelGrid>
+					<br />
+					<p:outputPanel id="pgFormElegibles"
+						rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarFormularioElegibles}">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficio}">
+							<h:outputText value="Dependencia" />
+							<h:outputText
+								value="#{manejadorGenerarDocumentosConvocatorias.dependenciaConvocatoriaPadre}" />
+
+							<h:outputText
+								value="Por favor seleccione el tipo de oficio a generar:" />
+							<p:selectOneMenu id="seleTipoOficiPremDefOE"
+								value="#{manejadorGenerarDocumentosConvocatorias.tipoOficioPreDef}">
+								<f:selectItem itemValue=""
+									itemLabel="Por favor seleccione una opción" />
+								<f:selectItem itemValue="P" itemLabel="Preliminar" />
+								<f:selectItem itemValue="D" itemLabel="Definitivo" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Texto adicional" />
+							<p:inputTextarea id="tesxtoAdicionalOficioElegibles"
+								value="#{manejadorGenerarDocumentosConvocatorias.textoAdicionalOficioElegibles}"
+								cols="60" rows="5" maxlength="3950" />
+
+						</p:panelGrid>
+						<br />
+						<center>
+							<h:commandLink
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficio}"
+								value="Descargar oficio lista de proyectos que cumplen requisitos (elegibles)"
+								target="_blank"
+								action="#{manejadorGenerarDocumentosConvocatorias.generarOficioElegibles}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" />
+						</center>
+						<br />
+						<p:outputPanel id="opArchivosElegibles">
+							<t:div style="text-align:center;">
+								<span>El sistema permite carga de archivos de hasta 3Mb. Por favor verificar que cada archivo que desea subir cumpla con este requisito </span>
+							</t:div>
+							<p:fileUpload style="margin-top: 20px;"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficio}"
+								fileUploadListener="#{manejadorGenerarDocumentosConvocatorias.insertarArchivoElegibles}"
+								id="uploadArchivoProyecto" mode="advanced" auto="true"
+								binding="#{manejadorGenerarDocumentosConvocatorias.uploadArchivoProyecto}"
+								update="archivosConvocatoriaOE, uploadArchivoProyecto, opArchivosElegibles"
+								multiple="true" sizeLimit="4000000" label="Subir archivo" />
+							<p:message for="uploadArchivoProyecto" display="icon,text"
+								id="msgUploadArchivoProyecto" />
+							<br />
+
+							<p:dataTable id="archivosConvocatoriaOE" var="archivo"
+								value="#{manejadorGenerarDocumentosConvocatorias.listaArchivos}"
+								style="margin-top: 20px;"
+								rendered="#{!empty manejadorGenerarDocumentosConvocatorias.listaArchivos}">
+								<f:facet name="header">
+									<h:outputText value="Oficio de proyectos elegibles" />
+								</f:facet>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<t:div style="width: 200px;">
+										<h:outputText value="#{archivo.nombre}" />
+									</t:div>
+								</p:column>
+								<p:column style="text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Descargar" />
+									</f:facet>
+									<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+										title="Descargar" ajax="false"
+										action="#{manejadorGenerarDocumentosConvocatorias.consultarDocumentoProceso}">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorGenerarDocumentosConvocatorias.archivoProcesoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+					</p:outputPanel>
+					<p:panelGrid columns="2" id="pgListaElegibles"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarListaElegibles}">
+
+						<center>
+							<p:dataTable var="pry"
+								value="#{manejadorGenerarDocumentosConvocatorias.listaElegible}"
+								rows="10" paginator="true"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<p:column headerText="CÓDIGO">
+									<h:outputText value="#{pry.idProyecto}" />
+								</p:column>
+
+								<p:column headerText="NOMBRE">
+									<h:outputText value="#{pry.nombreProyecto}" />
+								</p:column>
+
+								<p:column headerText="INV. PRINCIPAL">
+									<h:outputText value="#{pry.investigadorPrincipal}" />
+								</p:column>
+
+								<p:column headerText="FACULTAD">
+									<h:outputText value="#{pry.facultad}" />
+								</p:column>
+
+								<p:column headerText="SEDE">
+									<h:outputText value="#{pry.sede}" />
+								</p:column>
+
+								<p:column headerText="MODALIDAD">
+									<h:outputText value="#{pry.modalidad}" />
+								</p:column>
+
+								<p:column headerText="Ver">
+									<p:commandButton icon="ui-icon-search" title="Ver" ajax="false"
+										action="#{manejadorGenerarDocumentosConvocatorias.cargarProyecto}">
+										<f:setPropertyActionListener value="#{pry.idProyecto}"
+											target="#{manejadorGenerarDocumentosConvocatorias.proyectoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</center>
+
+
+					</p:panelGrid>
+				</p:panel>
+
+				<p:panel id="panelProyectosAprobados"
+					header="Oficio o resolución de lista de proyectos financiables (aprobados)"
+					style="margin-bottom:20px"
+					rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiProyectosAprobados}">
+					<p:panelGrid columns="2" id="pgSelCorteAprobados"
+						styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Corte"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarCorteConvocatoria}" />
+						<p:selectOneMenu id="seleNumCorteAp"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarCorteConvocatoria}"
+							value="#{manejadorGenerarDocumentosConvocatorias.numeroCorteConvocatoria}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorGenerarDocumentosConvocatorias.selItemCortesConvocatoria}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+					<br />
+					<h:panelGrid columns="2" cellpadding="3" align="center">
+						<p:commandButton
+							action="#{manejadorGenerarDocumentosConvocatorias.mostrarListaAprobados}"
+							value="Mostrar lista de propuestas aprobadas" update="@form" />
+						<p:commandButton
+							action="#{manejadorGenerarDocumentosConvocatorias.mostrarGenerarOficioAprobados}"
+							value="Generar documento para publicación de lista"
+							update="@form" />
+					</h:panelGrid>
+
+					<br />
+
+					<p:outputPanel id="pgFormAprobados"
+						rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarFormularioAprobados}">
+
+						<p:panelGrid id="pgSelOficio" columns="2"
+							styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}">
+							<h:outputText value="Dependencia" />
+							<h:outputText
+								value="#{manejadorGenerarDocumentosConvocatorias.dependenciaConvocatoriaPadre}" />
+
+							<h:outputText value="Documento a generar" />
+							<p:selectOneMenu id="idDocumento"
+								value="#{manejadorGenerarDocumentosConvocatorias.tipoDocumentoAprobados}">
+								<f:selectItem itemValue=""
+									itemLabel="Por favor seleccione una opción" />
+								<f:selectItem itemValue="1" itemLabel="Oficio" />
+								<f:selectItem itemValue="2" itemLabel="Resolución" />
+								<p:ajax
+									listener="#{manejadorGenerarDocumentosConvocatorias.cambioSiResolucion}"
+									update="pgSelOficio, pgFirma" />
+							</p:selectOneMenu>
+
+							<h:outputText
+								value="Por favor seleccione el tipo de oficio a generar:"
+								rendered="#{!manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}" />
+							<p:selectOneMenu id="seleTipoOficiPremDefAP"
+								value="#{manejadorGenerarDocumentosConvocatorias.tipoOficioPreDef}"
+								rendered="#{!manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}">
+								<f:selectItem itemValue=""
+									itemLabel="Por favor seleccione una opción" />
+								<f:selectItem itemValue="P" itemLabel="Preliminar" />
+								<f:selectItem itemValue="D" itemLabel="Definitivo" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Dependencia generadora de la resolución"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}" />
+							<p:selectOneMenu id="depResolucion"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}"
+								value="#{manejadorGenerarDocumentosConvocatorias.dependenciaResolucion}">
+								<f:selectItems
+									value="#{manejadorGenerarDocumentosConvocatorias.selItemDependencia}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Fecha en la que se genera la resolución"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}" />
+							<p:calendar id="fechaResolucion" pages="1" locale="es"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}"
+								navigator="true" readonlyInput="true" pattern="dd/MM/yyyy"
+								value="#{manejadorGenerarDocumentosConvocatorias.fechaResolucion}">
+							</p:calendar>
+
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+
+							<h:outputText
+								value="Consecutivo de oficio o número de la resolución" />
+							<p:inputText id="numeroOficio"
+								value="#{manejadorGenerarDocumentosConvocatorias.consecutivoOficioAprobados}"
+								size="15" />
+
+							<h:outputText value="Texto adicional" />
+							<p:inputTextarea id="tesxtoAdicionalOficioAprobados"
+								value="#{manejadorGenerarDocumentosConvocatorias.textoAdicionalOficioAprobados}"
+								rows="3" style="width: 400px; height: 60px;" maxlength="3950" />
+
+						</p:panelGrid>
+
+						<p:outputPanel id="pgVigencia"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}">
+
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}">
+								<h:outputText value="Mostrar en el listado vigencia" />
+								<p:selectOneMenu id="idVigencias"
+									value="#{manejadorGenerarDocumentosConvocatorias.mostrarVigenciaAprobados}">
+									<f:selectItem itemValue="S" itemLabel="Si" />
+									<f:selectItem itemValue="N" itemLabel="No" />
+									<p:ajax
+										listener="#{manejadorGenerarDocumentosConvocatorias.cambioSiVigencia}"
+										update="pgVigencia, pgSelVigencia" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid id="pgSelVigencia" columns="2"
+								styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiVigencia}">
+
+								<h:outputText value="Vigencia" />
+								<p:spinner id="minMax"
+									value="#{manejadorGenerarDocumentosConvocatorias.vigenciaSeleccionada}"
+									min="2014" max="2025" />
+
+							</p:panelGrid>
+
+						</p:outputPanel>
+
+						<p:outputPanel id="pgFirma"
+							rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}">
+							<p:panelGrid id="idMostrarFirmaOficio" columns="2"
+								styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}">
+								<h:outputText value="Mostrar firma " />
+								<p:selectOneMenu id="esParaSedes"
+									value="#{manejadorGenerarDocumentosConvocatorias.mostrarFirmaAprobados}">
+									<f:selectItem itemValue="S" itemLabel="Si" />
+									<f:selectItem itemValue="N" itemLabel="No" />
+									<p:ajax
+										listener="#{manejadorGenerarDocumentosConvocatorias.cambioSiFirma}"
+										update="pgFirma, idFirma" />
+								</p:selectOneMenu>
+
+							</p:panelGrid>
+
+							<p:panelGrid id="idFirma" columns="2"
+								styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiFirma || manejadorGenerarDocumentosConvocatorias.mostrarSiResolucion}">
+								<h:outputText value="Nombre del responsable del oficio: " />
+								<p:inputText id="nombreResp"
+									value="#{manejadorGenerarDocumentosConvocatorias.responsableOficioAprobados}"
+									size="50" />
+
+								<h:outputText value="Cargo del responsable del oficio: " />
+								<p:inputText id="cargoResp"
+									value="#{manejadorGenerarDocumentosConvocatorias.cargoResponsableOficioAprobados}"
+									size="50" />
+
+							</p:panelGrid>
+
+						</p:outputPanel>
+
+						<br />
+						<center>
+							<h:commandLink
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}"
+								value="Descargar oficio o resolución de lista de proyectos financiables (aprobados)"
+								target="_blank"
+								action="#{manejadorGenerarDocumentosConvocatorias.generarOficioAprobados}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" />
+						</center>
+						<br />
+
+						<p:outputPanel id="opArchivosAprobados">
+							<t:div style="text-align:center;">
+								<span>El sistema permite carga de archivos de hasta 3Mb. Por favor verificar que cada archivo que desea subir cumpla con este requisito </span>
+							</t:div>
+
+							<p:fileUpload style="margin-top: 20px;"
+								rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarSiOficioAprobados}"
+								fileUploadListener="#{manejadorGenerarDocumentosConvocatorias.insertarArchivoAprobados}"
+								id="uploadArchivoProyectoAprobados" mode="advanced" auto="true"
+								binding="#{manejadorGenerarDocumentosConvocatorias.uploadArchivoProyectoAprobados}"
+								update="archivosConvocatoriaAP, uploadArchivoProyectoAprobados, opArchivosAprobados"
+								multiple="true" sizeLimit="4000000" label="Subir archivo" />
+							<p:message for="uploadArchivoProyectoAprobados"
+								display="icon,text" id="msgUploadArchivoProyecto" />
+							<br />
+							<p:dataTable id="archivosConvocatoriaAP" var="archivo"
+								value="#{manejadorGenerarDocumentosConvocatorias.listaArchivos}"
+								style="margin-top: 20px;"
+								rendered="#{!empty manejadorGenerarDocumentosConvocatorias.listaArchivos}">
+								<f:facet name="header">
+									<h:outputText value="Oficio de proyectos elegibles" />
+								</f:facet>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<t:div style="width: 200px;">
+										<h:outputText value="#{archivo.nombre}" />
+									</t:div>
+								</p:column>
+								<p:column style="text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Descargar" />
+									</f:facet>
+									<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+										title="Descargar" ajax="false"
+										action="#{manejadorGenerarDocumentosConvocatorias.consultarDocumentoProceso}">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorGenerarDocumentosConvocatorias.archivoProcesoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+					</p:outputPanel>
+
+					<p:panelGrid columns="2" id="pgListaAprobados"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{manejadorGenerarDocumentosConvocatorias.mostrarListaAprobados}">
+
+						<center>
+							<p:dataTable var="pry"
+								value="#{manejadorGenerarDocumentosConvocatorias.listaAprobados}"
+								rows="10" paginator="true"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<p:column headerText="CÓDIGO">
+									<h:outputText value="#{pry.idProyecto}" />
+								</p:column>
+
+								<p:column headerText="NOMBRE">
+									<h:outputText value="#{pry.nombreProyecto}" />
+								</p:column>
+
+								<p:column headerText="INV. PRINCIPAL">
+									<h:outputText value="#{pry.investigadorPrincipal}" />
+								</p:column>
+
+								<p:column headerText="FACULTAD">
+									<h:outputText value="#{pry.facultad}" />
+								</p:column>
+
+								<p:column headerText="SEDE">
+									<h:outputText value="#{pry.sede}" />
+								</p:column>
+
+								<p:column headerText="MODALIDAD">
+									<h:outputText value="#{pry.modalidad}" />
+								</p:column>
+
+								<p:column headerText="Ver">
+									<p:commandButton icon="ui-icon-search" title="Ver" ajax="false"
+										action="#{manejadorGenerarDocumentosConvocatorias.cargarProyecto}">
+										<f:setPropertyActionListener value="#{pry.idProyecto}"
+											target="#{manejadorGenerarDocumentosConvocatorias.proyectoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</center>
+					</p:panelGrid>
+				</p:panel>
+			</p:outputPanel>
+		</h:form>
+	</ui:define>
+</ui:composition>

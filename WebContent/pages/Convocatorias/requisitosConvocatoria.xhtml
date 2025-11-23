@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Requisitos</t:div>
+			<br />
+			<p:menubar
+				rendered="#{!manejadorInsercionConvocatorias.esConvocatoriaMovilidades}">
+				<p:menuitem value="Generalidades"
+					action="irGeneralidadesConvocatoria" icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarGeneralidades}" />
+				<p:menuitem value="Requisitos" action="irRequisitosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRequisitos}" />
+				<p:menuitem value="Rubros" action="irRubrosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRubros}" />
+				<p:menuitem value="Compromisos" action="irCompromisosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCompromisos}" />
+				<p:menuitem value="Productos" action="irProductosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarProductos}" />
+				<p:menuitem value="Criterios de evaluación"
+					action="irCriteriosEvaluacionConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCriterios}" />
+				<p:menuitem value="Información específica"
+					action="irDetallesInformacionEspecifica"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarInfoEspecifica}" />
+			</p:menubar>
+
+			<p:menubar
+				rendered="#{manejadorInsercionConvocatorias.esConvocatoriaMovilidades}">
+				<p:menuitem value="Generalidades"
+					action="irGeneralidadesConvocatoria" icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarGeneralidades}" />
+				<p:menuitem value="Requisitos" action="irRequisitosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRequisitos}" />
+				<p:menuitem value="Archivos"
+					action="irArchivosConvocatoriaMovilidad"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarArchivosMovilidad}" />
+			</p:menubar>
+
+			<br />
+
+			<center>
+				<h:outputText
+					value="#{manejadorInsercionConvocatorias.avisoRequisitos}"
+					styleClass="mensajeerror" />
+			</center>
+
+			<br />
+
+			<p:panel id="panelRequisitos"
+				header="Administrar requisitos de la modalidad">
+
+
+				<h:panelGrid columns="2" align="center" cellpadding="2"
+					cellspacing="2">
+
+					<h:outputText value="Nombre:" />
+					<p:inputTextarea
+						value="#{manejadorInsercionConvocatorias.requisitoActual.nombre}"
+						styleClass="texto" rows="3" cols="60" />
+
+					<h:outputText value="Descripción:" />
+					<p:inputTextarea
+						value="#{manejadorInsercionConvocatorias.requisitoActual.descripcion}"
+						styleClass="texto" rows="3" cols="60" />
+				</h:panelGrid>
+
+				<center>
+					<h:panelGrid columns="1" align="center">
+						<p:commandButton
+							action="#{manejadorInsercionConvocatorias.agregarRequisito}"
+							value="Agregar" update="panelRequisitos, tablaRequisitos"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</h:panelGrid>
+				</center>
+
+				<br />
+
+				<p:dataTable
+					value="#{manejadorInsercionConvocatorias.requisito.hijos}"
+					id="tablaRequisitos" var="req" cellpadding="1" cellspacing="15"
+					align="center" editable="true">
+					<p:column style="width:5%;" headerText="Id-requisito">
+						<h:outputText value="#{req.id}" />
+					</p:column>
+					<p:column headerText="Requisito">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{req.nombre}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputTextarea rows="3" maxlength="2000" value="#{req.nombre}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Descripción">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{req.descripcion}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputTextarea rows="2" maxlength="2000"
+									value="#{req.descripcion}" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column style="width:10%; text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Editar" />
+						</f:facet>
+						<p:rowEditor />
+					</p:column>
+					<p:column headerText="Eliminar">
+						<center>
+							<p:commandButton
+								action="#{manejadorInsercionConvocatorias.eliminarRequisito}"
+								update="@form"
+								onclick="if(!confirm('¿Está seguro(a) de eliminar el Requisito?'))return false"
+								id="eliminarRequisito" icon="ui-icon-trash"
+								title="Eliminar requisito">
+
+								<f:setPropertyActionListener value="#{req}"
+									target="#{manejadorInsercionConvocatorias.requisitoSeleccionado}" />
+							</p:commandButton>
+						</center>
+
+
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<center>
+				<h:panelGrid columns="3"
+					rendered="#{!manejadorInsercionConvocatorias.esConvocatoriaMovilidades}">
+
+					<p:commandButton value="Guardar requisitos"
+						rendered="#{manejadorInsercionConvocatorias.activarGuardar}"
+						action="#{manejadorInsercionConvocatorias.guardarRequisitos}"
+						update="@form" />
+						
+					<p:commandButton styleClass="btnedicion"
+						rendered="#{manejadorInsercionConvocatorias.mostrarGuardarAvanzar}"
+						action="#{manejadorInsercionConvocatorias.siguiente}"
+						value="Guardar y avanzar" update="@form">
+						<f:param name="action" value="2"></f:param>
+					</p:commandButton>
+
+					
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3"
+					rendered="#{manejadorInsercionConvocatorias.esConvocatoriaMovilidades}">
+
+					<p:commandButton styleClass="btnedicion"
+						rendered="#{manejadorInsercionConvocatorias.mostrarGuardarAvanzar}"
+						action="#{manejadorInsercionConvocatorias.siguienteMovilidades}"
+						value="Guardar y avanzar" update="@form" proccess="@form" />
+
+					<p:commandButton styleClass="btnguardar" rendered="false"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						immediate="false" value="Guardar y continuar después" />
+
+					<p:commandButton value="Guardar Convocatoria"
+						rendered="#{manejadorInsercionConvocatorias.activarGuardar}"
+						action="#{manejadorInsercionConvocatorias.insertarConvocatoriaMovilidad}"
+						update="@form" />
+
+				</h:panelGrid>
+
+			</center>
+
+
+
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+	</ui:define>
+</ui:composition>

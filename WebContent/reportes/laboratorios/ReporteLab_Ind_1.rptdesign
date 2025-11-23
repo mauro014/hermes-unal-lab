@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">cm</property>
+    <text-property name="displayName">Reporte de Laboratorios</text-property>
+    <list-property name="configVars">
+        <structure>
+            <property name="name">id</property>
+            <property name="value">6113</property>
+        </structure>
+    </list-property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="19">
+            <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@168.176.6.21:1521:produnal</property>
+            <property name="odaUser">HERMES</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">MW52MzVUMWc0QzFvTnNsM2w=</encrypted-property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set" id="8971">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">CANTIDAD</property>
+                    <property name="displayName">CANTIDAD</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SEDE</property>
+                    <property name="displayName">SEDE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CAMPUS</property>
+                    <property name="displayName">CAMPUS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">FACULTAD</property>
+                    <property name="displayName">FACULTAD</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DEPARTAMENTO</property>
+                    <property name="displayName">DEPARTAMENTO</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">CANTIDAD</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">SEDE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">CAMPUS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">FACULTAD</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">DEPARTAMENTO</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CANTIDAD</property>
+                    <property name="nativeName">CANTIDAD</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">SEDE</property>
+                    <property name="nativeName">SEDE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">CAMPUS</property>
+                    <property name="nativeName">CAMPUS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">FACULTAD</property>
+                    <property name="nativeName">FACULTAD</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">DEPARTAMENTO</property>
+                    <property name="nativeName">DEPARTAMENTO</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select * from (
+select COUNT(*) as CANTIDAD, sede.SED_NOMBRE as SEDE, campus.CAMPUS_NOMBRE as CAMPUS, fac.DPN_NOMBRE as FACULTAD, 'Ninguno' as DEPARTAMENTO
+from HER_LABORATORIO lab, HER_SEDE sede, HER_DEPENDENCIA fac,
+HER_CAMPUS campus, HER_EDIFICIO edificio, HER_TIPOS tipo_lab, HER_PERSONA persona_reg
+where lab.LAB_DEPTO is null
+and lab.SED_ID = sede.SED_ID
+and lab.LAB_FACULTAD = fac.DPN_ID
+and lab.LAB_CAMPUS = campus.CAMPUS_ID
+and lab.EDF_ID = edificio.EDF_ID 
+and lab.LAB_TIPO = tipo_lab.ID
+and lab.LAB_REGISTRO_PER_ID = persona_reg.PER_ID
+and lab.LAB_REGISTRO_TDO_ID = persona_reg.TDO_ID
+group by sede.SED_NOMBRE, campus.CAMPUS_NOMBRE, fac.DPN_NOMBRE
+union
+select COUNT(*) as CANTIDAD, sede.SED_NOMBRE as SEDE, campus.CAMPUS_NOMBRE as CAMPUS, fac.DPN_NOMBRE as FACULTAD, depto.DPN_NOMBRE as DEPARTAMENTO
+from HER_LABORATORIO lab, HER_SEDE sede, HER_DEPENDENCIA fac, HER_DEPENDENCIA depto, 
+HER_CAMPUS campus, HER_EDIFICIO edificio, HER_TIPOS tipo_lab, HER_PERSONA persona_reg
+where lab.LAB_DEPTO is not null
+and lab.SED_ID = sede.SED_ID
+and lab.LAB_FACULTAD = fac.DPN_ID
+and lab.LAB_DEPTO = depto.DPN_ID
+and lab.LAB_CAMPUS = campus.CAMPUS_ID
+and lab.EDF_ID = edificio.EDF_ID 
+and lab.LAB_TIPO = tipo_lab.ID
+and lab.LAB_REGISTRO_PER_ID = persona_reg.PER_ID
+and lab.LAB_REGISTRO_TDO_ID = persona_reg.TDO_ID
+group by sede.SED_NOMBRE, campus.CAMPUS_NOMBRE, fac.DPN_NOMBRE , depto.DPN_NOMBRE
+) order by SEDE, CAMPUS, FACULTAD, DEPARTAMENTO</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>CANTIDAD</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>-127</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>CANTIDAD</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>CANTIDAD</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SEDE</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>60</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>SEDE</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SEDE</design:label>
+            <design:formattingHints>
+              <design:displaySize>60</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>CAMPUS</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>100</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>CAMPUS</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>CAMPUS</design:label>
+            <design:formattingHints>
+              <design:displaySize>100</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>FACULTAD</design:name>
+            <design:position>4</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>100</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>FACULTAD</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>FACULTAD</design:label>
+            <design:formattingHints>
+              <design:displaySize>100</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>DEPARTAMENTO</design:name>
+            <design:position>5</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>100</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>DEPARTAMENTO</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>DEPARTAMENTO</design:label>
+            <design:formattingHints>
+              <design:displaySize>100</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="TituloCentrado" id="15">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontSize">larger</property>
+            <property name="borderBottomStyle">none</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="BordeCaja" id="50">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="TituloDetalle" id="83">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontSize">small</property>
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="Raya" id="173">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">medium</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="Detalle" id="174">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontSize">medium</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="DetallePesos" id="230">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontSize">9pt</property>
+            <property name="borderBottomStyle">none</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderTopStyle">none</property>
+            <structure name="numberFormat">
+                <property name="category">Currency</property>
+                <property name="pattern">$#,##0</property>
+            </structure>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="Actividad" id="484">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontSize">small</property>
+        </style>
+        <style name="Numero" id="690">
+            <property name="fontFamily">"Verdana"</property>
+            <structure name="numberFormat">
+                <property name="category">Fixed</property>
+                <property name="pattern">#,##0</property>
+            </structure>
+        </style>
+        <style name="Centrado" id="2616">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">center</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">us-letter</property>
+            <property name="orientation">landscape</property>
+            <property name="topMargin">1.5cm</property>
+            <property name="leftMargin">1.5cm</property>
+            <property name="bottomMargin">1.5cm</property>
+            <property name="rightMargin">1.5cm</property>
+            <property name="footerHeight">1cm</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="8947">
+            <property name="width">100%</property>
+            <property name="dataSet">Data Set</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">CANTIDAD</property>
+                    <property name="displayName">CANTIDAD</property>
+                    <expression name="expression">dataSetRow["CANTIDAD"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">SEDE</property>
+                    <property name="displayName">SEDE</property>
+                    <expression name="expression">dataSetRow["SEDE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CAMPUS</property>
+                    <property name="displayName">CAMPUS</property>
+                    <expression name="expression">dataSetRow["CAMPUS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FACULTAD</property>
+                    <property name="displayName">FACULTAD</property>
+                    <expression name="expression">dataSetRow["FACULTAD"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEPARTAMENTO</property>
+                    <property name="displayName">DEPARTAMENTO</property>
+                    <expression name="expression">dataSetRow["DEPARTAMENTO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression">Total.sum(dataSetRow["CANTIDAD"])</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <column id="8966">
+                <property name="width">2cm</property>
+            </column>
+            <column id="8967">
+                <property name="width">3cm</property>
+            </column>
+            <column id="8968">
+                <property name="width">4cm</property>
+            </column>
+            <column id="8969">
+                <property name="width">8cm</property>
+            </column>
+            <column id="8970">
+                <property name="width">8cm</property>
+            </column>
+            <header>
+                <row id="8948">
+                    <property name="style">TituloDetalle</property>
+                    <property name="backgroundColor">#E0E0E0</property>
+                    <cell id="8949">
+                        <label id="8972">
+                            <text-property name="text">CANTIDAD</text-property>
+                        </label>
+                    </cell>
+                    <cell id="8950">
+                        <label id="8974">
+                            <text-property name="text">SEDE</text-property>
+                        </label>
+                    </cell>
+                    <cell id="8951">
+                        <label id="8976">
+                            <text-property name="text">CAMPUS</text-property>
+                        </label>
+                    </cell>
+                    <cell id="8952">
+                        <label id="8978">
+                            <text-property name="text">FACULTAD</text-property>
+                        </label>
+                    </cell>
+                    <cell id="8953">
+                        <label id="8980">
+                            <text-property name="text">DEPARTAMENTO</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="8954">
+                    <property name="style">Detalle</property>
+                    <cell id="8955">
+                        <data id="8973">
+                            <property name="fontWeight">normal</property>
+                            <property name="resultSetColumn">CANTIDAD</property>
+                        </data>
+                    </cell>
+                    <cell id="8956">
+                        <data id="8975">
+                            <property name="resultSetColumn">SEDE</property>
+                        </data>
+                    </cell>
+                    <cell id="8957">
+                        <data id="8977">
+                            <property name="resultSetColumn">CAMPUS</property>
+                        </data>
+                    </cell>
+                    <cell id="8958">
+                        <data id="8979">
+                            <property name="resultSetColumn">FACULTAD</property>
+                        </data>
+                    </cell>
+                    <cell id="8959">
+                        <data id="8981">
+                            <property name="resultSetColumn">DEPARTAMENTO</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="8960">
+                    <property name="style">TituloDetalle</property>
+                    <property name="backgroundColor">#E0E0E0</property>
+                    <cell id="8961">
+                        <data id="8983">
+                            <property name="style">Detalle</property>
+                            <property name="backgroundColor">#E0E0E0</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="resultSetColumn">Column Binding</property>
+                        </data>
+                    </cell>
+                    <cell id="8962">
+                        <property name="backgroundColor">#E0E0E0</property>
+                        <label id="8984">
+                            <property name="backgroundColor">#E0E0E0</property>
+                            <text-property name="text">TOTAL</text-property>
+                        </label>
+                    </cell>
+                    <cell id="8963"/>
+                    <cell id="8964"/>
+                    <cell id="8965"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

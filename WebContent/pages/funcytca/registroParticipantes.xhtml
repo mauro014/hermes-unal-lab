@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../principal/PlantillaConvocatoriasFuncytca.xhtml">
+	<ui:define name="content">
+		<h:form id="form">
+
+			<t:div id="panelTitulo" style="text-align: center; width: 100%;">
+				<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes1"
+					style="width: 100%;">
+					<t:div styleClass="contendido-titulo-principal"
+						style="margin-bottom: 30px;">
+
+						<center>
+							<img
+								src="#{facesContext.externalContext.requestContextPath}/images/funcytca/20141211-funcytca.jpg" />
+						</center>
+
+
+					</t:div>
+				</h:panelGrid>
+			</t:div>
+
+			<br />
+
+			<p:panel id="basic"
+				header="Aceptación de los términos de referencia de la convocatoria - Autorización y aviso de privacidad de datos personales"
+				style="margin-bottom:20px">
+
+
+				<p align="justify">Al participar en esta convocatoria declaro
+					que he leído, acepto y cumplo con los términos de referencia
+					establecidos.</p>
+
+				<p align="justify">La Fundación de Ciencia y Tecnológía Colombo
+					Alemana y la Universidad Nacional de Colombia, en cumplimiento del
+					artículo 10 del Decreto 1377 de 2013 y la Ley 1581 de 2012 le
+					informa que es responsable del tratamiento de datos personales, los
+					cuales han sido obtenidos directamente de las personas y entidades
+					que han tenido cualquier tipo de relación con la Fundación y la
+					Universidad.</p>
+
+				<p align="justify">De acuerdo a lo anterior, se solicita la
+					autorización de los titulares de los datos personales para
+					continuar con el tratamiento de los mismos, comprometiéndonos a
+					hacer buen uso de su información y basándonos en una política de
+					privacidad y tratamiento de información personal de manera lícita,
+					segura y confiable.</p>
+
+			</p:panel>
+
+			<p:panel id="inicioSesion" header="Ingreso a la convocatoria">
+				<center>
+					<h:panelGrid columns="2" cellpadding="10">
+
+						<h:outputText value="Documento de identidad: " />
+						<p:inputText id="docIdent"
+							value="#{ManejadorConvocatoriaFuncytca.documentoIngresoInv}"
+							disabled="#{ManejadorConvocatoriaFuncytca.deshabilitarBotonLogin}"></p:inputText>
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Contraseña: " />
+						<p:password id="usrPassword"
+							value="#{ManejadorConvocatoriaFuncytca.usrPassword}"
+							disabled="#{ManejadorConvocatoriaFuncytca.deshabilitarBotonLogin}" />
+
+
+					</h:panelGrid>
+					<br />
+					<h:panelGrid id="panelIngresar" columns="1" align="center">
+
+
+						<p:commandButton value="Ingresar" id="ingresar" ajax="false"
+							disabled="#{ManejadorConvocatoriaFuncytca.deshabilitarBotonLogin}"
+							actionListener="#{ManejadorConvocatoriaFuncytca.validarAutenticacionUsuario}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form" />
+
+					</h:panelGrid>
+
+					<br />
+					<p:messages id="msgs" autoUpdate="true" closable="true" />
+					<br />
+					<h:panelGrid cellpadding="10" cellspacing="10" align="center" rendered="false">
+
+						<p:selectOneRadio id="opcionesUsuario"
+							value="#{ManejadorConvocatoriaFuncytca.opcionesUsuario}">
+							<f:selectItem itemLabel="Si usted no se encuentra registrado en esta convocatoria, por favor de clic aquí"
+								itemValue="registrarUsuario" />
+							<p:ajax event="change" update="@form"
+								listener="#{ManejadorConvocatoriaFuncytca.validarOpcionesUsuario}" />
+						</p:selectOneRadio>
+
+					</h:panelGrid>
+
+				</center>
+
+			</p:panel>
+			<br />
+			<p:panel id="registroUsuario" header="Datos básicos del participante"
+				rendered="false">
+				<br />
+				 <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true" />
+				 <br />
+				<center>
+					<h:panelGrid id="test" columns="3">
+
+						<h:outputText value="Tipo de documento de identidad *:" />
+						<p:selectOneMenu style="width:160px"
+							value="#{ManejadorConvocatoriaFuncytca.tipoDocumentoInv.id}"
+							id="tipodoecv2">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaFuncytca.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+						<p:message for="tipodoecv2" display="icon" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Documento de identidad *:" />
+						<p:inputText value="#{ManejadorConvocatoriaFuncytca.documentoInv}"
+							id="documentov2" required="true"/>
+						<p:message for="documentov2" display="icon" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Primer Nombre *:" />
+						<p:inputText id="primerNombreInvestigador" required="true"
+							value="#{ManejadorConvocatoriaFuncytca.primerNombre}" size="38"
+							requiredMessage="El Primer Nombre es obligatorio">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+						<p:message id="errorPrimerNombreInvestigador"
+							for="primerNombreInvestigador" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Segundo Nombre:" />
+						<p:inputText id="segundoNombreInv"
+							value="#{ManejadorConvocatoriaFuncytca.segundoNombre}" size="38">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+						<p:message id="errorSegundoNombreInv" for="segundoNombreInv" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Primer Apellido *:" />
+						<p:inputText id="primerApellidoInvestigador" required = "true"
+							value="#{ManejadorConvocatoriaFuncytca.primerApellido}" size="38"
+							requiredMessage="El Primer Apellido es obligatorio">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+						<p:message id="errorPrimerApellidoInvestigador"
+							for="primerApellidoInvestigador" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Segundo Apellido:" />
+						<p:inputText id="segundoApellidoInv"
+							value="#{ManejadorConvocatoriaFuncytca.segundoApellido}"
+							size="38">
+							<f:validateLength maximum="20" />
+						</p:inputText>
+						<p:message id="errorSegundoApellidoInv" for="segundoApellidoInv" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Correo electrónico *:" />
+						<p:inputText id="correoElectronicoInv" required = "true"
+							value="#{ManejadorConvocatoriaFuncytca.correoElectronico}"
+							size="38">
+							<f:validateLength maximum="100" />
+						</p:inputText>
+						<p:message id="errorCorreoElectronicoInv"
+							for="correoElectronicoInv" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Teléfono fijo *" for="tel_fijo" />
+						<p:inputText id="tel_fijo" size="20" required = "true"
+							value="#{ManejadorConvocatoriaFuncytca.tel_fijo}" maxlength="20">
+							<f:validateLength minimum="7" />
+						</p:inputText>
+						<p:message id="idErrorTelefono" for="tel_fijo" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Dirección *" for="direccion" />
+						<p:inputText id="direccion" required="true"
+							requiredMessage="La Dirección es un campo obligatorio"
+							value="#{ManejadorConvocatoriaFuncytca.direccion}" maxlength="200"
+							size="38" />
+						<p:message id="IdErrorDireccion" for="direccion" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Contraseña *:" />
+						<p:password id="passwordOne" required="true" label="contraseña"
+							match="confirmPassword" size="20"
+							requiredMessage="Por favor ingrese su contraseña."
+							value="#{ManejadorConvocatoriaFuncytca.password1}" maxlength="20">
+						</p:password>
+						<p:message for="passwordOne" />
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Verificar contraseña *:" />
+						<p:password id="confirmPassword" required="true" size="20"
+							requiredMessage="Por favor confirme su contraseña."
+							label="Confirmar contraseña"
+							value="#{ManejadorConvocatoriaFuncytca.password2}" maxlength="20">
+						</p:password>
+						<p:message for="confirmPassword" />
+
+					</h:panelGrid>
+					<br />
+					<h:panelGrid id="panelGuardar" columns="2" align="center">
+						<p:commandButton value="Guardar" id="guardar" onstart="dlg.show()"
+							oncomplete="dlg.hide()"
+							actionListener="#{ManejadorConvocatoriaFuncytca.guardarNuevoUsuario}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form"/>
+
+						<p:commandButton value="Cancelar" id="cancelNuevoUsuario"
+							actionListener="#{ManejadorConvocatoriaFuncytca.cancelarCreacionUsuario}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form" immediate="true">
+						</p:commandButton>
+
+					</h:panelGrid>
+				</center>
+				<br />
+			</p:panel>
+			<br />
+			<p:panel id="recordarClave" header="Recordar contraseña"
+				rendered="#{ManejadorConvocatoriaFuncytca.mostrarRecordarClave}">
+				<center>
+					<h:panelGrid columns="2" cellpadding="10">
+
+						<h:outputText value="Documento de identidad: " />
+						<p:inputText id="docIdentRecClave"
+							value="#{ManejadorConvocatoriaFuncytca.documentoIngresoInv}"></p:inputText>
+
+						<p:spacer width="20" height="7" />
+						<p:spacer width="20" height="7" />
+
+						<h:outputText value="Correo electrónico " />
+						<p:password id="emailRecClave"
+							value="#{ManejadorConvocatoriaFuncytca.usrPassword}" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid id="panelRecordarClave" columns="2" align="center">
+						<p:commandButton value="Recordar" id="recordar"
+							onstart="dlg.show()" oncomplete="dlg.hide()"
+							actionListener="#{ManejadorConvocatoriaFuncytca.recordarClave}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form" />
+
+						<p:commandButton value="Cancelar" id="cancelRecordarClave"
+							actionListener="#{ManejadorConvocatoriaFuncytca.cancelarRecordarClave}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form" immediate="true">
+						</p:commandButton>
+
+					</h:panelGrid>
+				</center>
+
+
+			</p:panel>
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+
+			<t:div styleClass="logo-pequeño-principal">
+				<a href="#{facesContext.externalContext.requestContextPath}/"> <img
+					src="#{facesContext.externalContext.requestContextPath}/images/her-general/logo_hermes1.png" />
+				</a>
+			</t:div>
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

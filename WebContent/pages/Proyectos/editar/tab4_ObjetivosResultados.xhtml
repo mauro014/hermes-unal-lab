@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+<div id="formulariobasico">
+	
+	<t:div styleClass="contenido-titulo-general-myriad" >Objetivos y Resultados</t:div>
+	<br />
+	<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+	<br />
+
+	<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+			
+		<t:div styleClass="contenido-titulo-general-myriad-1">
+			<h:outputText value="#{manejadorObjetivosResultados.inicioTitulo}"
+					style="font-weight: bold" />
+		</t:div>
+		
+	</h:panelGrid>
+	
+	<br />
+	
+	<p:messages id="msgObj" for="msgObj" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+	<p:messages id="msgRes" for="msgRes" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+
+	<p:panel header="Objetivo General" id="grupoObjetivoGeneral">
+			
+			<br />
+			<center>
+			
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3"
+				align="center">
+
+				<p:message id="mes_Inicial" for="objetivoGeneral" />
+					
+				<p:inputTextarea 
+					forceId="true" id="objetivoGeneral"
+					value="#{manejadorObjetivosResultados.proyectoActual.objetivoGeneral}"
+					rows="10" cols="70" 
+					required="true" 
+					requiredMessage="Campo requerido"
+					autoResize="false">
+				</p:inputTextarea>
+			</h:panelGrid>
+			
+			<br />
+			</center>
+	</p:panel>
+	
+	<br />
+	
+	<p:panel header="Objetivos Específicos" id="grupoObjetivosEspecificos" rendered="#{!manejadorObjetivosResultados.esProgramaNacional}">
+			
+		<h:panelGrid columns="1" align="center">
+			
+			<p:dataTable cellpadding="6" 
+						 cellspacing="3"
+						 value="#{manejadorObjetivosResultados.listaObjetivos}"
+						 var="objetivo"
+						 binding="#{manejadorObjetivosResultados.tablaObjetivos}"
+						 id="tablaObjetivos"
+						 emptyMessage="No existen objetivos especificos asociados al proyecto"
+						 style="width:500px" >
+
+				<p:column id="columnaObjetivos" headerText="OBJETIVO">
+					
+					<br />
+					<p:message id="nombreObjetivo" for="nombreObjetivo" />	
+					
+					<p:inputTextarea 
+						id="nombreObjetivo" 
+						value="#{objetivo.nombre}"
+						rendered="#{!objetivo.borrable}" 
+						cols="60" 
+						rows="5"
+						required="true"
+						requiredMessage="Campo obligatorio" 
+						forceId="true"
+						autoResize="false">
+						<f:validateLength maximum="3000" />
+					</p:inputTextarea>
+				</p:column>
+
+				<p:column headerText="ELIMINAR">
+					
+					<center>
+					
+					<p:commandButton 
+						onclick="if(!confirm('¿Está seguro(a) de querer eliminar el objetivo?'))return false"
+						rendered="#{!objetivo.borrable}"
+						action="#{manejadorObjetivosResultados.eliminarObjetivo}"
+						immediate="true"
+						update="tablaObjetivos"
+						title="Eliminar objetivo específico"
+						icon="ui-icon-trash"/>
+
+					
+					</center>
+					
+				</p:column>
+
+			</p:dataTable>
+		
+		</h:panelGrid>
+
+			
+			<br />
+			<center>
+			
+			<p:commandButton 
+							action="#{manejadorObjetivosResultados.insertarObjetivo}"
+							value="Agregar objetivo" 
+							update="tablaObjetivos,tablaResultados"/>
+			
+			</center>
+			<br />
+
+	</p:panel>
+	
+	<br />
+	
+	<p:panel header="Resultados Esperados" id="grupoResultados" rendered="#{!manejadorObjetivosResultados.esProgramaNacional}">
+
+		<h:panelGrid columns="1" align="center">
+			
+			<p:dataTable 
+					cellpadding="6" 
+					cellspacing="3"
+					value="#{manejadorObjetivosResultados.listaResultados}"
+					var="resultado"
+					binding="#{manejadorObjetivosResultados.tablaResultados}"
+					id="tablaResultados"
+					emptyMessage="No existen resultados esperados asociados al proyecto"
+					style="width:500px" >
+
+				<p:column  headerText="RESULTADO">
+					
+					<p:message id="resultado" for="resultado" />
+					
+					<p:inputTextarea id="resultado" 
+									 rendered="#{!resultado.borrable}"
+									 value="#{resultado.descripcion}" 
+									 cols="60" 
+									 rows="5"
+									 required="true"
+									 requiredMessage="Campo obligatorio" 
+									 forceId="true"
+									 autoResize="false">
+						<f:validateLength maximum="2000" />
+					</p:inputTextarea>
+				</p:column>
+
+				<p:column  headerText="ELIMINAR">
+					
+					<center>
+					
+					<p:commandButton
+						onclick="if(!confirm('¿Está seguro(a) de querer eliminar el resultado?'))return false"
+						rendered="#{!resultado.borrable}"
+						action="#{manejadorObjetivosResultados.eliminarResultado}"
+						immediate="true" 
+						update="tablaResultados"
+						title="Eliminar resultado esperado"
+						icon="ui-icon-trash"/>
+	
+					</center>
+					
+				</p:column>
+
+			</p:dataTable>
+		
+		</h:panelGrid>
+			
+			<br />
+			<center>
+			
+			<p:commandButton
+				action="#{manejadorObjetivosResultados.insertarResultado}"
+				value="Agregar resultado esperado" 
+				update="tablaObjetivos,tablaResultados,grupoObjetivoGeneral"/>
+			
+			</center>
+			<br />
+			
+			<br />
+       
+    	<p:messages id="msgForm" for="msgForm" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+	
+	</p:panel>
+	<br />
+	
+	<h:panelGroup>
+
+	<br />
+	<center>
+		<h:panelGrid columns="3" cellpadding="3">
+			<p:commandButton
+				action="#{manejadorObjetivosResultados.atras}" value="Atrás"
+				immediate="true" />
+			<p:commandButton
+				action="#{manejadorObjetivosResultados.salirGuardar}"
+				value="Guardar y continuar después"
+				immediate="false"
+				update="tablaObjetivos,tablaResultados,grupoObjetivoGeneral"/>
+			<p:commandButton
+				action="#{manejadorObjetivosResultados.siguiente}"
+				value="Guardar y avanzar"
+				update="tablaObjetivos,tablaResultados,grupoObjetivoGeneral"/>
+		</h:panelGrid>
+	</center>
+	
+	</h:panelGroup>	
+
+</div>
+
+</h:form>
+</ui:define>
+</ui:composition>

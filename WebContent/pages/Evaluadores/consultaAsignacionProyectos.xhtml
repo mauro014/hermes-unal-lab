@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<div id="formulariobasico" /><h:panelGrid columns="1">
+
+
+	<h:panelGroup id="panelBusquedaProyectosxConvocatoria"
+		style="width: 420px">
+
+		<s:fieldset legend="Búsqueda por convocatoria o modalidad"
+			styleClass="legend1">
+
+			<s:pprPanelGroup id="pprSelectConvocatoria"
+				partialTriggers="selectConvocatoria selectModalidad">
+				
+					<br />
+				
+				<h:outputText
+					value="#{manejadorAsignacionProyectos.mensajeConvocatoria}"
+					styleClass="mensajeerror" />
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Convocatoria" styleClass="labels_proyecto" />
+					<t:popup id="popConvocatoria" styleClass="popup"
+						closePopupOnExitingElement="true" closePopupOnExitingPopup="true"
+						displayAtDistanceX="0" displayAtDistanceY="10">
+						<h:selectOneMenu id="selectConvocatoria"
+							value="#{manejadorAsignacionProyectos.convocatoriaPadre}"
+							styleClass="texto" onchange="submit(this)"
+							valueChangeListener="#{manejadorAsignacionProyectos.cambiarConvocatoriaPadre}">
+							<f:selectItems
+								value="#{manejadorAsignacionProyectos.convocatoriaPadreItem}" />
+						</h:selectOneMenu>
+
+						<f:facet name="popup">
+							<h:panelGrid columns="1">
+								<h:outputText
+									value="#{manejadorAsignacionProyectos.convocatoriaPadre}"
+									styleClass="item_2col_f" />
+							</h:panelGrid>
+						</f:facet>
+
+					</t:popup>
+
+
+					<h:outputText value="Modalidad" styleClass="labels_proyecto" />
+
+					<t:popup id="popDependencias" styleClass="popup"
+						closePopupOnExitingElement="true" closePopupOnExitingPopup="true"
+						displayAtDistanceX="0" displayAtDistanceY="10">
+						<h:selectOneMenu id="selectModalidad"
+							value="#{manejadorAsignacionProyectos.convocatoria}"
+							styleClass="texto" onchange="submit(this)"
+							valueChangeListener="#{manejadorAsignacionProyectos.cambiarModalidad}">
+							<f:selectItems
+								value="#{manejadorAsignacionProyectos.convocatoriaItem}" />
+						</h:selectOneMenu>
+
+						<f:facet name="popup">
+							<h:panelGrid columns="1">
+								<h:outputText
+									value="#{manejadorAsignacionProyectos.nombreModalidad}"
+									styleClass="item_2col_f" />
+							</h:panelGrid>
+						</f:facet>
+
+					</t:popup>
+					<h:commandLink
+						action="#{manejadorAsignacionProyectos.buscarProyectosxConvocatoriaxModalidad}"
+						value="Consultar"
+						style="font-style: normal; font-size: 9px; font-weight: bold; color: #0000A0; text-transform: capitalize">
+					</h:commandLink>
+
+				</h:panelGrid>
+			</s:pprPanelGroup>
+			
+				<br />
+			
+		</s:fieldset>
+	</h:panelGroup>
+	<h:panelGrid columns="2" border="1" align="center" >
+		<h:outputText value="Total Proyectos: " styleClass="labels_proyecto" />
+  		<h:outputText value="#{manejadorAsignacionProyectos.total}" styleClass="texto"/>
+  		<h:outputText value="Total Asignados: " styleClass="labels_proyecto" />
+  		<h:outputText value="#{manejadorAsignacionProyectos.totalAsignados}" styleClass="texto"/>
+  		<h:outputText value="Total Sin Asignar: " styleClass="labels_proyecto" />
+  		<h:outputText value="#{manejadorAsignacionProyectos.totalSinAsignar}" styleClass="texto"/>
+	
+	</h:panelGrid>
+
+	<h:panelGroup id="panelProyectoxConvocatoria"
+		rendered="#{manejadorAsignacionProyectos.mostrarProyectoCoordinador}">
+		<t:dataTable var="proyectoxFacultadxCoordinador"
+			value="#{manejadorAsignacionProyectos.listaProyectosCoordinadorConsulta}"
+			binding="#{manejadorAsignacionProyectos.tablaProyectoConsulta}"
+			border="1" preserveDataModel="false" id="tablaIdProyecto">
+
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Facultad" styleClass="labels_proyecto" />
+				</f:facet>
+				<h:outputText
+					value="#{proyectoxFacultadxCoordinador.nombreFacultad}"
+					styleClass="texto" />
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Coordinador" styleClass="labels_proyecto" />
+				</f:facet>
+				<h:outputText
+					value="#{proyectoxFacultadxCoordinador.nombreCoordinador}"
+					styleClass="texto" />
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Total Asignados" styleClass="labels_proyecto" />
+				</f:facet>
+				<h:outputText
+					value="#{proyectoxFacultadxCoordinador.totalAsignacion}"
+					styleClass="texto" />
+			</h:column>
+
+		</t:dataTable>
+
+		
+			<br />
+		
+		
+	</h:panelGroup>
+
+
+</h:panelGrid></h:form>
+</ui:define>
+</ui:composition>

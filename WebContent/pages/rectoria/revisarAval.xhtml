@@ -1,0 +1,436 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Aval Rectoría</t:div>
+			<br />
+			<p:panel id="panelAvalInfo">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelAval"
+					style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Código aval:"></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorRectoriaHome.aval.aviId}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo aval:"></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorRectoriaHome.aval.nombreTipo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por:"></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorRectoriaHome.nombreInvestigador}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Consultar información aval:" />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+							<h:commandLink value="Ver reporte específico"
+								action="#{manejadorRectoriaHome.imprimirAval}"
+								target="_popUpWindow1"
+								onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; color: #16A8E2; font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRectoriaHome.aval.tipo != 'GR' and manejadorRectoriaHome.aval.tipo != 'INI'}">
+						<p:column>
+							<h:outputText
+								value="Consultar información de proyecto relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte de proyecto"
+								target="_popUpWindow2"
+								action="#{manejadorRectoriaHome.imprimirProyecto}"
+								onclick="javascript: void window.open('', '_popUpWindow2', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; color: #16A8E2; font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRectoriaHome.aval.tipo == 'GR'}">
+						<p:column>
+							<h:outputText
+								value="Consultar información del grupo relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte grupo" target="_popUpWindow3"
+								action="#{manejadorRectoriaHome.imprimirGrupo}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none;  color: #16A8E2; font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRectoriaHome.aval.aviConvocatoria >= 1}">
+						<p:column>
+							<h:outputText value="Consultar la convocatoria: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Consultar página externa"
+								action="#{manejadorRectoriaHome.consultarPaginaConvocatoriaExterna}"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								target="_popUpWindow"
+								style="text-decoration:none; color: #16A8E2; font-weight: bold;">
+								<f:param name="aviNumeroConvocatoria"
+									value="#{manejadorRectoriaHome.aval.aviConvocatoria}" />
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRectoriaHome.aval.avalRelacionado!=null and manejadorRectoriaHome.aval.avalRelacionado!=0}">
+						<p:column>
+							<h:outputText value="Solicitud relacionada con el aval: " />
+						</p:column>
+						<p:column>
+							<h:commandLink
+								value="#{manejadorRectoriaHome.aval.avalRelacionado}"
+								target="_popUpWindow3"
+								action="#{manejadorRectoriaHome.imprimirReporteRelacionado}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; color: #16A8E2; font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRectoriaHome.aval.interSedes!=null and manejadorRectoriaHome.aval.interSedes=='S'}">
+						<p:column colspan="2">
+							<h:outputText
+								value="El docente ha indicado que la solicitud de aval involucra más de una sede de la Universidad " />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:dataTable var="documento" id="tablaArchivoDoc"
+					value="#{manejadorRectoriaHome.listaArchivos}"
+					emptyMessage="No hay archivos adjuntos." cellpadding="1"
+					cellspacing="8" align="center" border="1" style="width:100%">
+					<f:facet name="header">Archivos Adjuntos</f:facet>
+					<p:column headerText="Id">
+						<h:outputText value=" #{documento.id}" />
+					</p:column>
+					<p:column headerText="Archivo">
+						<h:outputText value=" #{documento.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value=" #{documento.nombreTipo}" styleClass="normal" />
+					</p:column>
+					<p:column headerText="Descargar">
+						<p:commandButton id="descargar"
+							action="#{manejadorRectoriaHome.descargarArchivo}"
+							icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{manejadorRectoriaHome.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+			<p:fieldset legend="Aval Rectoría" id="panelAvalRevision">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPrincipal" style="text-align:left">
+					<p:row>
+						<p:column style="width:50%;">
+							<h:outputText value="Concepto por parte de Rectoría:" />
+						</p:column>
+						<p:column style="width:50%;">
+							<p:selectOneMenu id="somCategoriaGrupos"
+								value="#{manejadorRectoriaHome.selItem}" style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{manejadorRectoriaHome.categoriaItems}" />
+								<p:ajax update="panelPrincipal" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRectoriaHome.selItem eq '2'}">
+						<p:column colspan="2">
+							<h:outputText style="color: #FF0000; font-weigt: bold"
+								value="La devolución del aval se remite a la Dirección de Relaciones Exteriores para su revisión y analizar si requiere adjuntar documentos o modificar información." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="70" rows="5" style="width:100%"
+								autoResize="false" id="dev1"
+								value="#{manejadorRectoriaHome.aval.textoRectoria}" maxlength="3800">
+								<f:validateLength minimum="0" maximum="3800" for="dev1"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterDev1"
+								value="Tamaño máximo 3800 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText
+								value="NOTA: Recomendamos no usar caracteres especiales como '$', puede haber problemas con el texto, en caso de envío de e-mail."
+								style='font-weight: bold' />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRectoriaHome.selItem == '1'}">
+						<p:column colspan="2" style="text-align:center;">
+							<p:separator id="customSeparator2" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRectoriaHome.selItem == '1'}">
+						<p:column colspan="2" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<p:fieldset legend="Datos para el formato estándar de la UNAL"
+								id="pnlFormatoStd">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									id="pnlFormatoStd" style="width:100%;">
+									<p:row>
+										<p:column style="width:50%">
+											<h:outputText value="* Idioma:" />
+										</p:column>
+										<p:column style="width:50%">
+											<p:selectOneRadio
+												value="#{manejadorRectoriaHome.formatoIngles}">
+												<f:selectItem itemLabel="Español" itemValue="false" />
+												<f:selectItem itemLabel="Inglés" itemValue="true" />
+												<p:ajax event="change" update="pnlFormatoStd"
+													process="pnlFormatoStd" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="* #{manejadorRectoriaHome.formatoIngles?'Consecutivo':'Consecutivo Rectoría'}:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorRectoriaHome.consecutivo}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorRectoriaHome.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Nombre de Institución en Inglés:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorRectoriaHome.nombreInstitucion}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorRectoriaHome.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Nombre de la convocatoria en inglés:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorRectoriaHome.nombreConvocatoria}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorRectoriaHome.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Nombre del proyecto en inglés:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorRectoriaHome.nombreProyecto}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorRectoriaHome.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Rol de la Universidad en inglés:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorRectoriaHome.nombreRol}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="* ¿La persona que firma el formato es Rector(a) Encargado(a) (E)?" />
+										</p:column>
+										<p:column>
+											<p:selectBooleanCheckbox
+												value="#{manejadorRectoriaHome.encargado}">
+												<p:ajax update="panelAvalRevision" process="panelAvalRevision" />
+											</p:selectBooleanCheckbox>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorRectoriaHome.encargado}">
+										<p:column>
+											<h:outputText value="* Cargo:" />
+										</p:column>
+										<p:column>
+											<p:selectOneRadio value="#{manejadorRectoriaHome.cargo}">
+												<f:selectItem itemLabel="Rector (E)" itemValue="Rector (E)" />
+												<f:selectItem itemLabel="Rectora (E)" itemValue="Rectora (E)" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorRectoriaHome.encargado}">
+										<p:column>
+											<h:outputText value="* Nombre de rector(a) encargado(a) (E):" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorRectoriaHome.rector}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align:center;">
+											<h:commandLink value="Generar Formato Estándar"
+												action="#{manejadorRectoriaHome.generarFormatoStd}"
+												target="_blank"
+												update="panelAvalRevision" process="panelAvalRevision"
+												style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+											</h:commandLink>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2">
+											<p:messages id="msgFormato" autoUpdate="true" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:fieldset>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRectoriaHome.selItem == '1'}">
+						<p:column>
+							<h:outputText value="Adjuntar Documento Aval Rectoría: " />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorRectoriaHome.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRectoriaHome.selItem == '1'}">
+						<p:column>
+							<h:outputText value="Archivo aval adjunto:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{manejadorRectoriaHome.aval.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:separator id="customSeparator2" />
+				<br />
+				<center>
+					<p:commandButton id="infoDocs" icon="ui-icon-info" />
+					<p:tooltip for="infoDocs" styleClass="tooltip-mesage"
+						showDelay="999">
+						<t:div style="text-align: left; float:left;">
+								       	En caso de ser necesario, por favor adjunte los documentos <br />
+								       	relacionados con la revisión del aval.
+								</t:div>
+					</p:tooltip>
+					<h:outputText value=" DOCUMENTOS DE SOPORTE (Opcional)"
+						style='font-weight: bold;' />
+					<br /> <br />
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+						id="panelArchivoSoporte" style="text-align:left; width:100%;">
+
+						<p:fileUpload
+							fileUploadListener="#{manejadorRectoriaHome.guardarArchivoCoorRectoria}"
+							id="archivo1" mode="advanced" update="tablaArchivo" auto="true"
+							multiple="true" sizeLimit="3000000" label="Seleccionar archivo" />
+
+					</p:panelGrid>
+					<p:dataTable var="archivoResumen"
+						value="#{manejadorRectoriaHome.aval.archivosCoorList}"
+						id="tablaArchivo" emptyMessage="No tiene documentos vinculados."
+						style="width:100%">
+						<f:facet name="header">Documentos Vinculados</f:facet>
+						<p:column style="width:76%;" headerText="Archivo">
+							<h:outputText value="#{archivoResumen.nombre}" />
+							<br />
+							<h:outputText
+								value="&lt;strong&gt;Tipo de Archivo: &lt;/strong&gt; #{archivoResumen.nombreTipo}"
+								escape="false" />
+						</p:column>
+						<p:column style="width:12%;" headerText="Eliminar">
+							<p:commandButton
+								onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+								action="#{manejadorRectoriaHome.eliminarArchivoCoor}"
+								value="Eliminar" update="tablaArchivo">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorRectoriaHome.arCoor}" />
+							</p:commandButton>
+						</p:column>
+						<p:column style="text-align: center; width: 12%;">
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<p:commandButton id="descargar"
+								action="#{manejadorRectoriaHome.descargarArchivo}"
+								icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorRectoriaHome.documentoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						id="panelGuardar">
+						<p:commandButton action="#{manejadorRectoriaHome.guardarRevision}"
+							value="Guardar revisión aval" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+						<p:commandButton action="#{manejadorRectoriaHome.anterior}"
+							value="Regresar" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</p:panelGrid>
+				</center>
+			</p:fieldset>
+			<p:messages id="msgs" autoUpdate="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

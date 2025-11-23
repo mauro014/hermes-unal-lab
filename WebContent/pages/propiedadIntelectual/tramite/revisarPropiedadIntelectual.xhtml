@@ -1,0 +1,1296 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data" id="formGeneral">
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión propiedad intelectual</t:div>
+			<br />
+			<p:fieldset legend="Información general de la propiedad"
+				style="margin-bottom:20px" id="fieldset1">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPropiedad" style="text-align:left;width:100%">
+					<p:row>
+						<p:column style="width:25%">
+							<h:outputText value="Código propiedad: "></h:outputText>
+						</p:column>
+						<p:column style="width:75%">
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.id}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo propiedad: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.subTipo.tipo.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Categoría propiedad: "></h:outputText>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.subTipo.id}"
+								style="width: 300px;" id="categoria" panelStyle="width: 280px;"
+								disabled="#{!manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.categoriasPropiedadIntelectualItem}" />
+								<p:ajax update="@form" process="@form" listener="#{manejadorRevisionPropiedadIntelectual.actualizarEstadosSubestados}"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Estado general del trámite: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.subEstado.estado.clasificacion.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Subestado: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.subEstado.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.responsableRegistro.nombreCompletoMinusculas}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Dependencia: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.dependenciaSolicitante.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Título: "></h:outputText>
+						</p:column>
+						<p:column>
+							<p:inputTextarea style="width:300px;" rows="3" autoResize="false"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.titulo}"
+								disabled="#{!manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<h:outputText value="Clasificación: "></h:outputText>
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="clasRev" 
+										style="width:300px;" 
+										rows="3" 
+										autoResize="false" 
+										maxlength="500"
+										value="#{manejadorRevisionPropiedadIntelectual.propiedad.clasificacionRevision}">
+								<f:validateLength minimum="0" maximum="500" for="clasRev"></f:validateLength>
+							</p:inputTextarea>	
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoSector" icon="ui-icon-info" />
+							<p:tooltip for="infoSector" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione el campo del sector tecnológico, el <br />
+								       	listado está basado en la clasificación de la SIC.
+									</t:div>
+							</p:tooltip>
+							<h:outputText value="Sector tecnológico:" />
+						</p:column>
+
+						<p:column>
+							<p:selectOneMenu id="sectorPI"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.sectorTecnologico}"
+								style="width:300px" panelStyle="width: 280px;" filter="true"
+								filterMatchMode="contains" converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.listaSectorTecnologicoItem}" />
+								<p:ajax update=":formGeneral:panelPropiedad2" />
+							</p:selectOneMenu>
+						</p:column>
+
+					</p:row>
+				</p:panelGrid>
+
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPropiedad2" style="text-align:left;width:100%">
+					<p:row
+						rendered="#{(manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial and manejadorRevisionPropiedadIntelectual.propiedad.sectorTecnologico.id == '649')}">
+						<p:column style="width:25%">
+							<h:outputText value="Otro:" />
+						</p:column>
+						<p:column style="text-align:left;width:75%">
+							<p:inputText style="width:50%;" columns="10" id="textOtro"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.otroSector}" />
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+			</p:fieldset>
+
+			<p:fieldset legend="Trámite de la propiedad">
+
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width:100%;" id="revision">
+					<p:row
+						rendered="#{!manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional or manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esNivelNacional}">
+						<p:column>
+							<p:commandButton id="infoEstadoGral" icon="ui-icon-info" />
+							<p:tooltip for="infoEstadoGral" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione el estado general para el trámite <br />
+								     (Interno, externo, seguimiento interno) de acuerdo a su selección <br />
+								     se cargarán los posibles estados para el trámite.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%">
+							<h:outputText value="Estado general del trámite:" />
+						</p:column>
+						<p:column style="width:80%">
+							<p:selectOneMenu id="tramite"
+								value="#{manejadorRevisionPropiedadIntelectual.clasificacionEstado}"
+								style="width:250px" >
+<!-- 								disabled="#{manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido and manejadorRevisionPropiedadIntelectual.esRevisorPrincipal}" >-->
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.clasificacionEstadosPropiedadIntelectualItem}" />
+								<p:ajax update="revision" process="revision"
+									listener="#{manejadorRevisionPropiedadIntelectual.estadosPropiedadIntelectual}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional or manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esNivelNacional}">
+						<p:column>
+							<p:commandButton id="infoEstado" icon="ui-icon-info" />
+							<p:tooltip for="infoEstado" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione el estado actual para el trámite <br />
+								     (De acuerdo a este se deplegarán los subestado asociados).
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Estado:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="estado"
+								value="#{manejadorRevisionPropiedadIntelectual.estado}"
+								style="width:400px">
+<!-- 								disabled="#{manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido and manejadorRevisionPropiedadIntelectual.esRevisorPrincipal}"> -->
+								<f:selectItem itemLabel=""
+									itemValue="#{manejadorRevisionPropiedadIntelectual.propiedad.subEstado.estado.nombre}" />
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.estadosPropiedadIntelectualItem}" />
+								<p:ajax update="revision" process="revision"
+									listener="#{manejadorRevisionPropiedadIntelectual.subEstadosPropiedadIntelectual}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional or manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esNivelNacional}">
+						<p:column>
+							<p:commandButton id="infoEstadoEsp" icon="ui-icon-info" />
+							<p:tooltip for="infoEstadoEsp" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione el subestado actual para el trámite.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Subestado:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="subestado"
+								value="#{manejadorRevisionPropiedadIntelectual.subEstado}"
+								style="width:400px">
+<!-- 								disabled="#{manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido and manejadorRevisionPropiedadIntelectual.esRevisorPrincipal}"> -->
+								<f:selectItem itemLabel=""
+									itemValue="#{manejadorRevisionPropiedadIntelectual.propiedad.subEstado.nombre}" />
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.subEstadoPropiedadIntelectualItem}" />
+								<p:ajax update="revision" process="revision" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional or manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esNivelNacional}">
+						<p:column>
+							<p:commandButton id="infoRadicado" icon="ui-icon-info" />
+							<p:tooltip for="infoRadicado" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Si la solicitud de protección de la propiedad <br />
+								     se ha radicado ante una entidad externa y posee un <br />
+								     número para hacerle seguimiento, por favor ingréselo.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Radicado (si aplica):" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width:45%;" columns="6"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.radicado}" />
+<!-- 								disabled="#{(manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido and manejadorRevisionPropiedadIntelectual.esRevisorPrincipal) or not empty manejadorRevisionPropiedadIntelectual.propiedad.radicado}" /> -->
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional or manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esNivelNacional}">
+						<p:column>
+							<p:commandButton id="infoFechaRadicado" icon="ui-icon-info" />
+							<p:tooltip for="infoFechaRadicado" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Si la solicitud de protección de la propiedad <br />
+								     se ha radicado ante una entidad externa, por <br />
+								     favor indique la fecha de la radicación.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Fecha de radicado (si aplica):" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechacierra" navigator="true" locale="es"
+								readonlyInput="true"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fechaRadicado}"
+								maxdate="#{manejadorRevisionPropiedadIntelectual.today}" />
+<!-- 								disabled="#{(manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido and manejadorRevisionPropiedadIntelectual.esRevisorPrincipal) or not empty manejadorRevisionPropiedadIntelectual.propiedad.fechaRadicado}" /> -->
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional}">
+						<p:column>
+							<p:commandButton id="infoSedeApoyo" icon="ui-icon-info" />
+							<p:tooltip for="infoSedeApoyo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     De acuerdo con el Acuerdo 184 de 2015 <br />
+								     las sedes de presencia nacional elegirán una sede de apoyo <br />
+								     para la gestión de la propiedad intelectual.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Sede o nivel de apoyo:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.dependenciaApoyo}"
+								style="width: 300px;" id="sedeApoyo" panelStyle="width: 280px;" >
+<!-- 								disabled="#{manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido}"> -->
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.sedesApoyoItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infoObservaciones" icon="ui-icon-info" />
+							<p:tooltip for="infoObservaciones" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     En caso de tener observaciones sobre la actualización <br />
+								     del estado del trámite, por favor ingréseleas <br />
+								     (Las observaciones se incluirán en el correo electrónico para el solicitante).
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="vertical-align:center; width:20%;">
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column style="width:80%;">
+							<p:inputTextarea cols="50" rows="6" id="comp"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.observaciones}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="comp"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterText"
+								value="Tamaño máximo 3500 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row style="vertical-align:center"
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<p:commandButton id="infoTipoSol" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoSol" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione el tipo de solicitud <br />
+								     del trámite.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo solicitud: " />
+						</p:column>
+						<p:column>							
+							<p:selectOneMenu id="tipoSolSelect"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.tipoSolicitud}"
+								style="width:250px" panelStyle="width: 250px;" filter="true"
+								filterMatchMode="contains" converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.tipoSolicitudPropiedadIndustrialItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row style="vertical-align:center"
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<p:commandButton id="infoApoderado" icon="ui-icon-info" />
+							<p:tooltip for="infoApoderado" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Haga clic en el lápiz para asignar/modificar el apoderado <br />
+								     del trámite.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Apoderado: " />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.apoderado.nombreCompletoMinusculas} " />
+							<p:commandButton icon="ui-icon-pencil" title="Asignar apoderado"
+								action="#{manejadorRevisionPropiedadIntelectual.abrirFormularioApoderado}"
+								update="@form" oncomplete="dialogAsignarApoderado.show();">
+							</p:commandButton>
+
+						</p:column>
+					</p:row>
+					<p:row style="vertical-align:center"
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<p:commandButton id="infoFichaPI" icon="ui-icon-info" />
+							<p:tooltip for="infoFichaPI" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Haga clic en el boton para diligenciar la ficha técnica <br /> 
+								     o en el enlace para ver la información diligenciada.<br />
+								     Antes de la opción guardar revisión, también puede consultar la ficha.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Ficha técnica: " />
+						</p:column>
+						<p:column>
+							<p:commandButton icon="ui-icon-pencil"
+								title="Ingresar/modificar ficha técnica" update="@form"
+								process="@form" oncomplete="dialogFichaTecnica.show();">
+							</p:commandButton>
+							<h:commandLink value="  Ver ficha técnica de la invención"
+								target="_popUpWindowFicha"
+								onclick="javascript: void window.open('', '_popUpWindowFicha', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{manejadorRevisionPropiedadIntelectual.imprimirFichaTecnica}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial and (manejadorRevisionPropiedadIntelectual.propiedad.subEstado.esConcedida or manejadorRevisionPropiedadIntelectual.subEstado == '21' or manejadorRevisionPropiedadIntelectual.subEstado == '22')}">
+						<p:column>
+							<p:commandButton id="infoFechaFinDerecho" icon="ui-icon-info" />
+							<p:tooltip for="infoFechaFinDerecho" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Indique la fecha de finalización del derecho.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Fecha de finalización del derecho:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaFin" navigator="true" locale="es"
+								readonlyInput="true"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fechaFinalizacionDerecho}"
+								disabled="#{(manejadorRevisionPropiedadIntelectual.propiedad.esTramiteTransferido and manejadorRevisionPropiedadIntelectual.esRevisorPrincipal) or manejadorRevisionPropiedadIntelectual.propiedad.tieneDocumentoCambioFechaDerecho}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPatente}">
+						<p:column>
+							<p:commandButton id="infoAccesoGenetico" icon="ui-icon-info" />
+							<p:tooltip for="infoAccesoGenetico" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Indique si la invención está relacionada o no con un contrato de acceso a recurso genético.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Contrato de acceso a recurso genético:" />
+						</p:column>
+						<p:column>
+							<p:selectOneRadio
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.contratoAccesoRecursoGenetico}"
+								layout="grid" columns="2">
+								<f:selectItem itemLabel="Sí" itemValue="S" />
+								<f:selectItem itemLabel="No" itemValue="N" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<p:commandButton id="infoPagoAnualidades" icon="ui-icon-info" />
+							<p:tooltip for="infoPagoAnualidades" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Indique si la invención se encuentra o no en pago de anualidades.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="¿La invención se encuentra en el periodo de pago de anualidades?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneRadio
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.pagoAnualidades}"
+								layout="grid" columns="2">
+								<f:selectItem itemLabel="Sí" itemValue="S" />
+								<f:selectItem itemLabel="No" itemValue="N," />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<p:commandButton id="infoNegociacion" icon="ui-icon-info" />
+							<p:tooltip for="infoNegociacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Indique si la invención tiene negociacion.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="¿La invención tiene negociación?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneRadio
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.negociacion}"
+								layout="grid" columns="2">
+								<f:selectItem itemLabel="Sí" itemValue="S" />
+								<f:selectItem itemLabel="No" itemValue="N" />
+								<p:ajax update="revision" process="revision" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.negociacion == 'S'}">
+						<p:column colspan="3">
+							<p:fieldset legend="Negociaciones" style="margin-bottom:20px">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									id="panelNegociacionesPropiedad"
+									style="text-align:left; width:100%;">
+									<p:row>
+										<p:column>
+											<h:outputText value="Entidad:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu id="entidadNegociadora"
+												value="#{manejadorRevisionPropiedadIntelectual.entidadNegociacion}"
+												style="width:470px" panelStyle="width: 450px;" filter="true"
+												filterMatchMode="contains">
+												<f:selectItem itemLabel="" itemValue="" />
+												<f:selectItems
+													value="#{manejadorRevisionPropiedadIntelectual.entidadesItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Forma de pago:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea style="width:100%;" rows="3"
+												autoResize="false"
+												value="#{manejadorRevisionPropiedadIntelectual.formaPago}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+										</p:column>
+										<p:column>
+											<h:outputText id="counterFormaPago"
+												value="Tamaño máximo 3000 caracteres" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Tiempo (años):" />
+										</p:column>
+										<p:column>
+											<p:inputText
+												value="#{manejadorRevisionPropiedadIntelectual.tiempo}"
+												style="width:50px;"
+												converterMessage="El valor debe ser un número válido, en caso de ser necesario emplear punto (.) decimal. Por ejemplo: 12.5">
+											</p:inputText>
+											<h:outputText value=" año(s)" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align:center;">
+											<p:commandButton value="Agregar negociación"
+												icon="ui-icon-plus"
+												actionListener="#{manejadorRevisionPropiedadIntelectual.agregarNegociacion}"
+												update="@form">
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<p:dataTable id="negociaciones" var="negociacion"
+									style="width:100%"
+									value="#{manejadorRevisionPropiedadIntelectual.propiedad.listaNegociaciones}"
+									align="center" emptyMessage="No se han agregado negociaciones"
+									sortBy="#{entidad.entidad.descripcion}" sortOrder="ascending">
+
+									<p:column headerText="Entidad" style="width:30%;">
+										<h:outputText value="#{negociacion.entidad.descripcion}" />
+										<h:outputText value=" NIT: (#{negociacion.entidad.nit})" />
+									</p:column>
+									<p:column headerText="Tiempo" style="width:15%;">
+										<h:outputText value="#{negociacion.tiempoAnos} año(s)" />
+									</p:column>
+
+									<p:column headerText="Forma de pago" style="width:50%;">
+										<h:outputText value="#{negociacion.formaPago}" />
+									</p:column>
+
+									<p:column style="width:5%; text-align:center;" headerText="-">
+										<p:commandButton update="@form"
+											action="#{manejadorRevisionPropiedadIntelectual.eliminarNegociacion}"
+											icon="ui-icon-trash" title="Eliminar negociación">
+											<f:setPropertyActionListener value="#{negociacion}"
+												target="#{manejadorRevisionPropiedadIntelectual.negociacionSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:fieldset>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<center>
+					<p:commandButton id="infoDocs" icon="ui-icon-info" />
+					<p:tooltip for="infoDocs" styleClass="tooltip-mesage"
+						showDelay="999">
+						<t:div style="text-align: left; float:left;">
+								       	En caso de ser necesario, por favor adjunte los documentos <br />
+								       	relacionados con la revisión de la solicitud de protección <br />
+								       	Marque la casilla "Visible" para aquellos archivos que el solicitante<br /> 
+								       	esté autorizado a consultar.
+								</t:div>
+					</p:tooltip>
+					<h:outputText value=" DOCUMENTOS DE SOPORTE DE REVISIÓN"
+						style='font-weight: bold;' />
+					<br /> <br />
+
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="panelArchivoSoporte" style="text-align:left; width:100%;">
+						<p:row
+							rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+							<p:column>
+								<h:outputText value="Tipo de documento: " />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu id="tipoDocPI"
+									value="#{manejadorRevisionPropiedadIntelectual.tipoArchivo}"
+									style="width:480px" panelStyle="width: 450px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorRevisionPropiedadIntelectual.listaTipoArchivoPropiedadIntItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Seleccione archivo: " />
+							</p:column>
+							<p:column>
+								<p:fileUpload
+									value="#{manejadorRevisionPropiedadIntelectual.archivo}"
+									mode="simple" sizeLimit="3072000" id="archivo1"
+									label="Seleccionar archivo" />
+							</p:column>
+							<p:column>
+								<p:commandButton value="Adjuntar Archivo" ajax="false"
+									actionListener="#{manejadorRevisionPropiedadIntelectual.adjuntarArchivo}"
+									update="panelArchivoSoporte" process="panelArchivoSoporte" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<p:dataTable var="documento" id="tablaArchivoTramite"
+									value="#{manejadorRevisionPropiedadIntelectual.propiedad.listaArchivos}"
+									emptyMessage="No hay archivos adjuntos." cellpadding="1"
+									cellspacing="8" align="center" border="1" style="width:100%">
+
+									<p:column headerText="Visible"
+										style="width:2%; text-align:center;"
+										rendered="#{documento.tipo.id != '82'}">
+										<p:selectBooleanCheckbox value="#{documento.visibleDocente}">
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column headerText="Id" style="width:2%;"
+										rendered="#{documento.tipo.id != '82'}">
+										<h:outputText value=" #{documento.id}" />
+									</p:column>
+									<p:column headerText="Archivo" style="width:95%;"
+										rendered="#{documento.tipo.id != '82'}">
+										<h:outputText value=" #{documento.nombre}" />
+									</p:column>
+									<p:column headerText="Descargar"
+										style="width:3%; text-align:center;"
+										rendered="#{documento.tipo.id != '82'}">
+										<p:commandButton id="descargar"
+											action="#{manejadorRevisionPropiedadIntelectual.descargarArchivo}"
+											icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+											ajax="false">
+											<f:setPropertyActionListener value="#{documento}"
+												target="#{manejadorRevisionPropiedadIntelectual.archivoSeleccionado}" />
+										</p:commandButton>
+									</p:column>
+									<p:column style="width:3%; text-align:center;" headerText="(-)"
+										rendered="#{documento.tipo.id != '82'}">
+										<p:commandButton id="selectButton"
+											update="tablaArchivoTramite" icon="ui-icon-trash"
+											action="#{manejadorRevisionPropiedadIntelectual.eliminarArchivo}"
+											title="Eliminar archivo">
+											<f:setPropertyActionListener value="#{documento}"
+												target="#{manejadorRevisionPropiedadIntelectual.archivoSeleccionado}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<h:outputText value="Proyectos relacionados: " />
+							</p:column>
+							<p:column>
+								<p:dataTable id="proyectos" var="proyecto" style="width:100%"
+									value="#{manejadorRevisionPropiedadIntelectual.propiedad.listaProyectos}"
+									align="center"
+									emptyMessage="No se encontraron proyectos relacionados"
+									sortBy="#{proyecto.proyecto.id}" sortOrder="ascending">
+
+									<p:column headerText="Id" style="width:5%;">
+										<h:outputText value="#{proyecto.proyecto.id}"
+											rendered="#{proyecto.tipoProyecto == 1}" />
+										<h:outputText value="#{proyecto.idProyectoExtension}"
+											rendered="#{proyecto.tipoProyecto == 2}" />
+									</p:column>
+
+									<p:column headerText="Tipo" style="width:10%;">
+										<h:outputText value="Inv./Lab."
+											rendered="#{proyecto.tipoProyecto == 1}" />
+										<h:outputText value="Ext."
+											rendered="#{proyecto.tipoProyecto == 2}" />
+									</p:column>
+
+									<p:column headerText="Nombre" style="width:80%;">
+										<h:outputText value="#{proyecto.nombreProyecto}"
+											rendered="#{proyecto.tipoProyecto == 1}" />
+										<h:outputText value="#{proyecto.nombreProyectoExtension}"
+											rendered="#{proyecto.tipoProyecto == 2}" />
+									</p:column>
+
+									<p:column style="width:5%; text-align:center;" headerText="-">
+										<h:commandLink value="Ver reporte" target="popUpWindow7"
+											ajax="false"
+											onclick="javascript: void window.open('', 'popUpWindow7', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+											action="#{manejadorRevisionPropiedadIntelectual.imprimirProyecto}"
+											style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;"
+											rendered="#{proyecto.tipoProyecto == 1}">
+											<f:setPropertyActionListener value="#{proyecto.proyecto.id}"
+												target="#{manejadorRevisionPropiedadIntelectual.idProyecto}" />
+										</h:commandLink>
+									</p:column>
+								</p:dataTable>
+
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Archivos adjuntos: " />
+							</p:column>
+							<p:column>
+								<p:dataTable var="documento" id="tablaArchivoDoc"
+									value="#{manejadorRevisionPropiedadIntelectual.propiedad.listaArchivos}"
+									emptyMessage="No hay archivos adjuntos." cellpadding="1"
+									cellspacing="8" align="center" border="1" style="width:100%">
+
+									<p:column headerText="Id" style="width:2%;"
+										rendered="#{documento.tipo.id == '82'}">
+
+										<h:outputText value=" #{documento.id}" />
+									</p:column>
+
+									<p:column headerText="Archivo" style="width:95%;"
+										rendered="#{documento.tipo.id == '82'}">
+
+										<h:outputText value=" #{documento.nombre}" />
+									</p:column>
+
+									<p:column headerText="Descargar"
+										style="width:3%; text-align:center;"
+										rendered="#{documento.tipo.id == '82'}">
+										<p:commandButton id="descargar"
+											action="#{manejadorRevisionPropiedadIntelectual.descargarArchivo}"
+											icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+											ajax="false">
+											<f:setPropertyActionListener value="#{documento}"
+												target="#{manejadorRevisionPropiedadIntelectual.archivoSeleccionado}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.solicitudIsbn != null and manejadorRevisionPropiedadIntelectual.propiedad.solicitudIsbn != 0}">
+							<p:column>
+								<h:outputText value="Consultar trámite ISBN:" />
+							</p:column>
+							<p:column>
+								<h:commandLink value="Ver reporte solicitud ISBN"
+									target="_popUpWindow"
+									onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0',false);"
+									action="#{manejadorRevisionPropiedadIntelectual.imprimirIsbn}"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+								</h:commandLink>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</center>
+			</p:fieldset>
+
+			<p:fieldset legend="Cotitularidad de la propiedad"
+				style="margin-bottom:20px">
+
+				<center>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="panelCotitularesPropiedad"
+						style="text-align:left; width:100%;">
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="infoCotitular" icon="ui-icon-info" />
+								<p:tooltip for="infoCotitular" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	En caso de que aplique, seleccione la(s) entidad(es) con las cuales <br />
+								       	se comparte titularidad (verifique la información de nit, dirección y teléfono) <br />
+								       	si es necesario ajustar por favor enviar correo electrónico con los datos al e-mail <br />
+								       	hermes@unal.edu.co.
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:20%;">
+								<h:outputText value="Entidad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="entidadExterna"
+									value="#{manejadorRevisionPropiedadIntelectual.entidadExterna}"
+									style="width:470px" panelStyle="width: 450px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorRevisionPropiedadIntelectual.entidadesItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3" style="text-align:center;">
+								<p:commandButton value="Agregar entidad" icon="ui-icon-plus"
+									actionListener="#{manejadorRevisionPropiedadIntelectual.agregarCotitular}"
+									update="@form">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<p:dataTable id="entidades" var="entidad" style="width:100%"
+						value="#{manejadorRevisionPropiedadIntelectual.propiedad.listaCotitulares}"
+						align="center" emptyMessage="No se han agregado cotitulares"
+						sortBy="#{entidad.entidad.descripcion}" sortOrder="ascending">
+
+						<p:column headerText="Entidad" style="width:45%;">
+							<h:outputText value="#{entidad.entidad.descripcion}" />
+						</p:column>
+
+						<p:column headerText="NIT" style="width:15%;">
+							<h:outputText value="#{entidad.entidad.nit}" />
+						</p:column>
+
+						<p:column headerText="Dirección" style="width:20%;">
+							<h:outputText value="#{entidad.entidad.direccion}" />
+						</p:column>
+
+						<p:column headerText="Teléfono" style="width:10%;">
+							<h:outputText value="#{entidad.entidad.telefono}" />
+						</p:column>
+
+						<p:column headerText="%" style="width:10%;">
+							<p:inputText value="#{entidad.porcentaje}" style="width:40px;"
+								validatorMessage="El porcentaje de participación no puede ser inferior a 0% ni exceder el 100%."
+								converterMessage="El valor debe ser un número válido, en caso de ser necesario emplear punto (.) decimal. Por ejemplo: 12.5"
+								disabled="#{manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esSedePresenciaNacional and !manejadorRevisionPropiedadIntelectual.revisor.dependencia2.sede.esNivelNacional}">
+								<f:validateDoubleRange minimum="0.0" maximum="100.0" />
+							</p:inputText>
+						</p:column>
+						<p:column style="width:5%; text-align:center;" headerText="-">
+							<p:commandButton update="@form"
+								action="#{manejadorRevisionPropiedadIntelectual.eliminarEntidad}"
+								icon="ui-icon-trash" title="Eliminar Entidad">
+								<f:setPropertyActionListener value="#{entidad}"
+									target="#{manejadorRevisionPropiedadIntelectual.entidadSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</center>
+			</p:fieldset>
+
+			<p:fieldset legend="Información del personal relacionado"
+				style="margin-bottom:20px">
+				<center>
+					<p:dataTable id="personal" var="integrante" style="width:100%"
+						value="#{manejadorRevisionPropiedadIntelectual.propiedad.listaPersonas}"
+						align="center"
+						emptyMessage="No se ha agregado ningun integrante del equipo"
+						sortBy="#{integrante.nombreCalidad}" sortOrder="ascending">
+
+						<p:column headerText="Nombre y apellidos" style="width:45%;">
+							<h:outputText
+								value="#{integrante.persona.nombreCompletoMinusculas}" />
+						</p:column>
+
+						<p:column headerText="Tipo participación" style="width:15%;">
+							<h:outputText value="#{integrante.tipoPersona.nombre}" />
+							<h:outputText value="#{integrante.sitioWeb}" />
+						</p:column>
+
+						<p:column headerText="Calidad" style="width:15%;">
+							<h:outputText value="#{integrante.nombreCalidad}" />
+						</p:column>
+
+						<p:column headerText="Dependencia" style="width:15%;">
+							<h:outputText value="#{integrante.entidad}"
+								rendered="#{integrante.calidad != '4'}" />
+							<h:outputText value="#{integrante.dependencia.nombre}" />
+						</p:column>
+
+						<p:column headerText="Email" style="width:10%;">
+							<h:outputText value="#{integrante.persona.email}" />
+						</p:column>
+
+					</p:dataTable>
+				</center>
+			</p:fieldset>
+
+			<p:fieldset legend="Guardar la revisión de la propiedad"
+				style="margin-bottom:20px">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelGuardarPropiedad" style="text-align:left; width:100%;">
+					<p:row>
+						<p:column>
+							<br />
+							<h:outputText value="Consultar información propiedad: " />
+							<h:commandLink
+								value="Ver historial del trámite de la propiedad intelectual"
+								target="_popUpWindow"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{manejadorRevisionPropiedadIntelectual.imprimirPropiedad}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row style="vertical-align:center"
+						rendered="#{manejadorRevisionPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column>
+							<h:outputText value="Consultar ficha técnica: " />
+							<h:commandLink value="  Ver ficha técnica de la invención"
+								target="_popUpWindowFicha"
+								onclick="javascript: void window.open('', '_popUpWindowFicha', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{manejadorRevisionPropiedadIntelectual.imprimirFichaTecnica}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<br />
+					<p:row>
+						<p:column colspan="3" style="text-align:center;">
+
+							<br />
+							<p:commandButton
+								action="#{manejadorRevisionPropiedadIntelectual.guardarRevision}"
+								value="Guardar revisión propiedad" update="@form"
+								process="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:messages id="msgs" autoUpdate="true" />
+			</p:fieldset>
+
+
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+			<p:dialog header="Información Apoderado"
+				widgetVar="dialogAsignarApoderado" modal="true" resizable="false"
+				width="600">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column colspan="2">
+							<p:panel>
+								<t:div style="color:#464646; text-align:justify;">
+									Indique el tipo y número de documento del apoderado.
+								</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo documento:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:200px"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.id.tipoDocumento}"
+								id="tipodoc"
+								disabled="#{!manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorRevisionPropiedadIntelectual.listaTiposDocItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Documento de identidad:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.id.documento}"
+								id="documento" style="width:70%"
+								disabled="#{!manejadorRevisionPropiedadIntelectual.datosExisten}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<p:commandButton
+								action="#{manejadorRevisionPropiedadIntelectual.consultarPersona}"
+								value="Consultar persona" update="@form"
+								oncomplete="dialogAsignarApoderado.show()" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column>
+							<h:outputText value="Primer Nombre *" />
+						</p:column>
+						<p:column>
+							<p:inputText id="primerNombreApoderado"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.nombre1}"
+								style="width:70%"
+								requiredMessage="El Primer Nombre es obligatorio"
+								disabled="#{manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:validateLength minimum="2" maximum="30" />
+							</p:inputText>
+							<p:message id="errorPrimerNombreApoderado"
+								for="primerNombreApoderado" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column>
+							<h:outputText value="Segundo nombre" />
+						</p:column>
+						<p:column>
+							<p:inputText id="segundoNombreApoderado"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.nombre2}"
+								style="width:70%;"
+								disabled="#{manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:validateLength maximum="30" />
+							</p:inputText>
+							<p:message id="errorSegundoNombreApoderado"
+								for="segundoNombreApoderado" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column>
+							<h:outputText value="Primer Apellido *" />
+						</p:column>
+						<p:column>
+							<p:inputText id="primerApellidoApoderado"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.apellido1}"
+								style="width:70%;"
+								requiredMessage="El Primer Apellido es obligatorio"
+								disabled="#{manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:validateLength minimum="2" maximum="30" />
+							</p:inputText>
+							<p:message id="errorPrimerApellidoApoderado"
+								for="primerApellidoApoderado" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column>
+							<h:outputText value="Segundo Apellido" />
+						</p:column>
+						<p:column>
+							<p:inputText id="segundoApellidoApoderado"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.apellido2}"
+								style="width:70%;"
+								disabled="#{manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:validateLength maximum="30" />
+							</p:inputText>
+							<p:message id="errorSegundoApellidoApoderado"
+								for="segundoApellidoApoderado" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column>
+							<h:outputText value="Correo electrónico" />
+						</p:column>
+						<p:column>
+							<p:inputText id="email"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.email}"
+								style="width:70%;"
+								disabled="#{manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:validateLength maximum="60" />
+							</p:inputText>
+							<p:message id="errorEmail" for="email" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column>
+							<h:outputText value="Dirección" />
+						</p:column>
+						<p:column>
+							<p:inputText id="direccion"
+								value="#{manejadorRevisionPropiedadIntelectual.personaExterna.direccion}"
+								style="width:70%;"
+								disabled="#{manejadorRevisionPropiedadIntelectual.datosExisten}">
+								<f:validateLength maximum="150" />
+							</p:inputText>
+							<p:message id="errorDireccion" for="direccion" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRevisionPropiedadIntelectual.mostrarDatos}">
+						<p:column colspan="2" style="text-align:center;">
+							<p:commandButton
+								action="#{manejadorRevisionPropiedadIntelectual.asignarApoderado}"
+								value="Asignar apoderado" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:messages id="msgsApoderado" autoUpdate="true" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Ficha técnica" widgetVar="dialogFichaTecnica"
+				modal="true" resizable="false" width="600" height="620">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column>
+							<p:panel>
+								<t:div style="color:#464646; text-align:justify;">
+									Diligencie la ficha técnica de la solicitud, tenga en cuenta que cada campo admite un máximo de 3800 caracteres.
+								</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Objeto de protección:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fobjeto"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.objetoProteccion}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fobjeto"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Problema técnico que resuelve:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fdescripcion"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.descripcion}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fdescripcion"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Ventajas:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fventaja"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.ventajas}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fventaja"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Impacto o solución:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fimpacto"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.impactoSolucion}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fimpacto"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Estado de la técnica:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fmonitoreo"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.monitoreo}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fmonitoreo"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Publicaciones o difusion:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fdifusion"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.difusion}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fdifusion"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Posibilidades de transferencia:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputTextarea cols="50" rows="4" id="fmercado"
+								style="width:100%; height:70px; overflow:auto;"
+								value="#{manejadorRevisionPropiedadIntelectual.propiedad.fichaGestor.mercadoPoblacion}"
+								maxlength="3500">
+								<f:validateLength minimum="0" maximum="3500" for="fmercado"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:center;">
+							<p:commandButton
+								action="#{manejadorRevisionPropiedadIntelectual.fijarDatos}"
+								value="Fijar datos" update="@form" process="@form" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

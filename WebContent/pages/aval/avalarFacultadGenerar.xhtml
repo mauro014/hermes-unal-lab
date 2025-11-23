@@ -1,0 +1,497 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<style type="text/css">
+.confirmaEdicion .ui-state-default,.confirmaEdicion .ui-widget-content .ui-state-default,.confirmaEdicion .ui-widget-header .ui-state-default
+	{
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión aval</t:div>
+			<br />
+			<p:panel rendered="#{manejadorSolicitarAvalFacultad.convocatoriaExterna.convocatoriaCerrada}">
+			<t:div style="color:#464646; text-align:justify;">
+					La convocatoria asociada a esta solicitud de aval<strong
+					style="color: #FF0000;"> ya se encuentra cerrada ante la entidad externa</strong>, 
+					por lo que es su responsabilidad el proceso aprobar o no la solicitud de aval después de esas fechas y 
+					coordinar con la Dirección de Investigación su aprobación final.
+			</t:div>
+			<br/>
+			<strong
+					style="color: #000000;">Convocatoria: </strong>
+			<h:outputText style="text-weight:bold;" value="#{manejadorSolicitarAvalFacultad.convocatoriaExterna.nombre}"></h:outputText>
+			<br />
+			<h:outputText style="text-weight:bold;" value="Fecha de cierre: "></h:outputText>
+			<h:outputText style="text-weight:bold;" value="#{manejadorSolicitarAvalFacultad.convocatoriaExterna.fechaCierre}"></h:outputText>
+			
+		</p:panel>
+		<t:div rendered="#{manejadorSolicitarAvalFacultad.convocatoriaExterna.convocatoriaCerrada}">
+		<br/>
+		</t:div>
+			<p:panel id="panelAvalInfo">
+				<p:panelGrid id="pgU" styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column>
+							<h:outputText value="Código aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalFacultad.aval.aviId}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo de aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalFacultad.aval.nombreTipo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalFacultad.nombreInvestigador}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Unidad académica básica: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalFacultad.dependenciaAval.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Consultar información aval: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte específico"
+								target="_popUpWindow"
+								action="#{manejadorSolicitarAvalFacultad.imprimirAval}"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{(manejadorSolicitarAvalFacultad.aval.tipo != 'GR' and manejadorSolicitarAvalFacultad.aval.tipo != 'INI') or (manejadorSolicitarAvalFacultad.aval.esCentroInvestigacion and manejadorSolicitarAvalFacultad.aval.tipoAvalCIN eq 'L')}">
+						<p:column>
+							<h:outputText
+								value="Consultar información de proyecto relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte proyecto"
+								target="_popUpWindow2"
+								action="#{manejadorSolicitarAvalFacultad.imprimirProyecto}"
+								onclick="javascript: void window.open('', '_popUpWindow2', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.esGrupoInvestigacion}">
+						<p:column>
+							<h:outputText
+								value="Consultar información del grupo relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte grupo" target="_popUpWindow3"
+								action="#{manejadorSolicitarAvalFacultad.imprimirGrupo}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.aviConvocatoria >= 1}">
+						<p:column>
+							<h:outputText value="Consultar la convocatoria: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Consultar página externa"
+								action="#{manejadorSolicitarAvalFacultad.consultarPaginaConvocatoriaExterna}"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								target="_popUpWindow"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<f:param name="aviNumeroConvocatoria"
+									value="#{manejadorSolicitarAvalFacultad.aval.aviConvocatoria}" />
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.avalRelacionado!=null and manejadorSolicitarAvalFacultad.aval.avalRelacionado!=0}">
+						<p:column>
+							<h:outputText value="Solicitud relacionada con el aval: " />
+						</p:column>
+						<p:column>
+							<h:commandLink
+								value="#{manejadorSolicitarAvalFacultad.aval.avalRelacionado}"
+								target="_popUpWindow3"
+								action="#{manejadorSolicitarAvalFacultad.imprimirReporteRelacionado}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.interSedes!=null and manejadorSolicitarAvalFacultad.aval.interSedes=='S'}">
+						<p:column colspan="2">
+							<h:outputText
+								value="El docente ha indicado que la solicitud de aval involucra más de una sede de la Universidad " />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:dataTable var="documento" id="tablaArchivoDoc"
+					value="#{manejadorSolicitarAvalFacultad.listaArchivos}"
+					emptyMessage="No hay archivos adjuntos." cellpadding="1"
+					cellspacing="8" align="center" border="1" style="width:100%">
+					<f:facet name="header">Archivos Adjuntos</f:facet>
+
+					<p:column headerText="Id">
+
+						<h:outputText value=" #{documento.id}" />
+					</p:column>
+
+					<p:column headerText="Archivo">
+
+						<h:outputText value=" #{documento.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value=" #{documento.tipoArchivo.nombre}}"
+							styleClass="normal" />
+					</p:column>
+					<p:column headerText="Descargar"
+						style="text-align:center;">
+						<p:commandButton id="descargar"
+							action="#{manejadorSolicitarAvalFacultad.descargarArchivo}"
+							icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{manejadorSolicitarAvalFacultad.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<br />
+			<p:fieldset legend="Aval vicedecanatura de investigación"
+				id="panelAval">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left" id="revision">
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.tipo != 'JD'}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDecision" icon="ui-icon-info" />
+							<p:tooltip for="infoDecision" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione una decisión para la solicitud de aval (Devolver, aprobar o negar).
+									</t:div>
+							</p:tooltip>
+						</p:column>
+
+						<p:column style="width:150px;">
+							<h:outputText value="Aval facultad: "></h:outputText>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorSolicitarAvalFacultad.selItem}"
+								id="somCategoria">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems id="siCategoria"
+									value="#{manejadorSolicitarAvalFacultad.categoriaItems}" />
+								<p:ajax update="revision" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.tipo == 'JD' and manejadorSolicitarAvalFacultad.verEvaluacion}">
+						<p:column colspan="3">
+							<t:div style="color:#464646; text-align:justify;">
+						El proyecto asociado a este aval ha sido aprobado para la tipología de <strong
+									style="color: #FF0000;">JORNADA DOCENTE</strong> 
+						por el director(a) de la unidad académica básica a la que pertenece el investigador principal, de acuerdo con el procedimiento para la formalización, ejecución y
+						liquidación de actividades de investigación y creación artística, la vicedecanatura de investigación y extensión de la facultad o quien haga sus veces, debe realizar 
+						el seguimiento al proyecto, para lo cual se debe asignar un coordinador de seguimiento al proyecto (se generará un correo electrónico con la notificación). <a
+									target="_blank"
+									style="text-decoration: underline; color: #16A8E2; font-weight: bold;"
+									href="http://investigacion.unal.edu.co/acerca-de/gestion-de-calidad/macroprocesos/mp-investigacion/">
+									Ver procedimientos relacionados</a>
+							</t:div>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalFacultad.aval.tipo == 'JD' and manejadorSolicitarAvalFacultad.verEvaluacion}">
+						<p:column colspan="3">
+							<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText
+									value="¿Requiere habilitar el proyecto para edición el docente? " />
+								<p:selectBooleanCheckbox
+									value="#{manejadorSolicitarAvalFacultad.habilitarEdicion}">
+									<p:ajax update="panelAval"
+										process="panelAval" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.aval.tipo == 'JD' and manejadorSolicitarAvalFacultad.verEvaluacion and !manejadorSolicitarAvalFacultad.habilitarEdicion}">
+						<p:column>
+							<p:commandButton id="infoCoordinador" icon="ui-icon-info" />
+
+							<p:tooltip for="infoCoordinador" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione el coordinador que se encargará del seguimiento del proyecto, en adelante.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Coordinador: " />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="coordinador"
+								value="#{manejadorSolicitarAvalFacultad.documentoCoordinador}"
+								style="width:420px" panelStyle="width: 400px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSolicitarAvalFacultad.coordinadoresItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row id="comments">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoObservacion" icon="ui-icon-info" />
+							<p:tooltip for="infoObservacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Indique las observaciones pertinentes al trámite.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="50" rows="5" autoResize="false" id="neg"
+								value="#{manejadorSolicitarAvalFacultad.aval.descripcionfacultad}"
+								maxlength="1800" style="width:100%;">
+								<f:validateLength minimum="0" maximum="1800" for="neg"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counter" value="Tamaño máximo 1800 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row id="comments3">
+						<p:column colspan="3">
+							<h:outputText
+								value="NOTA: Recomendamos no usar caracteres especiales como '$', puede haber problemas con el texto, en caso de envío de e-mail." />
+						</p:column>
+					</p:row>
+					<p:row id="commentsProyecto"
+						rendered="#{manejadorSolicitarAvalFacultad.selItem == '4' and ((manejadorSolicitarAvalFacultad.aval.tipo != 'GR' and manejadorSolicitarAvalFacultad.aval.tipo != 'INI'  and manejadorSolicitarAvalFacultad.aval.tipo != 'ME') or (manejadorSolicitarAvalFacultad.aval.esCentroInvestigacion and manejadorSolicitarAvalFacultad.aval.tipoAvalCIN eq 'L'))}">
+						<p:column colspan="3" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<h:outputText
+								value="Si es necesario hacer cambios en el proyecto y desea habilitarlo para la edición del docente marque la siguiente casilla, 
+									tenga en cuenta que si el proyecto también se encuentra asociado a una convocatoria interna, no se habilitará la edición del mismo:"></h:outputText>
+							<br />
+							<table>
+								<tr>
+									<td><h:outputText
+											value="¿Habilitar edición del proyecto asociado? " /></td>
+									<td style="vertical-align: middle;"><p:selectBooleanCheckbox
+											value="#{manejadorSolicitarAvalFacultad.edicionProyecto}">
+											<p:ajax update="panelAval,panelRevision"
+												process="panelRevision" />
+										</p:selectBooleanCheckbox></td>
+								</tr>
+							</table>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.selItem == '2' and manejadorSolicitarAvalFacultad.verEvaluacion and manejadorSolicitarAvalFacultad.aval.tipo != 'JD'}">
+						<p:column>
+							<p:commandButton id="infoCarta" icon="ui-icon-info" />
+							<p:tooltip for="infoCarta" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Adjunte la carta de aval para la aprobación en caso de ser necesario.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Adjuntar aval: " />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalFacultad.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalFacultad.selItem == '2' and manejadorSolicitarAvalFacultad.verEvaluacion and manejadorSolicitarAvalFacultad.aval.tipo != 'JD'}">
+						<p:column colspan="2">
+							<h:outputText value="Archivo aval adjunto:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{manejadorSolicitarAvalFacultad.aval.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<center>
+					<p:commandButton id="infoDocs" icon="ui-icon-info" />
+					<p:tooltip for="infoDocs" styleClass="tooltip-mesage"
+						showDelay="999">
+						<t:div style="text-align: left; float:left;">
+								       	En caso de ser necesario, por favor adjunte los documentos <br />
+								       	relacionados con la revisión del aval.
+								</t:div>
+					</p:tooltip>
+					<h:outputText value=" DOCUMENTOS DE SOPORTE DE REVISIÓN (Opcional)"
+						style='font-weight: bold;' />
+					<br /> <br />
+
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+						id="panelArchivoSoporte" style="text-align:left; width:100%">
+						<p:fileUpload
+							fileUploadListener="#{manejadorSolicitarAvalFacultad.guardarArchivoCoor}"
+							id="archivo1" mode="advanced" update="tablaArchivo" auto="true"
+							multiple="true" sizeLimit="3072000" label="Seleccionar archivo" />
+					</p:panelGrid>
+
+					<br />
+					<p:dataTable var="archivoResumen"
+						value="#{manejadorSolicitarAvalFacultad.aval.archivosCoorList}"
+						id="tablaArchivo" emptyMessage="No tiene archivos de soporte."
+						style="width:100%">
+						<f:facet name="header">Archivos de Soporte</f:facet>
+						<p:column style="text-align: center; width:90%;"
+							headerText="Archivo">
+							<h:outputText value="#{archivoResumen.nombre}" />
+						</p:column>
+
+						<p:column headerText="Descargar"
+							style="width:5%; text-align:center;">
+							<p:commandButton id="descargar"
+								action="#{manejadorSolicitarAvalFacultad.descargarArchivo}"
+								icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorSolicitarAvalFacultad.documentoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Borrar" style="width:5%; text-align:center;">
+							<p:commandButton id="eliminar"
+								action="#{manejadorSolicitarAvalFacultad.eliminarArchivoCoor}"
+								icon="ui-icon-trash" title="Eliminar archivo" ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorSolicitarAvalFacultad.arCoor}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+					<br />
+				</center>
+
+				<br />
+				<p:panel id="aceptarTerminos" header="Aceptación de revisión de veracidad de la información registrada en el aval">
+				
+					<h:outputText  rendered="#{manejadorSolicitarAvalFacultad.aval.tipo == 'GR' or manejadorSolicitarAvalFacultad.aval.tipo == 'INI'}" value="Al dar el visto bueno a través del Sistema de Información Hermes para el aval institucional tanto para grupos como para investigadores independientes la Vicedecanatura de Investigación de la facultad o instituto certifica y garantiza la veracidad y el cumplimento de los requisitos de la información registrada por los grupos e investigadores en los diferentes aplicativos."
+						style='font-weight: bold;'/>
+						
+					<h:outputText rendered="#{manejadorSolicitarAvalFacultad.aval.tipo != 'GR' and manejadorSolicitarAvalFacultad.aval.tipo != 'INI'}" value="Al dar el visto bueno a través del Sistema de Información Hermes para el aval institucional la Vicedecanatura de Investigación de la facultad o instituto certifica y garantiza la veracidad y el cumplimento de los requisitos de la información registrada para aplicar a la convocatoria."
+						style='font-weight: bold;' />
+					<br />
+				</p:panel>
+				<br />
+				<!-- Revisión de aval en la facultad, para generación de carta en otra dependencia -->
+				<h:panelGroup
+					rendered="#{manejadorSolicitarAvalFacultad.verRevision}"
+					id="panelRevision">
+					<center>
+						<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<p:commandButton
+								action="#{manejadorSolicitarAvalFacultad.guardar}"
+								value="Guardar revisión aval" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								action="#{manejadorSolicitarAvalFacultad.anterior}"
+								value="Regresar" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</h:panelGrid>
+					</center>
+				</h:panelGroup>
+
+				<!-- Generación de aval en la facultad -->
+				<h:panelGroup id="panelEvaluacion"
+					rendered="#{manejadorSolicitarAvalFacultad.verEvaluacion}">
+					<center>
+						<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGuardar">
+							<p:commandButton ajax="false"
+								action="#{manejadorSolicitarAvalFacultad.guardarAvalGenerado}"
+								value="Guardar revisión aval" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								action="#{manejadorSolicitarAvalFacultad.anterior}"
+								value="Regresar" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</h:panelGrid>
+					</center>
+				</h:panelGroup>
+				<p:messages id="msgs" autoUpdate="true" />
+				<br />
+			</p:fieldset>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

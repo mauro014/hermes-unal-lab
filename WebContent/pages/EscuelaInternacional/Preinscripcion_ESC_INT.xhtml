@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+<ui:define name="title">FORMULARIO DE PREINSCRIPCIÓN</ui:define>
+
+<ui:define name="content">
+
+<h:form id="preinscripcion">
+
+	<img src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+		 style="padding-bottom: 10px;" />
+	
+	<t:div styleClass="contenido-informacion">
+		<t:div styleClass="cabezote-informacion-pagina-buscador">
+			<h:outputText value="Preinscripcion Escuela Internacional" />
+		</t:div>
+		
+		<t:div styleClass="contenedor-informacion">
+			<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+			<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+						closable="true" showSummary="true" showDetail="true" />
+			
+			<p:panel id="panelIdentificacion" header="Número de identificación">
+			
+				<h:panelGrid columns="3" align="center">
+					
+					<h:outputText value="Curso" />
+					<h:outputText value="Nombre del curso" />
+					<h:outputText value="" />
+					
+					<h:outputText value="Tipo de Documento" for="tipo_doc" />
+					<p:selectOneMenu value="#{ManejadorPreinscripcionECP.tipo_doc}"
+									 effect="fade" 
+									 id="tipo_doc">
+						<f:selectItems value="#{ManejadorPreinscripcionECP.tipoDocumentoItem}"/>
+					</p:selectOneMenu>
+					<h:outputText value="" />				 
+					
+					<h:outputText value="Número de Documento" />
+					<p:inputText id="documento"
+
+								 maxlength="25"
+								 required="true"
+								 requiredMessage="El número de documento es un campo obligatorio"
+								 validateMessage="El número de documento sólo puede tener números"
+
+								converter="#{Number}">
+								<f:validateLongRange minimum="0" maximum="999999999999" />
+					</p:inputText>
+					<p:message for="documento" />
+					
+				</h:panelGrid>
+			
+			</p:panel>
+			
+			<br />
+			
+			<p:panel header="Información General">
+				
+				<h:panelGrid columns="3">
+				
+					<h:outputText value="Nombres" for="nombres" />
+					<p:inputText id="nombres"
+						value="#{ManejadorPreinscripcionECP.nombres}" maxlength="80"
+						required="true"
+						requiredMessage="Los nombres es un campo obligatorio" 
+						size="30"/>
+					<p:message for="nombres" styleClass="texto" />
+
+					<h:outputText value="Primer Apellido" for="primer_apellido" />
+					<p:inputText id="primer_apellido"
+						value="#{ManejadorPreinscripcionECP.primer_apellido}"
+						maxlength="50" required="true"
+						requiredMessage="El primer apellido es un campo obligatorio" 
+						size="30"/>
+					<p:message for="primer_apellido" />
+
+					<h:outputText value="Segundo Apellido" for="segundo_apellido" />
+					<p:inputText id="segundo_apellido"
+						value="#{ManejadorPreinscripcionECP.segundo_apellido}"
+						maxlength="50" required="true"
+						requiredMessage="El segundo apellido es un campo obligaorio"
+						size="30" />
+					<p:message for="segundo_apellido" />
+
+					<h:outputText value="Correo Electrónico" for="correo_electronico" />
+					<p:inputText id="correo_electronico"
+						value="#{ManejadorPreinscripcionECP.correo_electronico}"
+						maxlength="80" required="true"
+						requiredMessage="El correo es un campo obligatorio"
+						validatorMessage="Correo inválido"
+						>
+						<f:validateRegex
+							pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+					</p:inputText>
+					<p:message for="correo_electronico" />
+
+					<h:outputText value="Teléfono fijo" for="tel_fijo" />
+					<p:inputText id="tel_fijo"
+						value="#{ManejadorPreinscripcionECP.tel_fijo}" 
+						maxlength="20"
+						validateMessage="El teléfono fijo sólo puede tener números">
+						<f:validateLength minimum="7" />
+						<f:validateLongRange minimum="0" maximum="999999999999" />
+					</p:inputText>
+					<p:message for="tel_fijo" />
+
+					<h:outputText value="Teléfono movil" for="tel_movil" />
+					<p:inputText id="tel_movil"
+						value="#{ManejadorPreinscripcionECP.tel_movil}" 
+						maxlength="20"
+						required="true"
+						requiredMessage="El teléfono movil es un campo obligatorio"
+						validateMessage="El teléfono movil sólo puede tener números">
+						<f:validateLength minimum="10" />
+						<f:validateLongRange minimum="0" maximum="999999999999" />
+					</p:inputText>
+					<p:message for="tel_movil" />
+					
+					<h:outputText value="Pais origen" id="paisText" />
+					<p:selectOneMenu value="#{ManejadorPreinscripcionECP.pais}"
+						effect="fade" id="pais" filter="true">
+						<f:selectItems value="#{ManejadorPreinscripcionECP.paisItem}" />
+						<p:ajax event="change"
+							update="departamento,ciudad,panelDeptoCiudad"
+							listener="#{ManejadorPreinscripcionECP.cargarDepto}" />
+					</p:selectOneMenu>
+					<p:message for="pais" />
+				
+				</h:panelGrid>
+							
+				<h:panelGrid id="panelDeptoCiudad" columns="3">
+
+					<h:outputText value="Departamento" 
+								  id="deptoText"
+								  rendered="#{ManejadorPreinscripcionECP.pais == 'CO'}" />
+					
+					<p:spacer width="18" height="10" />
+
+					<p:selectOneMenu
+						value="#{ManejadorPreinscripcionECP.departamento}" effect="fade"
+						id="departamento" filter="true"
+						rendered="#{ManejadorPreinscripcionECP.pais == 'CO'}">
+						<f:selectItems
+							value="#{ManejadorPreinscripcionECP.departamentoItemList}" />
+						<p:ajax event="change" update="ciudad"
+							listener="#{ManejadorPreinscripcionECP.cargarCiudad}" />
+
+					</p:selectOneMenu>
+
+					<h:outputText value="Ciudad" 
+								  id="ciudadText"
+								  rendered="#{ManejadorPreinscripcionECP.pais == 'CO'}" />
+					
+					<p:spacer width="18" height="10" />
+					
+					<p:selectOneMenu value="#{ManejadorPreinscripcionECP.ciudad}"
+						effect="fade" id="ciudad" filter="true"
+						rendered="#{ManejadorPreinscripcionECP.pais == 'CO'}">
+						<f:selectItems
+							value="#{ManejadorPreinscripcionECP.ciudadItemList}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="Tipo" />
+					<p:spacer width="0" height="10" />
+					<p:selectOneMenu value="#{ManejadorPreinscripcionECP.tipoESC}">
+						<f:selectItem itemLabel="Estudiante de pregrado UN" itemValue="1"/>
+						<f:selectItem itemLabel="Estudiante de posgrado UN" itemValue="2"/>
+						<f:selectItem itemLabel="Egresado UN" itemValue="3"/>
+						<f:selectItem itemLabel="Estudiante de pregrado otra Universidad" itemValue="4"/>
+						<f:selectItem itemLabel="Estudiante de posgrado otra Universidad" itemValue="5"/>
+						<f:selectItem itemLabel="Particular" itemValue="6"/>
+						<p:ajax event="change" update="valorCursoText"
+							listener="#{ManejadorPreinscripcionECP.cargarValorCurso}" />
+					</p:selectOneMenu>
+					<h:outputText id="valorCursoText" value="Valor: #{ManejadorPreinscripcionECP.valorCurso}" />
+					
+					<h:outputText value="Formación Académica"
+								id="formacionAcademicaText" for="formacionAcademica" />
+					<p:spacer width="0" height="10" />			
+					<p:selectOneMenu
+						value="#{ManejadorPreinscripcionECP.formacion_academica}"
+						effect="fade" id="formacionAcademica">
+						<f:selectItems
+							value="#{ManejadorPreinscripcionECP.formacionAcademicaItemList}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					
+					<h:outputText value="Universidad"/>
+					<p:spacer width="0" height="10" />
+					<p:inputText id="universidad"
+						size="50"
+						maxlength="200" />
+					<h:outputText value=""/>
+					
+					<h:outputText value="Facultad"/>
+					<p:spacer width="0" height="10" />
+					<p:inputText id="facultad"
+						size="50"
+						maxlength="200" />
+					<h:outputText value=""/>
+					
+					<h:outputText value="Promedio"/>
+					<p:spacer width="0" height="10" />
+					<p:inputText id="promedio"
+						size="4" />
+					<h:outputText value=""/>
+					
+					<h:outputText value="Creditos/Certificado" />
+					<p:spacer width="0" height="10" />
+					<p:selectOneRadio value="#{ManejadorPreinscripcionECP.creditoCertificado}">
+						<f:selectItem itemLabel="Créditos" itemValue="CR"/>
+						<f:selectItem itemLabel="Certificado" itemValue="CE"/>
+					</p:selectOneRadio>
+					<h:outputText value="" />
+					
+				</h:panelGrid>
+				
+			</p:panel>
+			
+			<br />
+
+			<h:panelGrid id="panelGuardar" columns="3" align="center">
+				<p:commandButton value="Guardar" 
+								 id="guardar"
+								 icon="ui-icon-check" 
+								 styleClass="ui-priority-primary"
+
+/>
+					
+				<p:commandButton id="volver" 
+								 value="Volver"
+								 styleClass="ui-priority-primary"
+
+								 immediate="true" />
+					
+			</h:panelGrid>
+			
+		</t:div>
+		
+	</t:div>
+	
+	<t:div styleClass="contenido-menu">
+		<t:div styleClass="menu-superior">
+			<div class="logo-hermes">
+				<a href="#{facesContext.externalContext.requestContextPath}/"><img src="#{facesContext.externalContext.requestContextPath}/images/her-general/logo_hermes.png" /></a>
+			</div>
+		</t:div>
+	</t:div>
+
+</h:form>
+	
+</ui:define>
+	
+</ui:composition>

@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+
+
+		<p:panelGrid columns="2" id="mensaje"
+			styleClass="estilo-panelgrid-sinbordes">
+			<h:outputText class="panel-titulo-error"
+				value="Mejoras en desarrollo o asignadas a los ingenieros Hermes" />
+		</p:panelGrid>
+		<br></br>
+
+		<h:form>
+
+			<p:panel header="Información de mejoras en desarrollo o asignadas"
+				align="center" id="requerimiento">
+
+				<br />
+				<h:outputText value="Búsqueda del ingeniero asignado a la mejora:"
+					styleClass="negrilla" />
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelReq">
+
+					<h:outputText value="Ingeniero:" for="ing" styleClass="negrilla" />
+					<p:selectOneMenu
+						value="#{ManejadorConsultarRequerimientoAdm.ingenieroAsignado}"
+						id="ing" style="width:200px">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+						<f:selectItems
+							value="#{ManejadorConsultarRequerimientoAdm.tipoIngItem}" />
+						<p:ajax
+							listener="#{ManejadorConsultarRequerimientoAdm.actualizarIngeniero}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="" />
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimientoAdm.buscarIngeniero}"
+						value="Buscar" id="botonBuscar" update="@form" ajax="false" />
+
+				</p:panelGrid>
+
+			</p:panel>
+
+
+			<p:messages id="msgs" />
+
+			<br></br>
+			<p:dataTable var="requerimientoRegistrado"
+				rendered="#{ManejadorConsultarRequerimientoAdm.mostrarForm}"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{ManejadorConsultarRequerimientoAdm.requerimientosAsignadosListaCompleta}"
+				paginator="true" paginatorposition="bottom" rows="20">
+
+				<f:facet name="header">  
+	            	Mejoras asignadas
+	        		</f:facet>
+
+
+				<p:column headerText="Número" style="text-align: center;"
+					sortBy="#{requerimientoRegistrado.id}">
+					<h:outputText value="#{requerimientoRegistrado.id}" />
+				</p:column>
+
+				<p:column headerText="Prioridad"
+					sortBy="#{requerimientoRegistrado.prioridad}"
+					filterBy="#{requerimientoRegistrado.prioridad}"
+					filterOptions="#{ManejadorConsultarRequerimientoAdm.prioridadItem}"
+					filterMatchMode="exact" style="text-align: center;">
+					<center>
+						<h:outputText value="#{requerimientoRegistrado.prioridad}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Módulo relacionado"
+					sortBy="#{requerimientoRegistrado.moduloVista}">
+					<h:outputText value="#{requerimientoRegistrado.moduloVista}" />
+				</p:column>
+
+				<p:column headerText="Fecha de solicitud"
+					sortBy="#{requerimientoRegistrado.fechaSolicitud}">
+					<h:outputText value="#{requerimientoRegistrado.fechaSolicitud}" />
+				</p:column>
+
+
+				<p:column headerText="Editar/Consultar" style="text-align: center;">
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimientoAdm.editarRequerimientoCoord}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimientoAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimientoAdm.consultarRequerimientoCoord}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimientoAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<h:outputText
+						value="Se encontraron #{ManejadorConsultarRequerimientoAdm.numeroSolicitudes} solicitudes" />
+				</f:facet>
+
+			</p:dataTable>
+			<br></br>
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+			<br></br>
+			<center>
+				<div class="panel-boton-error">
+					<input type="button" onclick="history.back()"
+						class="boton-regresar" />
+				</div>
+			</center>
+
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

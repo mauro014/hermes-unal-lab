@@ -1,0 +1,362 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Semillero - Plan de Trabajo</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" action="irGeneral"
+						icon="ui-icon-down" />
+					<p:menuitem value="Integrantes" action="irIntegrantes"
+						diabled="true" icon="ui-icon-down" />
+					<p:menuitem value="Líneas y Áreas de Trabajo"
+						action="irLineasAreas" icon="ui-icon-down" />
+					<p:menuitem value="Plan de Trabajo" action="irPlanTrabajo"
+						icon="ui-icon-down" />
+					<p:menuitem value="Cargar Archivos y Enviar"
+						action="irArchivosEnviar"
+						disabled="#{manejadorSemilleroPlanTrabajo.semilleroActual.fase lt 4}"
+						icon="ui-icon-down" />
+				</p:menubar>
+			</h:form>
+			<h:form>
+				<p:messages id="msgs" />
+				<p:panel id="panelInfo">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Id: " />
+						<h:outputText
+							value="#{manejadorSemilleroPlanTrabajo.semilleroActual.id}"
+							style=' font-weight: bold;' />
+						<h:outputText value="Nombre semillero: " />
+						<h:outputText
+							value="#{manejadorSemilleroPlanTrabajo.semilleroActual.nombre}"
+							style=' font-weight: bold;' />
+					</p:panelGrid>
+				</p:panel>
+				<p:panelGrid style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;" id="tblActividades">
+								<f:facet name="header">
+									<p:commandButton id="infActividades" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}" />
+									<p:tooltip for="infActividades" styleClass="tooltip-mesage"
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Coloque las actividades del semillero, recuerde que debe colocar el mes de inicio.</t:div>
+									</p:tooltip>
+									<p:tooltip for="infActividades" styleClass="tooltip-mesage"
+										rendered="#{manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Coloque las actividades del semillero, recuerde que debe colocar el mes de inicio.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+									</p:tooltip>
+									<h:outputText value="* Actividades" />
+								</f:facet>
+								<p:panelGrid cellpadding="5" cellspacing="5"
+									rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}"
+									id="panelAreasSecundarias" style="width:100%;"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column colspan="4">
+											<p:panel>
+												<t:div style="color:#464646; text-align:justify;">
+												NOTA: Por favor tener en cuenta que la fecha inicial de cada actividad debe ser  posterior a la activación del semillero. El cual puede incluir varios días o semanas dependiendo de la aprobación de la UAB y la facultad o sede.
+												</t:div>
+											</p:panel>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="* Descripción:" />
+										</p:column>
+										<p:column colspan="3">
+											<p:inputTextarea id="descripcion" rows="5"
+												counter="outDescripcion" maxlength="4000"
+												counterTemplate="{0} characters remaining."
+												autoResize="false"
+												value="#{manejadorSemilleroPlanTrabajo.actividadActual.descripcion}"
+												style="width: 100%;" />
+											<h:outputText id="outDescripcion" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="width:25%;">
+											<h:outputText value="* Fecha Inicial:" />
+										</p:column>
+										<p:column style="width:25%;">
+											<p:calendar readonlyInput="true" style="width: 100%;"
+												value="#{manejadorSemilleroPlanTrabajo.fechaInicio}"
+												mindate="#{manejadorSemilleroGeneral.today}" locale="es"
+												pattern="dd/MM/yyyy" navigator="true" />
+										</p:column>
+										<p:column style="width:25%;">
+											<h:outputText value="* Duración (Meses):" />
+										</p:column>
+										<p:column style="width:25%;">
+											<p:inputText id="duracion"
+												value="#{manejadorSemilleroPlanTrabajo.duracion}"
+												style="width: 100%;" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="* Responsable:" />
+										</p:column>
+										<p:column colspan="2">
+											<p:selectOneMenu id="areaOCDESecundaria" autoWidth="false"
+												value="#{manejadorSemilleroPlanTrabajo.actividadActual.responsable.id}">
+												<f:selectItem style="width:100%;"
+													itemLabel="Seleccione un integrante" itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroPlanTrabajo.integrantesItems}" />
+											</p:selectOneMenu>
+										</p:column>
+										<p:column>
+											<p:commandButton value="Adicionar Actividad"
+												action="#{manejadorSemilleroPlanTrabajo.agregarActividad}"
+												icon="ui-icon-plus" onstart="dialogEspere.show()"
+												update="@form" oncomplete="dialogEspere.hide()" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<p:dataTable id="actividadesTabla" var="actividad"
+									value="#{manejadorSemilleroPlanTrabajo.actividades}"
+									editable="true" emptyMessage="No se han agregado actividades"
+									style="width:100%; margin-top: 20px;"
+									rowEditListener="#{manejadorSemilleroPlanTrabajo.onEditActividad}">
+
+									<p:ajax event="rowEdit" update="actividadesTabla" />
+
+									<f:facet name="header">
+										<h:outputText value="Actividades vinculadas" />
+									</f:facet>
+
+									<!-- Columna Actividad -->
+									<p:column headerText="Actividad">
+										<h:outputText value="#{actividad.descripcion}" />
+										<br />
+										<h:outputText rendered="#{actividad.fechaRegistro != null}"
+											value="&lt;b&gt;Fecha registro: &lt;/b&gt;#{actividad.fechaRegistro}"
+											escape="false" />
+									</p:column>
+
+									<!-- Columna Duración -->
+									<p:column headerText="Duración">
+										<h:outputText
+											value="&lt;b&gt;Fecha inicial: &lt;/b&gt;#{actividad.fecha}"
+											escape="false" />
+										<br />
+										<h:outputText
+											value="&lt;b&gt;Duración en meses: &lt;/b&gt;#{actividad.duracion}"
+											escape="false" />
+										<br />
+										<h:outputText
+											value="&lt;b&gt;Fecha Finalización: &lt;/b&gt;#{actividad.fechaFin}"
+											escape="false" />
+									</p:column>
+
+									<!-- Columna Responsable editable -->
+									<p:column headerText="Responsable">
+
+										<h:outputText
+											value="#{actividad.responsable.integrante.nombreCompleto}" />
+									</p:column>
+
+									<p:column style="width:5%; text-align: center;"
+										rendered="#{!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5}">
+										<f:facet name="header">
+											<h:outputText value="" />
+										</f:facet>
+										<p:commandButton title="Editar responsable"
+											icon="ui-icon-pencil" oncomplete="dialogEditarResp.show();"
+											rendered="#{!actividad.actividadVencida}" process="@this"
+											update="@form">
+											<f:setPropertyActionListener value="#{actividad}"
+												target="#{manejadorSemilleroPlanTrabajo.actividadSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+
+									<p:column style="width:10%; text-align: center;"
+										rendered="#{!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5}">
+										<f:facet name="header">
+											<h:outputText value="Eliminar" />
+										</f:facet>
+										<p:commandButton icon="ui-icon-trash"
+											rendered="#{!actividad.actividadVencida}"
+											action="#{manejadorSemilleroPlanTrabajo.eliminarActividad}"
+											update="actividadesTabla" process="actividadesTabla"
+											title="Eliminar actividad" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{actividad}"
+												target="#{manejadorSemilleroPlanTrabajo.actividadEliminar}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;" id="tblActividades">
+								<f:facet name="header">
+									<p:commandButton id="infMetodologia" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}" />
+									<p:tooltip for="infMetodologia" styleClass="tooltip-mesage"
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Metodología de trabajo del semillero.</t:div>
+									</p:tooltip>
+									<p:tooltip for="infMetodologia" styleClass="tooltip-mesage"
+										rendered="#{manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Metodología de trabajo del semillero.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+									</p:tooltip>
+									<h:outputText value="* Metodología:" />
+								</f:facet>
+								<p:inputTextarea rows="5" counter="outMetodologia"
+									maxlength="4000" counterTemplate="{0} characters remaining."
+									autoResize="false"
+									value="#{manejadorSemilleroPlanTrabajo.semilleroActual.metodologia}"
+									readonly="#{manejadorSemilleroPlanTrabajo.esConsulta and !manejadorSemilleroPlanTrabajo.solicitudAprobadaMetodologia}"
+									style="width: 100%;" />
+								<h:outputText id="outMetodologia"
+									rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.solicitudAprobadaMetodologia}" />
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;" id="lineasInvestigacion">
+								<f:facet name="header">
+									<p:commandButton id="infResultados" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta}" />
+									<p:tooltip for="infResultados" styleClass="tooltip-mesage"
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Resultados que espera alcanzar frente a los objetivos del semillero.</t:div>
+									</p:tooltip>
+									<p:tooltip for="infResultados" styleClass="tooltip-mesage"
+										rendered="#{manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Resultados que espera alcanzar frente a los objetivos del semillero.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+									</p:tooltip>
+									<h:outputText value="* Resultados Esperados" />
+								</f:facet>
+								<p:panelGrid cellpadding="5" cellspacing="5"
+									rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.solicitudAprobadaResultados}"
+									id="panelAreasSecundarias" style="width:100%;"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column>
+											<h:outputText value="Resultado:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea rows="5" counter="outResultado"
+												maxlength="4000" counterTemplate="{0} characters remaining."
+												autoResize="false"
+												value="#{manejadorSemilleroPlanTrabajo.resultadoActual.resultado}"
+												style="width: 100%;" />
+											<h:outputText id="outResultado" />
+										</p:column>
+										<p:column>
+											<p:commandButton value="Adicionar Resultado"
+												icon="ui-icon-plus" onstart="dialogEspere.show()"
+												action="#{manejadorSemilleroPlanTrabajo.agregarResultado}"
+												update="resultadosTabla, msgs"
+												oncomplete="dialogEspere.hide()" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<p:dataTable id="resultadosTabla" var="resultado"
+									value="#{manejadorSemilleroPlanTrabajo.semilleroActual.listaResultados}"
+									emptyMessage="No se han agregado resultados"
+									style="width:100%; margin-top: 20px;">
+									<f:facet name="header">
+										<h:outputText value="Resultados vinculados" />
+									</f:facet>
+									<p:column headerText="Resultado">
+										<h:outputText value="#{resultado.resultado}" />
+									</p:column>
+									<p:column
+										rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.solicitudAprobadaResultados}">
+										<p:commandButton
+											action="#{manejadorSemilleroPlanTrabajo.eliminarResultado}"
+											update="resultadosTabla, @form"
+											process="resultadosTabla, @parent" icon="ui-icon-trash"
+											title="Eliminar">
+											<f:setPropertyActionListener value="#{resultado}"
+												target="#{manejadorSemilleroPlanTrabajo.resultadoEliminar}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<p:messages id="msgsResultados" />
+							</p:panel>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:messages id="msgs" />
+				<div style="width: 100%; text-align: center;">
+					<p:commandButton
+						rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta}"
+						action="#{manejadorSemilleroPlanTrabajo.guardarParcialmente}"
+						value="Guardar Parcialmente" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton
+						rendered="#{!manejadorSemilleroPlanTrabajo.esConsulta or manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5}"
+						action="#{manejadorSemilleroPlanTrabajo.guardarPlanTrabajo}"
+						value="#{(manejadorSemilleroPlanTrabajo.semilleroActual.estadoActual.id eq 5)?'Guardar Cambios':'Siguiente'}"
+						ajax="false" />
+				</div>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 			</p:dialog>
+				<p:dialog header="Editar Responsable" widgetVar="dialogEditarResp"
+					modal="true" closable="true" resizable="false" id="dialogoEditar"
+					width="400">
+
+					<h:panelGrid id="panelDialogoEditar" columns="1" cellpadding="5"
+						style="width:100%; text-align: left;">
+
+						<h:outputText value="Actividad:" style="font-weight: bold;" />
+						<h:outputText
+							value="#{manejadorSemilleroPlanTrabajo.actividadSeleccionada.descripcion}" />
+
+						<h:outputText value="Seleccione nuevo responsable:"
+							style="margin-top: 10px; font-weight: bold;" />
+
+						<p:selectOneMenu
+							value="#{manejadorSemilleroPlanTrabajo.actividadSeleccionada.responsable.id}">
+							<f:selectItem itemLabel="Seleccione responsable" itemValue="" />
+							<f:selectItems
+								value="#{manejadorSemilleroPlanTrabajo.integrantesItems}" />
+						</p:selectOneMenu>
+
+						<p:spacer height="10" />
+
+						<h:panelGroup layout="block" style="text-align: center;">
+							<p:commandButton value="Guardar" icon="ui-icon-disk"
+								actionListener="#{manejadorSemilleroPlanTrabajo.guardarResponsable}"
+								update="actividadesTabla" oncomplete="dialogEditarResp.hide(); dialogEspere.hide();" 
+								onstart="dialogEspere.show()"/>
+						</h:panelGroup>
+					</h:panelGrid>
+				</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

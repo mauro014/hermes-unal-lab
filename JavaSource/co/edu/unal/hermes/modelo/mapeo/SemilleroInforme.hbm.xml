@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="SemilleroInforme" table="HER_SEMILLERO_INFORME">
+		<id name="id" column="SIN_ID" type="integer">
+			<generator class="sequence">
+				<param name="sequence">SEQ_SEMILLERO_INFORME</param>
+			</generator>
+		</id>
+		<property name="fechaCompromiso"
+			column="SIN_FECHA_COMPROMISO" />
+		<property name="numeroNotificaciones"
+			column="SIN_NUM_NOTIFICACIONES" />
+		<property name="fechaUltimaNotificacion"
+			column="SIN_FECHA_NOTIFICACION" />
+		<property name="cumple" column="SIN_CUMPLE" />
+		<property name="fechaEntrega" column="SIN_FECHA_ENTREGA" />
+		<property name="fechaDesde" column="SIN_FECHA_DESDE"
+			type="date" />
+		<property name="fechaHasta" column="SIN_FECHA_HASTA"
+			type="date" />
+		<property name="proyectos" column="SIN_PROYECTOS" />
+		<many-to-one name="semillero" class="Semillero"
+			column="SEM_ID" lazy="false">
+		</many-to-one>
+		<set name="archivos" table="HER_SEMILLERO_INF_ARCHIVO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SIN_ID" />
+			<one-to-many class="SemilleroInformeArchivo" />
+		</set>
+		<set name="actividades" table="HER_SEMILLERO_INF_ACTIVIDAD"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SIN_ID" />
+			<one-to-many class="SemilleroInformeActividad" />
+		</set>
+		<set name="resultados" table="HER_SEMILLERO_INF_RESULTADO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SIN_ID" />
+			<one-to-many class="SemilleroInformeResultado" />
+		</set>
+		<set name="historico" table="HER_SEMILLERO_HIST_INFORME"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SIN_ID" />
+			<one-to-many class="SemilleroHistoricoInforme" />
+		</set>
+		<property name="guardadoParcial" column="SIN_PARCIAL" />
+		<many-to-one name="respuesta"
+			class="SemilleroSolicitudRespuesta" not-null="true" lazy="false">
+			<column name="SSR_ID" />
+		</many-to-one>
+		<property name="observaciones" column="SIN_OBSERVACIONES" />
+		<property name="fechaRespuesta"
+			column="SIN_FECHA_RESPUESTA" type="date" />
+	</class>
+</hibernate-mapping>

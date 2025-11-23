@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="title">DESCUENTOS CURSOS DE EDUCACIÓN CONTINUA Y PERMANENTE</ui:define>
+
+<ui:define name="content">
+
+<style type="text/css">
+.datalist-noborder .ui-widget-content {
+border: none;
+}
+</style>
+
+<h:form>
+	
+		<t:div styleClass="contenido-titulo-general-myriad">
+			<h:outputText value="#{ManejadorDescuentosCursoECP.curso.nombre}"/>
+		</t:div>
+		
+		<p:growl id="growl" showDetail="true" sticky="true" />
+		
+<!-- 		<p:panel header="Descuentos"> -->
+		
+			<p:dataTable var="descuentoCurso" 
+					 emptyMessage="No se encuentran descuentos asociados al curso"
+					 value="#{ManejadorDescuentosCursoECP.listaDescuentosProyecto}" 
+					 rows="15"
+					 sortBy="#{descuentoCurso.descuento.id_descuento}"
+					 >
+					 
+				<p:column headerText="Código" sortBy="#{descuentoCurso.descuento.id_descuento}" >
+					<h:outputText value="#{descuentoCurso.descuento.id_descuento}" />
+				</p:column>
+				
+				<p:column headerText="Descripción">
+					<h:outputText value="#{descuentoCurso.descuento.descuento_desc}" />
+				</p:column>
+				
+				<p:column headerText="%">
+				<center>
+					<p:inputText id="porcentaje"
+								value="#{descuentoCurso.porcentaje}"
+								maxlength="3" 
+								size="4"
+								style="align: center"
+								dir="RTL"
+								required="true"
+								requiredMessage="El porcentaje es un campo obligatorio"
+								validatorMessage="El porcentaje debe estar entre 0 y 100"
+								converter="javax.faces.Integer"
+								converterMessage="Años sólo debe contener numeros">
+						<f:validateLongRange minimum="0" maximum="100" for="porcentaje" />
+						
+					</p:inputText>
+				</center>	
+				</p:column>
+				
+				<p:column headerText="# Cupos">
+				<center>
+					<p:inputText id="numEsperado"
+								value="#{descuentoCurso.numParticipantesEsperado}"
+								maxlength="3"
+								size="4"
+								dir="RTL" 
+								required="true"
+								requiredMessage="El número de cupos es un campo obligatorio"
+								validatorMessage="El número de cupos debe estar entre 0 y 999"
+								converter="javax.faces.Integer"
+								converterMessage="El número de cupos sólo debe contener numeros"
+								>
+						<f:validateLongRange minimum="0" maximum="999" for="numEsperado" />	
+
+					</p:inputText>
+				</center>							
+				</p:column>
+				
+				
+				<p:column headerText="# Disponible">
+					<center>
+						<p:inputText id="numDisponible"
+									value="#{descuentoCurso.numParticipantesDisponibles}"
+									maxlength="2" 
+									required="false"
+									requiredMessage="El número disponible es un campo obligatorio"
+									size="4"
+									readonly="true"
+									dir="RTL"
+									/>
+					</center>				
+				</p:column>
+				 
+			</p:dataTable>
+			
+			<br />
+			
+			<center>				
+				<p:commandButton
+					action="#{ManejadorDescuentosCursoECP.guardar}"
+					value="GUARDAR INFORMACIÓN CURSO"
+					icon="ui-icon-check"
+					update="growl"/>
+			</center>		 
+		
+<!-- 		</p:panel> -->
+	
+</h:form>
+	
+</ui:define>
+	
+</ui:composition>
+	
+	
+		

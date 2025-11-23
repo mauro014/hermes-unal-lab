@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Administrar archivos informe</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Código: " />
+					<h:outputText
+						value="#{manejadorAdministrarArchivosInforme.proyecto.id}"
+						style=' font-weight: bold' />
+					<h:outputText value="Nombre proyecto: " />
+					<h:outputText
+						value="#{manejadorAdministrarArchivosInforme.proyecto.nombre}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Código de informe: " />
+					<h:outputText
+						value="#{manejadorAdministrarArchivosInforme.proyectoInforme.id}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Fecha entrega: " />
+					<h:outputText
+						value="#{manejadorAdministrarArchivosInforme.proyectoInforme.fechaGeneracion}"
+						style=' font-weight: bold;' />
+				</p:panelGrid>
+			</p:panel>
+			<p:messages id="msgs" style="margin-top: 20px;" />
+			<p:dataTable var="archivoInforme" id="tablaArchivoadicionales"
+				emptyMessage="No ha adjuntado ningún archivo."
+				value="#{manejadorAdministrarArchivosInforme.archivosInforme}"
+				style="width: 680px; margin-top: 20px;">
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Id" />
+					</f:facet>
+					<h:outputText value=" #{archivoInforme.id}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Tipo" />
+					</f:facet>
+					<h:outputText value=" #{archivoInforme.tipoArchivo.nombre}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Nombre del archivo" />
+					</f:facet>
+					<t:div style="width: 300px;">
+						<h:outputText value=" #{archivoInforme.nombre}" />
+					</t:div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Responsable" />
+					</f:facet>
+					<h:outputText value=" #{archivoInforme.responsable.nombreCompleto}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+					</f:facet>
+					<h:outputText value=" #{archivoInforme.fecha}" />
+				</p:column>
+				<p:column style="width: 140px; text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Opciones" />
+					</f:facet>
+					<p:commandButton value="Descargar"
+						action="#{manejadorAdministrarArchivosInforme.descargarArchivo}"
+						ajax="false">
+						<f:setPropertyActionListener value="#{archivoInforme}"
+							target="#{manejadorAdministrarArchivosInforme.archivoInformeSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash"
+						action="#{manejadorAdministrarArchivosInforme.eliminarArchivoInforme}"
+						onclick="if(!confirm('¿Esta seguro de eliminar este archivo? Esta acción no puede ser revertida.'))return false"
+						update="@form">
+						<f:setPropertyActionListener value="#{archivoInforme}"
+							target="#{manejadorAdministrarArchivosInforme.archivoInformeSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:panelGrid id="subirArchivos" styleClass="estilo-panelgrid-sinbordes">
+			<p:row>
+				<p:column style="width:20%">
+				<h:outputText value="Tipo de Archivo:" />
+				</p:column>
+				<p:column style="width:80%">
+				<p:selectOneMenu id="tipoArchivo"
+					value="#{manejadorAdministrarArchivosInforme.idTipoArchivo}">
+					<f:selectItems
+						value="#{manejadorAdministrarArchivosInforme.tipoArchivoItem}" />
+					<p:ajax update="@this" />
+				</p:selectOneMenu>
+				</p:column>
+			</p:row>
+			<p:row>
+			<p:column>
+				<h:outputText value="Archivo: " />
+					</p:column>
+				<p:column>
+				<p:fileUpload
+					fileUploadListener="#{manejadorAdministrarArchivosInforme.guardarArchivo}"
+					mode="advanced" auto="true" update="tablaArchivoadicionales,msgs,subirArchivos" process="subirArchivos"
+					multiple="true" sizeLimit="3000000" label="Seleccionar archivo"
+					style="margin: auto; margin-top: 20px; width:100%;" />
+			</p:column>
+			</p:row>
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

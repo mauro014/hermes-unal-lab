@@ -1,0 +1,995 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+		
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitud creación nuevo laboratorio</t:div>
+			
+			<p:panelGrid style="width:100%" styleClass="estilo-panelgrid-sinbordes">
+				<p:row>
+					<p:column colspan="2">
+						<h:outputText
+							value="Por medio de este formulario puede enviar solicitud para la creación de un nuevo laboratorio. 
+							       	Luego de ingresar toda la información, hacer clic en 'Enviar Solicitud'" 
+							rendered="#{ManejadorSolicitudCreacionLaboratorio.esInvestigador}"/>
+					</p:column>
+				</p:row>	
+			</p:panelGrid>
+				
+			<p:spacer height="20" />
+			
+			<p:panel id="panelInfoSolicitud">
+
+				<t:div styleClass="contenido-titulo-general-ancizar-left" 
+					rendered="#{ManejadorSolicitudCreacionLaboratorio.revisionDLS}" >
+					Información ingresada por el usuario que realiza la solicitud
+				</t:div>
+				
+				<p:spacer height="20" rendered="#{ManejadorSolicitudCreacionLaboratorio.revisionDLS}"/>
+					
+				<center>	
+				
+				<p:panelGrid id="panelGridInfoSolicitud1" cellpadding="10" cellspacing="10" style="width:100%;">
+					<p:row>
+						<p:column style="width:20%;">
+							<h:outputText value="ID solicitud:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:80%;">
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.id}" styleClass="negrilla"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20%;">
+							<h:outputText value="Fecha solicitud:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:80%;">
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.fechaRegistro}" styleClass="negrilla"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Estado solicitud:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.estado.nombre}" styleClass="negrilla"/>
+						</p:column>
+					</p:row>
+<!-- 					<p:row rendered="#{ManejadorSolicitudCreacionLaboratorio.revisionDLS}"> -->
+<!-- 						<p:column style="width:25%;"> -->
+<!-- 							<h:outputText value="Descripción solicitud:" styleClass="negrilla"/> -->
+<!-- 						</p:column> -->
+<!-- 						<p:column style="width:75%;"> -->
+<!-- 							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.descripcion}"/> -->
+<!-- 						</p:column> -->
+<!-- 					</p:row> -->
+<!-- 					<p:row rendered="#{ManejadorSolicitudCreacionLaboratorio.revisionDLS}"> -->
+<!-- 						<p:column> -->
+<!-- 							<h:outputText value="Laboratorio sugerido:" styleClass="negrilla"/> -->
+<!-- 						</p:column> -->
+<!-- 						<p:column> -->
+<!-- 							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorioDestinoEquipo.id} - #{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorioDestinoEquipo.nombre}"/> -->
+<!-- 						</p:column> -->
+<!-- 					</p:row> -->
+					<p:row>
+						<p:separator />
+					</p:row>
+				</p:panelGrid>
+				
+				<p:separator />
+				
+				<p:panelGrid id="panelGridInfoSolicitud2" cellpadding="10" cellspacing="10" style="width:100%;">
+					<p:row>
+						<p:column style="width:20%;">
+							<h:outputText value="Solicitante:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:80%;">
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.persona.nombreCompleto}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Identificación:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.persona.id.tipoDocumento} 
+												- #{ManejadorSolicitudCreacionLaboratorio.solicitudCL.persona.id.documento}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Correo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.persona.email}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Cargo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.persona.tipoCargo.nombre}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Teléfono:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.persona.telefono}"/>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				</center>
+			</p:panel>
+			
+			<p:spacer height="20" />
+			
+			<p:panel id="panelEnviarSolicitudInfoLab" rendered="#{ManejadorSolicitudCreacionLaboratorio.esInvestigador}">
+				
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Información del laboratorio</t:div>
+				<br />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudInfoLabNoLab" columns="1" cellpadding="5" cellspacing="5" style="width:100%;">
+				
+					<p:row rendered="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio == null}">
+							<p:column style="width:10%;">
+								<p:commandButton id="botonRegistrarLab" icon="ui-icon-info" />
+								<p:tooltip for="botonRegistrarLab" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									   Haga clic en el siguiente botón para REGISTRAR la información del laboratorio 
+									   con la que cuente en el momento de realizar la solicitud: Nombre, Coordinador, Equipos, entre otros. 
+									   Si no cuenta con toda la información solicitada en los siguientes formularios, 
+									   deje los campos vacios y continue hasta el último formulario.
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:90%;">
+								<p:commandButton
+									action="#{ManejadorSolicitudCreacionLaboratorio.nuevoLab}" update="@form"
+									onclick="if(!confirm('Está seguro de registrar la información específica asociada al Laboratorio? Se le dirigirá a una nueva página, donde tendrá que ingresar información sobre la localización, el personal, las actividades de docencia, investigación y extensión e infraestructura.'))return false"
+									value="Registrar Laboratorio" icon="ui-icon-disk" />
+							</p:column>
+					</p:row>
+					
+					<p:row rendered="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio != null}">
+							<p:column>
+								<p:commandButton id="botonEditarLab" icon="ui-icon-info" />
+								<p:tooltip for="botonEditarLab" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									   Haga clic en el siguiente botón para EDITAR la información del laboratorio 
+									   con la que cuente en el momento de realizar la solicitud: Nombre, Coordinador, Equipos, entre otros. 
+									   Si no cuenta con toda la información solicitada en los siguientes formularios, 
+									   deje los campos vacios y continue hasta el último formulario.
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<p:commandButton
+									action="#{ManejadorSolicitudCreacionLaboratorio.editarLaboratorioCreacion}"
+									onclick="if(!confirm('Está seguro de editar el Laboratorio? Se le dirigirá a una página, donde tendrá que ingresar información sobre la localización, el personal, las actividades de docencia, investigación y extensión e infraestructura.'))return false"
+									value="Editar Laboratorio" icon="ui-icon-pencil" />
+							</p:column>
+					</p:row>
+				
+				</p:panelGrid>
+				
+				<p:panelGrid id="panelGridEnviarSolicitudInfoLabNoLab" columns="1" cellpadding="5" cellspacing="5" style="width:100%;"
+							 rendered="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio == null}">
+					<p:spacer height="20" />
+					<h:outputText style="color: #FF0000;" 
+								  value="No ha registrado la información específica del laboratorio, esto es obligatorio para enviar la solicitud de creación 
+								  y posterior activación en el Sistema de Información HERMES." />
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				
+				<p:panel rendered="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio != null}">
+				
+				<p:panelGrid id="panelGridEnviarSolicitudInfoLabSiLab" columns="1" cellpadding="5" cellspacing="5" style="width:100%;">
+						
+						<p:row>
+							<p:column style="width:25%;">
+								<h:outputText value="ID Laboratorio: " styleClass="negrilla"/>
+							</p:column>
+							<p:column style="width:75%;">
+								<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio.id}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Nombre Laboratorio: " styleClass="negrilla"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Sede: " styleClass="negrilla"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio.sede.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad: " styleClass="negrilla"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Departamento: " styleClass="negrilla"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.laboratorio.departamento.nombre}"/>
+							</p:column>
+						</p:row>	
+				</p:panelGrid>
+			</p:panel>
+				
+			</p:panel>
+			
+			<p:spacer height="20" />
+			
+			<p:panel id="panelEnviarSolicitud" rendered="#{ManejadorSolicitudCreacionLaboratorio.esInvestigador}">
+			
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Justificación de la solicitud</t:div>
+				<p:spacer height="20" />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudJustificacion" cellpadding="5" cellspacing="5" style="width:100%;">
+					
+					<!--Justificacion-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoJustificacion" icon="ui-icon-info" />
+							<p:tooltip for="infoJustificacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Debe incluir factibilidad y recursos (humano, económicos y de infraestructura) necesarios para poner en funcionamiento el laboratorio. 
+								 	Justificacion desde el area de conocimiento. Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Justificación(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoJustificacion" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.justificacion}" 
+								style="width:100%;"
+								requiredMessage="La justificación de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!--Pertinencia-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoPertinencia" icon="ui-icon-info" />
+							<p:tooltip for="infoPertinencia" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+									Debe incluir el factor diferencial con otros grupos de investigacion y/o laboratorios del mismo área de conocimiento. 
+									Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Pertinencia(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoPertinencia" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.pertinencia}" 
+								style="width:100%;"
+								requiredMessage="La Pertinencia de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!--Infraestructura-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoInfraestructura" icon="ui-icon-info" />
+							<p:tooltip for="infoInfraestructura" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Infraestructura:   sistema de las instalaciones, equipos y servicios necesarios para el funcionamiento de una organización. (ISO 9001:2015).
+								Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Infraestructura(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoInfraestructura" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.infraestructura}" 
+								style="width:100%;"
+								requiredMessage="La Infraestructura de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!--Sostenibilidad-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoSostenibilidad" icon="ui-icon-info" />
+							<p:tooltip for="infoSostenibilidad" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Debe indicarse el plan de desarrollo que asegura la correspondencia con las necesidades  presentes en cuanto a la sostenibilidad ambiental, 
+								económica y académica. Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Sostenibilidad(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoSostenibilidad" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.sostenibilidad}" 
+								style="width:100%;"
+								requiredMessage="La Sostenibilidad de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!--Investigacion-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoInvestigacion" icon="ui-icon-info" />
+							<p:tooltip for="infoInvestigacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Descripción e identificación de posibles actividades de investigación que se pueden llegar a ejecutar en el laboratorio. 
+								Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Descripción de actividades de Investigacion(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoInvestigacion" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.investigacionDescActividades}" 
+								style="width:100%;"
+								requiredMessage="La Descripción de Actividades de Investigacion de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!--Extension-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoExtension" icon="ui-icon-info" />
+							<p:tooltip for="infoExtension" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Descripción e identificación de posibles usuarios y/o usuarios potenciales para el servicio. Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Descripción de actividades de Extension(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoExtension" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.extensionDescActividades}" 
+								style="width:100%;"
+								requiredMessage="La Descripción de Actividades de Extension de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!--Docencia-->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoDocencia" icon="ui-icon-info" />
+							<p:tooltip for="infoDocencia" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Descripción de las actividades de docencía que se realizarían en el laboratorio. Máximo 3500 caracteres.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Descripción de actividades de Docencia(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoDocencia" rows="3" autoResize="false" maxlength="3500"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.docenciaDescActividades}" 
+								style="width:100%;"
+								requiredMessage="La Descripción de Actividades de Docencia de la solicitud es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Mobiliario requerido</t:div>
+				<p:spacer height="20" />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudMobiliario1" cellpadding="5" cellspacing="5" style="width:60%;">
+					<!--Mesas -->
+					<p:row>
+						<p:column style="width:30%;">
+							<h:outputText value="Mesas para PC:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<p:selectBooleanCheckbox id="booleanMesasPC" value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.mesasPC}">
+								<p:ajax update=":form:mesasPCCantidad" />
+							</p:selectBooleanCheckbox>
+						</p:column>
+						<p:column style="width:25%;">
+							<h:outputText value="Cantidad:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:35%;">
+							<p:inputText id="mesasPCCantidad" style="width:100%;"
+								validatorMessage="La cantidad de Mesas para PC debe ser numérico"
+								converterMessage="La cantidad de Mesas para PC debe ser numérico"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.mesasPCCantidad}"
+								disabled="#{!ManejadorSolicitudCreacionLaboratorio.solicitudCL.mesasPC}">
+								<f:validateDoubleRange minimum="0" maximum="100" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Mesas(movibles):" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<p:selectBooleanCheckbox id="booleanMesasMovibles" value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.mesasMovibles}">
+								<p:ajax update=":form:mesasMoviblesCantidad" />
+							</p:selectBooleanCheckbox>
+						</p:column>
+						<p:column>
+							<h:outputText value="Cantidad:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<p:inputText id="mesasMoviblesCantidad" style="width:100%;"
+								validatorMessage="La cantidad de Mesas(movibles) debe ser numérico"
+								converterMessage="La cantidad de Mesas(movibles) debe ser numérico"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.mesasMoviblesCantidad}"
+								disabled="#{!ManejadorSolicitudCreacionLaboratorio.solicitudCL.mesasMovibles}">
+								<f:validateDoubleRange minimum="0" maximum="100" />
+							</p:inputText>
+						</p:column>
+					</p:row>					
+				</p:panelGrid>
+				
+				<p:panelGrid id="panelGridEnviarSolicitudMobiliario2" cellpadding="5" cellspacing="5" style="width:60%;">
+					<!--Puestos Trabajo -->					
+					<p:row>
+						<p:column style="width:30%;">
+							<h:outputText value="Puesto de trabajo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<p:selectBooleanCheckbox id="booleanPuestosTrabajo" value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.puestosTrabajo}">
+							</p:selectBooleanCheckbox>
+						</p:column>
+						<p:column style="width:50%;">
+							<h:outputText value="Separado físicamente del área:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<p:selectBooleanCheckbox id="booleanSeparadoFisicamente" value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.puestosTrabajoDetalle}">
+							</p:selectBooleanCheckbox>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudMobiliario3" columns="1" cellpadding="5" cellspacing="5" style="width:100%;">
+					
+					<p:spacer height="20" />
+				
+					<p:dataTable id="tablaMuebles" var="objeto" value="#{ManejadorSolicitudCreacionLaboratorio.listaMueblesAlmacenamiento}">
+					
+						<f:facet name="header">
+							CANTIDAD DE MUEBLES PARA ALMACENAMIENTO
+						</f:facet>
+						
+						<p:column style="width:25%;">
+							<f:facet name="header">
+								<h:outputText value="" style="font-size:11px;"/>
+							</f:facet>
+							<h:outputText value="#{objeto.nombre}" styleClass="negrilla"/>
+<!-- 							<p:inputText value="#{objeto.nombre}" /> -->
+						</p:column>
+						
+						<p:column style="width:15%;">
+							<f:facet name="header">
+								<h:outputText value="Armario de seguridad" style="font-size:11px;"/>
+							</f:facet>
+							<center>
+								<p:inputText value="#{objeto.armarioSeguridad}" size="3" maxlength="3"/>
+							</center>	
+						</p:column>
+						
+						<p:column style="width:15%;">
+							<f:facet name="header">
+								<h:outputText value="Vitrina" style="font-size:11px;"/>
+							</f:facet>
+							<center>
+								<p:inputText value="#{objeto.vitrina}" size="3" maxlength="3"/>
+							</center>
+						</p:column>
+						
+						<p:column style="width:15%;">
+							<f:facet name="header">
+								<h:outputText value="Cajonera" style="font-size:11px;"/>
+							</f:facet>
+							<center>
+								<p:inputText value="#{objeto.cajonera}" size="3" maxlength="3"/>
+							</center>	
+						</p:column>
+						
+						<p:column style="width:15%;">
+							<f:facet name="header">
+								<h:outputText value="Estantería" style="font-size:11px;"/>
+							</f:facet>
+							<center>
+								<p:inputText value="#{objeto.estanteria}" size="3" maxlength="3"/>
+							</center>	
+						</p:column>
+						
+						<p:column style="width:15%;">
+							<f:facet name="header">
+								<h:outputText value="Otro" style="font-size:11px;"/>
+							</f:facet>
+							<center>
+								<p:inputText value="#{objeto.otro}" size="3" maxlength="3"/>
+							</center>	
+						</p:column>
+						
+					</p:dataTable>	
+				
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudMobiliario4" cellpadding="5" cellspacing="5" style="width:100%;">
+				
+					<p:row>
+						<p:column style="width:12%;">
+							<h:outputText value="Cabinas de extracción:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:3%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanCabExtra" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaExtraccion}" >
+									<p:ajax update=":form:mesasCabinaExtraCantidad,:form:textoCabinaExtraDetalle" />
+								</p:selectBooleanCheckbox>	
+							</center>
+						</p:column>
+						<p:column style="width:10%;">
+							<h:outputText value="Cantidad:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<p:inputText id="mesasCabinaExtraCantidad" size="3" maxlength="3"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaExtraccionCantidad}" 
+								disabled="#{!ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaExtraccion}"/>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Tipo de sustancias que se manejarán:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:45%;">
+							<p:inputTextarea id="textoCabinaExtraDetalle" rows="2" autoResize="false" maxlength="1000"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaExtraccionDetalle}" 
+								style="width:100%;"
+								disabled="#{!ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaExtraccion}"/>
+						</p:column>		
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:12%;">
+							<h:outputText value="Cabinas de seguridad biológica:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:3%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanCabBio" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaSeguridad}" >
+									<p:ajax update=":form:mesasCabBioCantidad,:form:textoCabBioDetalle" />
+								</p:selectBooleanCheckbox>	
+							</center>
+						</p:column>
+						<p:column style="width:10%;">
+							<h:outputText value="Cantidad:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<p:inputText id="mesasCabBioCantidad" size="3" maxlength="3"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaSeguridadCantidad}" 
+								disabled="#{!ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaSeguridad}"/>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Clase requerida:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:45%;">
+							<p:inputTextarea id="textoCabBioDetalle" rows="2" autoResize="false" maxlength="1000"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaSeguridadDetalle}"
+								style="width:100%;"
+								disabled="#{!ManejadorSolicitudCreacionLaboratorio.solicitudCL.cabinaSeguridad}"/>
+						</p:column>		
+					</p:row>
+				
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Otros requerimientos</t:div>
+				<p:spacer height="20" />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudMobiliario5" cellpadding="5" cellspacing="5" style="width:100%;">
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Pocetas:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanPocetas" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requierePocetas}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoPocetas" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requierePocetasDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Mesones de lavado:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanMesones" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereMesonesLavado}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoMesones" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereMesonesLavadoDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Mesas anti vibratorias:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanMesasAnti" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereMesasAntivibracion}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoMesasAnti" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereMesasAntivibracionDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Sifones:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanSifones" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereSifones}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoSifones" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereSifonesDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Conexión de gas:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanGas" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereConexionGas}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoGas" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereConexionGasDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Ducha:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanDucha" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereDucha}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoDucha" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereDuchaDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Lavaojos:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanLavaojos" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereLavaOjos}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoLavaojos" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereLavaOjosDetalle}" />
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column style="width:15%;">
+							<h:outputText value="Otros:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<center>
+								<p:selectBooleanCheckbox id="booleanOtros" 
+									value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereOtros}" />
+							</center>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="textoOtros" rows="2" autoResize="false" maxlength="1000" style="width:100%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.requiereOtrosDetalle}" />
+						</p:column>
+					</p:row>
+					
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Archivos adjuntos (Soportes de la solicitud)</t:div>
+				<p:spacer height="20" />
+				
+				<p:panelGrid id="panelGridEnviarSolicitudArchivos" columns="1" cellpadding="5" cellspacing="5" style="width:100%;">
+					
+					<center>
+					    <p:fileUpload label="Agregar" update="dtArchivos"
+								fileUploadListener="#{ManejadorSolicitudCreacionLaboratorio.subirArchivo}"
+								auto="true" mode="advanced" showButtons="false"
+								sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB"
+								invalidFileMessage="El archivo debe ser de formato PDF." 
+								style="width: 100%"/>
+							
+						<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+							value="#{ManejadorSolicitudCreacionLaboratorio.listaArchivosSolicitud}"
+							rows="6" paginator="true" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" pageLinks="5"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No existen archivos registrados."
+							style="width: 100%">
+							<p:column>
+								<f:facet name="header" style="width:25%">
+									<h:outputText value="Fecha" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+									styleClass="pequennio">
+									<f:convertDateTime pattern="yyyy-MM-dd" />
+								</h:outputText>
+							</p:column>
+							<p:column style="width:65%">
+								<f:facet name="header">
+									<h:outputText value="Nombre" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+									styleClass="pequennio" />
+							</p:column>
+							<p:column rendered="false">
+								<f:facet name="header">
+									<h:outputText value="Tipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{archivoLaboratorio.tipoArchivo.nombre}"
+									styleClass="pequennio" />
+							</p:column>
+							<p:column style="width:5%">
+								<f:facet name="header">
+									<h:outputText value="D" styleClass="pequennio" />
+								</f:facet>
+								<center>
+									<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+										action="#{ManejadorSolicitudCreacionLaboratorio.descargarArchivo}">
+										<f:setPropertyActionListener value="#{archivoLaboratorio}"
+											target="#{ManejadorSolicitudCreacionLaboratorio.archivoLaboratorioSolicitudSeleccionado}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+							<p:column
+								rendered="#{not ManejadorSolicitudCreacionLaboratorio.soloLectura}"
+								style="width:5%">
+								<f:facet name="header">
+									<h:outputText value="(-)" styleClass="pequennio" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+										action="#{ManejadorSolicitudCreacionLaboratorio.eliminarArchivo}"
+										onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+										<f:setPropertyActionListener value="#{archivoLaboratorio}"
+											target="#{ManejadorSolicitudCreacionLaboratorio.archivoLaboratorioSolicitudSeleccionado}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+					
+					</center>
+					
+				</p:panelGrid>
+				
+			</p:panel>
+				
+			<p:panel id="panelRevisarSolicitud" rendered="#{ManejadorSolicitudCreacionLaboratorio.revisionDLS}">
+				
+				<p:panelGrid id="panelGridRevisarSolicitud" cellpadding="5" cellspacing="5" style="width:100%;">
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoProceso" icon="ui-icon-info" />
+
+							<p:tooltip for="infoProceso" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Seleccione si desea desvincular o trasladar el equipo
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Proceso:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							
+						<p:selectOneRadio id="proceso" value="#{ManejadorSolicitudCreacionLaboratorio.procesoRevision}"
+										  required="true"
+										  requiredMessage="Debe seleccionar si desea desvincular o trasladar el equipo">
+				            <f:selectItem itemLabel="Desvincular equipo" itemValue="D" />
+				            <f:selectItem itemLabel="Trasladar a otro laboratorio" itemValue="T" />
+				            <p:ajax update=":form:panelRevisarSolicitud" />
+				        </p:selectOneRadio>	
+							
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{ManejadorSolicitudCreacionLaboratorio.procesoRevision == 'T'}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoLabDestino" icon="ui-icon-info" />
+
+							<p:tooltip for="infoLabDestino" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Si conoce el laboratorio al cual pertenece el equipo, por favor seleccionelo en la siguiente lista.
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Laboratorio al cual pertenece el equipo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							
+							<p:selectOneMenu id="labDestino" style="width:80%;"
+								value="#{ManejadorSolicitudCreacionLaboratorio.idLabDestino}"
+								panelStyle="width: 400px;"
+								filter="true" filterMatchMode="contains"
+								effect="fade">
+								<f:selectItem itemLabel="Ninguno / Ubicación desconocida" itemValue="0" />
+								<f:selectItems value="#{ManejadorSolicitudCreacionLaboratorio.listaLaboratorios}" />
+							</p:selectOneMenu>
+							
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{ManejadorSolicitudCreacionLaboratorio.procesoRevision == 'D'}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoObservacionesRevision" icon="ui-icon-info" />
+
+							<p:tooltip for="infoObservacionesRevision" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Ingrese las observaciones pertinentes o comentarios adicionales de la solicitud. En el caso desvincular un equipo y no trasladarlo, por favor especifique el motivo.
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Observaciones:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="observacionRev" rows="3" autoResize="false" maxlength="2000"
+								value="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.observaciones}" 
+								style="width:80%;"
+								required="true"
+								requiredMessage="Debe indicar el motivo por que no se translada el equipo a otro laboratorio"/>
+						</p:column>
+					</p:row>
+					
+				</p:panelGrid>
+			
+			</p:panel>
+			
+			<p:spacer height="20" />
+			
+			<p:panel id="panelGuardar" style="width:100%;">
+				
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+				
+				<p:spacer height="20" />
+				
+				<center>
+					<!--Boton guardar enviar solicitud -->
+					<p:panelGrid columns="3" rendered="#{ManejadorSolicitudCreacionLaboratorio.esInvestigador}">
+						
+						<p:commandButton value="Volver al Inicio"
+							icon="ui-icon-arrowreturnthick-1-w" ajax="false"
+							action="#{ManejadorSolicitudCreacionLaboratorio.volverInicio}"
+							onclick="if(!confirm('Está seguro de regresar a la página de inicio?'))return false" 
+							immediate="true"/>
+						
+						<p:commandButton value="Guardar Parcialmente" icon="ui-icon-disk"
+							ajax="false"
+							action="#{ManejadorSolicitudCreacionLaboratorio.guardarSolicitudParcialmente}"
+							onclick="if(!confirm('Está seguro de guardar parcialmente la solicitud?'))return false" 
+							rendered="#{ManejadorSolicitudCreacionLaboratorio.mostrarGuardarParcialmente}"/>
+							
+						<p:commandButton value="Enviar solicitud" icon="ui-icon-check"
+							ajax="false"
+							action="#{ManejadorSolicitudCreacionLaboratorio.enviarSolicitud}"
+							onclick="if(!confirm('Está seguro de enviar la solicitud para revisión? No podrá realizar cambios sobre la información diligenciada'))return false" 
+							rendered="#{ManejadorSolicitudCreacionLaboratorio.mostrarEnviar}"/>
+							
+					</p:panelGrid>
+					
+					<!--Boton guardar aprobar solicitud -->
+					<p:panelGrid columns="3" rendered="#{ManejadorSolicitudCreacionLaboratorio.revisionDLS}">
+						<p:commandButton value="Aprobar solicitud" icon="ui-icon-check"
+							ajax="false"
+							action="#{ManejadorSolicitudCreacionLaboratorio.aprobarSolicitud}"
+							onclick="if(!confirm('Está seguro de aprobar la solicitud?'))return false" 
+							rendered="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.estado.id == 7230}"/>
+							
+						<p:commandButton value="Rechazar solicitud" icon="ui-icon-close"
+							ajax="false"
+							action="#{ManejadorSolicitudCreacionLaboratorio.rechazarSolicitud}"
+							onclick="if(!confirm('Está seguro de rechazar la solicitud?'))return false" 
+							rendered="#{ManejadorSolicitudCreacionLaboratorio.solicitudCL.estado.id == 7230}"
+							immediate="true"/>
+
+						<p:commandButton value="Volver al Laboratorio"
+							icon="ui-icon-arrowreturnthick-1-w" ajax="false"
+							action="#{ManejadorSolicitudCreacionLaboratorio.volverLaboratorio}"
+							onclick="if(!confirm('Está seguro de regresar a la página del Laboratorio?'))return false" 
+							immediate="true"/>
+					</p:panelGrid>
+					
+				</center>
+				<p:spacer height="20" />
+				
+			</p:panel>
+				
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false" modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

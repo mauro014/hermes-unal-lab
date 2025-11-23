@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="title">CURSOS DE EDUCACIÓN CONTINUA Y PERMANENTE</ui:define>
+
+<ui:define name="content">
+
+<h:form>
+	
+		<t:div styleClass="contenido-titulo-general-myriad">Lista de Cursos Asistente</t:div>
+		
+		<p:growl id="growl" showDetail="true" sticky="true" />
+		
+		<p:dataTable var="preinscripcion" 
+					 emptyMessage="No tiene inscripciones asociadas"
+					 value="#{ManejadorCursosAsistenteECP.listaPreinscripcionesPersona}" 
+					 paginator="true" rows="15"
+					 paginatorPosition="bottom"
+					 sortBy="#{preinscripcion.estado}"
+					 sortMode="multiple"
+					 filteredValue="#{ManejadorCursosAsistenteECP.listaPreinscripcionesfiltradas}"
+					 >
+
+			<p:column headerText="Curso" sortBy="#{preinscripcion.curso.nombre}"
+					  filterBy="#{preinscripcion.curso.nombre}"
+					  filterMatchMode="contains">
+				<h:outputText value="#{preinscripcion.curso.nombre}" />
+			</p:column>
+			
+			<p:column headerText="Estado" sortBy="#{preinscripcion.estado}"
+			          filterBy="#{preinscripcion.estado}"
+			          filterOptions="#{ManejadorCursosAsistenteECP.listaEstadosPreinscripcionItem}"
+					  filterMatchMode="exact">
+				<center>	  
+					<h:outputText value="#{preinscripcion.estado}" />
+				</center>	
+			</p:column>
+
+			<p:column headerText="Form.">
+			<center>
+				<p:commandButton
+					action="#{ManejadorCursosAsistenteECP.formalizarCurso}" icon="ui-icon-extlink"
+					title="Formalizar"
+					update="@form"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+					
+					<f:setPropertyActionListener value="#{preinscripcion}"
+										target="#{ManejadorCursosAsistenteECP.preinscripcionSeleccionada}" />
+					
+				</p:commandButton>
+			</center>
+			</p:column>
+			
+			<p:column headerText="Cert.">
+			<center>
+				<p:commandButton
+					action="#{ManejadorCursosAsistenteECP.descargarCertificado}" icon="ui-icon-script"
+					title="Certificado"
+					update="@form"
+					>
+					
+					<f:setPropertyActionListener value="#{preinscripcion}"
+										target="#{ManejadorCursosAsistenteECP.preinscripcionSeleccionada}" />
+					
+				</p:commandButton>
+			</center>
+			</p:column>
+			
+			<p:column headerText="Eval.">
+			<center>
+				<p:commandButton
+					action="#{ManejadorCursosAsistenteECP.realizarEvaluacion}" icon="ui-icon-circle-check" ajax="false"
+					title="Realizar evaluación"
+					update="@form"
+					>
+					
+					<f:setPropertyActionListener value="#{preinscripcion}"
+										target="#{ManejadorCursosAsistenteECP.preinscripcionSeleccionada}" />
+					
+				</p:commandButton>
+			</center>
+			</p:column>
+
+		</p:dataTable>
+		
+		<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+	
+</h:form>
+	
+</ui:define>
+	
+</ui:composition>
+	
+	
+		

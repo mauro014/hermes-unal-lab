@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Buscador de Usuarios Hermes</t:div>
+			
+			<p:panel>				
+					<center>
+					<h:outputText value="Buscar Usuarios por:" />
+					<br/>
+					
+					<p:selectOneButton value="#{ManejadorBuscarUsuario.tipoBusqueda}">
+						<f:selectItem itemLabel="Documento" itemValue="busqDoc" />
+						<f:selectItem itemLabel="Correo" itemValue="busqEmail" />
+						<p:ajax event="change" update="@form"
+							listener="#{ManejadorBuscarUsuario.cambiarForm}" />
+					</p:selectOneButton>
+					</center>
+				
+			</p:panel>
+			
+			<br/>
+			<p:panel header="Búsqueda de Usuarios" align="center"
+				id="solicUsuario" style="margin-top: 10px;"
+				rendered="#{ManejadorBuscarUsuario.mostrarpanelDoc}">
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelSolu">
+					
+					<h:outputLabel value="Tipo de documento:" styleClass="negrilla"
+						for="usuarioTipoDocumento" />
+					<p:selectOneMenu
+						value="#{ManejadorBuscarUsuario.usuarioTipoDocumento}"
+						id="usuarioTipoDocumento">
+						 <f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+						<f:selectItems value="#{ManejadorBuscarUsuario.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					
+					<h:outputLabel value="Documento:" for="usuarioDocumento"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioDocumento" maxlength="256" size="50"
+						required="true" rendered="true"
+						requiredMessage="Indique el número de documento del usuario"
+						value="#{ManejadorBuscarUsuario.usuarioDocumento}">
+					</p:inputText>
+				
+					<h:outputText />
+					<p:commandButton value="Buscar usuario"
+					action="#{ManejadorBuscarUsuario.buscarPersona}" update="msgs"
+					icon="ui-icon-search" ajax="false" />
+				</p:panelGrid>
+				
+			</p:panel>
+			
+			<br/>
+			<p:panel header="Búsqueda de Usuarios" align="center"
+				id="solicUsuario" style="margin-top: 10px;"
+				rendered="#{ManejadorBuscarUsuario.mostrarpanelEmail}">
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelEmail">
+					<h:outputLabel value="Correo electrónico:" for="usuarioEmail"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioEmail" maxlength="256" size="50"
+						required="true" rendered="true"
+						requiredMessage="Indique el correo electrónico del usuario"
+						value="#{ManejadorBuscarUsuario.usuarioEmail}">
+					</p:inputText>
+
+					<h:outputText />
+					<p:commandButton value="Buscar usuario"
+					action="#{ManejadorBuscarUsuario.buscarPersona}" update="msgs"
+					icon="ui-icon-search" ajax="false" />
+				</p:panelGrid>				
+			</p:panel>
+			
+			<br />
+			<p:panel  header="Usuarios encontrados" rendered="#{ManejadorBuscarUsuario.mostrarUsuarios}">
+				
+				<center>
+   					 <p:dataTable id="usuariosTabla" var="usuario"
+   						 value="#{ManejadorBuscarUsuario.listaPersonas}"
+   						 emptyMessage="No se han encontrado usuarios" style="width:80%">
+
+   						 <p:column headerText="Nombre">
+   							 <h:outputText
+   								 value="#{usuario.nombre1} #{usuario.nombre2} #{usuario.apellido1} #{usuario.apellido2}" />
+   						 </p:column>
+   						 <p:column headerText="Documento">
+   							 <h:outputText
+   								 value="#{usuario.id.tipoDocumento} #{usuario.id.documento}" />
+   						 </p:column>
+   						 <p:column headerText="Editar" style="text-align: center;">
+							<p:commandButton
+								action="#{ManejadorBuscarUsuario.editarUsuario}"
+								icon="ui-icon-pencil" ajax="false">
+								<f:setPropertyActionListener value="#{usuario}"
+									target="#{ManejadorBuscarUsuario.usuarioSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+   					</p:dataTable>
+				</center>
+				
+			</p:panel>
+			
+			
+			<br/>
+			<p:panel header="Información de usuario" style="margin-top: 10px;"
+				id="formUsuario" rendered="#{ManejadorBuscarUsuario.mostrarForm}"
+				styleClass="contenido-nombre-grande">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelInfUsuario">
+					<h:outputText style="font-weight: bold;"
+						value="Nombre:"/>
+					<h:outputText style="font-weight: bold;"
+						value="#{ManejadorBuscarUsuario.persona.nombreCompleto}" />
+						
+					<h:outputText style="font-weight: bold;"
+						value="Documento:"/>
+					<h:outputText style="font-weight: bold;"
+						value="#{ManejadorBuscarUsuario.persona.id.tipoDocumento} #{ManejadorBuscarUsuario.persona.id.documento}" />
+
+					<h:outputText style="font-weight: bold;"
+						value="Correo electrónico:"/>
+					<h:outputText style="font-weight: bold;"
+						value="#{ManejadorBuscarUsuario.persona.email}" />
+						
+					<h:outputText style="font-weight: bold;"
+						value="Extensión:"/>
+					<p:inputText id="temp" maxlength="256" size="50" rendered="true"
+						value="#{ManejadorBuscarUsuario.ext}">
+					</p:inputText>
+				</p:panelGrid>
+				
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelInfUsuario2">
+						<h:outputText value="Dependencia principal:" />
+						<p:selectOneMenu filter="true" filterMatchMode="contains"
+							value="#{ManejadorBuscarUsuario.dependenciaUsuario}"
+							id="dependenciasUN_11" style="width:300px">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorBuscarUsuario.dependenciaItem}" />
+						</p:selectOneMenu>	
+						
+						<h:outputText value="Dependencia secundaria*:" />
+						<p:selectOneMenu filter="true" filterMatchMode="contains"
+							value="#{ManejadorBuscarUsuario.dependenciaUsuario2}"
+							id="dependenciasUN_21" style="width:300px">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorBuscarUsuario.dependenciaItem}" />
+						</p:selectOneMenu>					
+				
+					<h:outputText />
+					<h:outputText />
+					
+					<h:outputText />
+					<p:commandButton value="Actualizar usuario"
+					action="#{ManejadorBuscarUsuario.actualizarUsuario}" update="msgs"
+					icon="ui-icon-search" ajax="false" />
+				</p:panelGrid>				
+			</p:panel>
+			
+			
+			<br />
+			<p:messages id="msgs" />
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

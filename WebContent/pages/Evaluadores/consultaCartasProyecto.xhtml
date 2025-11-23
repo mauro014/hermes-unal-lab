@@ -1,0 +1,602 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Información seguimiento</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<t:div style="width: 130px;">
+						<h:outputText value="Código: " style="font-weight: bold" />
+					</t:div>
+					<t:div style="width: 490px;">
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.proyectoActual.id}" />
+					</t:div>
+					<h:outputText value="Nombre: " style="font-weight: bold" />
+					<h:outputText
+						value="#{manejadorConsultaCartasProyecto.proyectoActual.nombre}" />
+					<h:outputText value="Convocatoria: " style="font-weight: bold" />
+					<t:div style="background:#FFFFFF;">
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.proyectoActual.modalidad.padre.titulo}" />
+						<h:outputText
+							value="-#{manejadorConsultaCartasProyecto.proyectoActual.modalidad.padre.id}"
+							style="color: #FFFFFF;" />
+					</t:div>
+					<h:outputText value="Modalidad: " style="font-weight: bold" />
+					<t:div style="background:#FFFFFF;">
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.proyectoActual.modalidad.titulo}" />
+						<h:outputText
+							value="-#{manejadorConsultaCartasProyecto.proyectoActual.modalidad.id}"
+							style="color: #FFFFFF;" />
+					</t:div>
+					<h:outputText value=""
+						rendered="#{manejadorSeguimiento.proyectoActual.esJornadaDocente == 'Y'}" />
+					<h:outputText
+						value="Este proyecto está asociado a la jornada del investigador"
+						style="font-weight: bold; color:#FF8000;"
+						rendered="#{manejadorSeguimiento.proyectoActual.esJornadaDocente == 'Y'}" />
+					<h:outputText value=""
+						rendered="#{manejadorSeguimiento.proyectoActual.esPryContrapartida == 'Y'}" />
+					<h:outputText value="Este proyecto es de contrapartida"
+						style="font-weight: bold; color:#FF8000;"
+						rendered="#{manejadorSeguimiento.proyectoActual.esPryContrapartida == 'Y'}" />
+				</p:panelGrid>
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<t:div style="width: 130px;">
+						<h:outputText value="Código QUIPU:" style="font-weight: bold" />
+					</t:div>
+					<t:div style="width: 190px;">
+						<h:outputText
+							value=" #{manejadorConsultaCartasProyecto.proyectoActual.codigoQuipu}"
+							rendered="#{manejadorConsultaCartasProyecto.proyectoActual.codigoQuipu != null}" />
+						<h:outputText value="Sin código asignado"
+							rendered="#{manejadorConsultaCartasProyecto.proyectoActual.codigoQuipu == null or manejadorConsultaCartasProyecto.proyectoActual.codigoQuipu == ''}" />
+					</t:div>
+					<t:div style="width: 130px;">
+						<h:outputText value="Estado:" style="font-weight: bold" />
+					</t:div>
+					<t:div style="width: 150px;">
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.proyectoActual.estadoProyecto.nombre}" />
+					</t:div>
+					<h:outputText value="Fecha de inicio: " style="font-weight: bold" />
+					<h:outputText
+						value="#{manejadorConsultaCartasProyecto.proyectoActual.fechaTentativaInicio}" />
+					<h:outputText for="fechaFin" value="Estado acta de inicio: "
+						style="font-weight: bold" />
+					<h:outputText for="fechaFin" value="Aprobada"
+						rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.paisOrigen == 'AP'}" />
+					<h:outputText for="fechaFin" value="Generada"
+						rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.paisOrigen == 'G'}" />
+					<h:outputText for="fechaFin" value="No aprobada"
+						rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.paisOrigen == 'NP'}" />
+					<h:outputText for="fechaFin" value=""
+						rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.paisOrigen != 'NP'
+						and manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.paisOrigen != 'G'
+						and manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.paisOrigen != 'AP'}" />
+					<h:outputText value="Duración:"
+						style="font-weight: bold" />
+					<h:outputText
+						value="#{manejadorConsultaCartasProyecto.proyectoActual.duracion} meses" />
+					<h:outputText value="Fecha finalización inicial:"
+						style="font-weight: bold" />
+					<h:outputText
+						value="#{manejadorConsultaCartasProyecto.fechaFinalOriginalProyecto}" />
+					<h:outputText value="Duración actual: " style="font-weight: bold" />
+					<t:div style="width: 190px;">
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.proyectoActual.duracionAcumulada} meses + #{manejadorConsultaCartasProyecto.proyectoActual.duracionDiasAcumulada} días"
+							rendered="#{manejadorConsultaCartasProyecto.proyectoActual.duracionAcumulada!=null}" />
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.proyectoActual.duracion} meses"
+							rendered="#{manejadorConsultaCartasProyecto.proyectoActual.duracionAcumulada==null}" />
+					</t:div>
+					<h:outputText for="fechaFin" value="Fecha finalización actual: "
+						style="font-weight: bold" />
+					<h:outputText for="fechaFin"
+						value="#{manejadorConsultaCartasProyecto.fechaFinalProyecto}" />
+				</p:panelGrid>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<h:outputText value="Coordinador seguimiento: "
+						style="font-weight: bold" />
+					<t:div style="width: 400px;">
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.nombreCompleto}"
+							rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.id.documento != '41654907'}" />
+						<h:outputText value="Sin asignar"
+							rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto == null 
+								|| manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.id.documento == '41654907'}"
+							style="color: #F32020; font-weight: bold;" />
+						<h:outputText value=" Extensión: "
+							rendered="#{!empty manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.telefono}"
+							style="font-weight: bold" />
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.telefono}"
+							rendered="#{!empty manejadorConsultaCartasProyecto.coordinadorSeguimientoProyecto.telefono}" />
+					</t:div>
+					<h:outputText value="Coordinador evaluación: "
+						style="font-weight: bold" />
+					<t:div>
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoEvaluacionProyecto.nombreCompleto}" />
+						<h:outputText value="Sin asignar"
+							rendered="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoEvaluacionProyecto == null}"
+							style="color: #F32020; font-weight: bold;" />
+						<h:outputText value=" Extensión: "
+							rendered="#{!empty manejadorConsultaCartasProyecto.coordinadorSeguimientoEvaluacionProyecto.telefono}"
+							style="font-weight: bold" />
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.coordinadorSeguimientoEvaluacionProyecto.telefono}"
+							rendered="#{!empty manejadorConsultaCartasProyecto.coordinadorSeguimientoEvaluacionProyecto.telefono}" />
+					</t:div>
+					<h:outputText value="Coordinador requisitos: "
+						style="font-weight: bold" />
+					<t:div>
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.coordinadorRequisitos.nombreCompleto}" />
+						<h:outputText value="Sin asignar"
+							rendered="#{manejadorConsultaCartasProyecto.coordinadorRequisitos == null}"
+							style="color: #F32020; font-weight: bold;" />
+						<h:outputText value=" Extensión: "
+							rendered="#{!empty manejadorConsultaCartasProyecto.coordinadorRequisitos.telefono}"
+							style="font-weight: bold" />
+						<h:outputText
+							value="#{manejadorConsultaCartasProyecto.coordinadorRequisitos.telefono}"
+							rendered="#{!empty manejadorConsultaCartasProyecto.coordinadorRequisitos.telefono}" />
+					</t:div>
+				</p:panelGrid>
+			</p:panel>
+			<p:accordionPanel id="tabView" style="margin-top: 20px;"
+				activeIndex="-1">
+				<p:tab id="tab2" title="Prórrogas"
+					rendered="#{(manejadorConsultaCartasProyecto.proyectoActual.modalidad.id!=2 or manejadorConsultaCartasProyecto.proyectoActual.esJornadaDocente == 'Y') and (!manejadorConsultaCartasProyecto.proyectoActual.esContratoBiodiversidad and !manejadorConsultaCartasProyecto.proyectoActual.esPermisoMarco)}">
+					<br />
+					<br />
+					<p:dataTable id="tablaProrrogas" var="prorroga"
+						value="#{manejadorConsultaCartasProyecto.proyectoActual.listaProrrogas}"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" rows="10"
+						emptyMessage="No hay prorrogas asociadas"
+						styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<t:div styleClass="panel-interno-tabla">
+								<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+									<t:div style="width: 250px;">
+										<h:outputText value="Fecha Aprobación: " />
+									</t:div>
+									<p:inputText value="#{prorroga.fecha}" readonly="true" />
+									<t:div style="width: 250px;"
+										rendered="#{!empty prorroga.responsable.nombreCompleto}">
+										<h:outputText value="Responsable: " />
+									</t:div>
+									<t:div style="width: 250px;"
+										rendered="#{!empty prorroga.responsable.nombreCompleto}">
+										<h:outputText value="#{prorroga.responsable.nombreCompleto}" />
+									</t:div>
+									<t:div style="width: 250px;">
+										<h:outputText value="Meses de prórroga: " />
+									</t:div>
+
+									<t:div style="width: 250px;">
+										<p:inputText value="#{prorroga.duracion}"
+											readonly="#{!prorroga.nueva}" required="false">
+										</p:inputText>
+
+									</t:div>
+									<t:div style="width: 250px;"
+										rendered="#{prorroga.nueva or (!prorroga.nueva and prorroga.dias > 0)}">
+										<h:outputText
+											value="Días adicionales a los meses de prórroga: "
+											rendered="#{prorroga.nueva or (!prorroga.nueva and prorroga.dias > 0)}" />
+									</t:div>
+									<t:div style="width: 250px;"
+										rendered="#{prorroga.nueva or (!prorroga.nueva and prorroga.dias > 0)}">
+										<p:inputText value="#{prorroga.dias}"
+											readonly="#{!prorroga.nueva}" required="false"
+											rendered="#{prorroga.nueva or (!prorroga.nueva and prorroga.dias > 0)}">
+										</p:inputText>
+									</t:div>
+									<h:outputText value="Fecha finalización proyecto : "
+										rendered="#{!prorroga.nueva}" />
+									<p:inputText id="fechaFinalProrroga"
+										value="#{prorroga.nuevaFechaFinal}" readonly="true"
+										rendered="#{!prorroga.nueva}" />
+								</p:panelGrid>
+							</t:div>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab id="tab4" title="Cartas"
+					rendered="#{manejadorConsultaCartasProyecto.proyectoActual.modalidad.id!=2 or manejadorConsultaCartasProyecto.proyectoActual.esJornadaDocente == 'Y'}">
+					<p:dataTable var="proyectoxFacultadxCoordinador"
+						value="#{manejadorConsultaCartasProyecto.listaCartasProyecto}"
+						id="tablaIdProyectoa" emptyMessage="No existen cartas asociadas.">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{proyectoxFacultadxCoordinador.id}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo carta" />
+							</f:facet>
+							<h:outputText
+								value="#{proyectoxFacultadxCoordinador.carta.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Cons." />
+							</f:facet>
+							<h:outputText value="#{proyectoxFacultadxCoordinador.seq}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Responsable" />
+							</f:facet>
+							<h:outputText
+								value="#{proyectoxFacultadxCoordinador.responsable.nombreCompleto}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+							</f:facet>
+							<h:outputText
+								value="#{proyectoxFacultadxCoordinador.fechaGeneracion}"
+								styleClass="texto" />
+						</p:column>
+						<p:column style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText value="Archivo" />
+							</f:facet>
+
+							<p:commandButton
+								action="#{manejadorConsultaCartasProyecto.descargarCartaProyecto}"
+								value="Descargar" ajax="false">
+								<f:setPropertyActionListener
+									value="#{proyectoxFacultadxCoordinador}"
+									target="#{manejadorConsultaCartasProyecto.proyectoCartaSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab id="tabReporteLegalización"
+					title="#{(manejadorConsultaCartasProyecto.proyectoActual.modalidad.id==10  or
+								manejadorConsultaCartasProyecto.proyectoActual.modalidad.id==2)?'Reporte de legalización del proyecto':'Reporte de formalización del proyecto'}"
+					rendered="#{manejadorConsultaCartasProyecto.proyectoActual.fechaLegalizacion!=null}">
+					<p:panel style="width: 100%; text-align: center;">
+						<table style="margin: auto;">
+							<tr>
+								<td><h:commandLink
+										action="#{manejadorConsultaCartasProyecto.reporteLegalizacion}"
+										value="#{(manejadorConsultaCartasProyecto.proyectoActual.modalidad.id==10  or
+											manejadorConsultaCartasProyecto.proyectoActual.modalidad.id==2)?'Reporte de legalización':'Reporte de formalización'}" target="_blank"
+										style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+									</h:commandLink></td>
+							</tr>
+						</table>
+					</p:panel>
+				</p:tab>
+				<p:tab id="tabObservaciones" title="Observaciones de seguimiento">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="observacionesSeguimientoTabla" var="observacion"
+						value="#{manejadorConsultaCartasProyecto.observacionesSeguimiento}"
+						emptyMessage="Este proyecto no tiene observaciones de seguimiento asociadas"
+						cellpadding="10" paginator="true" paginatorAlwaysVisible="false"
+						rows="15"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Observaciones de seguimiento" />
+							</f:facet>
+							<b>Fecha: </b>
+							<h:outputText value="#{observacion.fecha}"
+								style="font-weight: lighter !important;">
+								<f:convertDateTime type="both" pattern="dd/MM/yyyy-HH:mm" />
+							</h:outputText>
+							<br />
+							<b>Tipo: </b>
+							<h:outputText value="Observación simple"
+								rendered="#{observacion.tipo == 'O'}"
+								style="font-weight: lighter !important;" />
+							<h:outputText
+								value="Observación con alerta a investigador principal"
+								rendered="#{observacion.tipo == 'M'}"
+								style="font-weight: lighter !important;" />
+							<br />
+							<b>Responsable: </b>
+							<h:outputText value="#{observacion.responsable.nombreCompleto}"
+								style="font-weight: lighter !important;" />
+							<br />							
+							<br />
+							<b>Observación:</b>
+							<br />
+							<h:outputText value="#{observacion.descripcion}"
+								style="font-weight: lighter !important;" escape="false" />
+							<br />
+							<br />
+							<b>Respuesta Investigador: </b> (Máximo 2000 caracteres)
+							<br />
+							<p:inputTextarea
+								value="#{observacion.respuesta}"
+								style="width:100%; height: 100px;" maxlength="2000"
+								disabled="#{observacion.respuesta != null and observacion.respuesta != ''}" />
+							<br />
+							<br />
+							<p:commandButton								
+								value="Guardar respuesta observación"
+								action="#{manejadorConsultaCartasProyecto.guardarRespuestaObservacionSeg}"
+								onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()"
+								disabled="#{observacion.respuesta != null and observacion.respuesta != ''}">
+								<f:setPropertyActionListener value="#{observacion}" target="#{manejadorConsultaCartasProyecto.observacionSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<p:tab id="tab6" title="Información financiera"
+					rendered="#{(manejadorConsultaCartasProyecto.proyectoActual.modalidad.id!=2
+								 or manejadorConsultaCartasProyecto.proyectoActual.esJornadaDocente == 'Y') and (!manejadorConsultaCartasProyecto.proyectoActual.esContratoBiodiversidad and !manejadorConsultaCartasProyecto.proyectoActual.esPermisoMarco)}">
+
+					<p:dataTable style="border:none; margin-top: 10px;"
+						var="detalleCambioRubro"
+						value="#{manejadorConsultaCartasProyecto.detallesCambiosRubro}"
+						emptyMessage="No tiene detalles de cambio de rubro">
+						<f:facet name="header">
+							<h:outputText
+								value="Cambios de rubros aprobados por el coordinador de seguimiento" />
+						</f:facet>
+						<p:column style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText value="Solicitud" />
+							</f:facet>
+								#{detalleCambioRubro.id}
+							</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fuente" />
+								<br />
+								<h:outputText value="financiaión" />
+							</f:facet>
+								#{detalleCambioRubro.gasto.financiacion.fuente.descripcion}
+							</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Rubro" />
+								<br />
+								<h:outputText value="origen" />
+							</f:facet>
+								#{detalleCambioRubro.gasto.tipoRubro.nombre}
+							</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Rubro" />
+								<br />
+								<h:outputText value="destino" />
+							</f:facet>
+								#{detalleCambioRubro.tipoRubro.nombre}
+							</p:column>
+						<p:column style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
+							<h:outputText value="#{detalleCambioRubro.valor}">
+								<f:convertNumber currencySymbol="$" groupingUsed="true"
+									maxFractionDigits="0" type="currency" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+					<p:panel header="Información financiera actualizada"
+						style="margin-top: 20px;">
+						<p:accordionPanel var="financiacion" id="acordeonFinanciacion"
+							value="#{manejadorConsultaCartasProyecto.informacionFinaciera}"
+							emptyMessage="No existe financiacion del proyecto.">
+							<p:tab title="#{financiacion[0].fuente.descripcion}">
+									<p:dataTable style="border:none; margin-top: 10px;" var="gasto"
+										value="#{financiacion[1]}" id="tabla_rubros"
+										emptyMessage="No tiene gastos asociados">
+										<p:column exportOnly="true" style="display:none;">
+											<f:facet name="header">
+												<h:outputText value="Fuente de financiación" />
+											</f:facet>
+											<h:outputText value="#{financiacion[0].fuente.descripcion}" />
+										</p:column>
+										<p:column exportable="false">
+											<f:facet name="header">
+												<h:outputText value="Rubro" />
+											</f:facet>
+											<div class="panel-interno-tabla">
+												<h:panelGrid columns="1"
+													styleClass="estilo-panelgrid-sinbordes">
+													<h:outputText value="#{gasto[0].tipoRubro.nombre}"
+														style="font-weight: bold" />
+													<h:outputText value="#{gasto[0].descripcion}" />
+												</h:panelGrid>
+											</div>
+										</p:column>
+										<p:column exportOnly="true" style="display:none;">
+											<f:facet name="header">
+												<h:outputText value="Rubro" />
+											</f:facet>
+											<h:outputText value="#{gasto[0].tipoRubro.nombre}" />
+										</p:column>
+										<p:column exportOnly="true" style="display:none;">
+											<f:facet name="header">
+												<h:outputText value="Descripción" />
+											</f:facet>
+											<h:outputText value="#{gasto[0].descripcion}" />
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Valor aprobado" style="font-size:10px;" />
+											</f:facet>
+											<h:outputText value="#{gasto[0].sumaCampos}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													maxFractionDigits="0" type="currency" />
+											</h:outputText>
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Créditos (+)" style="font-size:10px;" />
+											</f:facet>
+											<h:outputText value="#{gasto[1]}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													maxFractionDigits="0" type="currency" />
+											</h:outputText>
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Contracréditos (-)"
+													style="font-size:10px;" />
+											</f:facet>
+											<h:outputText value="#{gasto[2]}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													maxFractionDigits="0" type="currency" />
+											</h:outputText>
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Valor actual" />
+											</f:facet>
+											<h:outputText
+												value="#{(gasto[0].sumaCampos + gasto[1] - gasto[2])}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													maxFractionDigits="0" type="currency" />
+											</h:outputText>
+										</p:column>
+									</p:dataTable>
+									<h:commandLink value="Exportar" rendered="false">
+										<p:dataExporter type="xls" target="tabla_rubros"
+											fileName="tablaRubros" />
+									</h:commandLink>
+								</p:tab>
+						</p:accordionPanel>
+					</p:panel>
+				</p:tab>
+				<p:tab id="tab5" title="Archivos asociados">
+					<p:dataTable var="archivo" id="ArchivosProyecto"
+							style="width: 600px;"
+							value="#{manejadorConsultaCartasProyecto.listaArchivosProyecto}"
+							emptyMessage="No existen archivos asociados">
+							<f:facet name="header">Archivos</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Id" />
+								</f:facet>
+								<h:outputText value="#{archivo.id}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre del archivo" />
+								</f:facet>
+								<t:div style="width: 200px;">
+									<h:outputText value="#{archivo.nombre}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Responsable" />
+								</f:facet>
+								<h:outputText value="#{archivo.responsable.nombreCompleto}"
+									style="font-weight: bold;"
+									rendered="#{! empty archivo.responsable.nombreCompleto}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Fecha" />
+								</f:facet>
+								<h:outputText value="#{archivo.fecha}" />
+							</p:column>
+							<p:column style="width: 140px;text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="Opciones" />
+								</f:facet>
+								<p:commandButton ajax="false" value="Descargar"
+									action="#{manejadorConsultaCartasProyecto.descargarArchivoProyecto}">
+									<f:setPropertyActionListener value="#{archivo}"
+										target="#{manejadorConsultaCartasProyecto.archivoResumenSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+				</p:tab>
+				<p:tab id="tabCompromisos" title="Compromisos">
+						<p:dataTable var="compromisos"
+							value="#{manejadorConsultaCartasProyecto.listaCompromisos}"
+							emptyMessage="No se ha asociado ningún compromiso">
+							<f:facet name="header">
+								<h:outputText value="Compromisos adquiridos" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+								Cod.<br />
+								</f:facet>
+								<h:outputText value=" #{compromisos.id}" styleClass="normal" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+							Fecha<br />
+							vencim.
+						</f:facet>
+								<h:outputText value=" #{compromisos.fechaVencimiento}"
+									styleClass="normal" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Cumplido" />
+								</f:facet>
+								<h:outputText value="No"
+									rendered="#{compromisos.cumplido == 'N'}" />
+								<h:outputText value="Si"
+									rendered="#{compromisos.cumplido == 'S'}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+							Tipo<br />
+							informe
+						</f:facet>
+								<h:outputText value="#{compromisos.tipoInforme.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+							Número<br />
+							notific.
+						</f:facet>
+								<h:outputText value=" #{compromisos.numeroNotificaciones}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+							Última<br />
+							notificación
+						</f:facet>
+								<h:outputText value=" #{compromisos.fechaNotificacion}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+							Fecha vencimiento<br />
+							después de prórroga
+						</f:facet>
+								<h:outputText value=" #{compromisos.fechaVencProrroga}" />
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+			</p:accordionPanel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

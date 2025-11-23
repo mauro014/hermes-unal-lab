@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Gestionar convocatoria</t:div>
+			<p:messages id="msgs" />
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelBusquedaProyectosxConvocatoria">
+					<t:div style="width: 120px;">
+						<h:outputText value="Nombre convocatoria:" />
+					</t:div>
+					<t:div>
+						<p:inputText id="numCom" style="width:418px;"
+							value="#{manejadorAdministrarConvocatorias.nombreConvocatoriaBusqueda}" />
+						<p:commandButton
+							actionListener="#{manejadorAdministrarConvocatorias.consultarConvocatorias}"
+							value="Consultar" update="panelBusquedaProyectosxConvocatoria">
+						</p:commandButton>
+					</t:div>
+					<h:outputText value="Convocatoria:" />
+					<p:selectOneMenu style="width:520px;"
+						value="#{manejadorAdministrarConvocatorias.idConvocaPadre}"
+						id="somConvocatoriaPadre" panelStyle="width: 520px;">
+						<f:selectItems
+							value="#{manejadorAdministrarConvocatorias.convocatoriaPadreItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<div
+					style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+					<p:commandButton value="Cargar información convocatoria"
+						icon="ui-icon-search" update="@form" ajax="false"
+						actionListener="#{manejadorAdministrarConvocatorias.cargarArchivosConvocatoriaPadre}" />
+				</div>
+			</p:panel>
+			<p:panel
+				rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null}"
+				style="margin-top: 20px;">
+				<p:panelGrid columns="2" id="panelProyectosxConvocatoria"
+					styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Convocatoria:" />
+					<h:outputText
+						value="#{manejadorAdministrarConvocatorias.convocatoriaPadre.titulo}"
+						style="font-weight:bold;" />
+				</p:panelGrid>
+			</p:panel>
+			<p:dataTable id="archivosConvocatoria" var="archivo"
+				value="#{manejadorAdministrarConvocatorias.listaArchivos}"
+				style="margin-top: 20px;"
+				rendered="#{!empty manejadorAdministrarConvocatorias.listaArchivos}">
+				<f:facet name="header">
+					<h:outputText value="Archivos convocatoria" />
+				</f:facet>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<t:div style="width: 200px;">
+						<h:outputText value="#{archivo.nombre}" />
+					</t:div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Etiqueta" />
+					</f:facet>
+					<p:inputText value="#{archivo.etiqueta}" style="width: 200px;" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Términos" />
+					</f:facet>
+					<p:selectOneMenu id="console" value="#{archivo.terminos}"
+						style="width:60px" stylePanel="width:60px">
+						<f:selectItem itemLabel="No" itemValue="N" />
+						<f:selectItem itemLabel="Si" itemValue="Y" />
+						<f:selectItem itemLabel="Evaluador" itemValue="A" />
+					</p:selectOneMenu>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Visible Pág." />
+					</f:facet>
+					<p:selectOneMenu id="pagna" value="#{archivo.visiblePagina}"
+						style="width:60px" stylePanel="width:60px">
+						<f:selectItem itemLabel="No" itemValue="N" />
+						<f:selectItem itemLabel="Si" itemValue="S" />
+					</p:selectOneMenu>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Opciones" />
+					</f:facet>
+					<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+						title="Descargar" ajax="false"
+						action="#{manejadorAdministrarConvocatorias.consultarDocumentoProceso}">
+						<f:setPropertyActionListener value="#{archivo}"
+							target="#{manejadorAdministrarConvocatorias.archivoProcesoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-disk" title="Guardar etiqueta"
+						procesos="@parent" update="@form"
+						action="#{manejadorAdministrarConvocatorias.guardarDocumentoProceso}">
+						<f:setPropertyActionListener value="#{archivo}"
+							target="#{manejadorAdministrarConvocatorias.archivoProcesoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash" title="Eliminar archivo"
+						update="@form"
+						onclick="if(!confirm('¿Esta seguro de eliminar este archivo?, esta acción no puede deshacerse'))return false"
+						action="#{manejadorAdministrarConvocatorias.borrarDocumentoProceso}">
+						<f:setPropertyActionListener value="#{archivo}"
+							target="#{manejadorAdministrarConvocatorias.archivoProcesoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<t:div style="text-align:center;" rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null
+			 	and manejadorAdministrarConvocatorias.mostrarAgregarArchivo}">
+				<span>El sistema permite carga de archivos de hasta 3Mb. Por
+					favor verificar que cada archivo que desea subir cumpla con este
+					requisito </span>
+			</t:div>
+			<p:fileUpload style="margin-top: 20px;"
+				rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null
+			 	and manejadorAdministrarConvocatorias.mostrarAgregarArchivo}"
+				fileUploadListener="#{manejadorAdministrarConvocatorias.insertarArchivo}"
+				id="uploadArchivoProyecto" mode="advanced" auto="true"
+				update="@form" multiple="true" sizeLimit="4000000"
+				label="Subir archivo" />
+			<br />
+			<h:panelGroup layout="block" rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null
+			 	and manejadorAdministrarConvocatorias.mostrarAgregarArchivo}"
+				style="text-align:left; margin-top: 20px;">
+				<h:outputText value="Consideraciones:"
+					style="font-weight:bold; font-size:14px;" />
+
+				<ul style="margin-top: 10px; padding-left: 20px;">
+					<li>Los archivos categorizados como <strong>Términos</strong>
+						son visibles para el evaluador y para aceptar los términos de la
+						convocatoria.
+					</li>
+					<li>Los archivos catalogados como <strong>Evaluador</strong>
+						solo son visibles para el evaluador, pero por defecto el evaluador
+						también tiene visible los términos.
+					</li>
+					<li>Los archivos que se marquen como <strong>visibles
+							en la página</strong> serán visibles en la página, independientemente de
+						si son de Términos, Evaluador, Oficios de Elegibles u Oficios de
+						Aprobados.
+					</li>
+				</ul>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

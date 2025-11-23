@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Reportes propiedad intelectual</t:div>
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<p:dataTable
+				value="#{manejadorPropiedadIntelectualListas.indicadoresRapidos}"
+				id="tabla-indicadores" var="indicador"
+				emptyMessage="No hay datos disponibles" rows="2" paginator="false">
+				<p:column headerText="Datos rápidos">
+					<h:outputText value="#{indicador[0]}" />
+				</p:column>
+				<p:column headerText="Total" style="width:45%">
+					<h:outputText value="#{indicador[1]}" />
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:dataTable
+				value="#{manejadorPropiedadIntelectualListas.reportesHabilitados}"
+				id="tabla-reportes" var="reporte"
+				emptyMessage="No hay reportes disponibles" rows="15"
+				paginator="true" paginatorPosition="bottom">
+				<p:column style="width:15px;">
+					<p:commandButton id="infoReporte" icon="ui-icon-info" />
+					<p:tooltip for="infoReporte" styleClass="tooltip-mesage"
+						showDelay="999">
+						<t:div style="text-align: left; float:left;">
+							<t:div rendered="#{reporte[0] == '0'}">
+								Reporte general de registros de propiedad intelectual.
+							</t:div>
+							<t:div rendered="#{reporte[0] == '1'}">
+								Reporte de registros de propiedad intelectual <br />
+								de la categoría seleccionada.
+							</t:div>
+							<t:div rendered="#{reporte[0] == '2'}">
+								Reporte de registros de propiedad intelectual <br />
+								de la persona identificada con el tipo y documento ingresados.
+							</t:div>
+							<t:div rendered="#{reporte[0] == '3'}">
+								Reporte de registros de propiedad intelectual en <br />
+								cotitularidad con la entidad seleccionada.
+							</t:div>
+						</t:div>
+					</p:tooltip>
+				</p:column>
+				<p:column headerText="Datos detallados" style="width:55%">
+					<h:outputText value="#{reporte[1]}" />
+				</p:column>
+				<p:column headerText="Parámetro" style="width:40%;">
+					<p:selectOneMenu id="tipoPI" rendered="#{reporte[0] == '1'}"
+						value="#{manejadorPropiedadIntelectualListas.subTipoPropiedad}"
+						style="width: 100%;" panelStyle="width: 120px;">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorPropiedadIntelectualListas.subTiposPropiedadIntelectualTodos}" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="tipoDocumentoP"
+						rendered="#{reporte[0] == '2'}"
+						value="#{manejadorPropiedadIntelectualListas.tipoDocumento}"
+						style="width: 100%;" panelStyle="width: 120px;">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorPropiedadIntelectualListas.listaTiposDocItem}" />
+					</p:selectOneMenu>
+					<t:htmlTag value="br" rendered="#{reporte[0] == '2'}" />
+					<t:htmlTag value="br" rendered="#{reporte[0] == '2'}" />
+					<p:inputText style="width:97%;" id="documento"
+						rendered="#{reporte[0] == '2'}"
+						value="#{manejadorPropiedadIntelectualListas.documento}" />
+					<p:selectOneMenu id="entidadExterna"
+						rendered="#{reporte[0] == '3'}"
+						value="#{manejadorPropiedadIntelectualListas.entidadExterna}"
+						style="width:100%" panelStyle="width: 120px;" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorPropiedadIntelectualListas.entidadesItem}" />
+					</p:selectOneMenu>
+				</p:column>
+				<p:column headerText="" style="width:5%;">
+					<p:commandButton
+						action="#{manejadorPropiedadIntelectualListas.generarReporte}"
+						icon="ui-icon-circle-arrow-s" title="Generar" ajax="false">
+						<f:setPropertyActionListener value="#{reporte[0]}"
+							target="#{manejadorPropiedadIntelectualListas.reporteSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

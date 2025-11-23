@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Aval Institucional CESI</t:div>
+			<br />
+			<p:tabView>
+				<p:tab title="Avales">
+					<p:dataTable var="aval" style="width:100%; font-size: 13px; text-align: center;"
+						value="#{manejadorSolicitarAvalCESI.listaAval}"
+						emptyMessage="No tiene avales para revisión." 
+						paginator="true" rows="15" paginatorPosition="top"
+						filteredValue="#{manejadorSolicitarAvalCESI.filteredAvales}">
+						<f:facet name="header">Avales pendientes por revisión</f:facet>
+						<p:column 
+							style="width:13%;"
+							headerText="Código"
+							filterBy="#{aval.aviId}" 
+							filterStyle="width: 35px;">
+							<h:outputText value="#{aval.aviId}" style='font-weight: bold;'/>
+							<br />
+							<h:outputText value="Aval ético para proyecto" styleClass="azul" style="font-size: 12px;"/>
+						</p:column>
+		
+						<p:column style="width:12%;" headerText="Estado">
+							<h:outputText value="#{aval.nombreEstado}" />
+						</p:column>
+						
+						<p:column 
+							headerText="Tipo recurso"
+							filterBy="#{aval.tipoRecursoAvalEtico.nombre}"
+							>
+							<h:outputText value="#{aval.tipoRecursoAvalEtico != null ? aval.tipoRecursoAvalEtico.nombre : ''}" styleClass="azul" style="font-size: 12px;"/>
+						</p:column>
+		
+						<p:column headerText="Fecha Solicitud">
+							<h:outputText value="#{aval.fechaUltimoEnvio}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column style="text-align: center;"
+							headerText="Facultad">
+							<h:outputText value="#{aval.dependencia.facultad.nombre}" />
+						</p:column>
+						
+						<p:column style="text-align: center;"
+							headerText="Sede">
+							<h:outputText value="#{aval.dependencia.facultad.sede.nombre}" />
+						</p:column>
+		
+						<p:column style="text-align: center;" headerText="Solicitado por"
+							filterMatchMode="contains" filterBy="#{aval.nombreInvestigador}">
+							<h:outputText value="#{aval.nombreInvestigador}" />
+						</p:column>
+		
+						<p:column style="text-align: center;" headerText="Avalar">
+							<p:commandButton action="#{manejadorSolicitarAvalCESI.editarAval}"
+								icon="ui-icon-circle-triangle-e">
+								<f:param name="idAval" value="#{aval.aviId}" />
+							</p:commandButton>
+						</p:column>
+						<f:facet name="footer">Han sido encontrados #{manejadorSolicitarAvalCESI.tamañoLista} avales</f:facet>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Quejas">
+					<p:dataTable var="aval" style="width:100%; font-size: 13px; text-align: center;"
+						value="#{manejadorSolicitarAvalCESI.listaAvalQueja}"
+						emptyMessage="No tiene avales para revisión." 
+						paginator="true" rows="15" paginatorPosition="top"
+						filteredValue="#{manejadorSolicitarAvalCESI.filteredAvales}">
+						<f:facet name="header">Quejas pendientes por revisión</f:facet>
+						<p:column 
+							style="width:13%;"
+							headerText="Código"
+							filterBy="#{aval.aviId}" 
+							filterStyle="width: 35px;">
+							<h:outputText value="#{aval.aviId}" style='font-weight: bold;'/>
+							<br />
+							<h:outputText value="Aval ético para proyecto" styleClass="azul" style="font-size: 12px;"/>
+						</p:column>
+		
+						<p:column style="width:12%;" headerText="Estado">
+							<h:outputText value="#{aval.nombreEstado}" />
+						</p:column>
+						
+						<p:column 
+							headerText="Tipo recurso"
+							filterBy="#{aval.tipoRecursoAvalEtico.nombre}"
+							>
+							<h:outputText value="#{aval.tipoRecursoAvalEtico != null ? aval.tipoRecursoAvalEtico.nombre : ''}" styleClass="azul" style="font-size: 12px;"/>
+						</p:column>
+								
+						<p:column headerText="Fecha queja">
+							<h:outputText value="#{aval.fechaQueja}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column style="text-align: center;"
+							headerText="Facultad">
+							<h:outputText value="#{aval.dependencia.facultad.nombre}" />
+						</p:column>
+						
+						<p:column style="text-align: center;"
+							headerText="Sede">
+							<h:outputText value="#{aval.dependencia.facultad.sede.nombre}" />
+						</p:column>
+		
+						<p:column style="text-align: center;" headerText="Solicitado por"
+							filterMatchMode="contains" filterBy="#{aval.nombreInvestigador}">
+							<h:outputText value="#{aval.nombreInvestigador}" />
+						</p:column>
+		
+						<p:column style="text-align: center;" headerText="Revisar">
+							<p:commandButton action="#{manejadorSolicitarAvalCESI.editarAvalQueja}"
+								icon="ui-icon-comment">
+								<f:param name="idAval" value="#{aval.aviId}" />
+							</p:commandButton>
+						</p:column>
+						<f:facet name="footer">Han sido encontrados #{manejadorSolicitarAvalCESI.tamañoListaQueja} quejas</f:facet>
+					</p:dataTable>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+	</ui:define>
+</ui:composition>

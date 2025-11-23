@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+
+<s:fieldset legend="Convocatoria Artículos" styleClass="legend1"
+	style='font-size: 12px;'>
+
+	<h:panelGrid columns="1" align="center">
+		<h:panelGrid columns="2">
+			<h:outputText value="Solicitudes Registradas"
+				styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:selectOneMenu
+				value="#{ManejadorConsultarSolicitudArticulo.codigoArticulo}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorConsultarSolicitudArticulo.articuloItem}" />
+			</h:selectOneMenu>
+		</h:panelGrid>
+		<h:panelGrid columns="2" align="center">
+			<h:commandButton
+				action="#{ManejadorConsultarSolicitudArticulo.buscarSolicitudConvocatoriaArticulos}"
+				value="Buscar" image="/imgplantilla/pngtitulos/cen_buscar.png" />
+			<h:commandButton
+				action="#{ManejadorConsultarSolicitudArticulo.limpiar}"
+				actionListener="#{ManejadorConsultarSolicitudArticulo.cancelAction}"
+				value="Limpiar" image="/imgplantilla/pngtitulos/cen_limpiar.png"
+				immediate="true" />
+		</h:panelGrid>
+	</h:panelGrid>
+
+	<h:panelGrid columns="2" align="center"
+		rendered="#{ManejadorConsultarSolicitudArticulo.panelRenderError[0]}">
+		<h:outputText
+			value="#{ManejadorConsultarSolicitudArticulo.errores[0]}"
+			styleClass="labels_proyecto" />
+	</h:panelGrid>
+
+</s:fieldset>
+
+<s:fieldset legend="Adjuntar Archivos - Docentes Eventos"
+	rendered="#{ManejadorConsultarSolicitudArticulo.adjuntarCertRad}"
+	styleClass="legend1" style='font-size: 12px;'>
+
+	<h:panelGrid columns="3" border="0" cellspacing="5" align="center">
+
+		<h:outputText value="Tipo de Archivo:" />
+		<h:selectOneMenu
+			value="#{ManejadorConsultarSolicitudArticulo.tipoDocumentoSel}"
+			styleClass="mediano">
+			<f:selectItems
+				value="#{ManejadorConsultarSolicitudArticulo.listaArchivosObl}" />
+		</h:selectOneMenu>
+
+		<h:outputText />
+
+		<h:outputLabel for="myFileId" value="Archivo: " />
+
+		<t:inputFileUpload id="myFileId"
+			value="#{ManejadorConsultarSolicitudArticulo.archivoObligatorio}"
+			storage="file" />
+
+		<h:outputText />
+		<h:outputText />
+
+		<h:commandButton value="Adjuntar"
+			action="#{ManejadorConsultarSolicitudArticulo.insertarCertificadoRadicacion}"
+			image="/imgplantilla/pngtitulos/cen_adjuntararchivo.png" />
+
+		<h:outputText />
+
+		<h:message for="myFileId"
+			style="font-size: xx-small; color:#FF3939; font-weight: bold; text-align: left; font-style: normal"
+			showDetail="true" showSummary="true" />
+
+	</h:panelGrid>
+
+
+</s:fieldset>
+
+<s:fieldset legend="Archivos Adjuntos"
+	rendered="#{ManejadorConsultarSolicitudArticulo.imprimirReporteConvArticulo}"
+	styleClass="legend1" style='font-size: 12px;'>
+	<h:dataTable var="archivoResumen"
+		value="#{ManejadorConsultarSolicitudArticulo.listaArchivosConvocatoriaArticulos}"
+		cellpadding="1" cellspacing="8" align="center" border="1"
+		binding="#{ManejadorConsultarSolicitudArticulo.tablaArchivosConvocatoriaArticulos}">
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Nombre del archivo" />
+			</f:facet>
+			<h:outputText value=" #{archivoResumen.nombre}" styleClass="normal" />
+		</h:column>
+		
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Tipo de archivo" />
+			</f:facet>
+			<h:outputText value=" #{archivoResumen.tipoArchivo}" styleClass="normal" />
+		</h:column>
+
+		<h:column>
+
+			<f:facet name="header">
+				<h:outputText value="Descargar" />
+			</f:facet>
+
+			<h:commandButton value="Descargar"
+				action="#{ManejadorConsultarSolicitudArticulo.descargarArchivoArticulo}"
+				image="/imgplantilla/pngtitulos/cen_descargar.png" />
+
+		</h:column>
+	</h:dataTable>
+</s:fieldset>
+
+<s:fieldset legend="Descargar Reporte"
+	rendered="#{ManejadorConsultarSolicitudArticulo.imprimirReporteConvArticulo}"
+	styleClass="legend1" style='font-size: 12px;'>
+
+	<h:panelGrid columns="1" align="center">
+		<h:commandLink target="popupWindow"
+			action="#{ManejadorConsultarSolicitudArticulo.imprimirReporteConvocatoriaArticulo}">
+
+			<h:graphicImage
+				value="/imgplantilla/pngtitulos/_formulario_imprimir.png" />
+		</h:commandLink>
+	</h:panelGrid>
+</s:fieldset>
+
+</h:form>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,666 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">
+				 Seguimiento movilidad estudiantes</t:div>
+			<p:panel style="margin-top: 10px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Nombre docente: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.personaMovilidad}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Código solicitud: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.mep.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Nombre estudiante: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.estudianteMovilidad}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esResidencia}">
+						<p:column style="width: 150px;">
+							<h:outputText value="Evento: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.mep.evento}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.esResidencia}">
+						<p:column style="width: 150px;">
+							<h:outputText value="Institución de la pasantía:"
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.mep.universidad}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Fecha inicio: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.mep.fechainicial}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!empty manejadorCrearEditarSeguimientoMovilidadEstudiante.estadoRevisionSeguimiento}">
+						<p:column style="width: 150px;">
+							<h:outputText value="Estado de revisión: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.estadoRevisionSeguimiento == 'L'}"
+								value="Revisado facultad" />
+							<h:outputText
+								rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.estadoRevisionSeguimiento == 'D'}"
+								value="Devuelto para correciones" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+						<p:column style="width: 150px;">
+						</p:column>
+						<p:column>
+							<h:commandLink target="popupWindow"
+								value="Imprimir reporte de seguimiento"
+								action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.imprimirInforme}"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel style="margin-top: 10px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 450px;">
+						 	¿Esta movilidad fue realizada con recursos de la #{empty manejadorCrearEditarSeguimientoMovilidadEstudiante.mep.convocatoria.padre.titulo?'Sistema de Investigación de la Universidad Nacional':manejadorCrearEditarSeguimientoMovilidadEstudiante.mep.convocatoria.padre.titulo}?
+						</p:column>
+						<p:column>
+							<p:selectOneRadio id="movilidadRealizada"
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.realizacionMovilidad}"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+								<f:selectItem itemLabel="Si" itemValue="SI" />
+								<f:selectItem itemLabel="No" itemValue="NO" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			(*) Esta información es obligatoria.
+			<p:panel style="margin-top: 10px;"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.realizacionMovilidad == 'NO'}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 600px;">
+						 	Por favor diligencie las razones por las cuales no fue realizada la movilidad, 
+						 	y si lo considera necesario por favor anexe los documentos pertienentes (*):
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 600px;">
+							<p:inputTextarea id="razonesNoRealizacion"
+								style="width: 600px; height: 150px;"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}"
+								maxlength="3000"
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.razonesNoRealizacion}"
+								rows="1" cols="75" counter="counterRazonesNoRealizacion"
+								counterTemplate="{0} caracteres restantes">
+							</p:inputTextarea>
+							<br />
+							<h:outputText id="counterRazonesNoRealizacion" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<t:div
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.realizacionMovilidad == 'SI'}">
+				<p:panel header="Revisión facultad" style="margin-top: 20px;"
+					id="panelRevisionFacultad"
+					rendered="#{!empty manejadorCrearEditarSeguimientoMovilidadEstudiante.estadoRevisionSeguimiento}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="text-align:left; width: 100%;" cellpadding="10">
+						<p:row
+							rendered="#{!empty manejadorCrearEditarSeguimientoMovilidadEstudiante.comentariosInforme}">
+							<p:column style="width: 150px;">
+								<h:outputText value="Comentarios facultad: "
+									style="font-weight: bold" />
+							</p:column>
+							<p:column>
+							#{manejadorCrearEditarSeguimientoMovilidadEstudiante.comentariosInforme}
+						</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 150px;">
+								<h:outputText value="Estado de revisión: "
+									style="font-weight: bold" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.estadoRevisionSeguimiento == 'L'}"
+									value="Revisado facultad" />
+								<h:outputText
+									rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.estadoRevisionSeguimiento == 'D'}"
+									value="Devuelto para correciones" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 150px;">
+								<h:outputText value="Responsable: " style="font-weight: bold" />
+							</p:column>
+							<p:column>
+							#{manejadorCrearEditarSeguimientoMovilidadEstudiante.responsableRevision.nombreCompleto}
+						</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 150px;">
+								<h:outputText value="Fecha: " style="font-weight: bold" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.fechaRevision}">
+									<f:convertDateTime type="both" dateStyle="short" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel header="Indicadores de impacto (*)"
+					style="margin-top: 10px;">
+					<p:panelGrid columns="2" align="center"
+						styleClass="estilo-panelgrid-sinbordes" id="formCoproductos"
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+						<h:outputText value="Tipo coproducto:" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.cooproductoSel}"
+							style="width: 520px" panelStyle="width: 520px">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoCooproducto}" />
+						</p:selectOneMenu>
+						<h:outputText value="Descripción:" />
+						<p:inputTextarea id="uiDescripcionCoproducto"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.descripcionPro}"
+							rows="10" cols="70" autoResize="false"
+							counterTemplate="{0} caracteres restantes" maxlength="3000"
+							counter="counterDescripcionCoproducto" />
+						<h:outputText value="" />
+						<h:outputText id="counterDescripcionCoproducto" />
+						<h:outputText value="" />
+						<p:message id="errorDescCoproducto" for="uiDescripcionCoproducto" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar" id="uiCoproductoButton"
+							action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.adicionarCooproducto}"
+							icon="ui-icon-plusthick" update="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						<h:outputText value="" />
+						<p:message id="errorTablaCoproductos" for="uiCoproductoButton"
+							autoUpdate="true"></p:message>
+					</p:panelGrid>
+					<h:panelGrid id="grupoListaCoproductos" align="center" columns="1"
+						style="width: 100%;">
+						<p:dataTable id="tablaCoproductos" style="width: 100%;"
+							var="cooproducto"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.listaCooproductos}"
+							emptyMessage="No se encuentran coproductos registrados">
+
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Tipo Coproducto" />
+								</f:facet>
+								<h:outputText value="#{cooproducto[1]}" />
+							</p:column>
+
+							<p:column style="width:60%">
+								<f:facet name="header">
+									<h:outputText value="Descripción" />
+								</f:facet>
+								<h:outputText id="descripcionProduc" value="#{cooproducto[2]}" />
+							</p:column>
+
+							<p:column style="width:10%"
+								rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton
+									onclick="if(!confirm('Esta seguro de eliminar el coproducto?'))return false"
+									action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.eliminarCoproducto}"
+									icon="ui-icon-trash" title="Eliminar Coproducto"
+									update="tablaCoproductos" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()">
+									<f:setPropertyActionListener value="#{cooproducto}"
+										target="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.coproductoTable}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabProductosMovilidad" style="margin-top: 10px;"
+					header="Resultados de la movilidad (*)">
+					<p:panelGrid columns="2" align="center" id="formProductos"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+						<h:outputText value="Tipo producto:"
+							style="width: font-weight: bold;" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoProducto}"
+							style="width: 520px" panelStyle="width: 520px">
+							<p:ajax update="tipoSubproducto" process="uiDescripcionProducto"
+								listener="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.cargarSubproductos}" />
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoProductoSelect}" />
+						</p:selectOneMenu>
+						<h:outputText value="Tipo subproducto:"
+							style="width: font-weight: bold;" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoSubproducto}"
+							id="tipoSubproducto" style="width: 520px"
+							panelStyle="width: 520px">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoSubproductoSelect}" />
+						</p:selectOneMenu>
+						<h:outputText value="Descripción:"
+							style="width: font-weight: bold;" />
+						<p:inputTextarea id="uiDescripcionProducto"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.descripcionProducto}"
+							rows="10" cols="70" autoResize="false" maxlength="1000"
+							counter="counterDescripcionProducto"
+							counterTemplate="{0} caracteres restantes.">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterDescripcionProducto" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar" id="uiProducto"
+							update="tablaProductos, tabProductosMovilidad"
+							action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.adicionarProducto}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						<h:outputText value="" />
+					</p:panelGrid>
+					<h:panelGrid id="grupoListaProductos" align="center" columns="1">
+						<p:dataTable var="producto" id="tablaProductos"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.listaProductos}"
+							style="width:600px"
+							emptyMessage="No se encuentran productos registrados">
+
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Tipo producto" />
+								</f:facet>
+								<h:outputText value="#{producto.producto.nombre}" />
+							</p:column>
+
+							<p:column style="width:60%">
+								<f:facet name="header">
+									<h:outputText value="Descripción" />
+								</f:facet>
+								<h:outputText id="descripcionProduc"
+									value="#{producto.descripcion}" />
+							</p:column>
+
+							<p:column style="width:10%"
+								rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton title="Eliminar producto"
+									onclick="if(!confirm('Esta seguro de eliminar el producto?'))return false"
+									update="tablaProductos"
+									action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.eliminarProducto}"
+									icon="ui-icon-trash">
+									<f:setPropertyActionListener value="#{producto}"
+										target="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.productoTable}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel header="Calificación de la movilidad (*)"
+					style="margin-top: 10px;">
+					<h:panelGrid columns="1" align="center" cellpadding="5"
+						styleClass="estilo-panelgrid-sinbordes" cellspacing="5">
+						<h:panelGrid columns="2" style="margin-top: 10px;">
+
+							<h:outputText
+								value="Concepción y alcance del Programa de Intenacionalización del Conocimiento:" />
+							<p:selectOneMenu
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.calificacion1Sel}"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoCalificacion1}" />
+							</p:selectOneMenu>
+
+							<h:outputText
+								value="Procedimiento para realizar la solicitud de apoyo de movilidad:" />
+							<p:selectOneMenu
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.calificacion2Sel}"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoCalificacion2}" />
+							</p:selectOneMenu>
+
+							<h:outputText
+								value="Procedimiento para la transferencia del apoyo economico para la movilidad:" />
+							<p:selectOneMenu
+								value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.calificacion3Sel}"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+								<f:selectItems
+									value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoCalificacion3}" />
+
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel header="Sugerencias (*)" style="margin-top: 10px;">
+					<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText
+							value="En forma breve, realice sugerencias para mejorar Programa de Internacionalización del Conocimiento." />
+						<p:inputTextarea id="uiSugerencias"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.descripcionMovilidad}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}"
+							rows="3" cols="60" maxlength="1000"
+							counterTemplate="{0} caracteres restantes"
+							counter="counterSugerencias" />
+						<h:outputText value="" />
+						<h:outputText id="counterSugerencias" />
+						<h:outputText value="" />
+						<p:message id="errorSugerencias" for="uiSugerencias"
+							autoUpdate="true"></p:message>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabPonencia"
+					header="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tituloPonencia} (*)"
+					style="margin-top: 10px;">
+					<h:panelGrid columns="2" cellpadding="5"
+						styleClass="estilo-panelgrid-sinbordes" cellspacing="5">
+						<h:outputText
+							value="Título del trabajo presentado por el estudiante:"
+							rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esResidencia}" />
+						<p:inputTextarea id="uiTituloTrabajo" maxlength="1000"
+							style="width: 500px;"
+							rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esResidencia}"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tituloTrabajoPresentado}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}"
+							counterTemplate="{0} caracteres restantes"
+							counter="counterTituloTrabajo" resize="false">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterTituloTrabajo" />
+						<h:outputText value="Experiencia de la participación:" />
+						<p:inputTextarea id="uiExperiencias" maxlength="1000"
+							style="width: 500px;"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.experienciasTrabajo}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}"
+							counterTemplate="{0} caracteres restantes"
+							counter="counterExperiencias" resize="false">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterExperiencias" />
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabFinanciacion" header="Valor total apoyado en el programa de movilidad"
+					style="margin-top: 10px;">
+				Relacione los valores totales que se ejecutaron para el apoyo a la movilidad: <br />
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Valor total del apoyo de la movilidad:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.apoyoTotal}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}"
+							maxlength="9" />
+						<h:outputText
+							value="Valor del tiquete/pasaje en pesos colombianos:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.costoTiquetes}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}"
+							maxlength="9" />
+						<h:outputText
+							rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esResidencia}"
+							value="Valor de la inscripción al evento en pesos colombianos:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esResidencia}"
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.valorEvento}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}"
+							maxlength="9" />
+						<h:outputText
+							value="Valor de viáticos y gastos del viaje en pesos colombianos:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.valorTotalViativos}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}"
+							maxlength="9" />
+					</p:panelGrid>
+				</p:panel>
+				<p:panel id="tabFinancieroAdicional" header="Valor monto adicional ejecutado de movilidad"
+					style="margin-top: 10px;">
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Valor adicional del apoyo de la movilidad:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.apoyoTotalAdicional}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}"
+							maxlength="9" />
+					</p:panelGrid>
+				</p:panel>
+			</t:div>
+			<p:panel header="Documentos Obligatorios (*)"
+				style="margin-top: 10px;">
+				<h:panelGrid align="left" columns="2" style="margin-bottom: 10px;"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+					<h:outputText value="Lista de documentos" />
+					<p:selectOneMenu
+						value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoDocumentoSel}"
+						style="width:90%">
+						<f:selectItems
+							value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.tipoDocumentoSelItem}" />
+					</p:selectOneMenu>
+
+					<h:outputLabel for="myFileId11" value="Archivo: " />
+					<p:fileUpload id="myFileId11" sizeLimit="3145728"
+						value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.archivoObligatorio}"
+						mode="simple" />
+
+					<h:outputText />
+					<p:commandButton value="Adjuntar"
+						actionListener="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarArchivoObligatorio}"
+						update="@form" ajax="false" />
+
+					<h:outputText id="uiArchivos" value="" />
+					<p:message id="errorArchivos" for="uiArchivos" autoUpdate="true"></p:message>
+				</h:panelGrid>
+				<p:dataTable var="archivoResumen1"
+					value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.listaArchivosObligatoriosSel}"
+					emptyMessage="No se encuentran archivos registrados">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.nombre}" />
+					</p:column>
+
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+						<p:commandButton
+							action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.descargarArchivoObligatorio}"
+							icon="ui-icon-triangle-1-s" title="Descargar" ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.archivoTabla}" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column style="text-align: center;"
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton
+							onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+							action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.eliminarArchivoObligatorio}"
+							icon="ui-icon-trash" title="Eliminar archivo" update="@form">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.archivoTabla}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.realizacionMovilidad == 'SI'}">
+				<p:commandButton value="Atrás" id="botonAtras"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.atras}"
+					styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esConsultaFacultad}" />
+
+				<p:commandButton id="botonGuardarParcialmente" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarParcialmente}"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}"
+					value="Guardar parcialmente" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton id="botonGuardarEnviar" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarEnviar}"
+					value="Guardar y enviar" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}" />
+			</h:panelGrid>
+			<h:panelGrid columns="1" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}"
+				style="margin-top: 20px;">
+				<h:outputText value="Comentarios de revisión sede" />
+				<p:inputTextarea id="comentariosSede"
+					style="width: 500px; height: 100px;" maxlength="3000"
+					value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.comentariosInforme}"
+					rows="1" cols="75"
+					disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.revisadoSede}">
+				</p:inputTextarea>
+			</h:panelGrid>
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionSede}">
+				<p:commandButton value="Atrás" id="botonAtrasAprobacion"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.atrasAprobacion}"
+					styleClass="ui-priority-primary" ajax="false" />
+				<p:commandButton id="botonGuardarLectura" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarAprobacion}"
+					value="Aprobar" styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.revisadoSede}"
+					onclick="if(!confirm('¿Esta seguro de que desea dar aprobación al informe?'))return false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton id="botonGuardarDevolucion" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarDevolucionSede}"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.revisadoSede}"
+					onclick="if(!confirm('¿Esta seguro de que desea devolver para correcciones?'))return false"
+					value="Devolver para correcciones" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</h:panelGrid>
+			<h:panelGrid columns="1" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad}"
+				style="margin-top: 20px;">
+				<h:outputText value="Comentarios de revisión facultad" />
+				<p:inputTextarea id="comentariosFacultad"
+					style="width: 500px; height: 100px;" maxlength="3000"
+					value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.comentariosInforme}"
+					disabled="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.revisadoFacultad}"
+					rows="1" cols="75">
+				</p:inputTextarea>
+			</h:panelGrid>
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad}">
+				<p:commandButton value="Atrás" id="botonAtrasRevision"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.atrasRevision}"
+					styleClass="ui-priority-primary" />
+				<p:commandButton id="botonGuardarLectura" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarLectura}"
+					value="Aprobar" styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.revisadoFacultad}"
+					onclick="if(!confirm('¿Esta seguro de que desea dar lectura al informe?'))return false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton id="botonGuardarDevolucion" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarDevolucion}"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.revisadoFacultad}"
+					onclick="if(!confirm('¿Esta seguro de que desea devolver para correcciones?'))return false"
+					value="Devolver para correcciones" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</h:panelGrid>
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.realizacionMovilidad == 'NO'}">
+				<p:commandButton value="Atrás" id="botonAtras"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.atras}"
+					styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.esConsultaFacultad}" />
+				<p:commandButton id="botonGuardarParcialMenteNorealizado"
+					update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarNoRealizacionParcial}"
+					value="Guardar parcialmente" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}" />
+				<p:commandButton id="botonGuardarNoRealizado" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.guardarNoRealizacionEnviar}"
+					value="Guardar y enviar" styleClass="ui-priority-primary"
+					onclick="if(!confirm('¿Esta seguro de que desea enviar el informe definitivamente?'))return false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadEstudiante.consulta}" />
+			</h:panelGrid>
+			<t:div
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.esRevisionFacultad}"
+				style="width: 650px; text-align: center;">
+				<h:outputText style="color: #FF0000; font-weight: bold;"
+					value="#{manejadorCrearEditarSeguimientoMovilidadEstudiante.mensajeRevisionFacultad}" />
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

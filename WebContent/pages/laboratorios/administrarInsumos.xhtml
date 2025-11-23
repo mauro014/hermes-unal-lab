@@ -1,0 +1,338 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Administrar Insumos de Laboratorio</t:div>
+			
+			<p:panel header="#{manejadorAdministrarInsumos.tipoOperación == 'C' ? 'Nuevo' : 'Editar'} insumo" rendered="#{manejadorAdministrarInsumos.esDNL}">
+				<p:panelGrid columns="2">
+					
+					<h:outputText value="CAS" for="CASInsumo" styleClass="labels_proyecto"/>
+					<p:inputText maxlength="100" size="50" id="CASInsumo"
+						value="#{manejadorAdministrarInsumos.nuevoInsumo.cas}">
+					</p:inputText>
+					
+					<h:outputText value="Nombre insumo" for="nombreInsumo" styleClass="labels_proyecto"/>
+					<p:inputText maxlength="100" size="50" id="nombreInsumo"
+						value="#{manejadorAdministrarInsumos.nuevoInsumo.nombre}">
+					</p:inputText>
+
+					<h:outputText value="Unidad de medida" styleClass="labels_proyecto"/>
+					<p:selectOneMenu
+						value="#{manejadorAdministrarInsumos.nuevoInsumo.unidadDeMedida}"
+						converter="ConvertidorTipos">
+						<f:selectItems
+							value="#{manejadorAdministrarInsumos.selectItemUnidadDeMedida}" />
+					</p:selectOneMenu>
+
+					<h:outputText />
+					<p:message for="nombreInsumo" />
+							
+				</p:panelGrid>
+				
+				<p:spacer height="15" />
+				
+				<center>
+					<p:commandButton 
+						id="btnAgregarInsumo"
+						value="Agregar" 
+						icon="ui-icon-plusthick"
+						update="@form"
+						action="#{manejadorAdministrarInsumos.agregarInsumo}"
+						onclick="if(!confirm('Está seguro de agregar el insumo?'))return false" 
+						rendered="#{manejadorAdministrarInsumos.tipoOperación == 'C'}"
+					/>
+					
+					<p:commandButton 
+						id="btnEditarInsumo"
+						value="Guardar" 
+						icon="ui-icon-check"
+						update="@form"
+						action="#{manejadorAdministrarInsumos.guardarInsumoEditar}"
+						onclick="if(!confirm('Está seguro de editar el insumo?'))return false"
+						rendered="#{manejadorAdministrarInsumos.tipoOperación == 'E'}"
+					/>
+				</center>
+			</p:panel>
+			
+			<p:spacer height="15" />
+
+			<p:panel>
+				<center>
+					<p:panelGrid columns="1" style="width:100%">
+						<p:dataTable
+							id="dtInsumos" 
+							var="insumo"
+							value="#{manejadorAdministrarInsumos.listaInsumos}" rows="15"
+							paginator="true" paginatorPosition="bottom" pageLinks="5"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} insumos, Pagina: {currentPage}/{totalPages})"
+							filteredValue="#{manejadorAdministrarInsumos.listaInsumosFiltrados}"
+							emptyMessage="No existen registros."
+							style="width:100%">
+							<f:facet name="header">
+								<h:outputText value="Insumos registrados" />
+							</f:facet>
+							<p:column style="width:10%" sortBy="#{insumo.cas}"
+								filterBy="#{insumo.cas}" filterMatchMode="contains" filterStyle="width:70px;">
+								<f:facet name="header">
+									<h:outputText value="CAS"/>
+								</f:facet>
+								<h:outputText value="#{insumo.cas}" />
+							</p:column>
+							<p:column style="width:40%" sortBy="#{insumo.nombre}"
+								filterBy="#{insumo.nombre}" filterMatchMode="contains" filterStyle="width:200px;">
+								<f:facet name="header">
+									<h:outputText value="Nombre"/>
+								</f:facet>
+								<h:outputText value="#{insumo.nombre}"/>
+								<br />
+								<h:outputText value="#{insumo.unidadDeMedida.nombre}" styleClass="azul-pequennio" />
+							</p:column>
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Ficha de datos" />
+									<br />
+									<h:outputText value=" de seguridad" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-alert" ajax="true"
+										update="@form"
+										action="#{manejadorAdministrarInsumos.modificarArchivosFichaSeguridad}"
+										oncomplete="archivosFichaSeguridad.show()"
+										title="Registrar/Modificar ficha de seguridad">							
+										<f:setPropertyActionListener value="#{insumo}"
+											target="#{manejadorAdministrarInsumos.nuevoInsumo}" />
+									</p:commandButton>
+								</center>	
+							</p:column>
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Etiqueta" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-image" ajax="true"
+										update="@form"
+										action="#{manejadorAdministrarInsumos.modificarArchivosEtiqueta}"
+										oncomplete="archivosEtiqueta.show()"
+										title="Registrar/Modificar etiqueta">				
+										<f:setPropertyActionListener value="#{insumo}"
+											target="#{manejadorAdministrarInsumos.nuevoInsumo}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+							<p:column style="width:10%" sortBy="#{insumo.controlado}">
+								<f:facet name="header">
+									<h:outputText value="Controlado" />
+								</f:facet>
+								<center>
+									<p:selectBooleanCheckbox value="#{insumo.controlado}" disabled="true" />
+								</center>
+							</p:column>
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Editar" />
+								</f:facet>
+								<center>
+									<p:commandButton 
+										icon="ui-icon-pencil" 
+										update="@form"
+										action="#{manejadorAdministrarInsumos.editarInsumo}"
+										title="Editar Insumo">
+										<f:setPropertyActionListener value="#{insumo}"
+											target="#{manejadorAdministrarInsumos.nuevoInsumo}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</center>
+			</p:panel>
+			
+			<p:growl id="growlAgregarInsumo" for="btnAgregarInsumo" life="15000" severity="info"/>
+			<p:growl id="growlEditarInsumo" for="btnEditarInsumo" life="15000" severity="info"/>
+
+			<p:dialog header="Ficha de seguridad" id="archivosFichaSeguridad" 
+						widgetVar="archivosFichaSeguridad" modal="true"
+						resizable="false" width="600" dynamic="true">
+				
+				<p:ajax event="close" update="@form" listener="#{manejadorAdministrarInsumos.cerrarModalesArchivos}" />
+	
+				<p:panelGrid columns="1"
+							id="subirArchivoFichaSeguridad"
+							styleClass="estilo-panelgrid-sinbordes"
+							style="width:100%;">
+							
+					<h:outputText value="Archivos que corresponden a la ficha de seguridad del insumo #{manejadorAdministrarInsumos.nuevoInsumo.nombre}"/>
+							
+					<p:spacer height="20" />
+							
+					<p:fileUpload 
+						label="Agregar" 
+						update="dtArchivosFS"
+						fileUploadListener="#{manejadorAdministrarInsumos.subirArchivoFichaSeguridad}"
+						auto="true"
+						mode="advanced"
+						showButtons="false"
+						sizeLimit="3145728"
+						invalidSizeMessage="Tamaño máximo: 3 MB"
+						invalidFileMessage="El archivo debe ser de formato PDF." 
+						style="width: 100%"
+					/>
+					
+					<p:dataTable 
+						var="archivoFS" 
+						id="dtArchivosFS"
+						value="#{manejadorAdministrarInsumos.listaArchivosFichaSeguridadVista}"
+						rows="10"
+						paginator="true"
+						paginatorPosition="bottom"
+						paginatorAlwaysVisible="false"
+						pageLinks="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+						emptyMessage="No existen archivos"
+						style="width:100%;"
+					>
+						<p:column>
+							<f:facet name="header">
+								Nombre
+							</f:facet>
+							<h:outputText value="#{archivoFS.nombreArchivo}" styleClass="pequennio" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+							Tipo
+							</f:facet>
+							<h:outputText value="#{archivoFS.tipoArchivo.nombre}" styleClass="pequennio" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descargar" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s" 
+												 action="#{manejadorAdministrarInsumos.descargarArchivoFichaSeguridad}">
+									<f:setPropertyActionListener value="#{archivoFS}"
+										target="#{manejadorAdministrarInsumos.archivoFSSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton icon="ui-icon-trash" update="dtArchivosFS"
+									action="#{manejadorAdministrarInsumos.eliminarArchivoFichaSeguridad}"
+									onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoFS.nombreArchivo}? Esta acción NO se podrá deshacer.'))return false">
+									<f:setPropertyActionListener value="#{archivoFS}"
+										target="#{manejadorAdministrarInsumos.archivoFSSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+						
+					<font color="FF8000"><b>Restricción: Máximo 3 MB por archivo.</b></font>
+					
+				</p:panelGrid>
+			</p:dialog>
+				
+			<p:dialog header="Etiqueta" id="archivosEtiqueta" 
+					widgetVar="archivosEtiqueta" modal="true"
+					resizable="false" width="600" dynamic="true">
+					
+				<p:ajax event="close" update="@form" listener="#{manejadorAdministrarInsumos.cerrarModalesArchivos}" />
+				
+				<p:panelGrid columns="1"
+							id="subirArchivoEtiqueta"
+							styleClass="estilo-panelgrid-sinbordes"
+							style="width:100%;">
+							
+					<h:outputText value="Archivos que corresponden a la etiqueta del insumo #{manejadorAdministrarInsumos.nuevoInsumo.nombre}"/>
+							
+					<p:spacer height="20" />
+							
+					<p:fileUpload 
+						label="Agregar" 
+						update="dtArchivosEtiqueta"
+						fileUploadListener="#{manejadorAdministrarInsumos.subirArchivoEtiqueta}"
+						auto="true"
+						mode="advanced"
+						showButtons="false"
+						sizeLimit="3145728"
+						invalidSizeMessage="Tamaño máximo: 3 MB"
+						invalidFileMessage="El archivo debe ser de formato PDF." 
+						style="width: 100%"
+					/>
+					
+					<p:dataTable 
+						var="archivoEtiqueta" 
+						id="dtArchivosEtiqueta"
+						value="#{manejadorAdministrarInsumos.listaArchivosEtiquetaVista}"
+						rows="10"
+						paginator="true"
+						paginatorPosition="bottom"
+						paginatorAlwaysVisible="false"
+						pageLinks="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+						emptyMessage="No existen archivos"
+						style="width:100%;"
+					>
+						<p:column>
+							<f:facet name="header">
+								Nombre
+							</f:facet>
+							<h:outputText value="#{archivoEtiqueta.nombreArchivo}" styleClass="pequennio" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+							Tipo
+							</f:facet>
+							<h:outputText value="#{archivoEtiqueta.tipoArchivo.nombre}" styleClass="pequennio" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descargar" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s" 
+												 action="#{manejadorAdministrarInsumos.descargarArchivoEtiqueta}">
+									<f:setPropertyActionListener value="#{archivoEtiqueta}"
+										target="#{manejadorAdministrarInsumos.archivoEtiquetaSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton icon="ui-icon-trash" update="dtArchivosEtiqueta"
+									action="#{manejadorAdministrarInsumos.eliminarArchivoEtiqueta}"
+									onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoEtiqueta.nombreArchivo}? Esta acción NO se podrá deshacer.'))return false">
+									<f:setPropertyActionListener value="#{archivoEtiqueta}"
+										target="#{manejadorAdministrarInsumos.archivoEtiquetaSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+						
+					<font color="FF8000"><b>Restricción: Máximo 3 MB por archivo.</b></font>
+					
+				</p:panelGrid>
+					
+			</p:dialog>		
+				
+			</h:form>
+	</ui:define>
+</ui:composition>

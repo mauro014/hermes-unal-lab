@@ -1,0 +1,844 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Hoja de Vida - Docente<br />
+			</t:div>
+			En esta sección puede actualizar la información de su hoja de vida.<br />
+			Por favor tener en cuenta el <a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=112"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a> para registro o actualización de la hoja de vida.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="hojaVidaDocente">
+			<br />
+			<p:accordionPanel>
+				<p:tab title="Información Personal">
+
+					<h:outputText value="Imagen:" style="text-weight:bold;" />
+					<center>
+						<h:panelGrid columns="1" id="localCroppedImage">
+
+							<p:graphicImage id="localCroppedImage1"
+								value="/images/#{ManejadorHojaVidaDocente.cedula}.jpg"
+								rendered="#{ManejadorHojaVidaDocente.banderaDos}" />
+
+							<p:graphicImage id="localCroppedImage2"
+								value="#{ManejadorHojaVidaDocente.imagen}"
+								rendered="#{ManejadorHojaVidaDocente.bandera &amp;&amp; !ManejadorHojaVidaDocente.banderaDos}" />
+
+							<p:graphicImage id="localCroppedImage3"
+								value="/images/Docentes_BN_210px.png"
+								rendered="#{!ManejadorHojaVidaDocente.bandera &amp;&amp; !ManejadorHojaVidaDocente.banderaDos}" />
+
+
+							<p:messages id="msgs" />
+							<p:fileUpload label="Seleccionar imagen" update="@parent"
+								style="max-width:666px;" allowTypes="/(\.|\/)(jpg|jpeg)$/"
+								fileUploadListener="#{ManejadorHojaVidaDocente.subirArchivo}"
+								auto="true" mode="advanced" showButtons="false"
+								sizeLimit="3072000"
+								invalidFileMessage="El formado de archivo no es permitido. Sólo imágenes jpg."
+								invalidSizeMessage="El tamaño máximo por archivo es de 3MB." />
+
+
+
+							<p:panel rendered="#{ManejadorHojaVidaDocente.banderaUno}"
+								id="panelfoto" closable="true"
+								style="max-width:666px;overflow:scroll;">
+								<p:imageCropper value="#{ManejadorHojaVidaDocente.croppedImage}"
+									image="/images/#{ManejadorHojaVidaDocente.newImageNameActual}"
+									initialCoords="0,0,160,160" minSize="160,160" aspectRatio="1" />
+
+								<p:commandButton value="Fijar imagen"
+									action="#{ManejadorHojaVidaDocente.crop}"
+									update="localCroppedImage" />
+
+								<p:commandButton value="Cerrar"
+									action="#{ManejadorHojaVidaDocente.cerrar}"
+									update="localCroppedImage" />
+							</p:panel>
+						</h:panelGrid>
+					</center>
+					<br />
+
+					<p:panelGrid id="informacionRegistro"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="2" style='text-weight:bold;'>
+								<h:outputText value="Perfil:" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:inputTextarea value="#{ManejadorHojaVidaDocente.perfil}"
+									style="max-width:620px;" rows="10" cols="98"
+									counter="counterPerfil" maxlength="3950"
+									counterTemplate="{0} caracteres restantes.">
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row style="text-align:right;">
+							<p:column colspan="2">
+								<h:outputText id="counterPerfil" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:200px; text-weight:bold;">
+								<h:outputText value="Url de CvLAC (Colciencias):" />
+							</p:column>
+							<p:column style="width:400px;">
+								<p:inputText style="width:400px;"
+									value="#{ManejadorHojaVidaDocente.investigadorInterno.urlColciencias}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:200px; text-weight:bold;">
+								<h:outputText value="Extensión:" />
+							</p:column>
+							<p:column>
+								<p:inputText value="#{ManejadorHojaVidaDocente.extension}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="NOTA: Para la presentación de la hoja de vida se asume el número del conmutador de su respectiva sede." />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Desea agregar un teléfono" />
+								<br />
+								<h:outputText value="diferente para la extensión?" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{ManejadorHojaVidaDocente.otroTelefono}">
+									<p:ajax update="informacionRegistro"
+										process="informacionRegistro" />
+								</p:selectBooleanCheckbox>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorHojaVidaDocente.otroTelefono}"
+							style='text-weight:bold;'>
+							<p:column>
+								<h:outputText value="Número de teléfono:" />
+							</p:column>
+							<p:column>
+								<p:inputText
+									value="#{ManejadorHojaVidaDocente.investigadorInterno.telefonoHojaVida}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+
+				</p:tab>
+				<p:tab title="Áreas de interés">
+
+
+					<p:panelGrid id="areasInteres"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Área:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:inputText value="#{ManejadorHojaVidaDocente.areaInteres}"
+									id="areaInteres" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar área"
+									actionListener="#{ManejadorHojaVidaDocente.agregarAreaInteres}"
+									update="listaAreas">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+					</p:panelGrid>
+					<br />
+					<p:dataTable id="listaAreas" var="area"
+						value="#{ManejadorHojaVidaDocente.listaAreasInteresInvestigador}"
+						align="center" emptyMessage="No se han agregado áreas de interés">
+
+						<p:column headerText="Área">
+							<h:outputText value="#{area.nombreAreaInteres}" />
+						</p:column>
+						<p:column headerText="(X)" style="width:50px;">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarAreaInteres}"
+								icon="ui-icon-trash" title="Eliminar Área">
+								<f:setPropertyActionListener value="#{area}"
+									target="#{ManejadorHojaVidaDocente.areaInteresSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</p:tab>
+				<p:tab title="Áreas de investigación">
+
+
+					<p:panelGrid id="areasInvestigacion"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Área de investigación:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:selectOneMenu id="areaInv"
+									value="#{ManejadorHojaVidaDocente.areaInvestigacion}"
+									style="width:380px;" filter="true" filterMatchMode="contains">
+									<f:selectItems
+										value="#{ManejadorHojaVidaDocente.areasInvestigacionItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar área investigación"
+									actionListener="#{ManejadorHojaVidaDocente.agregarAreaInvestigacion}"
+									update="@form">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+					</p:panelGrid>
+					<br />
+					<p:dataTable id="listaAreasInvestigacion" var="areaInv"
+						value="#{ManejadorHojaVidaDocente.listaAreasInvestigacionInvestigador}"
+						align="center" emptyMessage="No se han agregado áreas de interés">
+
+						<p:column headerText="Área">
+							<h:outputText value="#{areaInv.nombreArea}" />
+						</p:column>
+						<p:column headerText="(X)" style="width:50px;">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarAreaInvestigacion}"
+								icon="ui-icon-trash" title="Eliminar Área">
+								<f:setPropertyActionListener value="#{areaInv}"
+									target="#{ManejadorHojaVidaDocente.areaInvestigacionSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</p:tab>
+				<p:tab title="Líneas de investigación">
+
+
+					<p:panelGrid id="lineasInvestigacion"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Líneas de investigación: " />
+							</p:column>
+							<p:column>
+
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorHojaVidaDocente.lineaInvestigacion}"
+									id="lineas-inv" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una línea de investigación"
+										itemValue="" />
+									<f:selectItems
+										value="#{ManejadorHojaVidaDocente.listaLineasInvestigacionItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar línea"
+									actionListener="#{ManejadorHojaVidaDocente.agregarLineaInvestigacion}"
+									update="@form" process="@form">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="listaLineas" var="linea"
+									value="#{ManejadorHojaVidaDocente.listaLineasInvestigacion}"
+									align="center"
+									emptyMessage="No se han agregado líneas de investigación">
+
+									<p:column headerText="Líneas de investigación">
+										<h:outputText value="#{linea.linea.nombre}" />
+									</p:column>
+									<p:column headerText="(X)" style="width:50px;">
+										<p:commandButton update="@form"
+											action="#{ManejadorHojaVidaDocente.eliminarLinea}"
+											icon="ui-icon-trash" title="Eliminar Línea">
+											<f:setPropertyActionListener value="#{linea}"
+												target="#{ManejadorHojaVidaDocente.lineaInvestigacionSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+				</p:tab>
+				<p:tab title="Publicaciones">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="publicaciones">
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<h:outputText style="font-weight:bold;"
+									value="Por favor ingrese una a una sus publicaciones, diligenciando primero los autores y luego el resto de la información de acuerdo a los ejemplos indicados." />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Seleccione el tipo de publicación:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:selectOneMenu id="tipo"
+									value="#{ManejadorHojaVidaDocente.tipo}" style="width:380px;">
+									<f:selectItems
+										value="#{ManejadorHojaVidaDocente.tipoPublicacionesItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="Ingrese el(los) autor(es) de la publicación separados por (;):" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="autoresPub" rows="6" cols="60"
+									value="#{ManejadorHojaVidaDocente.autores}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Ejemplo:" style="font-style:italic;" />
+								<br />
+								<br />
+								<h:outputText style="font-weight:bold;"
+									value="Arzola, N.; Gómez, A.; Rincón, S." />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="Ingrese la publicación y demás datos según el formato ejemplo:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="descripcionPub" rows="6" cols="60"
+									value="#{ManejadorHojaVidaDocente.publicacion}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Ejemplo:" style="font-style:italic;" />
+								<br />
+								<br />
+								<h:outputText style="font-weight:bold;"
+									value="The effects of moisture content, particle size and binding agent content on oil palm shell pellet quality parameters. En: Ingeniería e Investigación, ISSN: 0120-5609, Universidad Nacional de Colombia V.32, No.1, 2012, p.24 - 29." />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar publicación"
+									actionListener="#{ManejadorHojaVidaDocente.agregarPublicacion}"
+									update="listaPublicaciones">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+
+
+					</p:panelGrid>
+					<br />
+					<p:dataTable id="listaPublicaciones" var="publicacion"
+						value="#{ManejadorHojaVidaDocente.listaPublicaciones}"
+						align="center" emptyMessage="No se han agregado publicaciones">
+
+						<p:column headerText="Tipo">
+							<h:outputText value="#{publicacion.nombrePublicacion}" />
+						</p:column>
+						<p:column headerText="Publicación">
+							<h:outputText value="#{publicacion.autores}:" />
+							<br />
+							<h:outputText value="#{publicacion.publicacion}" />
+						</p:column>
+						<p:column headerText="(X)">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarPublicacion}"
+								icon="ui-icon-trash" title="Eliminar Publicación">
+								<f:setPropertyActionListener value="#{publicacion}"
+									target="#{ManejadorHojaVidaDocente.publicacionSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+
+				<p:tab title="Asignaturas">
+
+					<t:div id="seccionAsignaturas">
+						<p:panelGrid id="asignaturas"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width:220px;">
+									<h:outputText value="Seleccione sede:" />
+								</p:column>
+								<p:column style="width:380px;">
+									<p:selectOneMenu id="sedeAsignatura"
+										value="#{ManejadorHojaVidaDocente.sedeUniversidad}"
+										style="width:380px;">
+										<f:selectItems
+											value="#{ManejadorHojaVidaDocente.listaSedesItem}" />
+										<p:ajax update="seccionAsignaturas" process="asignaturas"
+											listener="#{ManejadorHojaVidaDocente.cargarDependencias}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Seleccione facultad:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="facultadAsignatura"
+										value="#{ManejadorHojaVidaDocente.dependenciaUniversidad}"
+										style="width:380px;">
+										<f:selectItems
+											value="#{ManejadorHojaVidaDocente.listaDependenciasItem}" />
+										<p:ajax update="seccionAsignaturas" process="asignaturas"
+											listener="#{ManejadorHojaVidaDocente.cargarDepartamentos}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Departamento:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="deptoAsignatura"
+										value="#{ManejadorHojaVidaDocente.deptoAsignatura}"
+										style="width:380px;">
+										<f:selectItems
+											value="#{ManejadorHojaVidaDocente.listaDepartamentosItem}" />
+										<p:ajax update="seccionAsignaturas" process="asignaturas"
+											listener="#{ManejadorHojaVidaDocente.cargarAsignaturas}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Seleccione asignatura:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="asignaturaDocente" filter="true"
+										filterMatchMode="contains"
+										value="#{ManejadorHojaVidaDocente.asignatura}"
+										style="width:380px;" panelStyle="width: 400px;">
+										<f:selectItems
+											value="#{ManejadorHojaVidaDocente.listaAsignaturasDepartamento}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" style="text-align:center;">
+									<p:commandButton value="Agregar asignatura"
+										actionListener="#{ManejadorHojaVidaDocente.agregarAsignatura}"
+										update="listaAsignaturas">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+
+
+
+						</p:panelGrid>
+					</t:div>
+					<p:dataTable id="listaAsignaturas" var="asignatura"
+						value="#{ManejadorHojaVidaDocente.listaAsignaturasInvestigador}"
+						align="center" emptyMessage="No se han agregado asignaturas">
+
+						<p:column headerText="Código">
+							<h:outputText value="#{asignatura.asignatura.codAsignatura}" />
+						</p:column>
+						<p:column headerText="Nombre asigntura">
+							<h:outputText value="#{asignatura.asignatura.nombreAsignatura}" />
+						</p:column>
+						<p:column headerText="Nivel">
+							<h:outputText value="#{asignatura.asignatura.nivel}" />
+						</p:column>
+						<p:column headerText="Departamento">
+							<h:outputText value="#{asignatura.asignatura.uab.nombre}" />
+						</p:column>
+						<p:column headerText="Eliminar">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarAsignatura}"
+								icon="ui-icon-trash" title="(X)">
+								<f:setPropertyActionListener value="#{asignatura}"
+									target="#{ManejadorHojaVidaDocente.asignaturaSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</p:tab>
+
+				<p:tab title="Proyectos">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="proyectos">
+						<p:row>
+							<p:column>
+								<h:outputText
+									rendered="#{ManejadorHojaVidaDocente.proyectoArray!=null}"
+									value="Por favor seleccione los proyectos que desea hacer visibles en su página web:"
+									style='font-weight:bold;' />
+								<h:outputText
+									rendered="#{ManejadorHojaVidaDocente.proyectoArray==null}"
+									value="Usted no posee proyectos aprobados, activos o finalizados en el Sistema Hermes."
+									style='font-weight:bold;' />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<p:selectManyCheckbox id="grid"
+						value="#{ManejadorHojaVidaDocente.proyectoSeleccionadosArray}"
+						layout="pageDirection">
+						<f:selectItems value="#{ManejadorHojaVidaDocente.proyectoArray}" />
+					</p:selectManyCheckbox>
+				</p:tab>
+
+				<p:tab title="Eventos">
+
+
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="eventos">
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Nombre del evento:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:inputText value="#{ManejadorHojaVidaDocente.nombreEvento}"
+									id="nombreEvento" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Título del trabajo presentado:" />
+							</p:column>
+							<p:column>
+								<p:inputText value="#{ManejadorHojaVidaDocente.tituloTrabajo}"
+									id="tituloTrabajo" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="País del evento:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:320px;" id="pais"
+									value="#{ManejadorHojaVidaDocente.paisSeleccionado}">
+									<f:selectItems value="#{ManejadorHojaVidaDocente.paisItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Ciudad del evento:" />
+							</p:column>
+							<p:column>
+								<p:inputText value="#{ManejadorHojaVidaDocente.ciudadEvento}"
+									id="ciudad" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha:" />
+							</p:column>
+							<p:column>
+								<p:calendar id="fechaEvento" navigator="true" locale="es"
+									value="#{ManejadorHojaVidaDocente.fechaEvento}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar evento"
+									actionListener="#{ManejadorHojaVidaDocente.agregarEvento}"
+									update="listaEventos">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+
+
+					</p:panelGrid>
+					<p:dataTable id="listaEventos" var="evento"
+						value="#{ManejadorHojaVidaDocente.listaEventos}" align="center"
+						emptyMessage="No se han agregado eventos">
+
+						<p:column headerText="País">
+							<h:outputText value="#{evento.pais.nombre}" />
+						</p:column>
+						<p:column headerText="Ciudad">
+							<h:outputText value="#{evento.ciudadPais}" />
+						</p:column>
+						<p:column headerText="Nombre evento">
+							<h:outputText value="#{evento.nombre}" />
+						</p:column>
+						<p:column headerText="Título trabajo">
+							<h:outputText value="#{evento.tituloTrabajo}" />
+						</p:column>
+						<p:column headerText="Fecha">
+							<h:outputText value="#{evento.fecha}" />
+						</p:column>
+						<p:column headerText="(X)">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarEvento}"
+								icon="ui-icon-trash" title="Eliminar Evento">
+								<f:setPropertyActionListener value="#{evento}"
+									target="#{ManejadorHojaVidaDocente.eventoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</p:tab>
+				<p:tab title="Obra/Exposiciones">
+
+
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="obras">
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Nombre de la obra:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:inputText value="#{ManejadorHojaVidaDocente.nombreObra}"
+									id="nombreObra" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha de terminación de la obra:" />
+							</p:column>
+							<p:column>
+								<p:calendar id="fechaObra" navigator="true" locale="es"
+									value="#{ManejadorHojaVidaDocente.fechaObra}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="¿La obra ha sido presentada en una exposición?" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{ManejadorHojaVidaDocente.exposicionObra}">
+									<p:ajax update="obras" process="obras" />
+								</p:selectBooleanCheckbox>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorHojaVidaDocente.exposicionObra}">
+							<p:column>
+								<h:outputText value="Institución organizadora:" />
+							</p:column>
+							<p:column>
+								<p:inputText
+									value="#{ManejadorHojaVidaDocente.institucionOrganizadora}"
+									id="organizador" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorHojaVidaDocente.exposicionObra}">
+							<p:column style="width:220px;">
+								<h:outputText value="Nombre de la exposición:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:inputText
+									value="#{ManejadorHojaVidaDocente.nombreExposicion}"
+									id="nombreExposicion" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorHojaVidaDocente.exposicionObra}">
+							<p:column>
+								<h:outputText value="País:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:320px;" id="paisExposicion"
+									value="#{ManejadorHojaVidaDocente.paisObraExpo}">
+									<f:selectItems value="#{ManejadorHojaVidaDocente.paisItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorHojaVidaDocente.exposicionObra}">
+							<p:column>
+								<h:outputText value="Ciudad:" />
+							</p:column>
+							<p:column>
+								<p:inputText value="#{ManejadorHojaVidaDocente.ciudadObraExpo}"
+									id="ciudadObra" size="50">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorHojaVidaDocente.exposicionObra}">
+							<p:column>
+								<h:outputText value="Fecha exposición:" />
+							</p:column>
+							<p:column>
+								<p:calendar id="fechaExposicion" navigator="true" locale="es"
+									value="#{ManejadorHojaVidaDocente.fechaExposicion}" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar obra/exposición"
+									actionListener="#{ManejadorHojaVidaDocente.agregarObraExposicion}"
+									update="listaObraExposicion">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+
+
+					</p:panelGrid>
+					<p:dataTable id="listaObraExposicion" var="obra"
+						value="#{ManejadorHojaVidaDocente.listaObraExposicion}"
+						align="center"
+						emptyMessage="No se han agregado obras/exposiciones"
+						panelStyle="width:700px;">
+
+						<p:column headerText="Nombre de la obra">
+							<h:outputText value="#{obra.nombreObra}" />
+						</p:column>
+						<p:column headerText="Fecha terminación">
+							<h:outputText value="#{obra.fechaObra}" />
+						</p:column>
+						<p:column headerText="Información de la exposición">
+							<t:div rendered="#{!obra.obra}">
+								<h:outputText value="Nombre: " style="font-weight:bold;" />
+								<h:outputText value="#{obra.nombreExposicion}" />
+								<br />
+								<h:outputText value="País: " style='font-weight:bold;' />
+								<h:outputText value="#{obra.pais.nombre}" />
+								<br />
+								<h:outputText value="Ciudad: " style='font-weight:bold;' />
+								<h:outputText value="#{obra.ciudadPais}" />
+								<br />
+								<h:outputText value="Organizador: " style='font-weight:bold;' />
+								<h:outputText value="#{obra.organizador}" />
+								<br />
+								<h:outputText value="Fecha: " style='font-weight:bold;' />
+								<h:outputText value="#{obra.fechaExposicion}" />
+							</t:div>
+							<t:div rendered="#{obra.obra}">
+								<h:outputText value="Sin exposición relacionada"
+									style='font-weight:bold; text-align:center;' />
+							</t:div>
+						</p:column>
+						<p:column headerText="(X)">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarObraExposicion}"
+								icon="ui-icon-trash" title="Eliminar">
+								<f:setPropertyActionListener value="#{obra}"
+									target="#{ManejadorHojaVidaDocente.obraExposicionSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</p:tab>
+				<p:tab title="Enlaces">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="enlaces">
+						<p:row>
+							<p:column style="width:220px;">
+								<h:outputText value="Nombre del sitio:" />
+							</p:column>
+							<p:column style="width:380px;">
+								<p:inputText value="#{ManejadorHojaVidaDocente.nombreSitio}"
+									id="nombreSitio" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Link al sitio:" />
+							</p:column>
+							<p:column>
+								<p:inputText value="#{ManejadorHojaVidaDocente.linkSitio}"
+									id="linkSitio" size="70">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Ingrese la dirección sin incluir 'http://' Ej: www.hermes.edu.co"
+									style="font-style:italic;" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar enlace"
+									actionListener="#{ManejadorHojaVidaDocente.agregarEnlace}"
+									update="listaEnlaces">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+
+
+					</p:panelGrid>
+					<p:dataTable id="listaEnlaces" var="enlace"
+						value="#{ManejadorHojaVidaDocente.listaEnlaces}" align="center"
+						emptyMessage="No se han agregado eventos">
+
+						<p:column headerText="Sitio">
+							<h:outputText value="#{enlace.nombre}" />
+						</p:column>
+						<p:column headerText="Enlace">
+							<h:outputText value="#{enlace.link}" />
+						</p:column>
+						<p:column headerText="(X)">
+							<p:commandButton update="@form"
+								action="#{ManejadorHojaVidaDocente.eliminarEnlace}"
+								icon="ui-icon-trash" title="Eliminar Enlace">
+								<f:setPropertyActionListener value="#{enlace}"
+									target="#{ManejadorHojaVidaDocente.enlaceSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:accordionPanel>
+			<br />
+			<p:messages id="messages" showDetail="true" closable="true" />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{ManejadorHojaVidaDocente.guardar}" update="messages" />
+				<p:commandButton value="Ver hoja de vida"
+					action="#{ManejadorHojaVidaDocente.verCV}" />
+				<p:commandButton ajax="false" value="Generar pdf"
+					action="#{ManejadorHojaVidaDocente.reporteHojaVida}" />
+
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

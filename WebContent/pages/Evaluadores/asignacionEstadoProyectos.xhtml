@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Cambiar estado de proyecto</t:div>
+			<p:panel style="text-align: center; margin: auto; margin-top: 20px; ">
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+					id="panelBusquedaProyectosEvaluadoresxCodigo"
+					style="text-align: center; margin: auto;">
+					<t:div style="width: 170px;">
+						<h:outputText value="Código del Proyecto:" />
+					</t:div>
+					<p:inputText id="numCom" style="width:80px;"
+						value="#{manejadorAsignacionEstadoProyectos.idProyecto}" />
+					<p:commandButton
+						action="#{manejadorAsignacionEstadoProyectos.buscarProyectosxId}"
+						value="Consultar" update="@form" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+				</p:panelGrid>
+				<h:outputText
+					value="#{manejadorAsignacionEstadoProyectos.mensajeAsignacionId}"
+					style="font-size: 13px; font-weight:bold; color: #FF0000;" />
+			</p:panel>
+			<p:dataTable var="proyectoCoordinador"
+				rendered="#{manejadorAsignacionEstadoProyectos.mostrarTabla}"
+				value="#{manejadorAsignacionEstadoProyectos.listaProyectosCoordinador}"
+				preserveDataModel="false" rows="15" id="tablaConvocatoria"
+				paginator="true"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				paginatorAlwaysVisible="false" paginatorPosition="bottom"
+				style="margin-top: 20px;">
+				<f:facet name="header">
+					<h:outputText value="Proyectos encontrados" />
+				</f:facet>
+				<p:column headerText="Id">
+					<h:outputText value="#{proyectoCoordinador.idProyecto}" />
+				</p:column>
+				<p:column headerText="Proyecto">
+					<h:outputText value="#{proyectoCoordinador.nombreProyecto}" />
+				</p:column>
+				<p:column headerText="Facultad">
+					<h:outputText value="#{proyectoCoordinador.nombreFacultad}" />
+				</p:column>
+				<p:column headerText="Estado">
+					<p:selectOneMenu value="#{proyectoCoordinador.estadoProyecto}"
+						rendered="#{proyectoCoordinador.esCoordinadorSeguimiento and 
+						(proyectoCoordinador.estadoProyectoAnterior == 'F' or 
+						proyectoCoordinador.estadoProyectoAnterior == 'A' or 
+						proyectoCoordinador.estadoProyectoAnterior == 'CN' or 
+						proyectoCoordinador.estadoProyectoAnterior == 'PF' or 
+						proyectoCoordinador.estadoProyectoAnterior == 'BF')}"
+						style="width: 100px">
+						<f:selectItems
+							value="#{manejadorAsignacionEstadoProyectos.estadosItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="#{proyectoCoordinador.nombreEstadoProyecto}"
+						rendered="#{proyectoCoordinador.esCoordinadorSeguimiento 
+							and 
+							!(proyectoCoordinador.estadoProyectoAnterior == 'F' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'A' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'CN' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'PF' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'BF')}"
+						style="color:#FF8000;" />
+				</p:column>
+				<p:column headerText="Justificación">
+					<p:inputTextarea value="#{proyectoCoordinador.justificacion}"
+						rendered="#{proyectoCoordinador.esCoordinadorSeguimiento 
+							and 
+							(proyectoCoordinador.estadoProyectoAnterior == 'F' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'A' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'CN' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'S' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'PF' or 
+							proyectoCoordinador.estadoProyectoAnterior == 'BF')}" />
+				</p:column>
+			</p:dataTable>
+			<t:div
+				style="margin: auto; margin-top: 20px; width: 100%; text-align:center; "
+				rendered="#{manejadorAsignacionEstadoProyectos.mostrarTabla}">
+				<h:outputText value="Los estados en color " />
+				<h:outputText value="naranja"
+					style="color:#FF8000; font-weight: bold;" />
+				<h:outputText value="  no pueden ser cambiados." />
+				<br />
+			</t:div>
+			<t:div id="mensajeGuardar"
+				style="width: 100%; font-weight: bold; color:#FF0000; margin-top: 20px; text-align:center;"
+				rendered="#{!empty manejadorAsignacionEstadoProyectos.mensajeGuardar}">
+				<h:outputText
+					value="#{manejadorAsignacionEstadoProyectos.mensajeGuardar}" />
+			</t:div>
+			<t:div
+				style="margin: auto; margin-top: 20px; width: 100%; text-align:center; ">
+				<h:outputText
+					value="Para mayor información el protoco de cambio de estados puede ser consultado haciendo click " />
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=3"
+					style="text-decoration: none; color: #16A8E2; font-weight: bold;"
+					target="_BLANK">aquí</a>.
+				<br />
+			</t:div>
+			<t:div style="width: 100%; text-align: center; margin-top: 20px;">
+				<p:commandButton
+					rendered="#{manejadorAsignacionEstadoProyectos.mostrarTabla 
+						and manejadorAsignacionEstadoProyectos.habilitarGuardar}"
+					action="#{manejadorAsignacionEstadoProyectos.guardarEstadosProyecto}"
+					value="Guardar estado proyectos" update="@form" ajax="false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<br />
+			</t:div>
+			<t:div id="confirmacion"
+				style="text-align:center; width: 100%; font-size: 13px; font-weight: bold;"
+				rendered="#{manejadorAsignacionEstadoProyectos.mostrarConfirmacion}">
+						Se han guardado las modificaciones
+				</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+								Por favor espere...
+				</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

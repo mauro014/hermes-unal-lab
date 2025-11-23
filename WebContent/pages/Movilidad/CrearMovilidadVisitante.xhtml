@@ -1,0 +1,835 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadVisitante" enctype="multipart/form-data">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Registro solicitud de movilidad</t:div>
+			<p:panel header="Movilidad visitante" id="identificacion">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<p:panelGrid columns="2">
+						<h:outputText value="Tipo:" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarMovilidadVisitante.mve.tipoSolicitante}">
+							<f:selectItem itemValue="0" itemLabel="Nacional" />
+							<f:selectItem itemValue="1" itemLabel="Extranjero" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Tipo de documento del docente UN:" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarMovilidadVisitante.tipoDocumento.id}">
+							<f:selectItems
+								value="#{manejadorCrearEditarMovilidadVisitante.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Número de documento del docente UN:" />
+						<p:inputText id="Numero"
+							value="#{manejadorCrearEditarMovilidadVisitante.documento}"
+							size="20">
+						</p:inputText>
+
+						<h:outputText value="" />
+						<p:commandButton icon="ui-icon-search"
+							update="formCrearMovilidadVisitante"
+							action="#{manejadorCrearEditarMovilidadVisitante.buscarPersona}"
+							value="Buscar" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</p:panelGrid>
+
+					<t:div id="panelNoExiste" style="text-align: center; width: 100%;"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.panelNoExiste}">
+						<h:outputText id="panelNoExiste2"
+							value="#{manejadorCrearEditarMovilidadVisitante.noExiste }"
+							styleClass="mensajeerror" />
+					</t:div>
+				</p:panelGrid>
+
+
+			</p:panel>
+			<br />
+			<p:panel header="Apoyo a investigador o artista visitante extranjero"
+				id="fsApoyoVisitantesExtranjeros"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.mostrarDatosEvento}">
+				<p:panelGrid columns="1" id="evento"
+					styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{manejadorCrearEditarMovilidadVisitante.mostrarDatosEvento}">
+					<p:panelGrid columns="2">
+						<t:div style="width: 247px;">
+							<h:outputText value="Solictante" />
+						</t:div>
+						<h:outputText
+							value="#{manejadorCrearEditarMovilidadVisitante.nombreLider}" />
+
+						<h:outputText
+							rendered="#{manejadorCrearEditarMovilidadVisitante.bErrorGrupo and manejadorCrearEditarMovilidadVisitante.validarGrupo}" />
+						<h:outputText
+							value="#{manejadorCrearEditarMovilidadVisitante.errores[0]}"
+							styleClass="mensajeerror"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.bErrorGrupo and manejadorCrearEditarMovilidadVisitante.validarGrupo}" />
+
+						<!-- 						<h:outputText value="Grupo de investigación" rendered="#{manejadorCrearEditarMovilidadVisitante.validarGrupo}" /> -->
+						<!-- 						<p:selectOneMenu id="somGrupo" style="width:330px;" -->
+						<!-- 							panelStyle="width:330px;" -->
+						<!-- 							value="#{manejadorCrearEditarMovilidadVisitante.idgrupo}" -->
+						<!-- 							rendered="#{manejadorCrearEditarMovilidadVisitante.validarGrupo}"> -->
+						<!-- 							<f:selectItems value="#{manejadorCrearEditarMovilidadVisitante.listaGrupos}" /> -->
+						<!-- 							<p:ajax update="formCrearMovilidadVisitante" process="@form" -->
+						<!-- 								listener="#{manejadorCrearEditarMovilidadVisitante.validarGrupo}" -->
+						<!-- 								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" /> -->
+						<!-- 						</p:selectOneMenu> -->
+
+						<h:outputText value="Grupo de investigación"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.validarGrupo}" />
+						<p:selectOneMenu id="somGrupo" style="width:330px;"
+							panelStyle="width:330px;"
+							value="#{manejadorCrearEditarMovilidadVisitante.idgrupo}"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.validarGrupo}">
+							<f:selectItems
+								value="#{manejadorCrearEditarMovilidadVisitante.listaGrupos}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="grdDatosEvento"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mostrarDatosEventoGrupo}">
+						<p:row
+							rendered="#{manejadorCrearEditarMovilidadVisitante.mostrarSubModalidades}">
+							<p:column>
+								<h:outputText id="uiSubmodalidadVisitante" value="Tipo"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiSubmodalidadVisitante}" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="smSbmodalidadVisitante"
+									style="width:300px;" panelStyle="width: 300px;"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.tipoVisitante}">
+									<f:selectItems
+										value="#{manejadorCrearEditarMovilidadVisitante.listaSubmodalidades}" />
+								</p:selectOneMenu>
+								<p:message for="uiSubmodalidadVisitante" display="icon" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText id="uiProgramaAcademico"
+									value="Nombre del programa académico asociado a la visita"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiProgramaAcademico}" />
+								<p:message for="uiProgramaAcademico" display="icon" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="smProgramaAcademico" style="width:300px;"
+									panelStyle="width: 300px;" filter="true"
+									filterMatchMode="contains"
+									value="#{manejadorCrearEditarMovilidadVisitante.idPrograma}">
+									<f:selectItems
+										value="#{manejadorCrearEditarMovilidadVisitante.programas}" />
+								</p:selectOneMenu>
+
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="Nombre del investigador o artista visitante" />
+							</p:column>
+							<p:column>
+								<p:inputText id="uiNombreDocente"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiNombreDocente}"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.nombreVisitante}"
+									maxlength="100" style="width: 350px;">
+								</p:inputText>
+								<p:message for="uiNombreDocente" display="icon" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="Correo electrónico del investigador o artista visitante" />
+							</p:column>
+							<p:column>
+								<p:inputText id="uiEmailDocente"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiEmailDocente}"
+									maxlength="60"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.emailVisitante}"
+									style="width: 350px;"
+									validatorMessage="Dirección de E-mail no válida">
+									<f:validateRegex
+										pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+								</p:inputText>
+								<p:message for="uiEmailDocente" display="icon" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Pasaporte" />
+							</p:column>
+							<p:column>
+								<p:inputText id="uiDocumentoVisitante"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiDocumentoVisitante}"
+									maxlength="20"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.documentoVisitante}"
+									style="width: 300px;">
+								</p:inputText>
+								<p:message for="uiDocumentoVisitante" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText id="uiPaisProcedencia"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiPaisProcedencia}"
+									value="Nacionalidad del visitante" />
+								<p:message for="uiPaisProcedencia" display="icon" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="smPaisProcedencia" filter="true"
+									filterMatchMode="contains"
+									value="#{manejadorCrearEditarMovilidadVisitante.paisProcedencia}">
+									<f:selectItem itemLabel="Seleccione Uno" itemValue="00" />
+									<f:selectItems
+										value="#{manejadorCrearEditarMovilidadVisitante.paises}" />
+									<p:ajax update="grdDatosEvento" process="grdDatosEvento"
+										listener="#{manejadorCrearEditarMovilidadVisitante.revisarPais}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorCrearEditarMovilidadVisitante.siColombia}">
+							<p:column>
+								<h:outputText id="uiDepProcedencia"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiDepProcedencia}"
+									value="Departamento del visitante" />
+								<p:message for="uiDepProcedencia" display="icon" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="smDepProcedencia" filter="true"
+									filterMatchMode="contains"
+									value="#{manejadorCrearEditarMovilidadVisitante.departamentoActual.id}">
+									<f:selectItems
+										value="#{manejadorCrearEditarMovilidadVisitante.departamentoItem}" />
+									<p:ajax update="smDepProcedencia,smCiuProcedencia"
+										process="smDepProcedencia,smCiuProcedencia"
+										listener="#{manejadorCrearEditarMovilidadVisitante.cambiarDepartamento}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorCrearEditarMovilidadVisitante.siColombia}">
+							<p:column>
+								<h:outputText id="uiCiuProcedencia"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiCiuProcedencia}"
+									value="Ciudad del visitante" />
+								<p:message for="uiDepProcedencia" display="icon" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="smCiuProcedencia" filter="true"
+									filterMatchMode="contains"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.ciudad}">
+									<f:selectItems
+										value="#{manejadorCrearEditarMovilidadVisitante.ciudadItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:commandButton id="infoInst" icon="ui-icon-info" />
+								<p:tooltip for="infoInst" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Si la institución que va asociar no aparece en la lista,<br />
+								       	por favor comunicarse con el Sistema de Información HERMES - Componente de Investigación<br />
+								       	(ext. 11111 o hermes@unal.edu.co). 
+									</t:div>
+								</p:tooltip>
+								<h:outputText
+									value="Institución a la que pertenece el investigador o artista visitante" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="uiInstitucion" style="width:350px;"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiInstitucion}"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.universidad}"
+									panelStyle="width: 350px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorCrearEditarMovilidadVisitante.listaInstitucionesItem}" />
+								</p:selectOneMenu>
+								<p:message for="uiInstitucion" display="icon" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText rendered="true" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Por favor registrar únicamente país-ciudad (origen) y país-ciudad (destino)"
+									rendered="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorCrearEditarMovilidadVisitante.mve.convocatoria.id eq 897 or manejadorCrearEditarMovilidadVisitante.idConvocatoria eq 897}">
+							<p:column>
+								<h:outputText value="Tipo de Movilidad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="uiTipoMov" style="width:350px;"
+									panelStyle="width: 350px;"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadTipo}">
+									<f:selectItem itemValue="P" itemLabel="Presencial" />
+									<f:selectItem itemValue="V" itemLabel="Virtual" />
+									<p:ajax
+										listener="#{manejadorCrearEditarMovilidadVisitante.definirInicio4049}"
+										update="@form" process="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorCrearEditarMovilidadVisitante.mve.convocatoria.id eq 1178 or manejadorCrearEditarMovilidadVisitante.idConvocatoria eq 1178}">
+							<p:column>
+								<h:outputText value="Tipo de Movilidad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="uiTipoMov" style="width:350px;"
+									panelStyle="width: 350px;"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadTipo}">
+									<f:selectItem itemValue="P" itemLabel="Presencial" />
+									<f:selectItem itemValue="V" itemLabel="Virtual" />
+									<p:ajax
+										listener="#{manejadorCrearEditarMovilidadVisitante.definirInicioConvNal2022_2024}"
+										update="@form" process="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Ruta del viaje" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea forceId="true" id="uiRuta"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiRuta}"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.plan}"
+									rows="2" maxlength="2000" style="width: 350px;">
+								</p:inputTextarea>
+								<p:message for="uiRuta" display="icon" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{not empty manejadorCrearEditarMovilidadVisitante.convActual.infoAdicionalFormulario}">
+							<p:column
+								style="vertical-align: top; padding-top:10px; width:250px;">
+								<h:outputText value="Información adicional:"
+									style="font-weight:bold;" />
+							</p:column>
+
+							<p:column>
+								<h:panelGroup layout="block"
+									style="border:1px solid #7b1e3a; 
+                             background:#fdecef; 
+                             color:#4a0f1f; 
+                             border-radius:8px; 
+                             padding:10px;">
+									<h:outputText
+										value="#{manejadorCrearEditarMovilidadVisitante.convActual.infoAdicionalFormulario}"
+										style="white-space:pre-line; font-weight:500;" escape="true" />
+								</h:panelGroup>
+							</p:column>
+						</p:row>
+
+
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha de inicio del viaje" />
+							</p:column>
+							<p:column>
+								<p:calendar id="uiFechainicio"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiFechainicio}"
+									locale="es" readonlyInput="true" pattern="dd/MM/yyyy"
+									navigator="true"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.fechainicial}"
+									mindate="#{manejadorCrearEditarMovilidadVisitante.fechaMinimaInicio}">
+									<p:ajax event="dateSelect"
+										listener="#{manejadorCrearEditarMovilidadVisitante.validarFecha}"
+										update="fsApoyoVisitantesExtranjeros"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+										process="fsApoyoVisitantesExtranjeros" />
+								</p:calendar>
+								<p:message for="uiFechainicio" display="icon" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha de finalización del viaje"
+									rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos}" />
+							</p:column>
+							<p:column>
+								<p:calendar id="uiFechafin"
+									binding="#{manejadorCrearEditarMovilidadVisitante.uiFechafin}"
+									locale="es"
+									mindate="#{manejadorCrearEditarMovilidadVisitante.mve.fechainicial}"
+									readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+									value="#{manejadorCrearEditarMovilidadVisitante.mve.fechafinal}"
+									rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos}">
+									<p:ajax event="dateSelect"
+										listener="#{manejadorCrearEditarMovilidadVisitante.validarFechaLlegada}"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+										update="formCrearMovilidadVisitante" />
+								</p:calendar>
+								<p:message for="uiFechafin" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+			<ui:fragment
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos2}">
+				<br />
+			</ui:fragment>
+			<p:panel header="Actividades"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos2}">
+
+				<p:panelGrid columns="1" style="width: 650px;"
+					id="grupoInsercionActividades"
+					styleClass="estilo-panelgrid-sinbordes">
+
+					<p:panelGrid columns="2">
+						<h:outputText
+							rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorActividades}" />
+						<h:outputText
+							value="#{manejadorCrearEditarMovilidadVisitante.errores[8]}"
+							styleClass="mensajeerror"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorActividades}" />
+
+						<t:div style="width: 247px;">
+							<h:outputText value="Tipo de actividad" />
+						</t:div>
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarMovilidadVisitante.actividadSel}"
+							style="width:330px;" panelStyle="width: 330px;">
+							<f:selectItems
+								value="#{manejadorCrearEditarMovilidadVisitante.actividadSelItem}" />
+						</p:selectOneMenu>
+						<h:outputText
+							rendered="#{manejadorCrearEditarMovilidadVisitante.temp.BErrorDescripcion}" />
+
+						<h:outputText
+							value="#{manejadorCrearEditarMovilidadVisitante.temp.errorDescripcion}"
+							styleClass="mensajeerror"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.temp.BErrorDescripcion}" />
+						<h:outputText value="Descripción" />
+						<p:inputTextarea id="descripcion"
+							value="#{manejadorCrearEditarMovilidadVisitante.temp.descripcion}"
+							style="width:350px;" rows="5" maxlength="2000">
+						</p:inputTextarea>
+
+						<h:outputText
+							rendered="#{manejadorCrearEditarMovilidadVisitante.temp.BErrorFecha}" />
+						<h:outputText
+							value="#{manejadorCrearEditarMovilidadVisitante.temp.errorFecha}"
+							styleClass="mensajeerror"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.temp.BErrorFecha}" />
+
+						<h:outputText value="Fecha de inicio" />
+						<p:calendar id="fechaactividad" locale="es" readonlyInput="true"
+							pattern="dd/MM/yyyy"
+							value="#{manejadorCrearEditarMovilidadVisitante.temp.fecha}"
+							mindate="#{manejadorCrearEditarMovilidadVisitante.mve.fechainicial}"
+							maxdate="#{manejadorCrearEditarMovilidadVisitante.mve.fechafinal}" />
+						<h:outputText
+							rendered="#{manejadorCrearEditarMovilidadVisitante.temp.BErrorDuracion}" />
+
+						<h:outputText
+							value="#{manejadorCrearEditarMovilidadVisitante.temp.errorDuracion}"
+							styleClass="mensajeerror"
+							rendered="#{manejadorCrearEditarMovilidadVisitante.temp.BErrorDuracion}" />
+
+						<h:outputText value="Duración de la actividad (días)" />
+						<p:inputText id="duracion"
+							value="#{manejadorCrearEditarMovilidadVisitante.temp.duracion}"
+							size="4" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar"
+							update="formCrearMovilidadVisitante"
+							actionListener="#{manejadorCrearEditarMovilidadVisitante.adicionarActividad}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</p:panelGrid>
+
+					<p:dataTable var="actividadMovilidad" id="tablaActividades"
+						value="#{manejadorCrearEditarMovilidadVisitante.listaActividades}"
+						emptyMessage="No existen actividades.">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.tipoActividad.nombre}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descripción" />
+							</f:facet>
+							<t:div>
+								<h:outputText value="#{actividadMovilidad.descripcion}" />
+							</t:div>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Duración" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.duracion}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="de inicio" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.fecha}" />
+						</p:column>
+
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-trash" ajax="false"
+								update="@parent"
+								action="#{manejadorCrearEditarMovilidadVisitante.eliminarActividad}"
+								onclick="if(!confirm('Esta seguro de eliminar la Actividad?'))return false">
+								<f:setPropertyActionListener value="#{actividadMovilidad}"
+									target="#{manejadorCrearEditarMovilidadVisitante.actividadMovilidadVESeleccionada}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+			</p:panel>
+			<ui:fragment
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos2}">
+				<br />
+			</ui:fragment>
+			<p:panel header="Datos del evento"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3 and manejadorCrearEditarMovilidadVisitante.mostrarEventoMovilidad}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+
+					<h:outputText
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorEvento}" />
+					<h:outputText
+						value="#{manejadorCrearEditarMovilidadVisitante.errores[9]}"
+						styleClass="mensajeerror"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorEvento}" />
+
+					<t:div style="width: 247px;">
+						<h:outputText value="Evento de difusión asociado a la visita" />
+					</t:div>
+					<p:inputTextarea id="eventoDifusion"
+						value="#{manejadorCrearEditarMovilidadVisitante.mve.evento}"
+						rows="3" cols="50" maxlength="2000">
+					</p:inputTextarea>
+
+					<h:outputText value="Sede" />
+					<p:selectOneMenu id="selectSede"
+						value="#{manejadorCrearEditarMovilidadVisitante.sede}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una sede" />
+						<f:selectItems
+							value="#{manejadorCrearEditarMovilidadVisitante.sedeItem}" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+			</p:panel>
+			<ui:fragment
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3 and manejadorCrearEditarMovilidadVisitante.mostrarEventoMovilidad}">
+				<br />
+			</ui:fragment>
+			<p:panel id="panelApoyoEconomico" header="Apoyo económico"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorTiquete}" />
+					<h:outputText
+						value="#{manejadorCrearEditarMovilidadVisitante.errores[10]}"
+						styleClass="mensajeerror"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorTiquete}" />
+
+					<h:outputText />
+					<p:message for="valorTiquete" styleClass="mensajeerror"
+						showDetail="true" />
+
+					<t:div style="width: 247px;">
+						<h:outputText value="Valor del tiquete en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorTiquete"
+						value="#{manejadorCrearEditarMovilidadVisitante.mve.costotiquete}"
+						rendered="true" maxlength="10"
+						onkeyup="puntitos(this,this.value.charAt(this.value.length-1))">
+						<p:ajax event="blur"
+							listener="#{manejadorCrearEditarMovilidadVisitante.calcularTotalesMov}"
+							update="panelApoyoEconomico" process="panelApoyoEconomico"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorMonto}" />
+					<h:outputText
+						value="#{manejadorCrearEditarMovilidadVisitante.errores[11]}"
+						styleClass="mensajeerror"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorMonto}" />
+
+					<h:outputText
+						rendered="#{manejadorCrearEditarMovilidadVisitante.errorMontoDiario}" />
+					<h:outputText
+						value="El costo es superior al tope máximo del monto diario"
+						styleClass="mensajeerror"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.errorMontoDiario}" />
+
+					<h:outputText />
+					<p:message for="montoDiario" styleClass="mensajeerror"
+						showDetail="true" />
+
+					<h:outputText
+						value="Monto diario a financiar por concepto de gastos de estadía" />
+					<p:inputText id="montoDiario"
+						value="#{manejadorCrearEditarMovilidadVisitante.mve.monto}"
+						rendered="true" maxlength="10"
+						onkeyup="puntitos(this,this.value.charAt(this.value.length-1))">
+						<p:ajax event="blur"
+							listener="#{manejadorCrearEditarMovilidadVisitante.calcularTotalesMov}"
+							update="panelApoyoEconomico" process="panelApoyoEconomico"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorDias}" />
+					<h:outputText
+						value="#{manejadorCrearEditarMovilidadVisitante.errores[12]}"
+						styleClass="mensajeerror"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorDias}" />
+
+					<h:outputText />
+					<p:message for="numeroDias" styleClass="mensajeerror"
+						showDetail="true" />
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Número de días a financiar por concepto de gastos de estadía" />
+					</t:div>
+					<p:inputText id="numeroDias"
+						value="#{manejadorCrearEditarMovilidadVisitante.mve.numerodias}"
+						validatorMessage="número de días a financiar debe ser un número entre 0 y 99."
+						converterMessage="número de días a financiar debe ser un número entre 0 y 99."
+						rendered="true" maxlength="2"
+						onkeyup="puntitos(this,this.value.charAt(this.value.length-1))">
+						<f:validateDoubleRange minimum="0" maximum="99" />
+						<p:ajax event="blur"
+							listener="#{manejadorCrearEditarMovilidadVisitante.calcularTotalesMov}"
+							update="panelApoyoEconomico" process="panelApoyoEconomico"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:inputText>
+
+					<h:outputText />
+					<p:message for="valorEstVirtual" styleClass="mensajeerror"
+						showDetail="true" />
+
+					<t:div style="width: 247px;"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadTipo eq 'V'}">
+						<h:outputText value="Estímulo para modalidad virtual" />
+					</t:div>
+					<p:inputText id="valorEstVirtual"
+						value="#{manejadorCrearEditarMovilidadVisitante.mve.costoEstimuloVirtual}"
+						maxlength="10"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadTipo eq 'V'}"
+						onkeyup="puntitos(this,this.value.charAt(this.value.length-1))">
+						<p:ajax event="blur"
+							listener="#{manejadorCrearEditarMovilidadVisitante.calcularTotalesMov}"
+							update="panelApoyoEconomico" process="panelApoyoEconomico"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:inputText>
+
+					<t:div style="width: 247px;">
+						<h:outputText value="Valor total del apoyo " />
+					</t:div>
+					<p:inputText id="valTotal"
+						value="#{manejadorCrearEditarMovilidadVisitante.valorTotalApoyo}"
+						rendered="true" readonly="true" />
+					<h:outputText />
+				</p:panelGrid>
+			</p:panel>
+			<ui:fragment
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3}">
+				<br />
+			</ui:fragment>
+			<p:panel header="Sede de financiamiento"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3}"
+				id="pgSolDep">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText id="uiMovOtraDepOt"
+						binding="#{manejadorCrearEditarMovilidadVisitante.uiMovOtraDep}"
+						value="¿La movilidad se va a dirigir a una facultad o sede diferente a la que pertenece?" />
+					<p:selectOneMenu id="uiMovOtraDep" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadDirigidaOtraDependencia}">
+						<f:selectItem itemValue="N" itemLabel="No" />
+						<f:selectItem itemValue="S" itemLabel="Sí" />
+						<p:ajax update="pgSolDep" process="pgSolDep"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+					</p:selectOneMenu>
+
+					<h:outputText id="uiSedeOtraDepOt"
+						binding="#{manejadorCrearEditarMovilidadVisitante.uiSedeOtraDep}"
+						value="Sede de la solicitud"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadDirigidaOtraDependencia eq 'S'}" />
+					<p:selectOneMenu id="uiSedeOtraDep" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{manejadorCrearEditarMovilidadVisitante.sedeSolicitud}"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadDirigidaOtraDependencia eq 'S'}">
+						<f:selectItems
+							value="#{manejadorCrearEditarMovilidadVisitante.sedeSolicitudItem}" />
+						<p:ajax
+							listener="#{manejadorCrearEditarMovilidadVisitante.cargarFacultadSolcitud}"
+							update="pgSolDep" process="pgSolDep"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+					<h:outputText id="uiFacOtraDepOt"
+						binding="#{manejadorCrearEditarMovilidadVisitante.uiFacOtraDep}"
+						value="Facultad de la solicitud"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadDirigidaOtraDependencia eq 'S' and (manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '2' or manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '3' or manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '4' or manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '5')}" />
+					<p:selectOneMenu id="uiFacOtraDep" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{manejadorCrearEditarMovilidadVisitante.facultadSolicitud}"
+						rendered="#{manejadorCrearEditarMovilidadVisitante.mve.movilidadDirigidaOtraDependencia eq 'S' and (manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '2' or manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '3' or manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '4' or manejadorCrearEditarMovilidadVisitante.sedeSolicitud eq '5')}">
+						<f:selectItems
+							value="#{manejadorCrearEditarMovilidadVisitante.facultadItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panel>
+
+			<ui:fragment
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3}">
+				<br />
+			</ui:fragment>
+			<p:panel header="Documentos obligatorios:" id="panelDocs"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3}">
+				<h:outputText
+					rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorDocumentos}" />
+				<h:outputText
+					value="#{manejadorCrearEditarMovilidadVisitante.errores[13]}"
+					styleClass="mensajeerror"
+					rendered="#{manejadorCrearEditarMovilidadVisitante.BErrorDocumentos}" />
+				<p:panelGrid columns="1" style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:panelGrid columns="3">
+						<p:outputLabel for="somTipoDocumento" value="Tipos de documento: " />
+						<p:selectOneMenu id="somTipoDocumento" panelStyle="width:430px"
+							style="width:430px;"
+							value="#{manejadorCrearEditarMovilidadVisitante.tipoDocumentoSel}">
+							<f:selectItems
+								value="#{manejadorCrearEditarMovilidadVisitante.tipoDocumentoSelItem}" />
+							<p:ajax update="panelDocs" process="panelDocs"
+								listener="#{manejadorCrearEditarMovilidadVisitante.seleccionarTipoDocumento}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<p:fileUpload label="Adjuntar" multiple="true" showButtons="false"
+						id="fileUpload2"
+						fileUploadListener="#{manejadorCrearEditarMovilidadVisitante.guardarArchivoMovVE}"
+						mode="advanced" auto="true" process="formCrearMovilidadVisitante"
+						sizeLimit="3145728" update="dtArchivosObligatorios"
+						style="width: 100%;"
+						disabled="#{!manejadorCrearEditarMovilidadVisitante.puedeSubirArchivos}" />
+					<p:panelGrid columns="1" style="width: 100%">
+						<p:dataTable var="archivoResumen1" id="dtArchivosObligatorios"
+							value="#{manejadorCrearEditarMovilidadVisitante.listaArchivosObligatoriosSel}"
+							emptyMessage="No existen archivos." style="width: 100%">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<h:outputText value="#{archivoResumen1.nombre}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton icon="ui-icon-trash" ajax="false"
+									update="dtArchivosObligatorios"
+									action="#{manejadorCrearEditarMovilidadVisitante.eliminarArchivoObligatorio}"
+									onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+									<f:setPropertyActionListener value="#{archivoResumen1}"
+										target="#{manejadorCrearEditarMovilidadVisitante.archivoMovilidadVESeleccionado}" />
+								</p:commandButton>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Descargar" />
+								</f:facet>
+								<p:commandButton id="descargar"
+									action="#{manejadorCrearEditarMovilidadVisitante.descargarArchivoMovVE}"
+									icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+									ajax="false">
+									<f:setPropertyActionListener value="#{archivoResumen1}"
+										target="#{manejadorCrearEditarMovilidadVisitante.documentoSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+			<ui:fragment
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3 and manejadorCrearEditarMovilidadVisitante.estado != 'P'}">
+				<br />
+			</ui:fragment>
+			<p:panel
+				header="Confirmar el envío de la solicitud de movilidad para revisión"
+				rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3}">
+				<p:panelGrid columns="2">
+					<h:outputText
+						value="Por favor confirme el envío de la solicitud de movilidad para su revisión, una vez confirmada ya no podrá editar la información registrada."
+						styleClass="labels_proyecto" />
+					<p:selectOneMenu
+						value="#{manejadorCrearEditarMovilidadVisitante.estado}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+						<f:selectItem itemValue="P" itemLabel="Si" />
+						<f:selectItem itemValue="I" itemLabel="No" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+			</p:panel>
+			<p:messages id="msg" autoUpdate="true" closable="true" />
+			<center>
+				<ui:fragment
+					rendered="#{manejadorCrearEditarMovilidadVisitante.estado != 'P'}">
+					<br />
+				</ui:fragment>
+				<p:commandButton value="Guardar" icon="ui-icon-check"
+					action="#{manejadorCrearEditarMovilidadVisitante.guardar}"
+					update="formCrearMovilidadVisitante"
+					rendered="#{manejadorCrearEditarMovilidadVisitante.panelMasDatos3 and manejadorCrearEditarMovilidadVisitante.estado != 'P'}"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</center>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

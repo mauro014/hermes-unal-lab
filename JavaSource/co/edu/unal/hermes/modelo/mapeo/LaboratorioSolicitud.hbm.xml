@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo.laboratorios">
+
+	<class name="LaboratorioSolicitud" table="HER_LAB_SOLICITUD">
+
+		<id name="id" column="LSO_ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_SOL_LAB</param>
+			</generator>
+		</id>
+		
+		<many-to-one name="persona" class="co.edu.unal.hermes.modelo.Persona" lazy="false">
+			<column name="PER_ID" />
+			<column name="TDO_ID" />
+		</many-to-one>
+		
+		<many-to-one name="personaRevision" class="co.edu.unal.hermes.modelo.Persona" lazy="false">
+			<column name="PER_ID_REVISION" />
+			<column name="TDO_ID_REVISION" />
+		</many-to-one>
+
+		<many-to-one name="laboratorio"
+			class="co.edu.unal.hermes.modelo.laboratorios.Laboratorio" lazy="false">
+			<column name="LAB_ID" />
+		</many-to-one>
+		
+		<many-to-one name="tipo" class="co.edu.unal.hermes.modelo.Tipos" lazy="false">
+			<column name="LSO_TIPO_SOL" />
+		</many-to-one>
+		
+		<many-to-one name="estado" class="co.edu.unal.hermes.modelo.Tipos"
+			lazy="false">
+			<column name="LSO_ESTADO" />
+		</many-to-one>
+		
+		<many-to-one name="motivo" class="co.edu.unal.hermes.modelo.Tipos" lazy="false">
+			<column name="LSO_MOTIVO" />
+		</many-to-one>
+		<property name="motivo_otro" column="LSO_MOTIVO_OTRO" />
+		
+		<property name="descripcion" column="LSO_DESCRIPCION" />
+		
+		<property name="justificacion" column="LSO_JUSTIFICACION" />
+		
+		<property name="pertinencia" column="LSO_PERTINENCIA" />
+		
+		<many-to-one name="dependenciaDirigidaA" class="co.edu.unal.hermes.modelo.Dependencia" column="DPN_ID_DIRIGIDA_A" lazy="false"/>
+		
+		<property name="fechaRegistro" column="LSO_FECHA_REGISTRO" />
+		
+		<property name="fechaUltimoCambioEstado" column="LSO_FECHA_ULTIMO_ESTADO" />
+		
+		<property name="fechaRespuesta" column="LSO_FECHA_RESPUESTA" />
+		
+		<property name="observaciones" column="LSO_OBSERVACIONES_APROB" />
+		
+		<many-to-one name="equipo" class="LaboratorioDetalleEquipos" column="LSO_EQUIPO" lazy="false"/>
+		
+		<many-to-one name="laboratorioDestinoEquipo"
+			class="co.edu.unal.hermes.modelo.laboratorios.Laboratorio" lazy="false">
+			<column name="LSO_LAB_DESTINO" />
+		</many-to-one>
+		
+		<!-- Herencia para los investigadores -->
+		<joined-subclass name="LaboratorioSolicitudCreacionLaboratorio" table="HER_LAB_SOLICITUD_CREACION_LAB">
+			<key>
+				<column name="SCL_ID" />
+			</key>
+
+			<property name="infraestructura" column="SCL_INFRAESTRUCTURA" />
+			<property name="sostenibilidad" column="SCL_SOSTENIBILIDAD" />
+			<property name="docenciaDescActividades" column="SCL_DOCENCIA" />
+			<property name="investigacionDescActividades" column="SCL_INVESTIGACION" />
+			<property name="extensionDescActividades" column="SCL_EXTENSION" />
+			
+			<property name="mesasPC" column="SCL_MESAS_PC_SI_NO" />
+			<property name="mesasPCCantidad" column="SCL_MESAS_PC_CANT" />
+			<property name="mesasMovibles" column="SCL_MESAS_MOVIBLES_SI_NO" />
+			<property name="mesasMoviblesCantidad" column="SCL_MESAS_MOVIBLES_CANT" />
+			<property name="puestosTrabajo" column="SCL_PUESTOS_TRABAJO" />
+			<property name="puestosTrabajoDetalle" column="SCL_PUESTOS_TRABAJO_DETALLE" />
+			
+			<property name="reactivosQuimicosArmarioSeguridad" column="SCL_MUEB_RQ_ARMARIO_SEG" />
+			<property name="reactivosQuimicosVitrina" column="SCL_MUEB_RQ_VITRINA" />
+			<property name="reactivosQuimicosCajonera" column="SCL_MUEB_RQ_CAJONERA" />
+			<property name="reactivosQuimicosEstanteria" column="SCL_MUEB_RQ_ESTANTERIA" />
+			<property name="reactivosQuimicosOtro" column="SCL_MUEB_RQ_OTRO" />
+			
+			<property name="instrumentalArmarioSeguridad" column="SCL_MUEB_INST_ARMARIO_SEG" />
+			<property name="instrumentalVitrina" column="SCL_MUEB_INST_VITRINA" />
+			<property name="instrumentalCajonera" column="SCL_MUEB_INST_CAJONERA" />
+			<property name="instrumentalEstanteria" column="SCL_MUEB_INST_ESTANTERIA" />
+			<property name="instrumentalOtro" column="SCL_MUEB_INST_OTRO" />
+			
+			<property name="herramientasArmarioSeguridad" column="SCL_MUEB_HERR_ARMARIO_SEG" />
+			<property name="herramientasVitrina" column="SCL_MUEB_HERR_VITRINA" />
+			<property name="herramientasCajonera" column="SCL_MUEB_HERR_CAJONERA" />
+			<property name="herramientasEstanteria" column="SCL_MUEB_HERR_ESTANTERIA" />
+			<property name="herramientasOtro" column="SCL_MUEB_HERR_OTRO" />
+			
+			<property name="insumosArmarioSeguridad" column="SCL_MUEB_INSU_ARMARIO_SEG" />
+			<property name="insumosVitrina" column="SCL_MUEB_INSU_VITRINA" />
+			<property name="insumosCajonera" column="SCL_MUEB_INSU_CAJONERA" />
+			<property name="insumosEstanteria" column="SCL_MUEB_INSU_ESTANTERIA" />
+			<property name="insumosOtro" column="SCL_MUEB_INSU_OTRO" />
+			
+			<property name="otroArmarioSeguridad" column="SCL_MUEB_OTRO_ARMARIO_SEG" />
+			<property name="otroVitrina" column="SCL_MUEB_OTRO_VITRINA" />
+			<property name="otroCajonera" column="SCL_MUEB_OTRO_CAJONERA" />
+			<property name="otroEstanteria" column="SCL_MUEB_OTRO_ESTANTERIA" />
+			<property name="otroOtro" column="SCL_MUEB_OTRO_OTRO" />
+			
+			<property name="cabinaExtraccion" column="SCL_CABINA_EXTRACCION_SI_NO" />
+			<property name="cabinaExtraccionCantidad" column="SCL_CABINA_EXTRACCION_CANT" />
+			<property name="cabinaExtraccionDetalle" column="SCL_CABINA_EXTRACCION_DET" />
+			
+			<property name="cabinaSeguridad" column="SCL_CABINA_SEG_BIOL_SI_NO" />
+			<property name="cabinaSeguridadCantidad" column="SCL_CABINA_SEG_BIOL_CANT" />
+			<property name="cabinaSeguridadDetalle" column="SCL_CABINA_SEG_BIOL_DET" />
+			
+			<property name="requierePocetas" column="SCL_REQ_POCETAS" />
+			<property name="requierePocetasDetalle" column="SCL_REQ_POCETAS_DET" />
+			<property name="requiereMesonesLavado" column="SCL_REQ_MESONES_LAVADO" />
+			<property name="requiereMesonesLavadoDetalle" column="SCL_REQ_MESONES_LAVADO_DET" />
+			<property name="requiereMesasAntivibracion" column="SCL_REQ_MESAS_ANTIVIBRA" />
+			<property name="requiereMesasAntivibracionDetalle" column="SCL_REQ_MESAS_ANTIVIBRA_DET" />
+			<property name="requiereSifones" column="SCL_REQ_SIFONES" />
+			<property name="requiereSifonesDetalle" column="SCL_REQ_SIFONES_DET" />
+			<property name="requiereConexionGas" column="SCL_REQ_CONEXIONES_GAS" />
+			<property name="requiereConexionGasDetalle" column="SCL_REQ_CONEXIONES_GAS_DET" />
+			<property name="requiereDucha" column="SCL_REQ_DUCHA" />
+			<property name="requiereDuchaDetalle" column="SCL_REQ_DUCHA_DET" />
+			<property name="requiereLavaOjos" column="SCL_REQ_LAVAOJOS" />
+			<property name="requiereLavaOjosDetalle" column="SCL_REQ_LAVAOJOS_DET" />
+			<property name="requiereOtros" column="SCL_REQ_OTROS" />
+			<property name="requiereOtrosDetalle" column="SCL_REQ_OTROS_DET" />
+		
+		</joined-subclass>
+		
+	</class>
+
+</hibernate-mapping>

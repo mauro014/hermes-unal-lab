@@ -1,0 +1,651 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadPosgradoInvestigacion"
+			enctype="multipart/form-data" styleClass="estilo-panelgrid-sinbordes">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Registro solicitud de movilidad</t:div>
+			<p:panel
+				header="Estudiantes que participan en actividades de investigación">
+				<p:panelGrid columns="3" id="identificacion" align="left">
+					<t:div style="width: 247px;">
+						<h:outputText value="Tipo de documento del docente UN" />
+					</t:div>
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoDocumento.id}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					<h:outputText />
+
+					<h:outputText value="Número de documento del docente UN" />
+					<p:inputText id="Numero"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.documento}"
+						size="20">
+					</p:inputText>
+					<p:commandButton value="Continuar" icon="ui-icon-search"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						action="#{ManejadorCrearMovilidadPosgradoInvModTres.buscarPersona}"
+						update="formCrearMovilidadPosgradoInvestigacion" />
+				</p:panelGrid>
+
+				<br />
+
+				<p:panelGrid columns="1" id="identificacionEstudiante"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarDatosEvento}"
+					align="left">
+
+					<p:panelGrid columns="3">
+						<t:div style="width: 247px;">
+							<h:outputText value="Tipo de documento del estudiante" />
+						</t:div>
+						<p:selectOneMenu
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoDocumentoEstudiante.id}">
+							<f:selectItems
+								value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoDocumentoEstudianteItem}" />
+						</p:selectOneMenu>
+						<h:outputText />
+
+						<h:outputText value="Número de documento del estudiante" />
+						<p:inputText id="NumeroEstudiante"
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.documentoEstudiante}"
+							size="20">
+						</p:inputText>
+
+						<p:commandButton value="Buscar" icon="ui-icon-search"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							action="#{ManejadorCrearMovilidadPosgradoInvModTres.buscarEstudiante}"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:panelGrid>
+
+					<p:panelGrid columns="2"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarDatosEstudiante}"
+						align="left">
+
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.errorGrupo}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.msgErrorGrupo}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.errorGrupo}" />
+
+						<h:outputText value="Grupo de investigación"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarGrupo}" />
+						<p:selectOneMenu id="somGrupo" style="width:330px;"
+							panelStyle="width:330px;"
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.idgrupo}"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarGrupo}">
+							<f:selectItems
+								value="#{ManejadorCrearMovilidadPosgradoInvModTres.listaGrupos}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Nombre de estudiante" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.nombreDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Documento de identidad" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.documentoDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Facultad o instituto" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.facultadDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Departamento" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.departamentoDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Programa academico " />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.carreraDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Correo electrónico " />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.correoDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.errorPasaporte}" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.msgErrorPasaporte}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.errorPasaporte}" />
+
+						<h:outputText value="Pasaporte"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarPasaporte}" />
+						<p:inputText id="numPasaporte"
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.pasaporteEstudiante}"
+							style="width: 350px;" maxlength="100"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarPasaporte}">
+						</p:inputText>
+
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorPapa}"
+							style="font-weight: bold;" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[10]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorPapa}"
+							style="font-weight: bold;" />
+						<t:div style="width: 247px;">
+							<h:outputText
+								value="Promedio aritmético ponderado acumulado PAPA" />
+						</t:div>
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.papaEstudiante}"
+							style="font-weight: bold;" />
+					</p:panelGrid>
+				</p:panelGrid>
+
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarDatosEstudiante}" />
+			<p:panel header="Información del evento"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarDatosEstudiante}">
+
+				<p:panelGrid columns="2" id="evento">
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorPonencia}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[5]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorPonencia}" />
+					<h:outputText value="Tipo de trabajo a presentar" />
+					<p:selectOneMenu id="somTipoPonencia1"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.idTipoPonencia}"
+						panelStyle="width:600px;" style="width:400px">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoPonencia}" />
+						<p:ajax update="formCrearMovilidadPosgradoInvestigacion"
+							process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"
+							listener="#{ManejadorCrearMovilidadPosgradoInvModTres.activarOtrotipoPonencia}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Cual tipo de ponencia"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BOtroTipoPonencia}" />
+					<p:inputText id="otroTipoPonencia"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.otroTipoPonencia}"
+						size="60" styleClass="labels_proyecto"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BOtroTipoPonencia}"
+						maxlength="200">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorEvento}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[1]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorEvento}" />
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Nombre del evento científico (Incluir enlace del evento)" />
+					</t:div>
+					<p:inputTextarea id="nombreEvento"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.evento}"
+						rows="3" style="width: 350px;" counter="contadorNombreEvento"
+						counterTemplate="{0} caracteres restantes." maxlength="2000">
+					</p:inputTextarea>
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+					<h:outputText id="contadorNombreEvento"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorTitulo}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[2]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorTitulo}" />
+
+					<h:outputText value="Título de trabajo a presentar"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia and !ManejadorCrearMovilidadPosgradoInvModTres.esConvMovCiencias2019}" />
+					<h:outputText
+						value="Título de trabajo a presentar o pasantía a realizar"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia and ManejadorCrearMovilidadPosgradoInvModTres.esConvMovCiencias2019}" />
+					<p:inputTextarea id="tituloPonencia"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.titulo}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}"
+						rows="3" style="width: 350px;" counter="contadorTituloPonencia"
+						counterTemplate="{0} caracteres restantes." maxlength="2000">
+					</p:inputTextarea>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+					<h:outputText id="contadorTituloPonencia"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorResumen}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[6]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorResumen}" />
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Resumen de trabajo a presentar (Máximo 3900 carácteres)"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+
+					</t:div>
+					<p:inputTextarea id="resumenPonencia"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.resumen}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}"
+						counter="contadorResumen"
+						counterTemplate="{0} caracteres restantes." rows="9"
+						style="width: 350px;" maxlength="3900">
+					</p:inputTextarea>
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+					<h:outputText id="contadorResumen"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorPais}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[3]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorPais}" />
+
+					<h:outputText value="País donde se realizará el evento"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvModTres.esConvMovCiencias2019}" />
+					<h:outputText value="País donde se realizará el evento o pasantía"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esConvMovCiencias2019}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.idPais}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione Uno" itemValue="00" />
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.paises}" />
+						<p:ajax update="evento" process="evento"
+							listener="#{ManejadorCrearMovilidadPosgradoInvModTres.revisarPais}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Departamento"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.siColombia}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.departamentoActual.id}"
+						effect="fade" id="depto" panelStyle="width:350px;"
+						style="width:350px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.siColombia}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.departamentoItem}" />
+						<p:ajax update="depto,CiudadSel " processo="depto,CiudadSel "
+							listener="#{ManejadorCrearMovilidadPosgradoInvModTres.cambiarDepartamento}" />
+					</p:selectOneMenu>
+					<h:outputText value="Ciudad"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.siColombia}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.ciudadEvento}"
+						effect="fade" id="CiudadSel" panelStyle="width:350px;"
+						style="width:350px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.siColombia}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.ciudadItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorCiudad}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorCiudad}" />
+
+					<h:outputText value="Ciudad donde se realizará el evento"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvModTres.siColombia and !ManejadorCrearMovilidadPosgradoInvModTres.esConvMovCiencias2019}" />
+					<h:outputText
+						value="Ciudad donde se realizará el evento o pasantía"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvModTres.siColombia and ManejadorCrearMovilidadPosgradoInvModTres.esConvMovCiencias2019}" />
+					<p:inputText id="Ciudad"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.ciudad}"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvModTres.siColombia}"
+						style="width: 350px;">
+					</p:inputText>
+
+
+
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Nombre de la Universidad o Institución organizadora del evento donde se va a presentar el trabajo" />
+					</t:div>
+
+					<p:inputText id="nombreUniversidad"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.universidad}"
+						style="width: 350px;" styleClass="labels_proyecto" maxlenght="180">
+					</p:inputText>
+
+					<h:outputText value="Universidad"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}"
+						styleClass="labels_proyecto" />
+					<p:inputText id="univ1"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.universidad}"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}"
+						style="width: 350px;" styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText value="Tipo de Movilidad:"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarTipoMovilidad}" />
+					<p:selectOneMenu id="uiTipoMov" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.movilidadTipo}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarTipoMovilidad}">
+						<f:selectItem itemValue="P" itemLabel="Presencial" />
+						<f:selectItem itemValue="V" itemLabel="Virtual" />
+						<p:ajax
+							listener="#{ManejadorCrearMovilidadPosgradoInvModTres.definirInicioConvNal2022_2024}"
+							update="@form" process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Caracter del evento" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.caracterEvento}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.caracterEventoItem}" />
+						<p:ajax
+							listener="#{ManejadorCrearMovilidadPosgradoInvModTres.definirInicio4049}"
+							update="@form" process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+					<p:column
+						rendered="#{not empty ManejadorCrearMovilidadPosgradoInvModTres.convActual.infoAdicionalFormulario}"
+						style="vertical-align: top; padding-top:10px; width:250px;">
+						<h:outputText value="Información adicional:"
+							style="font-weight:bold;" />
+					</p:column>
+
+					<p:column
+						rendered="#{not empty ManejadorCrearMovilidadPosgradoInvModTres.convActual.infoAdicionalFormulario}">
+						<h:panelGroup layout="block"
+							style="border:1px solid #7b1e3a; 
+                             background:#fdecef; 
+                             color:#4a0f1f; 
+                             border-radius:8px; 
+                             padding:10px;">
+							<h:outputText
+								value="#{ManejadorCrearMovilidadPosgradoInvModTres.convActual.infoAdicionalFormulario}"
+								style="white-space:pre-line; font-weight:500;" escape="true" />
+						</h:panelGroup>
+					</p:column>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.fechaIncorrecta}" />
+					<h:outputText
+						value="La fecha del viaje debe ser superior que la fecha actual en 30 días calendario."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.fechaIncorrecta}" />
+
+					<h:outputText value="Fecha de inicio del viaje" />
+					<p:calendar id="fechainicio" pages="1" locale="es" navigator="true"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.fechainicial}"
+						mindate="#{ManejadorCrearMovilidadPosgradoInvModTres.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearMovilidadPosgradoInvModTres.validarFecha}">
+						<p:ajax event="dateSelect" process="@all"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:calendar>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.fechaIncorrecta2}" />
+					<h:outputText
+						value="La fecha de finalización viaje no es válida. La fecha debe ser superior a la fecha de incio."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.fechaIncorrecta2}" />
+
+					<h:outputText value="Fecha de finalización del viaje"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos}" />
+					<p:calendar id="fechafin" pages="1" locale="es" navigator="true"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.fechafinal}"
+						mindate="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.fechainicial}"
+						valueChangeListener="#{ManejadorCrearMovilidadPosgradoInvModTres.validarFechaLlegada}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos}">
+						<p:ajax event="dateSelect" process="@all"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:calendar>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}" />
+			<p:panel header="Apoyo financiero"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}">
+				<p:panelGrid columns="2" id="panelMasDatos2"
+					style="estilo-panelgrid-sinbordes">
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorResolucion}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[7]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorResolucion}" />
+
+					<h:outputText value="Medio de transporte" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.medioTransporte}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.medioTransporteItem}" />
+					</p:selectOneMenu>
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Valor de viáticos y gastos de viaje en pesos colombianos"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarValorViaticos}" />
+					</t:div>
+					<p:inputText id="valorViaticos"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.valorViaticos}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarValorViaticos}"
+						styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorTiquete}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[8]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorTiquete}" />
+
+					<h:outputText />
+					<p:message for="valorTiquetes" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+					<t:div style="width: 247px;">
+						<h:outputText value="Valor del tiquete en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorTiquetes"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.costotiquete}"
+						styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorInscripcion}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[9]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorInscripcion}" />
+
+					<h:outputText />
+					<p:message for="valorInscripcion" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Valor de la inscripción al evento en pesos colombianos"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}" />
+					</t:div>
+					<p:inputText id="valorInscripcion"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.costoevento}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.esPonencia}"
+						styleClass="labels_proyecto">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarAportesOtrasDependencias}">
+						<h:outputText value="Valor del apoyo de otras dependencias" />
+					</t:div>
+					<p:inputText id="valorApOtDep"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.valorOtrosAportes}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarAportesOtrasDependencias}">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarAportesOtrasDependencias}">
+						<h:outputText value="Nombre de las dependencias" />
+					</t:div>
+					<p:inputTextarea id="depApOtDep"
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.mep.dependenciaOtrosAportes}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.mostrarAportesOtrasDependencias}"
+						rows="9" cols="50" maxlength="3900">
+					</p:inputTextarea>
+
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}" />
+
+			<h:outputText
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorDocumentos}" />
+			<h:outputText
+				value="#{ManejadorCrearMovilidadPosgradoInvModTres.errores[11]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.BErrorDocumentos}" />
+
+			<p:panel header="Documentos Obligatorios" id="panelDocumentos"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}">
+				<p:panelGrid columns="2" style="width: 100%;">
+					<h:outputText value="Tipos de documentos" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoDocumentoSel}"
+						style="width:460px" panelStyle="width:460px">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvModTres.tipoDocumentoSelItem}" />
+						<p:ajax update="panelDocumentos"
+							listener="#{ManejadorCrearMovilidadPosgradoInvModTres.seleccionarTipoDocumento}" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+				<br />
+				<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+					mode="advanced" showButtons="false" style="width: 100%;"
+					update="tablaArchivos, panelDocumentos"
+					fileUploadListener="#{ManejadorCrearMovilidadPosgradoInvModTres.guardarArchivoMovEP3}"
+					disabled="#{!ManejadorCrearMovilidadPosgradoInvModTres.puedeSubirArchivos}">
+				</p:fileUpload>
+				<br />
+				<p:dataTable id="tablaArchivos" var="archivoResumen1"
+					value="#{ManejadorCrearMovilidadPosgradoInvModTres.listaArchivosObligatoriosSel}"
+					emptyMessage="No existen archivos.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre documento" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-trash"
+							action="#{ManejadorCrearMovilidadPosgradoInvModTres.eliminarArchivoObligatorio}"
+							update=":formCrearMovilidadPosgradoInvestigacion"
+							onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearMovilidadPosgradoInvModTres.archivoMovilidadEPSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+
+						<p:commandButton id="descargar"
+							action="#{ManejadorCrearMovilidadPosgradoInvModTres.descargarArchivoMovEP}"
+							icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearMovilidadPosgradoInvModTres.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<br />
+
+			<p:panel header="Confirmar el envío de la solicitud de movilidad"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}">
+
+				<p:panelGrid columns="2">
+					<h:outputText
+						value="Por favor confirme el envío de la solicitud de movilidad para su revisión, una vez confirmada ya no podrá editar la información registrada."
+						styleClass="labels_proyecto" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvModTres.estado}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+						<f:selectItem itemValue="P" itemLabel="Si" />
+						<f:selectItem itemValue="I" itemLabel="No" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+			</p:panel>
+
+			<center>
+				<h:outputText
+					value="#{ManejadorCrearMovilidadPosgradoInvModTres.noExiste}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelNoExiste}" />
+
+				<h:outputText
+					value="#{ManejadorCrearMovilidadPosgradoInvModTres.noExiste1}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelNoExiste}" />
+			</center>
+
+			<p:messages id="msg" autoUpdate="true" closable="true"
+				redisplay="false" />
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}" />
+			<center>
+				<p:commandButton value="Guardar" icon="ui-icon-check"
+					action="#{ManejadorCrearMovilidadPosgradoInvModTres.guardar}"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvModTres.panelMasDatos2}"
+					update="formCrearMovilidadPosgradoInvestigacion"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+			</center>
+
+			<p:dialog header="Por favor espere..." widgetVar="dialogEspere"
+				resizable="false" closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

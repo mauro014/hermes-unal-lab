@@ -1,0 +1,1005 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Semillero - Información General</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" icon="ui-icon-down" />
+					<p:menuitem value="Integrantes" action="irIntegrantes"
+						disabled="#{manejadorSemilleroGeneral.semilleroActual.fase lt 1}"
+						icon="ui-icon-down" />
+					<p:menuitem value="Líneas y Áreas de Trabajo"
+						action="irLineasAreas"
+						disabled="#{manejadorSemilleroGeneral.semilleroActual.fase lt 2}"
+						icon="ui-icon-down" />
+					<p:menuitem value="Plan de Trabajo" action="irPlanTrabajo"
+						icon="ui-icon-down"
+						disabled="#{manejadorSemilleroGeneral.semilleroActual.fase lt 3}" />
+					<p:menuitem value="Cargar Archivos y Enviar"
+						disabled="#{manejadorSemilleroGeneral.semilleroActual.fase lt 4}"
+						action="irArchivosEnviar" icon="ui-icon-down" />
+				</p:menubar>
+			</h:form>
+			<div style="width: 100%; text-align: center;">
+				Por favor verifique el cumplimiento de los requisitos para la
+				conformación de semilleros, de acuerdo a la <a
+					href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=96610"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">resolución</a>.
+			</div>
+			<h:form>
+				<p:messages id="msgs" />
+				<p:panelGrid style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column style="width:50%;">
+							<h:outputText value="Id:" />
+						</p:column>
+						<p:column style="width:50%;">
+							<h:outputText
+								value="#{manejadorSemilleroGeneral.semilleroActual.id}"
+								rendered="#{!empty manejadorSemilleroGeneral.semilleroActual.id}"
+								style="font-weight: bold;" />
+							<h:outputText value="Sin ID asignado"
+								rendered="#{empty manejadorSemilleroGeneral.semilleroActual.id}"
+								style="font-weight: bold;" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha de registro:" />
+						</p:column>
+						<p:column>
+							<h:outputText style="font-weight: bold;"
+								value="#{manejadorSemilleroGeneral.semilleroActual.fechaRegistro}"
+								rendered="#{!empty manejadorSemilleroGeneral.semilleroActual.fechaRegistro}" />
+							<h:outputText value="Sin fecha de registro asignada"
+								style="font-weight: bold;"
+								rendered="#{empty manejadorSemilleroGeneral.semilleroActual.fechaRegistro}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infFacPrincipal" icon="ui-icon-info"
+								rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infFacPrincipal" styleClass="tooltip-mesage"
+								rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+							</p:tooltip>
+							<h:outputText value="Facultad principal:" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSemilleroGeneral.semilleroActual.lider.dependencia.facultad.nombre}"
+								style="font-weight: bold;" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infSedePrincipal" icon="ui-icon-info"
+								rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infSedePrincipal" styleClass="tooltip-mesage"
+								rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+							</p:tooltip>
+							<h:outputText value="Sede principal:" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSemilleroGeneral.semilleroActual.lider.dependencia.sede.nombre}"
+								style="font-weight: bold;" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infNombre" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infNombre" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Colocar el nombre del semillero, no debe exceder 1000 caracteres.</t:div>
+							</p:tooltip>
+							<p:tooltip for="infNombre" styleClass="tooltip-mesage"
+								rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Colocar el nombre del semillero, no debe exceder 1000 caracteres.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+							</p:tooltip>
+							<h:outputText value="* Nombre:" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100%;"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaNombre}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.nombre}" />
+							<h:outputText style="width: 100%;"
+								rendered="#{manejadorSemilleroGeneral.esConsulta and !manejadorSemilleroGeneral.solicitudAprobadaNombre}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.nombre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infLogo" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infLogo" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Puede adjuntar una Imagen no mayor a 3MB.<br />Esta será visible al consultar el semillero en la página principal de Hermes.</t:div>
+							</p:tooltip>
+							<h:outputText value="Fotografía o logo del semillero:" />
+						</p:column>
+						<p:column style="text-align: center;">
+							<p:graphicImage id="localCroppedImage2"
+								value="#{manejadorSemilleroGeneral.imagen}"
+								rendered="#{not empty manejadorSemilleroGeneral.imagen}"
+								style="width:150px;height:150px; border-radius: 15px;" />
+							<h:outputText style="width: 100%;"
+								rendered="#{empty manejadorSemilleroGeneral.imagen}"
+								value="- FOTOGRAFÍA O LOGO DEL SEMILLERO SIN DEFINIR -" />
+							<br />
+							<br />
+							<p:fileUpload label="Seleccionar imagen" update="@form"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								style="max-width:666px;" allowTypes="/(\.|\/)(jpg|jpeg)$/"
+								auto="true" mode="advanced" showButtons="false"
+								sizeLimit="3145728"
+								invalidFileMessage="El formato de archivo no es permitido. Sólo imágenes jpg."
+								invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+								fileUploadListener="#{manejadorSemilleroGeneral.cargarImagen}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infDescripcion" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infDescripcion" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Descripción del semillero</t:div>
+							</p:tooltip>
+							<p:tooltip for="infDescripcion" styleClass="tooltip-mesage"
+								rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Descripción del semillero<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+							</p:tooltip>
+							<h:outputText value="* Presentación:" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea style="width: 100%;" rows="5"
+								counter="outPresentacion" maxlength="2500"
+								counterTemplate="{0} caracteres restantes." autoResize="false"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaPresentacion}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.presentacion}" />
+							<h:outputText id="outPresentacion"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaPresentacion}" />
+							<h:outputText style="width: 100%;"
+								rendered="#{manejadorSemilleroGeneral.esConsulta and !manejadorSemilleroGeneral.solicitudAprobadaPresentacion}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.presentacion}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infFechaCreacion" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta}" />
+							<p:tooltip for="infFechaCreacion" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Fecha en que se creó el semillero anterior a la fecha de registro</t:div>
+							</p:tooltip>
+							<h:outputText value="* Fecha de creación:" />
+						</p:column>
+						<p:column>
+							<p:calendar readonlyInput="true"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+								maxdate="#{manejadorSemilleroGeneral.today}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.fechaCreacion}"
+								locale="es" pattern="dd/MM/yyyy" navigator="true" />
+							<h:outputText style="width: 100%;"
+								rendered="#{manejadorSemilleroGeneral.esConsulta}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.fechaCreacion}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infEmail" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infEmail" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Por favor tenga en cuenta que llegará las notificaciones<br />y comunicaciones de las diferentes dependencias y<br />se recomienda que sea correo de la unal.</t:div>
+							</p:tooltip>
+							<h:outputText value="* Correo electrónico:" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100%;"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.email}" />
+							<h:outputText style="width: 100%;"
+								rendered="#{manejadorSemilleroGeneral.esConsulta and manejadorSemilleroGeneral.semilleroActual.estadoActual.id != 5}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.email}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infInterfacultades" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infInterfacultades" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Relaciona si el semillero tiene participación de varias facultades y colocas las facultades asociadas</t:div>
+							</p:tooltip>
+							<h:outputText value="*¿Es interfacultades?" />
+						</p:column>
+						<p:column>
+							<p:selectOneRadio
+								disabled="#{manejadorSemilleroGeneral.esConsulta and manejadorSemilleroGeneral.semilleroActual.estadoActual.id != 5}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.interfacultades}">
+								<f:selectItem itemLabel="Si" itemValue="true" />
+								<f:selectItem itemLabel="No" itemValue="false" />
+								<p:ajax event="change" update="@form" process="@form" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSemilleroGeneral.semilleroActual.interfacultades}">
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel header="* Facultades asociadas"
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarFacultad">
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+										<p:column>
+											<h:outputText value="Facultad a agregar:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorSemilleroGeneral.facultadSeleccionada}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una facultad"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroGeneral.facultadItem}" />
+											</p:selectOneMenu>
+											<p:messages id="msgsModal" />
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus" value="Agregar Facultad"
+												action="#{manejadorSemilleroGeneral.adicionarFacultad}"
+												update="agregarFacultad" process="agregarFacultad" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable value="#{manejadorSemilleroGeneral.facultades}"
+												id="tabla-facultad" var="facultadAsociada"
+												style="width:100%;"
+												emptyMessage="No ha sido asociada ninguna facultad a este semillero.">
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Facultad asociada" />
+													</f:facet>
+													<h:outputText value="#{facultadAsociada.nombre}" />
+												</p:column>
+												<p:column style="width: 50px;"
+													rendered="#{!manejadorSemilleroGeneral.esConsulta}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															action="#{manejadorSemilleroGeneral.eliminarFacultad}"
+															onclick="if(!confirm('¿Esta seguro que desea eliminar esta facultad?'))return false"
+															icon="ui-icon-trash" update="tabla-facultad"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{facultadAsociada}"
+																target="#{manejadorSemilleroGeneral.facultadEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{not empty manejadorSemilleroGeneral.semilleroActual.facultades}">
+										<p:column colspan="3" style="text-align:center;">
+											<p:commandButton icon="ui-icon-clock"
+												oncomplete="dialogHistorico.show();" update="@form"
+												value="Historico Facultades">
+												<f:setPropertyActionListener value="1"
+													target="#{manejadorSemilleroGeneral.idModal}" />
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:commandButton id="infIntersedes" icon="ui-icon-info"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+							<p:tooltip for="infIntersedes" styleClass="tooltip-mesage"
+								rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">Relaciona si el semillero tiene participación de varias sedes y colocas las sedes asociadas</t:div>
+							</p:tooltip>
+							<h:outputText value="*¿Es intersedes?" />
+						</p:column>
+						<p:column>
+							<p:selectOneRadio
+								disabled="#{manejadorSemilleroGeneral.esConsulta and manejadorSemilleroGeneral.semilleroActual.estadoActual.id != 5}"
+								value="#{manejadorSemilleroGeneral.semilleroActual.intersedes}">
+								<f:selectItem itemLabel="Si" itemValue="true" />
+								<f:selectItem itemLabel="No" itemValue="false" />
+								<p:ajax event="change" update="@form" process="@form" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSemilleroGeneral.semilleroActual.intersedes}">
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel header="* Sedes asociadas"
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarSedes">
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+										<p:column>
+											<h:outputText value="Sede a agregar:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorSemilleroGeneral.sedeSeleccionada}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+												<f:selectItems value="#{manejadorSemilleroGeneral.sedeItem}" />
+											</p:selectOneMenu>
+											<p:messages id="msgsModal" />
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus" value="Agregar Sede"
+												action="#{manejadorSemilleroGeneral.adicionarSede}"
+												update="agregarSedes" process="agregarSedes" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable value="#{manejadorSemilleroGeneral.sedes}"
+												id="tabla-sedes" var="sedeAsociada" width="style:100%;"
+												emptyMessage="No ha sido asociada ninguna sede a este semillero.">
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Sede asociada" />
+													</f:facet>
+													<h:outputText value="#{sedeAsociada.nombre}" />
+												</p:column>
+												<p:column style="width: 50px;"
+													rendered="#{!manejadorSemilleroGeneral.esConsulta}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															action="#{manejadorSemilleroGeneral.eliminarSede}"
+															onclick="if(!confirm('¿Esta seguro que desea eliminar esta sede?'))return false"
+															icon="ui-icon-trash" update="tabla-sedes"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{sedeAsociada}"
+																target="#{manejadorSemilleroGeneral.sedeEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{not empty manejadorSemilleroGeneral.semilleroActual.sedes}">
+										<p:column colspan="3" style="text-align:center;">
+											<p:commandButton icon="ui-icon-clock"
+												oncomplete="dialogHistorico.show();" update="@form"
+												value="Historico Sedes">
+												<f:setPropertyActionListener value="2"
+													target="#{manejadorSemilleroGeneral.idModal}" />
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarGrupo">
+								<f:facet name="header">
+									<p:commandButton id="infGrupos" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+									<p:tooltip for="infGrupos" styleClass="tooltip-mesage"
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Asocie los grupos con los<br />que se encuentra articulado el semillero.</t:div>
+									</p:tooltip>
+									<h:outputText value="Grupos de Investigación asociados" />
+								</f:facet>
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+										<p:column>
+											<h:outputText value="Sede:" />
+										</p:column>
+										<p:column colspan="2">
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;"
+												value="#{manejadorSemilleroGeneral.sedeFiltroGrupo}"
+												panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+												<f:selectItems value="#{manejadorSemilleroGeneral.sedeItem}" />
+												<p:ajax
+													listener="#{manejadorSemilleroGeneral.actualizarGrupos}"
+													update="agregarGrupo" process="agregarGrupo"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+										<p:column>
+											<h:outputText value="Grupo a añadir:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorSemilleroGeneral.grupoSeleccionado}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione un grupo" itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroGeneral.gruposItem}" />
+											</p:selectOneMenu>
+											<p:messages id="msgsModal" />
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus" value="Agregar Grupo"
+												action="#{manejadorSemilleroGeneral.adicionarGrupo}"
+												update="agregarGrupo" process="agregarGrupo" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable value="#{manejadorSemilleroGeneral.grupos}"
+												id="tabla-grupos" var="grupoAsociado"
+												emptyMessage="No ha sido asociada ningún grupo a este semillero.">
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Sede" />
+													</f:facet>
+													<h:outputText value="#{grupoAsociado.sede.nombre}" />
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Grupo asociado" />
+													</f:facet>
+													<h:outputText value="#{grupoAsociado.nombre}" />
+												</p:column>
+												<p:column style="width: 50px;"
+													rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															action="#{manejadorSemilleroGeneral.eliminarGrupo}"
+															onclick="if(!confirm('¿Esta seguro que desea eliminar este grupo?'))return false"
+															icon="ui-icon-trash" update="tabla-grupos"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{grupoAsociado}"
+																target="#{manejadorSemilleroGeneral.grupoEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{not empty manejadorSemilleroGeneral.semilleroActual.grupos}">
+										<p:column colspan="3" style="text-align:center;">
+											<p:commandButton icon="ui-icon-clock"
+												oncomplete="dialogHistorico.show();" update="@form"
+												value="Historico Grupos">
+												<f:setPropertyActionListener value="3"
+													target="#{manejadorSemilleroGeneral.idModal}" />
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<p:panelGrid align="center" style="width: 100%;"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column>
+											<p:commandButton id="infPertinencia" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="infPertinencia" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta and manejadorSemilleroGeneral.semilleroActual.estadoActual.id != 5}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Relacione la articulación con el o los grupo(s)<br />de investigación que asoció anteriormente.</t:div>
+											</p:tooltip>
+											<h:outputText
+												value="Pertinencia / Articulación con los grupos de investigación:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea style="width: 100%;" rows="5"
+												counter="outPertinencia" maxlength="2500"
+												counterTemplate="{0} caracteres restantes."
+												autoResize="false"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.pertinencia}" />
+											<h:outputText id="outPertinencia"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+											<h:outputText style="width: 100%;"
+												rendered="#{manejadorSemilleroGeneral.esConsulta and manejadorSemilleroGeneral.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.pertinencia}" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarObjetivo">
+								<f:facet name="header">
+									<h:outputText value="Objetivos" />
+								</f:facet>
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row>
+										<p:column>
+											<p:commandButton id="infObjetivoGen" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="infObjetivoGen" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Objetivo general del semillero.</t:div>
+											</p:tooltip>
+											<p:tooltip for="infObjetivoGen" styleClass="tooltip-mesage"
+												rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Objetivo general del semillero.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+											</p:tooltip>
+											<h:outputText value="* Objetivo general:" />
+										</p:column>
+										<p:column colspan="2">
+											<p:inputTextarea style="width: 100%;" rows="5"
+												counter="outObjGeneral" maxlength="2500"
+												counterTemplate="{0} caracteres restantes."
+												autoResize="false"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaObjGeneral}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.objetivoGeneral}" />
+											<h:outputText id="outObjGeneral"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaObjGeneral}" />
+											<h:outputText style="width: 100%;"
+												rendered="#{manejadorSemilleroGeneral.esConsulta and !manejadorSemilleroGeneral.solicitudAprobadaObjGeneral}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.objetivoGeneral}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaObjEspecifico}">
+										<p:column>
+											<p:commandButton id="infObjetivoEsp" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="infObjetivoEsp" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Detallar como alcanzar el objetivo general con un alcance mayor.</t:div>
+											</p:tooltip>
+											<p:tooltip for="infObjetivoEsp" styleClass="tooltip-mesage"
+												rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Detallar como alcanzar el objetivo general con un alcance mayor.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+											</p:tooltip>
+											<h:outputText value="Objetivo Específico:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea style="width: 100%;" rows="5"
+												counter="outObjEspecifico" maxlength="2500"
+												counterTemplate="{0} caracteres restantes."
+												autoResize="false"
+												value="#{manejadorSemilleroGeneral.objetivoEspecifico}" />
+											<h:outputText id="outObjEspecifico" />
+											<p:messages id="msgsModal" />
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus" value="Agregar Objetivo"
+												action="#{manejadorSemilleroGeneral.adicionarObjetivo}"
+												update="agregarObjetivo" process="agregarObjetivo" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3" style="text-align:center;">
+											<p:dataTable
+												value="#{manejadorSemilleroGeneral.objetivosEspecificos}"
+												id="tabla-objetivos" var="objEspecifico"
+												emptyMessage="No ha sido asociada ningún objetivo específico a este semillero.">
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Objetivo Específico" />
+													</f:facet>
+													<h:outputText value="#{objEspecifico}" />
+												</p:column>
+												<p:column style="width: 50px;"
+													rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaObjEspecifico}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															action="#{manejadorSemilleroGeneral.eliminarObjetivo}"
+															onclick="if(!confirm('¿Esta seguro que desea eliminar este objetivo?'))return false"
+															icon="ui-icon-trash" update="tabla-objetivos"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{objEspecifico}"
+																target="#{manejadorSemilleroGeneral.objetivoEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="justEnf">
+								<f:facet name="header">
+									<h:outputText value="Justificación y Enfoque" />
+								</f:facet>
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row>
+										<p:column>
+											<p:commandButton id="infJustificacion" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="infJustificacion" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Justificación de creación del semillero.</t:div>
+											</p:tooltip>
+											<p:tooltip for="infJustificacion" styleClass="tooltip-mesage"
+												rendered="#{manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Justificación de creación del semillero.<br />
+								Para modificar este campo debe realizarlo a través de la opción de solicitudes en cambio de contenido.</t:div>
+											</p:tooltip>
+											<h:outputText value="* Justificación de creación:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea style="width: 100%;" rows="5"
+												counter="outJustificacion" maxlength="2500"
+												counterTemplate="{0} caracteres restantes."
+												autoResize="false"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaJustificacion}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.justificacion}" />
+											<h:outputText id="outJustificacion"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.solicitudAprobadaJustificacion}" />
+											<h:outputText style="width: 100%;"
+												rendered="#{manejadorSemilleroGeneral.esConsulta and !manejadorSemilleroGeneral.solicitudAprobadaJustificacion}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.justificacion}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:commandButton id="infEnfoque" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta}" />
+											<p:tooltip for="infEnfoque" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Problemas o preguntas de investigación, creación<br />o innovación en las que se enfocará el semillero.</t:div>
+											</p:tooltip>
+											<h:outputText value="* Enfoque:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea style="width: 100%;" rows="5"
+												counter="outEnfoque" maxlength="2500"
+												counterTemplate="{0} caracteres restantes."
+												autoResize="false"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.enfoque}" />
+											<h:outputText id="outEnfoque"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+											<h:outputText style="width: 100%;"
+												rendered="#{manejadorSemilleroGeneral.esConsulta and manejadorSemilleroGeneral.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroGeneral.semilleroActual.enfoque}" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarLabs">
+								<f:facet name="header">
+									<p:commandButton id="infLabs" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}" />
+									<p:tooltip for="infLabs" styleClass="tooltip-mesage"
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Relacione los laboratorios con los que planea trabajar de manera articulada.</t:div>
+									</p:tooltip>
+									<h:outputText value="Laboratorios" />
+								</f:facet>
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+										<p:column>
+											<h:outputText value="Sede:" />
+										</p:column>
+										<p:column colspan="2">
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" 
+												value="#{manejadorSemilleroGeneral.sedeFiltroLabs}"
+												 panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+												<f:selectItems value="#{manejadorSemilleroGeneral.sedeItem}" />
+												<p:ajax
+													listener="#{manejadorSemilleroGeneral.actualizarLabs}"
+													update="agregarLabs" process="agregarLabs"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+										<p:column>
+											<h:outputText value="Laboratorio a añadir:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorSemilleroGeneral.labSeleccionado}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione un laboratorio"
+													itemValue="" />
+												<f:selectItems value="#{manejadorSemilleroGeneral.labsItem}" />
+											</p:selectOneMenu>
+											<p:messages id="msgsModal" />
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus"
+												value="Agregar Laboratorio"
+												action="#{manejadorSemilleroGeneral.adicionarLab}"
+												update="agregarLabs" process="agregarLabs" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable
+												value="#{manejadorSemilleroGeneral.laboratorios}"
+												id="tabla-labs" var="labAsociado"
+												emptyMessage="No ha sido asociada ningún laboratorio a este semillero.">
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Sede" />
+													</f:facet>
+													<h:outputText value="#{labAsociado.sede.nombre}" />
+												</p:column>
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Laboratorio asociado" />
+													</f:facet>
+													<h:outputText value="#{labAsociado.nombre}" />
+												</p:column>
+												<p:column style="width: 50px;"
+													rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															action="#{manejadorSemilleroGeneral.eliminarLab}"
+															onclick="if(!confirm('¿Esta seguro que desea eliminar este laboratorio?'))return false"
+															icon="ui-icon-trash" update="tabla-labs"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{labAsociado}"
+																target="#{manejadorSemilleroGeneral.labEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{not empty manejadorSemilleroGeneral.semilleroActual.laboratorios}">
+										<p:column colspan="3" style="text-align:center;">
+											<p:commandButton icon="ui-icon-clock"
+												oncomplete="dialogHistorico.show();" update="@form"
+												value="Historico Laboratorios">
+												<f:setPropertyActionListener value="4"
+													target="#{manejadorSemilleroGeneral.idModal}" />
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:messages id="msgs" />
+				<div style="width: 100%; text-align: center;">
+					<p:commandButton
+						rendered="#{!manejadorSemilleroGeneral.esConsulta}"
+						action="#{manejadorSemilleroGeneral.guardarParcialmente}"
+						value="Guardar Parcialmente" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton action="#{manejadorSemilleroGeneral.siguiente}"
+						rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroGeneral.semilleroActual.estadoActual.id eq 5}"
+						value="Siguiente" update="@form" />
+				</div>
+				<p:dialog
+					header="Histórico de Semillero - #{(manejadorSemilleroGeneral.idModal eq '1' ? 'Facultades':(manejadorSemilleroGeneral.idModal eq 2 ? 'Sedes':(manejadorSemilleroGeneral.idModal eq 3 ? 'Grupos':'Laboratorios')))}"
+					widgetVar="dialogHistorico" modal="true" resizable="false"
+					width="800">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histIntegrante" var="historico"
+						rendered="#{manejadorSemilleroGeneral.idModal eq '1'}"
+						value="#{manejadorSemilleroGeneral.semilleroActual.listaFacultades}"
+						emptyMessage="No hay un histórico de facultades para este semillero."
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.facultad.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histIntegrante" var="historico"
+						rendered="#{manejadorSemilleroGeneral.idModal eq '2'}"
+						value="#{manejadorSemilleroGeneral.semilleroActual.listaSedes}"
+						emptyMessage="No hay un histórico de sedes para este semillero."
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.sede.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histIntegrante" var="historico"
+						rendered="#{manejadorSemilleroGeneral.idModal eq '3'}"
+						value="#{manejadorSemilleroGeneral.semilleroActual.listaGrupos}"
+						emptyMessage="No hay un histórico de grupos para este semillero."
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{historico.grupo.sede.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.grupo.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+							<p:column>
+							<f:facet name="header">
+								<h:outputText value="Responsable retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.responsable.nombreCompletoMinusculas}">
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histIntegrante" var="historico"
+						rendered="#{manejadorSemilleroGeneral.idModal eq '4'}"
+						value="#{manejadorSemilleroGeneral.semilleroActual.listaLaboratorios}"
+						emptyMessage="No hay un histórico de laboratorios para este semillero."
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{historico.laboratorio.sede.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.laboratorio.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 		</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

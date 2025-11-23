@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core_rt"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+
+		<h:form id="form1">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Administrar convocatorias</t:div>
+			<br />
+
+			<p:panel id="panelBusquedaConvocatorias">
+
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+					align="center">
+
+					<p:selectOneRadio id="opcionesBusqueda"
+						value="#{ManejadorConsConvocatoriasCreacion.opcionesBusqueda}">
+						<f:selectItem itemLabel="Buscar convocatorias por nombre"
+							itemValue="nombre" />
+						<f:selectItem itemLabel="Buscar convocatorias por dependencia"
+							itemValue="dependencia" />
+						<p:ajax event="change"
+							update="panelBusquedaConvocatorias, panelBusquedaProyectosxConvocatoria, panelBusquedaXDependencia"
+							listener="#{ManejadorConsConvocatoriasCreacion.cambiarTipoBusqueda}" />
+					</p:selectOneRadio>
+
+				</h:panelGrid>
+
+				<br />
+
+				<p:outputPanel id="panelBusquedaXDependencia"
+					rendered="#{ManejadorConsConvocatoriasCreacion.mostrarBusqeudaXDependencia}">
+
+					<h:panelGrid columns="2" align="center">
+
+						<h:outputText value="Estado : " styleClass="labels_proyecto2" />
+						<p:selectOneMenu
+							value="#{ManejadorConsConvocatoriasCreacion.estadoConvocatoria.id}">
+							<f:selectItems
+								value="#{ManejadorConsConvocatoriasCreacion.listaEstadosConvocatoria}"
+								var="estadosConvocatoria"
+								itemLabel="#{estadosConvocatoria.nombre}"
+								itemValue="#{estadosConvocatoria.id}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Nivel : " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="nivelConvocatoria"
+							value="#{ManejadorConsConvocatoriasCreacion.nivelConvocatoria}"
+							styleClass="labels_proyecto2">
+							<f:selectItems
+								value="#{ManejadorConsConvocatoriasCreacion.listaNivelConvocatoria}" />
+							<p:ajax update="opNivel, nivel,facultad "
+								listener="#{ManejadorConsConvocatoriasCreacion.cambiarSedeConvocatoria}" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<p:outputPanel id="opNivel">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							cellspacing="5" style="width: 234px" id="nivel"
+							rendered="#{ManejadorConsConvocatoriasCreacion.mostrarNivelSed}">
+							<h:outputText value="Sede : " styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="nivelSedeConvocatoria"
+								value="#{ManejadorConsConvocatoriasCreacion.nivelSedeConvocatoria}"
+								styleClass="labels_proyecto2">
+								<f:selectItems
+									value="#{ManejadorConsConvocatoriasCreacion.sedeConvocatoriaItem}" />
+								<p:ajax update="facultad "
+									listener="#{ManejadorConsConvocatoriasCreacion.cambiarFacConvocatoria}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							cellspacing="5" style="width: 234px" id="facultad"
+							rendered="#{ManejadorConsConvocatoriasCreacion.mostrarNivelFac}">
+							<h:outputText value="Facultad: " styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="nivelFacConvocatoria"
+								value="#{ManejadorConsConvocatoriasCreacion.nivelFacConvocatoria}"
+								styleClass="labels_proyecto2">
+								<f:selectItems
+									value="#{ManejadorConsConvocatoriasCreacion.facConvocatoriaItem}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<div
+						style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+						<p:commandButton value="Buscar convocatoria" icon="ui-icon-search"
+							update="@form" ajax="false"
+							actionListener="#{ManejadorConsConvocatoriasCreacion.buscarConvocatoriaXDependencia}" />
+					</div>
+
+				</p:outputPanel>
+
+
+
+				<p:outputPanel id="panelBusquedaProyectosxConvocatoria"
+					rendered="#{ManejadorConsConvocatoriasCreacion.mostrarBusquedaXNombre}">
+
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<t:div style="width: 120px;">
+							<h:outputText value="Nombre convocatoria:" />
+						</t:div>
+						<t:div>
+							<p:inputText id="numCom" style="width:418px;"
+								value="#{ManejadorConsConvocatoriasCreacion.nombreConvocatoriaBusqueda}" />
+							<p:commandButton
+								actionListener="#{ManejadorConsConvocatoriasCreacion.consultarConvocatorias}"
+								value="Consultar" update="panelBusquedaProyectosxConvocatoria">
+							</p:commandButton>
+						</t:div>
+						<h:outputText value="Convocatoria:" />
+						<p:selectOneMenu style="width:520px;"
+							value="#{ManejadorConsConvocatoriasCreacion.idConvocaPadre}"
+							id="somConvocatoriaPadre" panelStyle="width: 520px;">
+							<f:selectItems
+								value="#{ManejadorConsConvocatoriasCreacion.convocatoriaPadreItem}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<div
+						style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+						<p:commandButton value="Cargar información convocatoria"
+							icon="ui-icon-search" update="@form" ajax="false"
+							actionListener="#{ManejadorConsConvocatoriasCreacion.cargarConvocatoriaPadreXNombre}" />
+					</div>
+
+				</p:outputPanel>
+				<br />
+				<p:outputPanel id="opConvocatoriasPadre"
+					rendered="#{ManejadorConsConvocatoriasCreacion.mostrarResultadoConvocatoriasPadre}">
+
+					<p:dataTable var="conv" id="tablaConvocatorias"
+						value="#{ManejadorConsConvocatoriasCreacion.listaConvocatoriasPadre}">
+
+						<p:column headerText="Año">
+							<h:outputText value="#{conv.ano}" />
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{conv.titulo}" />
+						</p:column>
+
+						<p:column headerText="Editar">
+							<center>
+								<p:commandButton id="botonEditar" title="Editar"
+									icon="ui-icon-pencil"
+									action="#{ManejadorConsConvocatoriasCreacion.editarConvocatoriaPadre}">
+									<f:setPropertyActionListener value="#{conv}"
+										target="#{ManejadorConsConvocatoriasCreacion.convocatoriaPadreSeleccion}" />
+
+								</p:commandButton>
+							</center>
+						</p:column>
+						<p:column headerText="Modalidades">
+							<center>
+								<p:commandButton id="botonConsultarModalidades"
+									title="Consultar modalidades" icon="ui-icon-search"
+									action="#{ManejadorConsConvocatoriasCreacion.consultarHijos}"
+									update="@form">
+									<f:setPropertyActionListener value="#{conv}"
+										target="#{ManejadorConsConvocatoriasCreacion.convocatoriaPadreSeleccion}" />
+
+								</p:commandButton>
+
+								<p:commandButton id="botonAgregarModalidades"
+									title="Agregar modalidad" icon="ui-icon-plus"
+									action="#{ManejadorConsConvocatoriasCreacion.agregarConvocatoria}"
+									update="@form">
+									<f:setPropertyActionListener value="#{conv}"
+										target="#{ManejadorConsConvocatoriasCreacion.convocatoriaPadreSeleccion}" />
+
+								</p:commandButton>
+
+							</center>
+						</p:column>
+
+					</p:dataTable>
+
+					<br />
+
+					<p:dataTable var="convHijo" id="tablaConvocatoriasHijo"
+						rendered="#{ManejadorConsConvocatoriasCreacion.mostrarModalidadesConvocatoria}"
+						value="#{ManejadorConsConvocatoriasCreacion.listaHijo}"
+						emptyMessage="No existen modalidades asociadas a esta convocatoria">
+						
+						<p:column style="width:5%;" headerText="Id-modalidad" >
+							<h:outputText value="#{convHijo.id}" rendered="#{convHijo.id != null}"/>
+							<h:outputText value="Pendiente" rendered="#{convHijo.id == null}"/>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{convHijo.titulo}" />
+						</p:column>
+
+						<p:column headerText="Editar">
+							<center>
+								<p:commandButton id="botonEditar" title="Editar modalidad"
+									icon="ui-icon-pencil"
+									action="#{ManejadorConsConvocatoriasCreacion.editarConvocatoriaModalidad}">
+									<f:setPropertyActionListener value="#{convHijo}"
+										target="#{ManejadorConsConvocatoriasCreacion.convocatoriaModalidadSeleccion}" />
+
+								</p:commandButton>
+							</center>
+						</p:column>
+
+					</p:dataTable>
+
+
+				</p:outputPanel>
+
+
+			</p:panel>
+
+
+
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

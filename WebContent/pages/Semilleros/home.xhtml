@@ -1,0 +1,572 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Mis Semilleros</t:div>
+			<div style="width: 100%; text-align: center;">
+				De acuerdo con la Resolución de Rectoría No 670 de 220 disponible en
+				el siguiente <a
+					href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=96610"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">enlace</a>:
+			</div>
+			<div style="width: 100%; color: #FF3300; text-align: justify;">
+				"Los semilleros de investigación, creación, extensión solidaria o
+				innovación son espacios extracurriculares de formación científica,
+				investigativa, innovativa y creativa de estudiantes mediante la
+				generación de un ambiente de trabajo colaborativo propicio para
+				reflexionar, debatir, conocer y aplicar diferentes métodos,
+				metodologías y técnicas de investigación. Estarán integrados por
+				estudiantes de pregrado o posgrado, que cuentan con la guía de
+				docentes de la Universidad y se constituyen con el propósito de
+				estimular la vocación investigativa o creativa de los estudiantes en
+				torno a problemas o áreas temáticas que convocan a los integrantes
+				del Semillero, respetando los criterios éticos institucionales sobre
+				la investigación definidos por el Comité Nacional de Ética de la
+				Universidad Nacional de Colombia."</div>
+			<br />
+			<div style="width: 100%;">
+				En esta sección puede agregar un nuevo semillero o actualizar el
+				(los) semillero(s) en los cuales actúa como director(a) o estudiante
+				líder.<br /> Por favor tener en cuenta el <a
+					href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=194"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a>
+				para registro o actualización de información del semillero.
+			</div>
+			<br />
+			Lo invitamos a diligenciar la 
+			<a href="https://docs.google.com/forms/d/e/1FAIpQLSdVtNHo3fKcgcj1bHg3ppRaPdkHIk2OGxTaEaK_PX2bBo1hcA/viewform"
+						target="_blank" style="color: #16A8E2; font-weight: bold;">
+				encuesta de satisfacción del proceso de gestión de investigación y creación artística
+			</a> 
+			<br />
+			<p:dataTable var="semillero"
+				emptyMessage="No tiene semilleros registrados." paginator="true"
+				value="#{manejadorSemillerosHome.listaSemilleros}" rows="10"
+				paginatorPosition="bottom">
+				<f:facet name="header">Semilleros registrados a su nombre: #{manejadorSemillerosHome.semillerosRegistrados}</f:facet>
+				<p:column style="text-align: center; width:50%;"
+					headerText="Información de Semillero">
+					<h:outputText
+						value="&lt;strong&gt;ID: &lt;/strong&gt; #{semillero.id}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Nombre: &lt;/strong&gt; #{semillero.nombre}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Estado Actual: &lt;/strong&gt; #{semillero.estadoActual.nombre}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Rol: &lt;/strong&gt; Director(a)"
+						rendered="#{semillero.lider.id.documento == manejadorSemillerosHome.personaActual.id.documento}"
+						escape="false" />
+					<h:outputText value="&lt;strong&gt;Rol: &lt;/strong&gt; Integrante"
+						rendered="#{semillero.lider.id.documento != manejadorSemillerosHome.personaActual.id.documento}"
+						escape="false" />
+					<br />
+					<h:outputText
+						value="&lt;strong&gt;Coordinador: &lt;/strong&gt; #{empty semillero.coordinador ? 'No Aplica' : semillero.coordinador.nombreCompleto}"
+						escape="false" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="Acciones">
+					<p:commandButton value="Editar" icon="ui-icon-pencil"
+						rendered="#{semillero.estadoActual.id eq 1 and ((semillero.lider.id.documento eq manejadorSemillerosHome.personaActual.id.documento) or (semillero.estudianteLider.id.documento eq manejadorSemillerosHome.personaActual.id.documento))}"
+						action="#{manejadorSemillerosHome.editarSemillero}">
+						<f:setPropertyActionListener value="#{semillero}"
+							target="#{manejadorSemillerosHome.semilleroActual}" />
+					</p:commandButton>
+					<p:commandButton value="Ver" icon="ui-icon-search"
+						rendered="#{semillero.estadoActual.id != 1 and semillero.estadoActual.id != 5}"
+						action="#{manejadorSemillerosHome.consultarSemillero}"
+						ajax="false">
+						<f:setPropertyActionListener value="#{semillero}"
+							target="#{manejadorSemillerosHome.semilleroActual}" />
+					</p:commandButton>
+					<p:commandButton value="Ver / Editar" icon="ui-icon-search"
+						rendered="#{semillero.estadoActual.id eq 5 and ((semillero.lider.id.documento eq manejadorSemillerosHome.personaActual.id.documento) or (semillero.estudianteLider.id.documento eq manejadorSemillerosHome.personaActual.id.documento))}"
+						action="#{manejadorSemillerosHome.consultarSemillero}"
+						ajax="false">
+						<f:setPropertyActionListener value="#{semillero}"
+							target="#{manejadorSemillerosHome.semilleroActual}" />
+					</p:commandButton>
+					<p:commandButton value="Generar Reporte" icon="ui-icon-print"
+						action="#{manejadorSemillerosHome.reporteSemillero}" ajax="false">
+						<f:setPropertyActionListener value="#{semillero}"
+							target="#{manejadorSemillerosHome.semilleroActual}" />
+					</p:commandButton>
+					<p:commandButton value="Informes" icon="ui-icon-note"
+						rendered="#{semillero.estadoActual.id eq 5 and (semillero.lider.id.documento eq manejadorSemillerosHome.personaActual.id.documento)}"
+						update="@form" process="@form" oncomplete="dlgInformes.show();">
+						<f:setPropertyActionListener value="#{semillero}"
+							target="#{manejadorSemillerosHome.semilleroActual}" />
+					</p:commandButton>
+					<p:commandButton value="Solicitudes" icon="ui-icon-notice"
+						rendered="#{(semillero.estadoActual.id eq 5 or semillero.estadoActual.id eq 6) and (semillero.lider.id.documento eq manejadorSemillerosHome.personaActual.id.documento)}"
+						update="@form" process="@form" oncomplete="dlgSolicitudes.show();">
+						<f:setPropertyActionListener value="#{semillero}"
+							target="#{manejadorSemillerosHome.semilleroActual}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:dialog
+				header="Informes del semillero ID: #{manejadorSemillerosHome.semilleroActual.id}"
+				widgetVar="dlgInformes" modal="true" resizable="false" width="800"
+				minHeight="500">
+				<t:div styleClass="panel-interno-tabla" id="frmDialog"
+					style="max-height:460px; width:100%; overflow: auto;">
+
+					<div style="width: 100%; text-align: center;">Usted solo
+						puede registrar los informes del semillero que han sido
+						programados por el coordinador de seguimiento, en caso de ser
+						necesario por favor comunicarse con él.</div>
+
+
+
+					<p:dataTable id="histInformes2" var="informe"
+						value="#{manejadorSemillerosHome.semilleroActual.listaInformes}"
+						paginator="true" rows="5" paginatorPosition="bottom"
+						emptyMessage="No hay informes asociados a este semillero."
+						style="width:100%; margin-top: 20px;" editable="true">
+						<f:facet name="header">
+							<h:outputText value="Informes asociados al semillero" />
+						</f:facet>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="ID" />
+							</f:facet>
+							<h:outputText value="#{informe.id}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Compromiso" />
+							</f:facet>
+							<h:outputText value="#{informe.fechaCompromiso}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Notificaciones" />
+							</f:facet>
+							<h:outputText
+								value="&lt;strong&gt;Cantidad:&lt;/strong&gt; #{informe.numeroNotificaciones}"
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;strong&gt;Última Notificación:&lt;/strong&gt; #{empty informe.ultimaNotificacion? 'No Aplica' : informe.ultimaNotificacion}"
+								escape="false" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Cumplimiento" />
+							</f:facet>
+							<h:outputText
+								value="&lt;strong&gt;Fecha Entrega:&lt;/strong&gt; #{empty informe.entrega ? 'No Aplica' : informe.entrega}"
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;strong&gt;Cumple:&lt;/strong&gt; #{informe.cumple ? 'Si' : 'No'}"
+								escape="false" />
+							<br />
+							<h:outputText rendered="#{!informe.esInformeEditable}"
+								value="&lt;strong&gt;Estado:&lt;/strong&gt; #{informe.respuesta.nombre}"
+								escape="false" />
+							<h:outputText rendered="#{informe.esInformeEditable}"
+								value="&lt;strong&gt;Estado:&lt;/strong&gt; Pendiente por registrar"
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;strong&gt;Fecha Cumplimiento:&lt;/strong&gt; #{empty informe.fechaAprobacion ? 'No Aplica' : informe.fechaAprobacion}"
+								escape="false" />
+						</p:column>
+						<p:column>
+							<p:commandButton value="Registrar/Editar informe"
+								action="#{manejadorSemillerosHome.nuevoInforme}"
+								icon="ui-icon-pencil" update="@form" process="@form"
+								rendered="#{informe.esInformeEditable and informe.informeSiguienteRegistro}">
+								<f:setPropertyActionListener value="#{informe.id}"
+									target="#{manejadorSemillerosHome.idInforme}" />
+							</p:commandButton>
+							<p:commandButton value="Consultar informe"
+								action="#{manejadorSemillerosHome.consultarInforme}"
+								rendered="#{!informe.esInformeEditable}" icon="ui-icon-search"
+								update="@form" process="@form">
+								<f:setPropertyActionListener value="#{informe.id}"
+									target="#{manejadorSemillerosHome.idInforme}" />
+							</p:commandButton>
+							<p:commandButton icon="ui-icon-clock" value="Histórico"
+														oncomplete="dlgHistInf.show();" update="@form">
+														<f:setPropertyActionListener value="#{informe}"
+															target="#{manejadorSemillerosHome.informeActual}" />
+													</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</t:div>
+			</p:dialog>
+			<p:dialog
+				header="Solicitudes de semillero ID: #{manejadorSemillerosHome.semilleroActual.id}"
+				widgetVar="dlgSolicitudes" modal="true" resizable="false"
+				width="800" minHeight="500">
+				<t:div styleClass="panel-interno-tabla" id="frmDialogSol"
+					style="max-height:460px;min-height: 450px; width:100%; overflow: auto;">
+					<p:panelGrid style="width: 100%;"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column>
+								<p:commandButton value="Nueva Solicitud" update="@form"
+									process="@form" icon="ui-icon-plus"
+									oncomplete="dlgSolicitudesRegistro.show();"
+									action="#{manejadorSemillerosHome.nuevaSolicitud}" />
+							</p:column>
+						</p:row>
+						<p:separator />
+						<p:row>
+							<p:column>
+								<p:dataTable id="listaSol" var="solicitud"
+									value="#{manejadorSemillerosHome.semilleroActual.listaSolicitudes}"
+									paginator="true" rows="5" paginatorPosition="bottom"
+									emptyMessage="No hay solicitudes asociadas a este semillero."
+									style="width:100%; margin-top: 20px;" editable="true">
+									<f:facet name="header">
+										<h:outputText value="Solicitudes asociadas al semillero" />
+									</f:facet>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Solicitud" />
+										</f:facet>
+										<h:outputText
+											value="&lt;strong&gt;ID: &lt;/strong&gt; #{solicitud.id}"
+											escape="false" />
+										<br />
+										<h:outputText
+											value="&lt;strong&gt;Tipo: &lt;/strong&gt; #{solicitud.tipo.nombre}"
+											escape="false" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Estado" />
+										</f:facet>
+										<h:outputText rendered="#{solicitud.respuestaUAB.id eq 0}"
+											value="&lt;strong&gt;INGRESANDO&lt;/strong&gt;"
+											escape="false" />
+										<h:outputText
+											rendered="#{solicitud.tipo.id le 2 and solicitud.respuestaUAB.id ne 0 and solicitud.semillero.lider.dependencia.sede.esSedeAndina}"
+											value="&lt;strong&gt;UAB: &lt;/strong&gt;#{empty solicitud.respuestaUAB.nombre?'Sin Respuesta':solicitud.respuestaUAB.nombre}&lt;br /&gt;"
+											escape="false" />
+										<h:outputText
+											rendered="#{solicitud.tipo.id eq 1 and solicitud.respuestaUAB.id ne 0}"
+											value="&lt;strong&gt;VIF/DI: &lt;/strong&gt;#{empty solicitud.respuestaVifDi.nombre?'Sin Respuesta':solicitud.respuestaVifDi.nombre}"
+											escape="false" />
+										<h:outputText
+											rendered="#{solicitud.tipo.id ne 1 and solicitud.respuestaUAB.id ne 0}"
+											value="&lt;strong&gt;Coordinador: &lt;/strong&gt; #{empty solicitud.respuestaCoordinador.nombre?'Sin Respuesta':solicitud.respuestaCoordinador.nombre}"
+											escape="false" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha Solicitud" />
+										</f:facet>
+										<h:outputText value="#{solicitud.fechaSolicitud}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Fecha Trámite" />
+										</f:facet>
+										<h:outputText
+											rendered="#{solicitud.tipo.id le 2 and solicitud.respuestaUAB.id ne 0}"
+											value="&lt;strong&gt;UAB: &lt;/strong&gt;#{empty solicitud.fechaRespuestaUAB?'Sin Fecha de Trámite':solicitud.fechaRespuestaUAB}&lt;br /&gt;"
+											escape="false" />
+										<h:outputText
+											rendered="#{solicitud.tipo.id eq 1 and solicitud.respuestaUAB.id ne 0}"
+											value="&lt;strong&gt;VIF/DI: &lt;/strong&gt; #{empty solicitud.fechaRespuestaVifDi?'Sin Fecha de Trámite':solicitud.fechaRespuestaVifDi}"
+											escape="false" />
+										<h:outputText
+											rendered="#{solicitud.tipo.id ne 1 and solicitud.respuestaUAB.id ne 0}"
+											value="&lt;strong&gt;Coordinador que tramitó: &lt;/strong&gt; #{solicitud.coordinador.nombreCompleto}"
+											escape="false" />
+										<br />
+										<h:outputText
+											rendered="#{solicitud.tipo.id ne 1 and solicitud.respuestaUAB.id ne 0}"
+											value="&lt;strong&gt;Fecha trámite coordinador: &lt;/strong&gt; #{empty solicitud.fechaRespuestaCoordinador?'Sin Fecha de Trámite':solicitud.fechaRespuestaCoordinador}"
+											escape="false" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Acciones" />
+										</f:facet>
+										<p:commandButton value="Editar"
+											rendered="#{solicitud.respuestaUAB.id eq 0}"
+											action="#{manejadorSemillerosHome.cargarSolicitud}"
+											icon="ui-icon-pencil" update="@form" process="@form"
+											oncomplete="dlgSolicitudesRegistro.show();">
+											<f:setPropertyActionListener value="#{solicitud}"
+												target="#{manejadorSemillerosHome.solicitudActual}" />
+										</p:commandButton>
+										<p:commandButton value="Generar Reporte"
+														icon="ui-icon-print"
+														action="#{manejadorSemillerosHome.reporteSolicitudSemillero}"
+														ajax="false">
+														<f:setPropertyActionListener value="#{solicitud.id}"
+															target="#{manejadorSemillerosHome.idSolicitudSeleccionada}" />
+													</p:commandButton>
+										<p:commandButton value="Eliminar"
+											rendered="#{solicitud.respuestaUAB.id eq 0}"
+											icon="ui-icon-trash"
+											action="#{manejadorSemillerosHome.eliminarSolicitud}"
+											update="@form" process="@form"
+											oncomplete="dlgSolicitudes.show();">
+											<f:setPropertyActionListener value="#{solicitud}"
+												target="#{manejadorSemillerosHome.solicitudActual}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Registro de Solicitudes"
+				widgetVar="dlgSolicitudesRegistro" modal="true" resizable="false"
+				width="800" height="500" onHide="dlgSolicitudes.show();">
+				<t:div styleClass="panel-interno-tabla" id="frmDialogSol2"
+					style="max-height:460px;min-height: 450px; width:100%; overflow: auto;">
+					<p:panelGrid style="width: 100%;" id="panSolicitud"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row rendered="#{manejadorSemillerosHome.solicitudNueva}">
+							<p:column>
+								<h:outputText value="Tipo Solicitud:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu styleClass="selectGrupo"
+									disabled="#{not empty manejadorSemillerosHome.solicitudActual.tipo.id}"
+									value="#{manejadorSemillerosHome.solicitudActual.tipo.id}">
+									<f:selectItem itemLabel="Seleccione el tipo de Solicitud"
+										iteValue="" itemDisabled="true" />
+									<f:selectItems
+										value="#{manejadorSemillerosHome.listaSolicitudes}" />
+									<p:ajax update="frmDialogSol2" process="frmDialogSol2"
+										listener="#{manejadorSemillerosHome.actualizarDialogSolicitudes}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorSemillerosHome.solicitudNueva}">
+							<p:column
+								rendered="#{manejadorSemillerosHome.solicitudActual.tipo.id eq 2}">
+								<h:outputText value="Nuevo Estado del Semillero:" />
+							</p:column>
+							<p:column
+								rendered="#{manejadorSemillerosHome.solicitudActual.tipo.id eq 2}">
+								<p:selectOneMenu styleClass="selectGrupo"
+									value="#{manejadorSemillerosHome.nuevoEstadoId}">
+									<f:selectItems
+										value="#{manejadorSemillerosHome.listaEstadosDisponiblesSolicitud}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column
+								rendered="#{manejadorSemillerosHome.solicitudActual.tipo.id eq 3}">
+								<h:outputText value="Contenido a Cambiar:" />
+							</p:column>
+							<p:column
+								rendered="#{manejadorSemillerosHome.solicitudActual.tipo.id eq 3}">
+								<p:selectManyCheckbox layout="pageDirection"
+									value="#{manejadorSemillerosHome.cambiosContenido}"
+									style="width:100%;">
+									<f:selectItems
+										value="#{manejadorSemillerosHome.listaCambiosContenido}" />
+								</p:selectManyCheckbox>
+							</p:column>
+							<p:column
+								rendered="#{manejadorSemillerosHome.solicitudActual.tipo.id eq 5}">
+								<h:outputText value="Tipo de Documento:" />
+							</p:column>
+							<p:column
+								rendered="#{manejadorSemillerosHome.solicitudActual.tipo.id eq 5}">
+								<p:selectOneMenu
+									value="#{manejadorSemillerosHome.tipoDocNuevoLider}">
+									<f:selectItems
+										value="#{manejadorSemillerosHome.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosHome.solicitudNueva and manejadorSemillerosHome.solicitudActual.tipo.id eq 5}">
+							<p:column>
+								<h:outputText value="Número de Documento:" />
+							</p:column>
+							<p:column>
+								<p:inputText
+									value="#{manejadorSemillerosHome.documentoNuevoLider}"
+									id="numdocumento" maxlength="25" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosHome.solicitudNueva and not empty manejadorSemillerosHome.solicitudActual.tipo.id}">
+							<p:column>
+								<h:outputText value="Justificación:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea style="width: 100%;" rows="5"
+									value="#{manejadorSemillerosHome.solicitudActual.justificacion}"
+									counter="outJustificacion" maxlength="2500"
+									counterTemplate="{0} caracteres restantes." autoResize="false" />
+								<h:outputText id="outJustificacion" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosHome.solicitudNueva and not empty manejadorSemillerosHome.solicitudActual.tipo.id}">
+							<p:column>
+								<h:outputText value="Documentos Adjuntos:" />
+							</p:column>
+							<p:column>
+								<p:fileUpload label="Seleccionar Archivo"
+									update="tblArchivos tblArchivos2" style="max-width:666px;"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="3145728"
+									invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+									fileUploadListener="#{manejadorSemillerosHome.agregarArchivo}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorSemillerosHome.solicitudNueva and not empty manejadorSemillerosHome.solicitudActual.tipo.id}">
+							<p:column colspan="2">
+								<p:dataTable var="archivo" id="tblArchivos"
+									rendered="#{empty manejadorSemillerosHome.solicitudActual.id}"
+									value="#{manejadorSemillerosHome.listaArchivos}"
+									emptyMessage="No hay archivos asociados a esta solicitud.">
+									<f:facet name="header">
+										<h:outputText value="Archivos vinculados" />
+									</f:facet>
+									<p:column>
+										<h:outputText value=" #{archivo.fileName}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Acciones" />
+										</f:facet>
+										<h:outputText
+											value="Por favor, guarde parcialmente su solicitud para descargar o eliminar el archivo." />
+									</p:column>
+								</p:dataTable>
+								<p:dataTable var="archivo" id="tblArchivos2"
+									rendered="#{not empty manejadorSemillerosHome.solicitudActual.id}"
+									value="#{manejadorSemillerosHome.solicitudActual.listaArchivosSolicitud}"
+									emptyMessage="No hay archivos asociados a esta solicitud.">
+									<f:facet name="header">
+										<h:outputText value="Archivos vinculados" />
+									</f:facet>
+									<p:column>
+										<h:outputText value=" #{archivo.nombre}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Acciones" />
+										</f:facet>
+										<p:commandButton
+											action="#{manejadorSemillerosHome.descargarArchivo}"
+											ajax="false" update="tblArchivos2" icon="ui-icon-search"
+											title="Descargar">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosHome.archivo}" />
+										</p:commandButton>
+										<p:commandButton
+											action="#{manejadorSemillerosHome.eliminarArchivo}"
+											update="tblArchivos2" icon="ui-icon-trash" title="Eliminar">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorSemillerosHome.archivo}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{not empty manejadorSemillerosHome.msgDialog}">
+							<p:column colspan="2">
+								<p:messages id="msgsModal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:commandButton value="Reiniciar" update="frmDialogSol2"
+									process="frmDialogSol2"
+									rendered="#{not empty manejadorSemillerosHome.solicitudActual.tipo.id and empty manejadorSemillerosHome.solicitudActual.id}"
+									icon="ui-icon-refresh"
+									action="#{manejadorSemillerosHome.nuevaSolicitud}" />
+								<p:commandButton value="Guardar Parcialmente" update="@form"
+									process="@form"
+									rendered="#{not empty manejadorSemillerosHome.solicitudActual.tipo.id}"
+									icon="ui-icon-disk" oncomplete="dlgSolicitudesRegistro.show();"
+									action="#{manejadorSemillerosHome.guardarSolicitudParcialmente}" />
+								<p:commandButton value="Enviar solicitud" update="@form"
+									process="@form" oncomplete="dlgSolicitudesRegistro.show();"
+									rendered="#{not empty manejadorSemillerosHome.solicitudActual.tipo.id}"
+									icon="ui-icon-play"
+									action="#{manejadorSemillerosHome.enviarSolicitud}" />
+								<p:commandButton value="Cancelar" update="@form"
+									rendered="#{not empty manejadorSemillerosHome.solicitudActual.tipo.id}"
+									process="@form" oncomplete="dlgSolicitudes.show();"
+									icon="ui-icon-trash"
+									action="#{manejadorSemillerosHome.cancelarSolicitud}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:dialog>
+			<p:dialog
+				header="Histórico de Informe - ID: #{manejadorSemillerosHome.informeActual.id}"
+				widgetVar="dlgHistInf" modal="true" resizable="false" width="800">
+				<p:dataTable paginator="true" rows="5" paginatorPosition="bottom"
+					emptyMessage="No hay histórico asociado a este informe."
+					value="#{manejadorSemillerosHome.informeActual.listaHistorico}"
+					style="width:100%; margin-top: 20px;" var="historico">
+					<f:facet name="header">
+						<h:outputText value="Histórico Cambios en Informe" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaAjuste}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Compromiso" />
+						</f:facet>
+						<h:outputText
+							value="#{historico.compromiso}"
+							escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText
+							value="#{historico.estado.nombre}"
+							escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios" />
+						</f:facet>
+						<h:outputText
+							value="#{historico.comentarios}"
+							escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{historico.responsable.nombreCompleto}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

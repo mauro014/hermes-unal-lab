@@ -1,0 +1,1623 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<style>
+.test .ui-selectcheckboxmenu-header {
+	display: none;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Reportes</t:div>
+
+			<p:growl id="growl" showDetail="true" />
+			<p:growl id="growl2" showDetail="true" />
+			<p:tabView>
+
+				<!-- Proyectos -->
+
+				<p:tab title="Proyectos" titleStyle="font-size:11px">
+
+					<p:growl id="growl" showDetail="true" />
+
+					<br />
+					<p:panel>
+						<t:div style="color:#333333; text-align:justify;">
+							<strong style="color: #D35400;">Nota:</strong>
+							<span style="color: #D35400;"> En este reporte <strong>no
+									se generan los reportes de movilidades</strong>, para generar este
+								reporte debe realizarlo con el <strong>rol de VIF</strong>. Así
+								mismo, el reporte de <strong>convocatorias de eventos y
+									artículos</strong> es posible que se genere sin información en algunos
+								campos, por la particularidad de estas convocatorias.
+							</span>
+						</t:div>
+					</p:panel>
+
+					<p:messages id="msgs" autoUpdate="true" closable="true" />
+					<br />
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="panelReporte">
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Tipo de proyectos para el reporte:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu id="tipoPry"
+									value="#{manejadorReporteProyectos.tipoProyectoReporte}">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaTiposReporteProyectoItem}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorReporteProyectos.cargarDependencias}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Estado Proyecto:" />
+								<br />
+								<b><h:outputText id="selEstados" style="color:#2e6e9e;"
+										value="Estados Seleccionados: #{manejadorReporteProyectos.selEstados}" /></b>
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu id="menu" style="width:100%;"
+									value="#{manejadorReporteProyectos.selectedEstados}"
+									panelStyleClass="test" label="Seleccione estado(s)"
+									panelStyle="width:250px">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaEstadosProyecto}" />
+									<p:ajax update="selEstados" process="selEstados" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorReporteProyectos.esReporteJornadaDocente}">
+							<p:column colspan="2">
+								<h:outputText value="Sede:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu style="width:100%;" id="sede"
+									value="#{manejadorReporteProyectos.sede}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaSedesItem}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorReporteProyectos.cargarDependencias}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{!manejadorReporteProyectos.esReporteJornadaDocente}">
+							<p:column colspan="2">
+								<h:outputText value="Sede:" />
+								<br />
+								<b><h:outputText id="selSedes" style="color:#2e6e9e;"
+										value="Sedes Seleccionadas: #{manejadorReporteProyectos.selSedes}" /></b>
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu style="width:100%;" id="sedes"
+									label="Seleccione Sede(s)" panelStyleClass="test"
+									value="#{manejadorReporteProyectos.selectedSedes}"
+									filter="false">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaSedesItem}" />
+									<p:ajax update="facultad,selSedes" process="facultad,selSedes"
+										listener="#{manejadorReporteProyectos.cargarDependencias}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Facultad:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu style="width:100%;" id="facultad"
+									value="#{manejadorReporteProyectos.facultad}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaDependenciasItem}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorReporteProyectos.cargarDeptos}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Departamento:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu
+									value="#{manejadorReporteProyectos.selectedDeptos}"
+									label="Seleccione departamento(s)" id="depto"
+									style="width:100%;" panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaDeptosItem}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{!manejadorReporteProyectos.esReporteJornadaDocente}">
+							<p:column colspan="2">
+								<h:outputText value="Convocatoria:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu
+									value="#{manejadorReporteProyectos.selectedConvocatorias}"
+									label="Seleccione convocatoria(s)" id="convoca"
+									style="width:100%;" panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.convocatoriaItem}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Rango del reporte:"
+									style='font-weight: bold;' />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="¿Desea generar el reporte para un rango de fechas?" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.reporteHistorico}">
+									<p:ajax update="@form" process="@form" />
+								</p:selectBooleanCheckbox>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:panel>
+									<t:div style="color:#333333; text-align:justify;">
+										<strong style="color: #D35400;">Notas:</strong>
+										<br/>
+										<span style="color: #D35400;"> - El rango de fechas le
+											muestra <strong>proyectos que han cambiado a los
+												estados seleccionados</strong> durante ese periodo.
+										</span>
+										<br/>
+										<span style="color: #D35400;">- El <strong>valor ejecutado</strong> solo se muestra para proyectos finalizados de acuerdo al dato generado en el acta de finalización</span>
+									</t:div>
+								</p:panel>
+
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorReporteProyectos.reporteHistorico}">
+							<p:column colspan="2" style="text-align: center;">
+								<h:outputText value="Fecha Inicial: " />
+								<p:calendar id="fechaInicial" navigator="true" locale="es"
+									readonlyInput="true"
+									value="#{manejadorReporteProyectos.fechaInicio}" />
+							</p:column>
+							<p:column colspan="2" style="text-align: center;">
+								<h:outputText value="Fecha Final: " />
+								<p:calendar id="fechaFinal" navigator="true" locale="es"
+									value="#{manejadorReporteProyectos.fechaFin}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido BASE del reporte:"
+									style='font-weight: bold;' />
+								<br />
+								<h:outputText
+									value="Seleccione la información que desea ver de los proyectos en el reporte." />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:left">
+								<p:commandButton value="Limpiar"
+									actionListener="#{manejadorReporteProyectos.desmarcarTodoProyectos}"
+									ajax="false" />
+							</p:column>
+							<p:column colspan="2" style="text-align:right">
+								<p:commandButton value="Seleccionar Todo"
+									actionListener="#{manejadorReporteProyectos.seleccionarTodoProyectos}"
+									ajax="false" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[0]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código Hermes" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[1]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código Quipú" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[2]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[3]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre Proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[4]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Duración (Meses)" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[5]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Estado Actual" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[6]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Lugar de Ejecución del Proyecto" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[7]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Objetivo general" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[8]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Año de Convocatoria" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[9]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo de Convocatoria" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[10]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Convocatoria" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[11]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Modalidad" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[12]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Investigador Principal" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[13]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad - Investigador Principal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[14]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sede - Investigador Principal" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[15]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha de Cambio de Estado a PROPUESTO" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[16]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha Inicio" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[17]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha Final Programada" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[18]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha Final con Prórrogas" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[19]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Valor de Personal UN" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[20]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Total Recursos Internos" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[21]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Total Recursos Externos" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[22]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha Aprobación" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[23]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Valor Ejecutado" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[24]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Valor Contrapartida UN" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[25]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha de Cambio de Estado a FINALIZADO" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[26]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Coordinador Asignado" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[27]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sede del proyecto al activarse" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[28]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sedes del proyecto" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[29]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Objetivo de Desarrollo Sostenible Principal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[30]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Fecha de entrega de informe final con prórrogas" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[31]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Valor de adición presupuestal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[32]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Resumen" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[33]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Objetivo socioeconómico" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columns[34]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Área Ocde" />
+							</p:column>
+							<p:column style="text-align: right;">
+								
+							</p:column>
+							<p:column>
+								
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido ADICIONAL del reporte:"
+									style='font-weight: bold;' />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="Seleccione la información que desea anexar al reporte:" />
+								<br />
+								<h:outputText style="color:#FF8000;" id="msgRP"
+									value="#{manejadorReporteProyectos.msgInfoAdicionalReportePry}" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu id="infoAdicionalReporte"
+									value="#{manejadorReporteProyectos.infoAdicionalReporteProyCoord}">
+									<p:ajax listener="#{manejadorReporteProyectos.actualizarMsgRP}"
+										update="msgRP" />
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaInfoAdicionalReporteProyCoord}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<br />
+						<br />
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row id="reporte">
+							<p:column colspan="4" style="text-align:center">
+								<p:commandButton value="Generar Reporte"
+									rendered="#{manejadorReporteProyectos.reporteHistorico and manejadorReporteProyectos.facultad!='0'}"
+									actionListener="#{manejadorReporteProyectos.imprimirReporteHistorico}"
+									ajax="false" />
+								<p:commandButton value="Generar Reporte"
+									rendered="#{manejadorReporteProyectos.reporteHistorico and manejadorReporteProyectos.facultad=='0'}"
+									actionListener="#{manejadorReporteProyectos.imprimirReporteHistoricoSede}"
+									ajax="false" />
+								<p:commandButton value="Generar Reporte"
+									rendered="#{!manejadorReporteProyectos.reporteHistorico and manejadorReporteProyectos.facultad!='0'}"
+									actionListener="#{manejadorReporteProyectos.imprimirReporte}"
+									ajax="false" />
+								<p:commandButton value="Generar Reporte"
+									rendered="#{!manejadorReporteProyectos.reporteHistorico and manejadorReporteProyectos.facultad=='0'}"
+									actionListener="#{manejadorReporteProyectos.imprimirReporteSede}"
+									ajax="false" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:tab>
+				<p:tab title="Proy. coordinador"
+					rendered="#{!manejadorAutenticacion.esConsulta and manejadorAutenticacion.esCoordinador}"
+					titleStyle="font-size:11px" id="panelInformacionProyecto">
+					<br />
+					<p:panelGrid id="panelGridAspectoGeneralPpal"
+						styleClass="estilo-panelgrid-sinbordes">
+
+						<p:row>
+							<p:column>
+								<h:outputText value="Convocatoria:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorConsultaProyectosCoordinador.convocatoriaSel}"
+									id="Convocatoria" style="width:500px"
+									panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todas" itemValue="15" />
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.convocatoriaItem}" />
+									<p:ajax
+										listener="#{manejadorConsultaProyectosCoordinador.cargarModalidad}"
+										update="panelGridAspectoGeneralPpal"
+										process="panelGridAspectoGeneralPpal" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorConsultaProyectosCoordinador.mostrarModalidades}">
+							<p:column>
+								<h:outputText value="Modalidad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorConsultaProyectosCoordinador.modalidadSel}"
+									id="Modalidad" style="width:500px" panelStyle="width: 500px;"
+									filter="true" filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.modalidadItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Sede:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorConsultaProyectosCoordinador.sedeSel}"
+									id="sedeUN" style="width:200px" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todas" itemValue="0" />
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.sedeItem}" />
+									<p:ajax
+										listener="#{manejadorConsultaProyectosCoordinador.cambiarSede}"
+										update="panelGridAspectoGeneralPpal"
+										process="panelGridAspectoGeneralPpal" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row id="facultadUN"
+							rendered="#{manejadorConsultaProyectosCoordinador.mostrarFacultades}">
+							<p:column>
+								<h:outputText value="Facultad:" id="outputTextFac" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorConsultaProyectosCoordinador.facultadSel}"
+									style="width:300px" filterStyle="width: 450px;" filter="true"
+									filterMatchMode="contains" panelStyle="width: 300px;">
+									<f:selectItem itemLabel="Todas" itemValue="0" />
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.facultadItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo de coordinación:" id="tipoCoord" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="coordinador"
+									value="#{manejadorConsultaProyectosCoordinador.coorSel}"
+									style="width:200px">
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.tipoCoordinadorItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row style="text-align:center;">
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Consultar"
+									actionListener="#{manejadorConsultaProyectosCoordinador.consultarProyectos}"
+									update="tablaCoordinadorReportes,tablaCoordinadorEvaluacion,proyectosAsignados"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+									process="panelGridAspectoGeneralPpal" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<t:div
+						style="text-align: right; color: #16A8E2; vertical-align:center;"
+						id="tablaCoordinadorReportes">
+						<h:commandLink value="Exportar tabla" style="color: #16A8E2;"
+							rendered="#{manejadorConsultaProyectosCoordinador.coorSel != '2'}">
+							<p:dataExporter type="xls" target="proyectosAsignados"
+								fileName="proyectosAsignados" />
+						</h:commandLink>
+						<p:commandButton id="infoReporte" icon="ui-icon-info"
+							rendered="#{manejadorConsultaProyectosCoordinador.coorSel == '2' and not empty manejadorConsultaProyectosCoordinador.listaProyectos}" />
+						<p:tooltip for="infoReporte" styleClass="tooltip-mesage"
+							showDelay="999">
+							<t:div style="text-align: left; float:left;">
+								       	Descarga archivo excel con los proyectos de la tabla e <br />
+								       	incluye los evaluadores y calificaciones de cada uno. 
+									</t:div>
+						</p:tooltip>
+						<h:commandLink id="tablaCoordinadorEvaluacion"
+							value=" Exportar listado con evaluación" style="color: #16A8E2;"
+							rendered="#{manejadorConsultaProyectosCoordinador.coorSel == '2' and not empty manejadorConsultaProyectosCoordinador.listaProyectos}"
+							action="#{manejadorConsultaProyectosCoordinador.consultarEvaluacionProyectos}">
+						</h:commandLink>
+					</t:div>
+					<p:dataTable id="proyectosAsignados" var="proyecto"
+						emptyMessage="0 proyectos encontrados"
+						value="#{manejadorConsultaProyectosCoordinador.listaProyectos}"
+						paginator="true" rows="10" paginatorPosition="bottom"
+						style="width:100%;"
+						filteredValue="#{manejadorConsultaProyectosCoordinador.filteredProyectos}">
+
+						<f:facet name="header">  
+	            Proyectos asociados
+	        	</f:facet>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Código" />
+							</f:facet>
+							<h:outputText value="#{proyecto.id}" />
+						</p:column>
+
+						<p:column filterBy="#{proyecto.estadoProyecto.nombre}"
+							filterMatchMode="contains" filterStyle="width: 35px;">
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText value="#{proyecto.estadoProyecto.nombre}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Titulo" />
+							</f:facet>
+							<h:outputText value="#{proyecto.nombre}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Convocatoria" />
+							</f:facet>
+							<h:outputText value="#{proyecto.nombreConvocatoriaPadre}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Inv. principal" />
+							</f:facet>
+							<h:outputText
+								value="#{proyecto.investigadorPrincipalVista.investigador.nombreCompleto}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Facultad" />
+							</f:facet>
+							<h:outputText
+								value="#{proyecto.investigadorPrincipalVista.investigador.dependencia.facultad.nombre}" />
+						</p:column>
+
+						<p:column headerText="Ver" exportable="false">
+							<p:commandButton icon="ui-icon-search" title="Ver" ajax="false"
+								action="#{manejadorConsultaProyectosCoordinador.cargarProyecto}">
+								<f:setPropertyActionListener value="#{proyecto.id}"
+									target="#{manejadorConsultaProyectosCoordinador.proyectoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+
+						<f:facet name="footer">Han sido encontrados #{manejadorConsultaProyectosCoordinador.totalProyectos} proyectos</f:facet>
+					</p:dataTable>
+
+				</p:tab>
+				<p:tab title="Proy. compromisos pendientes"
+					rendered="#{!manejadorAutenticacion.esConsulta and manejadorAutenticacion.esCoordinador}"
+					titleStyle="font-size:11px" id="panelInformacionProyectosMorosos">
+					<br />
+					<p:panelGrid id="panelGridProyectosMorosos"
+						styleClass="estilo-panelgrid-sinbordes">
+
+						<p:row>
+							<p:column style="width:200px;">
+								<h:outputText value="Convocatoria:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorConsultaProyectosCoordinador.convocatoriaSel}"
+									id="ConvocatoriaMorosos" style="width:500px"
+									panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todas" itemValue="15" />
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.convocatoriaItem}" />
+									<p:ajax
+										listener="#{manejadorConsultaProyectosCoordinador.cargarModalidad}"
+										update="panelGridProyectosMorosos"
+										process="panelGridProyectosMorosos" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorConsultaProyectosCoordinador.mostrarModalidades}">
+							<p:column>
+								<h:outputText value="Modalidad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorConsultaProyectosCoordinador.modalidadSel}"
+									id="Modalidad" style="width:500px" panelStyle="width: 500px;"
+									filter="true" filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorConsultaProyectosCoordinador.modalidadItem}" />
+
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row style="text-align:center;">
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Consultar"
+									actionListener="#{manejadorConsultaProyectosCoordinador.consultarProyectosMorosos}"
+									update="proyectosMorosos" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<div style="text-align: right; color: #16A8E2;">
+						<h:commandLink value="Exportar tabla" style="color: #16A8E2;">
+							<p:dataExporter type="xls" target="proyectosMorosos"
+								fileName="proyectosMorosos" />
+						</h:commandLink>
+					</div>
+					<p:dataTable id="proyectosMorosos" var="proyecto"
+						emptyMessage="0 proyectos encontrados"
+						value="#{manejadorConsultaProyectosCoordinador.listaProyectosMorosos}"
+						paginator="true" rows="10" paginatorPosition="bottom"
+						style="width:650px;"
+						filteredValue="#{manejadorConsultaProyectosCoordinador.filteredProyectos}">
+
+						<f:facet name="header">  
+	            Proyectos con compromisos pendientes
+	        	</f:facet>
+						<p:column filterBy="#{proyecto.id}" filterMatchMode="contains"
+							filterStyle="width: 35px;">
+							<f:facet name="header">
+								<h:outputText value="Código" />
+							</f:facet>
+							<h:outputText value="#{proyecto.id}" />
+						</p:column>
+						<p:column filterBy="#{proyecto.estadoProyecto.nombre}"
+							filterMatchMode="contains" filterStyle="width: 35px;">
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText value="#{proyecto.estadoProyecto.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Título" />
+							</f:facet>
+							<t:div style="width:160px; font-size:10px">
+								<h:outputText value="#{proyecto.nombre}" />
+							</t:div>
+						</p:column>
+						<p:column
+							filterBy="#{proyecto.investigadorPrincipalVista.investigador.nombreCompleto}"
+							filterMatchMode="contains" filterStyle="width: 35px;">
+							<f:facet name="header">
+								<h:outputText value="Inv. principal" />
+							</f:facet>
+							<h:outputText value="#{proyecto.resumen}" />
+						</p:column>
+						<p:column filterBy="#{proyecto.resumen}"
+							filterMatchMode="contains" filterStyle="width: 35px;">
+							<f:facet name="header">
+								<h:outputText value="Pendiente" />
+							</f:facet>
+							<h:outputText value="#{proyecto.observaciones}" />
+						</p:column>
+						<p:column filterBy="#{proyecto.observaciones}"
+							filterMatchMode="contains" filterStyle="width: 35px;">
+							<f:facet name="header">
+								<h:outputText value="Est. compromiso" />
+							</f:facet>
+							<h:outputText value="#{proyecto.antecedentes}" />
+						</p:column>
+						<p:column headerText="Ver" exportable="false">
+							<p:commandButton icon="ui-icon-search" title="Ver" ajax="false"
+								action="#{manejadorConsultaProyectosCoordinador.cargarProyecto}">
+								<f:setPropertyActionListener value="#{proyecto.id}"
+									target="#{manejadorConsultaProyectosCoordinador.proyectoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+
+						<f:facet name="footer">Han sido encontrados #{manejadorConsultaProyectosCoordinador.totalProyectosMorosos} proyectos</f:facet>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Proy. externos" titleStyle="font-size:11px"
+					id="panelInfoProyectoExt">
+					<br />
+					<center>
+						<h:outputText
+							value="Generar reportes proyectos externos legalizados"
+							style='font-size:14px;font-weight: bold;' />
+					</center>
+					<br />
+					<p:panel>
+						<t:div style="color:#333333; text-align:justify;">
+							<strong style="color: #D35400;">Nota:</strong>
+							<span style="color: #D35400;"> En este reporte <strong> se generan los proyectos que se han legalizado</strong>. 
+							Para consultar los proyectos que están propuestos con aval se genera con el <strong>rol de VIF</strong> en la opción de 'Avales'.
+							</span>
+						</t:div>
+					</p:panel>
+					<br />
+					<p:panelGrid id="generarRepPryExtGral"
+						styleClass="estilo-panelgrid-sinbordes" columns="2">
+						<h:outputText
+							value="¿Desea generar el reporte para un rango de fechas de legalización?" />
+						<p:selectOneRadio id="opcionesTerminos"
+							value="#{manejadorReporteProyectos.reporteHistoricoLeg}">
+							<f:selectItem itemLabel="Si" itemValue="Si" />
+							<f:selectItem itemLabel="No" itemValue="No" />
+							<p:ajax event="change" update="OP_fechas"
+								listener="#{manejadorReporteProyectos.verPanelFechas}" />
+						</p:selectOneRadio>
+					</p:panelGrid>
+					<br/>
+								<p:panel>
+									<t:div style="color:#333333; text-align:justify;">
+										<span style="color: #D35400;"> El rango de fechas le
+											muestra <strong>proyectos que han cambiado a los
+												estados seleccionados</strong> durante ese periodo.
+										</span>
+										</t:div>
+								</p:panel>
+
+						<br />
+					<p:outputPanel id="OP_fechas">
+						<h:outputText
+							rendered="#{manejadorReporteProyectos.mostrarPanelFechas}"
+							style="font-size:12px; font-weight:bold;"
+							value="NOTA: El reporte generado a través de esta opción inluirá el listado de proyectos, que en el rango de fechas indicado se legalizó, dado que se proporciona en formato
+						excel, allí podrá aplicar filtros adicionales.">
+						</h:outputText>
+						<p:panelGrid id="generarRepPryExt_1"
+							styleClass="estilo-panelgrid-sinbordes" columns="2">
+
+							<h:outputText value="Fecha Inicial:"
+								rendered="#{manejadorReporteProyectos.mostrarPanelFechas}" />
+							<p:calendar id="fechaInicialLeg"
+								value="#{manejadorReporteProyectos.fechaInicioLeg}"
+								rendered="#{manejadorReporteProyectos.mostrarPanelFechas}" />
+
+							<h:outputText value="Fecha Final:"
+								rendered="#{manejadorReporteProyectos.mostrarPanelFechas}" />
+							<p:calendar id="fechaFinalLeg"
+								value="#{manejadorReporteProyectos.fechaFinLeg}"
+								rendered="#{manejadorReporteProyectos.mostrarPanelFechas}" />
+						</p:panelGrid>
+					</p:outputPanel>
+					<p:panelGrid id="generarRepPryExt_Dep"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Estado Proyecto:" />
+								<br />
+								<b><h:outputText id="selEstadosExt" style="color:#2e6e9e;"
+										value="Estados Seleccionados: #{manejadorReporteProyectos.selEstadosExt}" /></b>
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu id="menuEstadosExt" style="width:100%;"
+									value="#{manejadorReporteProyectos.selectedEstadosLeg}"
+									panelStyleClass="test" label="Seleccione estado(s)"
+									panelStyle="width:250px">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaEstadosProyecto}" />
+									<p:ajax update="selEstadosExt" process="selEstadosExt" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Sede:" />
+								<br />
+								<b><h:outputText id="selSedesExt" style="color:#2e6e9e;"
+										value="Sedes Seleccionadas: #{manejadorReporteProyectos.selSedesExt}" /></b>
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu style="width:320px;" id="sedesExt"
+									label="Seleccione sede(s)" panelStyleClass="test"
+									value="#{manejadorReporteProyectos.selectedSedesLeg}"
+									filter="false">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaSedesItemLeg}" />
+									<p:ajax update="facultadExt,selSedesExt"
+										process="facultadExt,selSedesExt"
+										listener="#{manejadorReporteProyectos.cargarDependenciasLeg}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Facultad:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu style="width:320px;" id="facultadExt"
+									value="#{manejadorReporteProyectos.facultadLeg}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaDependenciasItemLeg}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorReporteProyectos.cargarDeptosLeg}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Departamento:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu
+									value="#{manejadorReporteProyectos.selectedDeptosLeg}"
+									label="Seleccione departamento(s)" id="deptoExt"
+									style="width:320px;" panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaDeptosItemLeg}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido BASE del reporte:"
+									style='font-weight: bold;' />
+								<br />
+								<h:outputText
+									value="Seleccione la información que desea ver de los proyectos en el reporte." />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:left">
+								<p:commandButton value="Limpiar"
+									actionListener="#{manejadorReporteProyectos.desmarcarTodoLegalizacion}"
+									ajax="false" />
+							</p:column>
+							<p:column colspan="2" style="text-align:right">
+								<p:commandButton value="Seleccionar Todo"
+									actionListener="#{manejadorReporteProyectos.seleccionarTodoLegalizacion}"
+									ajax="false" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[0]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código HERMES" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[1]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código QUIPU" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[2]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo de Proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[3]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre de Proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[4]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Estado de Proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[5]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Lugar de Ejecución del Proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[6]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Investigador Principal" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[7]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sede - Investigador Principal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[8]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad -Investigador Principal" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[9]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha de Inicio de Proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[10]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo - Fecha de Inicio de Proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[11]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha de Finalización de Proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[12]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Acto Administrativo - Entidad Financiadora" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[13]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Acto Administrativo - Universidad" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[14]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Dependencia Ejecutora de Recursos" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[15]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código QUIPU - Unidades Ejecutoras" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[16]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Valor - Contrapartida Efectivo ($)" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[17]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Valor - Contrapartida Especie ($)" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[18]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Supervisión de Contrato" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[19]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Asistente de Proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[20]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Región" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[21]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fase" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[22]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Objetivo de Desarrollo Sostenible Principal" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsLeg[23]}"></p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Fecha de entrega de informe final con prórrogas" />
+							</p:column>
+
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido ADICIONAL del reporte:"
+									style='font-weight: bold;' />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="Seleccione la información que desea anexar al reporte:" />
+								<br />
+								<h:outputText style="color:#FF8000;" id="msgRPE"
+									value="#{manejadorReporteProyectos.msgInfoAdicionalReportePryExt}" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu id="infoAdicionalReporteExt"
+									value="#{manejadorReporteProyectos.infoAdicionalReporteProyExt}">
+									<p:ajax
+										listener="#{manejadorReporteProyectos.actualizarMsgRPE}"
+										update="msgRPE" />
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaInfoAdicionalReporteProyExt}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<br />
+					<center>
+						<p:commandButton value="Generar reporte proyectos externos"
+							actionListener="#{manejadorReporteProyectos.imprimirReportePryExternos}"
+							ajax="false" />
+					</center>
+				</p:tab>
+				<!-- Proyectos de regalias -->
+				<p:tab title="Proy. regalías" titleStyle="font-size:11px"
+					id="panelInfoProyectoReg">
+					<br />
+					<p:panelGrid id="generarRepPryReg_Dep"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Sede:" />
+								<br />
+								<b><h:outputText id="selSedesReg" style="color:#2e6e9e;"
+										value="Sedes Seleccionadas: #{manejadorReporteProyectos.selSedesReg}" /></b>
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu style="width:320px;" id="sedesReg"
+									label="Seleccione sede(s)" panelStyleClass="test"
+									value="#{manejadorReporteProyectos.selectedSedesReg}"
+									filter="false">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaSedesItemReg}" />
+									<p:ajax update="facultadReg,selSedesReg"
+										process="facultadReg,selSedesReg"
+										listener="#{manejadorReporteProyectos.cargarDependenciasReg}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Facultad:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu style="width:320px;" id="facultadReg"
+									value="#{manejadorReporteProyectos.facultadReg}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaDependenciasItemReg}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorReporteProyectos.cargarDeptosReg}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText value="Departamento:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu
+									value="#{manejadorReporteProyectos.selectedDeptosReg}"
+									label="Seleccione departamento(s)" id="deptoReg"
+									style="width:320px;" panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaDeptosItemReg}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido BASE del reporte:"
+									style='font-weight: bold;' />
+								<br />
+								<h:outputText
+									value="Seleccione la información que desea ver de los proyectos en el reporte." />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:left">
+								<p:commandButton value="Limpiar"
+									actionListener="#{manejadorReporteProyectos.desmarcarTodoRegalias}"
+									ajax="false" />
+							</p:column>
+							<p:column colspan="2" style="text-align:right">
+								<p:commandButton value="Seleccionar Todo"
+									actionListener="#{manejadorReporteProyectos.seleccionarTodoRegalias}"
+									ajax="false" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[0]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código HERMES" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[1]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre de proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[2]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Duración" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[3]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Docente investigador principal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[4]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Estado de Proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[5]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[6]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sede" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[7]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Operador o ejecutor" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[8]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código SIGP - ACTeI" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[9]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Código BPIN" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[10]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Número de acuerdo en el OCAD" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[11]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha del acuerdo de aprobación" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[12]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre del director del proyecto" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[13]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre del supervisor del proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[14]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="OCAD que aprobó" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[15]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre de entidad ejecutora del proyecto" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[16]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Se ejecutarán como proyecto de extensión" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[17]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Valor aprobado del Sistema General de Regalías ($)" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[18]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Valor aprobado de otras fuentes de financiación ($)" />
+							</p:column>
+							<p:column>
+								<p:selectBooleanCheckbox
+									value="#{manejadorReporteProyectos.columnsReg[19]}">
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column>
+								<h:outputText value="Valor de otras entidades participantes ($)" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido ADICIONAL del reporte:"
+									style='font-weight: bold;' />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="Seleccione la información que desea anexar al reporte:" />
+								<br />
+								<h:outputText style="color:#FF8000;" id="msgreg"
+									value="#{manejadorReporteProyectos.msgInfoAdicionalReportePryReg}" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectOneMenu id="infoAdicionalReporteReg"
+									value="#{manejadorReporteProyectos.infoAdicionalReporteProyReg}">
+									<p:ajax
+										listener="#{manejadorReporteProyectos.actualizarMsgReg}"
+										update="msgRPE" />
+									<f:selectItems
+										value="#{manejadorReporteProyectos.listaInfoAdicionalReporteProyReg}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<br />
+					<center>
+						<p:commandButton value="Generar reporte proyectos regalías"
+							actionListener="#{manejadorReporteProyectos.imprimirReportePryRegalias}"
+							ajax="false" />
+					</center>
+				</p:tab>
+			</p:tabView>
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+				</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

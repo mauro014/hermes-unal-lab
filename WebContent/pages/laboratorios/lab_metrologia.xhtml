@@ -1,0 +1,4278 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">METRORED</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="5" />
+		</h:form>
+
+		<h:form id="InformacionLaboratorioMetrologia">
+
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab"
+					styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+
+					<t:div style="width:450px;">
+						<p:progressBar
+							value="#{ManejadorLaboratoriosMetrologia.laboratorioActual.porcentajeCompletitud}"
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated" />
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText
+							value="#{ManejadorLaboratoriosMetrologia.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+							style="text-decoration:none; 
+								        color: #16A8E2;
+								        font-weight: bold;
+								        ">
+							<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="10" />
+			
+			<p:panel
+				header="#{ManejadorLaboratoriosMetrologia.laboratorioActual.nombre} - #{ManejadorLaboratoriosMetrologia.laboratorioActual.id}"
+				id="panelMEnsajeMetrologia" 
+				rendered="#{not ManejadorLaboratoriosMetrologia.laboratorioActual.aplicaMetrología}">
+				
+				<h:outputText value="Para registrar información metrológica, es necesario que se active este formulario por medio del campo 'Aplica metrología' 
+									en la información básica. Este proceso puede ser realizado únicamente por la Dirección Nacional de Investigación y Laboratorios." 
+							  styleClass="negrilla" />
+				
+			</p:panel>	
+
+			<p:panel
+				header="#{ManejadorLaboratoriosMetrologia.laboratorioActual.nombre} - #{ManejadorLaboratoriosMetrologia.laboratorioActual.id}"
+				id="panelInformacionLaboratorioMetrologia" 
+				rendered="#{ManejadorLaboratoriosMetrologia.laboratorioActual.aplicaMetrología}">
+				
+				<p:spacer height="20" rendered="true"/>
+				<t:div styleClass="contenido-titulo-general-ancizar-left" rendered="true" >Datos Básicos</t:div>
+				<p:spacer height="20" rendered="true"/>
+				
+				<p:tabView id="tabViewMetrologiaDatosBasicos" rendered="true">	
+	
+					<p:tab title="Sub-Redes" id="panelSubred" titleStyle="font-size:11px">
+					
+						<center>	
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridMetrologiaSubred" style="width:400px">
+							
+							<p:spacer height="10" />
+							<p:panelGrid columns="1"
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Seleccione la red o redes a las que aplique" />
+								<p:spacer height="10" />
+								<t:div
+									title="Si desea agregar una nueva subred, simplemente seleccionela de ésta lista y será agregada automáticamente.">
+									<p:selectOneMenu
+										value="#{ManejadorLaboratoriosMetrologia.subredSeleccionada}"
+										id="siSubred"
+										style="width:400px"
+										filter="true" filterMatchMode="contains">
+										<f:selectItems
+											value="#{ManejadorLaboratoriosMetrologia.selectItemSubredes}" />
+										<f:selectItem itemLabel="Ninguno" itemValue="0" />
+										<p:ajax update="dtSubred, @this, errorSubred"
+											listener="#{ManejadorLaboratoriosMetrologia.agregarSubred}" />
+									</p:selectOneMenu>
+								</t:div>
+							</p:panelGrid>		
+							
+							<h:outputText value="" styleClass="negrilla" />
+							<p:dataTable var="subred" style="width:400px"
+								emptyMessage="No existen registros." id="dtSubred"
+								value="#{ManejadorLaboratoriosMetrologia.listaSubredes}">
+								<p:column headerText="Sub-Redes agregadas al laboratorio" style="width:90%">
+									<h:outputText value="#{subred.subred.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column headerText="Eliminar"
+									rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}" 
+									style="width:10%">
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtSubred"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarSubred}"
+											onclick="if(!confirm('Está seguro(a) de eliminar #{subred.subred.nombre}?'))return false">
+											<f:setPropertyActionListener value="#{subred}"
+												target="#{ManejadorLaboratoriosMetrologia.subredEliminar}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+							<h:outputText />
+						</p:panelGrid>
+						</center>
+						
+						<p:message for="siSubred" id="errorSubred" />
+						
+					</p:tab>
+					
+					<p:tab title="Capacitacion" id="panelCapacitacion" titleStyle="font-size:11px" rendered="true">
+					
+						<center>	
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridMetrologiaCapacitacion" style="width:400px">
+							
+							<p:spacer height="10" />
+							<p:panelGrid columns="1"
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Seleccione las áreas de capacitación en las que ha participado el personal de apoyo" />
+								<p:spacer height="10" />
+								<t:div
+									title="Si desea agregar una nueva capacitación realizada, simplemente seleccionela de ésta lista y será agregada automáticamente.">
+									<p:selectOneMenu
+										value="#{ManejadorLaboratoriosMetrologia.capacitacionSeleccionada}"
+										id="siCapacitacion"
+										style="width:400px"
+										filter="true" filterMatchMode="contains">
+										
+										<f:selectItems
+											value="#{ManejadorLaboratoriosMetrologia.selectItemCapacitaciones}" />
+										<f:selectItem itemLabel="Ninguno" itemValue="0" />
+										<p:ajax update="dtCapacitacion, @this, errorCapacitacion"
+											listener="#{ManejadorLaboratoriosMetrologia.agregarCapacitacion}" />
+									</p:selectOneMenu>
+								</t:div>
+							</p:panelGrid>
+							
+							<h:outputText value="" styleClass="negrilla" />
+							<p:dataTable var="capacitacion" style="width:400px"
+								emptyMessage="No existen registros." id="dtCapacitacion"
+								value="#{ManejadorLaboratoriosMetrologia.listaCapacitaciones}">
+								<p:column headerText="Capacitaciones realizadas agregadas al laboratorio" style="width:90%">
+									<h:outputText value="#{capacitacion.capacitacion.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column headerText="Eliminar"
+									rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}" 
+									style="width:10%">
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtCapacitacion"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarCapacitacion}"
+											onclick="if(!confirm('Está seguro(a) de eliminar #{capacitacion.capacitacion.nombre}?'))return false">
+											<f:setPropertyActionListener value="#{capacitacion}"
+												target="#{ManejadorLaboratoriosMetrologia.capacitacionEliminar}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+			
+							<h:outputText />
+						
+						</p:panelGrid>
+						</center>
+						
+						<p:message for="siCapacitacion" id="errorCapacitacion" />
+					
+					</p:tab>
+					
+					<p:tab title="Actividades" id="panelActividades" titleStyle="font-size:11px" rendered="true">
+					
+						<center>	
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridMetrologiaActividad" style="width:400px">
+							
+							<p:spacer height="10" />
+							<p:panelGrid columns="1"
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Seleccione la actividad o actividades que realiza el laboratorio" />
+								<p:spacer height="10" />
+								<t:div
+									title="Si desea agregar una nueva actividad, simplemente seleccionela de ésta lista y será agregada automáticamente.">
+									<p:selectOneMenu
+										value="#{ManejadorLaboratoriosMetrologia.actividadSeleccionada}"
+										id="siActividad"
+										style="width:400px"
+										filter="true" filterMatchMode="contains">
+										
+										<f:selectItems
+											value="#{ManejadorLaboratoriosMetrologia.selectItemActividades}" />
+										<f:selectItem itemLabel="Ninguno" itemValue="0" />
+										<p:ajax update="dtActividad, @this, errorActividad"
+											listener="#{ManejadorLaboratoriosMetrologia.agregarActividad}" />
+									</p:selectOneMenu>
+								</t:div>
+							</p:panelGrid>
+							
+							<h:outputText value="" styleClass="negrilla" />
+							<p:dataTable var="actividad" style="width:400px"
+								emptyMessage="No existen registros." id="dtActividad"
+								value="#{ManejadorLaboratoriosMetrologia.listaActividades}">
+								<p:column headerText="Actividades agregadas al laboratorio" style="width:90%">
+									<h:outputText value="#{actividad.actividad.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column headerText="Eliminar"
+									rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}" 
+									style="width:10%">
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtActividad"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarActividad}"
+											onclick="if(!confirm('Está seguro(a) de eliminar #{actividad.actividad.nombre}?'))return false">
+											<f:setPropertyActionListener value="#{actividad}"
+												target="#{ManejadorLaboratoriosMetrologia.actividadEliminar}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+							<h:outputText />
+						</p:panelGrid>
+						</center>
+						
+						<p:message for="siActividad" id="errorActividad" />
+						
+					</p:tab>
+					
+					<p:tab title="Muestreo" id="panelMuestreo" titleStyle="font-size:11px" rendered="false">
+					
+						<center>	
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridMetroMuestreo" style="width:400px">
+							
+							<p:spacer height="10" />
+							<p:panelGrid columns="1"
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Seleccione las opciones en las que el laboratorio tenga dificultades en la toma y/o preparación de muestras" />
+								<p:spacer height="10" />
+								<t:div
+									title="Si desea agregar una nueva dificultad para muestreo, simplemente seleccionela de ésta lista y será agregada automáticamente.">
+									<p:selectOneMenu
+										value="#{ManejadorLaboratoriosMetrologia.muestreoSeleccionada}"
+										id="siMuestreo"
+										style="width:400px"
+										filter="true" filterMatchMode="contains">
+										<f:selectItem itemLabel="Ninguno" itemValue="0"/>
+										<f:selectItems
+											value="#{ManejadorLaboratoriosMetrologia.selectItemMuestreos}"/>
+										<p:ajax update="dtMuestreo, @this, errorMuestreo"
+											listener="#{ManejadorLaboratoriosMetrologia.agregarMuestreo}"/>
+									</p:selectOneMenu>
+								</t:div>
+							</p:panelGrid>
+							
+							<h:outputText value="" styleClass="negrilla" />
+							<p:dataTable var="muestreo" style="width:400px"
+								emptyMessage="No existen registros." id="dtMuestreo"
+								value="#{ManejadorLaboratoriosMetrologia.listaMuestreos}">
+								<p:column headerText="Dificultades para muestreo agregadas al laboratorio" style="width:90%">
+									<h:outputText value="#{muestreo.muestreo.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column headerText="Eliminar"
+									rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}" 
+									style="width:10%">
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtMuestreo"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarMuestreo}"
+											onclick="if(!confirm('Está seguro(a) de eliminar #{muestreo.muestreo.nombre}?'))return false">
+											<f:setPropertyActionListener value="#{muestreo}"
+												target="#{ManejadorLaboratoriosMetrologia.muestreoEliminar}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+							<h:outputText />
+						</p:panelGrid>
+						</center>
+						
+						<p:message for="siMuestreo" id="errorMuestreo" />
+					
+					</p:tab>
+						
+					<p:tab title="Sistemas de gestión" id="panelSistemasGestión" titleStyle="font-size:11px" rendered="true">
+					
+						<center>	
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridMetrologiaSisGestion" style="width:400px">
+							
+							<p:spacer height="10" />
+							<p:panelGrid columns="1"
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Seleccione las opciones en las que el laboratorio este acreditado y/o certificado" />
+								<p:spacer height="10" />
+								<t:div
+									title="Si desea agregar un nuevo sistema de gestión, simplemente seleccionelo de ésta lista y será agregado automáticamente.">
+									<p:selectOneMenu
+										value="#{ManejadorLaboratoriosMetrologia.sistemaGestionSeleccionado}"
+										id="siSisGestion"
+										style="width:400px"
+										filter="true" filterMatchMode="contains">
+										
+										<f:selectItems
+											value="#{ManejadorLaboratoriosMetrologia.selectItemSisGestion}" />
+										<f:selectItem itemLabel="Ninguno" itemValue="0" />
+										<p:ajax update="dtSisGestion, @this, errorSisGestion"
+											listener="#{ManejadorLaboratoriosMetrologia.agregarSistemaGestion}" />
+									</p:selectOneMenu>
+								</t:div>
+							</p:panelGrid>
+							
+							<h:outputText value="" styleClass="negrilla" />
+							<p:dataTable var="sisGestion" style="width:400px"
+								emptyMessage="No existen registros." id="dtSisGestion"
+								value="#{ManejadorLaboratoriosMetrologia.listaSistemasGestion}">
+								<p:column headerText="Sistemas de gestión agregados al laboratorio" style="width:90%">
+									<h:outputText value="#{sisGestion.sistemaGestion.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column headerText="Eliminar"
+									rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}" 
+									style="width:10%">
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtSisGestion"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarSistemaGestion}"
+											onclick="if(!confirm('Está seguro(a) de eliminar #{sisGestion.sistemaGestion.nombre}?'))return false">
+											<f:setPropertyActionListener value="#{sisGestion}"
+												target="#{ManejadorLaboratoriosMetrologia.sistemaGestionEliminar}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+			
+							<h:outputText />
+						</p:panelGrid>
+						</center>
+						
+						<p:message for="siSisGestion" id="errorSisGestion" />
+					
+					</p:tab>
+					
+				</p:tabView>
+				
+				<br />
+				<p:separator />
+				<br />
+
+				<p:tabView id="tabViewMetrologia">
+
+					<p:tab title="Medidas Químicas" id="panelMedidasQuimicas" titleStyle="font-size:11px">
+
+						<!-- 					Ini -->
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Medidas Químicas</t:div>
+							<p:spacer height="20"/>
+						</p:panelGrid>	
+
+						<p:panel id="panelMedidasQuimicasInterior" 
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoSector" icon="ui-icon-info" />
+
+										<p:tooltip for="infoSector" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el sector
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Sector(*):" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.sectorSel}"
+											id="selectSector" filter="true" filterMatchMode="contains"
+											style="width: 400px" effect="fade">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemSector}" />
+											<p:ajax
+												update=":InformacionLaboratorioMetrologia:tabViewMetrologia:selectMatriz"
+												listener="#{ManejadorLaboratoriosMetrologia.cambiarSector}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoMatriz" icon="ui-icon-info" />
+
+										<p:tooltip for="infoMatriz" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la matriz
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Matriz(*):" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.matrizSel}"
+											id="selectMatriz" filter="true" filterMatchMode="contains"
+											style="width: 400px" effect="fade">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemMatriz}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoMensurando" icon="ui-icon-info" />
+
+										<p:tooltip for="infoMensurando" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione el mensurando
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Mensurando:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.mensurandoSel}"
+											id="selectMensurando" filter="true"
+											filterMatchMode="contains" style="width: 400px" effect="fade">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemMensurando}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoTecnica" icon="ui-icon-info" />
+
+										<p:tooltip for="infoTecnica" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la tecnica
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Técnica:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.tecnicaSel}"
+											id="selectTecnica" filter="true" filterMatchMode="contains"
+											style="width: 400px" effect="fade">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemTecnica}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoConcentracion" icon="ui-icon-info" />
+
+										<p:tooltip for="infoConcentracion" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la concentración y/o intervalo de medición
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Concentración:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.concentracionSel}"
+											id="selectConcentracion" filter="true"
+											filterMatchMode="contains" style="width: 400px" effect="fade">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemConcentracion}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoNormaMetodoReferencia"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoNormaMetodoReferencia"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Norma/Metodo de referencia
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Norma/Metodo de referencia:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textNormaMetodoReferencia" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.normaMetodoReferencia}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoMetodoValidado" icon="ui-icon-info" />
+
+										<p:tooltip for="infoMetodoValidado"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el método de análisis está valido
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="¿El método de análisis está valido?:" />
+									</p:column>
+									<p:column>
+
+										<p:selectCheckboxMenu
+											value="#{ManejadorLaboratoriosMetrologia.metodoValidadoSelCheckMenu}"
+											label="Seleccione" style="width: 400px;"
+											panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemMetodoValidado}" />
+										</p:selectCheckboxMenu>
+
+									</p:column>
+
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoMaterialoReferencia"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoMaterialoReferencia"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione Materiales de Referencia MR - Si o No
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Materiales de Referencia MR" />
+									</p:column>
+									<p:column>
+
+										<p:selectOneButton
+											value="#{ManejadorLaboratoriosMetrologia.materialesReferencia}">
+											<f:selectItem itemLabel="Si" itemValue="true" />
+											<f:selectItem itemLabel="No" itemValue="false" />
+										</p:selectOneButton>
+
+									</p:column>
+								</p:row>
+
+							</p:panelGrid>
+
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarMedidaQuimica"
+								action="#{ManejadorLaboratoriosMetrologia.agregarMedidaQuimica}"
+								value="Agregar" update="tablaMedidasQuimicas,messagesMQ,panelMedidasQuimicasInterior"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarMedidaQuimica}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesMQ" for="botonAgregarMedidaQuimica"
+							autoUpdate="true" closable="true" />
+
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaMedidasQuimicas" var="medidaQuimica"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaMedidasQuimicas}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay medidas químicas asociadas">
+
+								<f:facet name="header">
+									MEDIDAS QUÍMICAS ASOCIADAS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:25%;"
+									sortBy="#{medidaQuimica.mensurando.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Mensurando: " />
+									</f:facet>
+									<h:outputText value="#{medidaQuimica.mensurando.nombre}"
+										style="font-size:12px;" />
+								</p:column>
+
+								<p:column style="width:35%;"
+									sortBy="#{medidaQuimica.sector.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Sector" />
+									</f:facet>
+									<h:outputText value="#{medidaQuimica.sector.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:35%;"
+									sortBy="#{medidaQuimica.matriz.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Matriz" />
+									</f:facet>
+									<h:outputText value="#{medidaQuimica.matriz.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaMedidasQuimicas" icon="ui-icon-search"
+											oncomplete="medidaQuimicaDetalles.show()">
+											<f:setPropertyActionListener value="#{medidaQuimica}"
+												target="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla}" />
+										</p:commandButton>
+										<p:dialog header="Detalles de la medida qúimica seleccionada"
+											widgetVar="medidaQuimicaDetalles"
+											modal="true" resizable="false" width="520">
+											
+											<t:div styleClass="panel-interno-tabla" id="medidaQuimicaPDF"
+												style="max-height:450px; overflow: auto; text-align: right"
+												rendered="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.id != null}">
+												<h:commandLink value="Descargar en formato PDF"
+													target="_blank"
+													action="#{ManejadorLaboratoriosMetrologia.imprimirMedidaQuimica}"
+													style="text-decoration:none; 
+													color: #16A8E2;
+													font-weight: bold;">
+												</h:commandLink>
+											</t:div>
+											
+											<t:div styleClass="panel-interno-tabla"
+												id="medidaQuimicaDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Sector:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.sector.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Matriz:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.matriz.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Mensurando:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.mensurando.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Técnica:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.tecnica.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Concentración:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.concentracionintervaloMedicion.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Norma/Metodo de referencia:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.normaMetodoReferencia}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="¿El método de análisis está valido?:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.metodoValidadoDesc}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Materiales de Referencia MR:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText value="SI"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.materialesReferencia}" />
+															<h:outputText value="NO"
+																rendered="#{!ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla.materialesReferencia}" />
+														</p:column>
+													</p:row>
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarMedidaQuimica}"
+											update="tablaMedidasQuimicas">
+											<f:setPropertyActionListener value="#{medidaQuimica}"
+												target="#{ManejadorLaboratoriosMetrologia.medidaQuimicaSeleccionadaTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+						<!-- 					fin -->
+
+					</p:tab>
+
+					<p:tab title="Producto" id="panelProductos" titleStyle="font-size:11px">
+
+						<!-- 					Ini -->
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Producto</t:div>
+							<p:spacer height="20"/>
+						</p:panelGrid>
+
+						<p:panel id="panelProductosInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid id="panelProducto1"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoProducto"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoProducto"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Ingrese el Producto
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:18%;">
+										<h:outputText value="Producto(*):" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textProducto" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.productoSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoSubRedPro" icon="ui-icon-info" />
+
+										<p:tooltip for="infoSubRedPro" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione la SubRed
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="SubRed:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.subredSel}"
+											id="selectSubRedPro" filter="true" filterMatchMode="contains"
+											style="width: 100%" effect="fade">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemSubredes}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoExportacion"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoExportacion"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione Si es de Exportación
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Exportación(*):" />
+									</p:column>
+									<p:column>
+
+										<p:selectOneButton
+											value="#{ManejadorLaboratoriosMetrologia.exportacionSel}">
+											<f:selectItem itemLabel="Si" itemValue="true" />
+											<f:selectItem itemLabel="No" itemValue="false" />
+											<p:ajax update=":InformacionLaboratorioMetrologia:tabViewMetrologia:panelProducto2" />
+										</p:selectOneButton>
+
+									</p:column>
+								</p:row>
+							</p:panelGrid>	
+								
+							<p:panelGrid id="panelProducto2"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+								
+								<p:row rendered="#{ManejadorLaboratoriosMetrologia.exportacionSel}">
+									<p:column style="width:5%">
+										<p:commandButton id="infoPais" icon="ui-icon-info" />
+
+										<p:tooltip for="infoPais" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el País
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:18%">
+										<h:outputText value="Pais(*):" />
+									</p:column>
+									<p:column style="width:30%">
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.paisSel}"
+											id="selectPais" filter="true" filterMatchMode="contains"
+											style="width: 100%" effect="fade">
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemPaises}" />
+											<p:ajax update=":InformacionLaboratorioMetrologia:tabViewMetrologia:panelProducto2" />
+										</p:selectOneMenu>
+									</p:column>
+									
+									<p:column style="width:2%">
+									</p:column>
+									
+									<p:column style="width:5%;">
+										<p:commandButton id="infoCiudad"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoCiudad"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Ingrese la Ciudad
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Ciudad:" />
+									</p:column>
+									<p:column style="width:30%">
+										<p:inputText id="textCiudad" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.ciudadSel}"
+											disabled="#{(ManejadorLaboratoriosMetrologia.paisSel == '00')}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+							</p:panelGrid>
+
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarProducto"
+								action="#{ManejadorLaboratoriosMetrologia.agregarProducto}"
+								value="Agregar" update="tablaProductos,messagesPR,panelProductosInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarProducto}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesPR" for="botonAgregarProducto" autoUpdate="true" closable="true" />
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaProductos" var="producto"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaProductos}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay productos asociados">
+
+								<f:facet name="header">
+									PRODUCTOS ASOCIADOS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:35%;"
+									sortBy="#{producto.producto}">
+									<f:facet name="header">
+										<h:outputText value="Producto" />
+									</f:facet>
+									<h:outputText value="#{producto.producto}"
+										style="font-size:12px;" />
+								</p:column>
+
+								<p:column style="width:30%;"
+									sortBy="#{producto.subred.nombre}">
+									<f:facet name="header">
+										<h:outputText value="SubRed" />
+									</f:facet>
+									<h:outputText value="#{producto.subred.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:25%;">
+									<f:facet name="header">
+										<h:outputText value="Exportación" />
+									</f:facet>
+									
+									<p:panelGrid id="panelProductoExp" columns="1"
+										styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+										cellspacing="5">
+									
+										<h:outputText rendered="#{producto.exportacion}" value="SI es de Exportación" style="font-size:11px;" />
+										<h:outputText rendered="#{!producto.exportacion}" value="NO es de Exportación" style="font-size:11px;" />
+										<h:outputText rendered="#{!(producto.pais == null)}" value="#{producto.pais.nombre}" style="font-size:11px;" />
+										<h:outputText rendered="#{!(producto.ciudad == null)}" value="#{producto.ciudad}" style="font-size:11px;" />
+									
+									</p:panelGrid>
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaProductos" icon="ui-icon-search"
+											oncomplete="productoDetalles.show()">
+											<f:setPropertyActionListener value="#{producto}"
+												target="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla}" />
+										</p:commandButton>
+										<p:dialog header="Detalles del producto seleccionado"
+											widgetVar="productoDetalles"
+											modal="true" resizable="false" width="520">
+											<t:div styleClass="panel-interno-tabla"
+												id="productoDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Producto:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla.producto}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="SubRed:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla.subred.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Exportación:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText value="SI"
+																rendered="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla.exportacion}" />
+															<h:outputText value="NO"
+																rendered="#{!ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla.exportacion}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="País:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla.pais.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Ciudad:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla.ciudad}" />
+														</p:column>
+													</p:row>
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarProducto}"
+											update="tablaProductos">
+											<f:setPropertyActionListener value="#{producto}"
+												target="#{ManejadorLaboratoriosMetrologia.productoSeleccionadoTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+						</center>
+
+					</p:tab>
+
+					<p:tab title="Medidas Microbiología" id="panelMedMicrobiologicas" titleStyle="font-size:11px">
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Medidas Microbiología</t:div>
+							<p:spacer height="20"/>
+						</p:panelGrid>
+
+						<p:panel id="panelMedMicrobiologicasInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid id="panelMedMicro"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoSectorMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoSectorMM" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el sector
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width:35%;">
+										<h:outputText value="Sector(*):" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.sectorMicroSel}"
+											id="selectSectorMM" filter="true" filterMatchMode="contains"
+											style="width: 400px" effect="fade" panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemSector}" />
+											<p:ajax
+												update=":InformacionLaboratorioMetrologia:tabViewMetrologia:selectMatrizMM"
+												listener="#{ManejadorLaboratoriosMetrologia.cambiarSectorMM}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoMatrizMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoMatrizMM" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione la matriz
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Matriz(*):" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.matrizMicroSel}"
+											id="selectMatrizMM" filter="true" filterMatchMode="contains"
+											style="width: 400px" effect="fade" panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemMatriz}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					1 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoTipoEnsayoMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoTipoEnsayoMM" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione el tipo de ensayo
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Tipo de Ensayo:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.tipoEnsayoSel}"
+											id="selectTipoEnsayoMM" filter="true"
+											filterMatchMode="contains" style="width: 400px" effect="fade"
+											panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemTipoEnsayo}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					2 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoNombreEnsayoMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoNombreEnsayoMM"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione el Nombre del Ensayo
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre del Ensayo:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.nombreEnsayoMicroSel}"
+											id="selectNombreEnsayoMM" filter="true"
+											filterMatchMode="contains" style="width: 400px" effect="fade"
+											panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemNombreEnsayo}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					3 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoTecnicaMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoTecnicaMM" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione la Técnica
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Técnica:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.tecnicaMicroSel}"
+											id="selectTecnicaMM" filter="true" filterMatchMode="contains"
+											style="width: 400px" effect="fade" panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemTecnicaMicro}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					4 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoNormaTecnicaMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoNormaTecnicaMM"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione la Norma Técnica
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Norma Técnica:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.normaTecnicaSel}"
+											id="selectNormaTecnicaMM" filter="true"
+											filterMatchMode="contains" style="width: 400px" effect="fade"
+											panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemNormaTecnica}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					5 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoMaterialRefCepaCertificadaMM"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoMaterialRefCepaCertificadaMM"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione el Material de Referencia Cepa Certificada
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Material de Referencia Cepa Certificada:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.materialReferenciaCepaCertificadaSel}"
+											id="selectMaterialRefCepaCertificadaMM" filter="true"
+											filterMatchMode="contains" style="width: 400px" effect="fade"
+											panelStyle="width: 400px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemMateCepaCertificada}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					6 -->
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoMatRefCepaUsada" icon="ui-icon-info" />
+
+										<p:tooltip for="infoMatRefCepaUsada"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Material de Referencia Cepa Usada
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Material de Referencia Cepa Usada:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textMatRefCepaUsada" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.materialReferenciaCepaUtilizadaSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoValidacionMM" icon="ui-icon-info" />
+
+										<p:tooltip for="infoValidacionMM" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione opciones para campo Validación
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Validación:" />
+									</p:column>
+									<p:column>
+
+										<p:selectCheckboxMenu
+											value="#{ManejadorLaboratoriosMetrologia.validacionSelCheckMenu}"
+											label="Seleccione" style="width: 400px;"
+											panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemValidacion}" />
+										</p:selectCheckboxMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					7 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoControCalidadMediosCultivoMM"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoControCalidadMediosCultivoMM"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccion opciones para campo ¿Control de Calidad para los medios de cultivo?
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="¿Control de Calidad para los medios de cultivo?:" />
+									</p:column>
+									<p:column>
+
+										<p:selectCheckboxMenu
+											value="#{ManejadorLaboratoriosMetrologia.controCalidadMediosCultivoSelCheckMenu}"
+											label="Seleccione" style="width: 400px;"
+											panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemControlCalMedioCultivo}" />
+										</p:selectCheckboxMenu>
+
+									</p:column>
+								</p:row>
+
+								<!-- 					8 -->
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoCondicionesAmbientalesMM"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoCondicionesAmbientalesMM"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 	Seleccione opciones para campo Condiciones Ambientales
+								</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Condiciones Ambientales:" />
+									</p:column>
+									<p:column>
+
+										<p:selectCheckboxMenu
+											value="#{ManejadorLaboratoriosMetrologia.condicionesAmbientalesSelCheckMenu}"
+											label="Seleccione" style="width: 400px;"
+											panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemCondicionesAmbientales}" />
+										</p:selectCheckboxMenu>
+
+									</p:column>
+								</p:row>
+
+
+							</p:panelGrid>
+
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarMedidaMicro"
+								action="#{ManejadorLaboratoriosMetrologia.agregarMedidaMicro}"
+								value="Agregar" update="tablaMedidasMicrobiologia,messagesMM,panelMedMicrobiologicasInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarMedidaMicro}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesMM" for="botonAgregarMedidaMicro"
+							autoUpdate="true" closable="true" />
+						<!-- 				<p:message id="error_buscarDirector" for="buscarDirector" /> -->
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaMedidasMicrobiologia" var="medidaMicro"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaMedidasMicrobilogicas}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay medidas microbiología asociadas">
+
+								<f:facet name="header">
+									MEDIDAS MICROBIOLÓGIA ASOCIADAS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:25%;"
+										  sortBy="#{medidaMicro.nombreEnsayo.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Nombre del Ensayo" />
+									</f:facet>
+									<h:outputText
+										value="#{medidaMicro.nombreEnsayo.nombre}"
+										style="font-size:12px;" />
+								</p:column>
+
+								<p:column style="width:35%;"
+										  sortBy="#{medidaMicro.sector.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Sector" />
+									</f:facet>
+									<h:outputText value="#{medidaMicro.sector.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:35%;"
+										  sortBy="#{medidaMicro.matriz.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Matriz" />
+									</f:facet>
+									<h:outputText value="#{medidaMicro.matriz.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaMedidasMicrobiologia" icon="ui-icon-search"
+											oncomplete="medidaMicroDetalles.show()">
+											<f:setPropertyActionListener value="#{medidaMicro}"
+												target="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla}" />
+										</p:commandButton>
+										<p:dialog
+											header="Detalles de la medida microbiológica seleccionada"
+											id="medidaMicroDetalles" widgetVar="medidaMicroDetalles"
+											modal="true" resizable="false" width="520">
+											
+											<t:div styleClass="panel-interno-tabla" id="medidaMicrobiologicaPDF"
+												style="max-height:450px; overflow: auto; text-align: right">
+
+												<h:commandLink value="Descargar en formato PDF"
+													target="_blank"
+													action="#{ManejadorLaboratoriosMetrologia.imprimirMedidaMicrobiologica}"
+													style="text-decoration:none; 
+													color: #16A8E2;
+													font-weight: bold;">
+												</h:commandLink>
+												
+											</t:div>
+											
+											<t:div styleClass="panel-interno-tabla"
+												id="medidaMicroDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Sector:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.sector.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Matriz:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.matriz.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Tipo de Ensayo:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.tipoEnsayo.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Nombre del Ensayo:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.nombreEnsayo.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Técnica:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.tecnica.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Norma Técnica:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.normaTecnica.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText
+																value="Material de Referencia Cepa Certificada:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.materialReferenciaCepaCertificada.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Material de Referencia Cepa Usada:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.materialReferenciaCepaUtilizada}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Validación:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.validacionDesc}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText
+																value="¿Control de Calidad para los medios de cultivo?:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.controCalidadMediosCultivoDesc}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Condiciones Ambientales:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla.condicionesAmbientalesDesc}" />
+														</p:column>
+													</p:row>
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>		
+										
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarMedidaMicro}"
+											update="tablaMedidasMicrobiologia">
+											<f:setPropertyActionListener value="#{medidaMicro}"
+												target="#{ManejadorLaboratoriosMetrologia.medidaMicrobiologicaSeleccionadaTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+
+					</p:tab>
+
+					
+					<p:tab title="Medidas Físicas" id="panelMedFisicas"
+						titleStyle="font-size:11px">
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Medidas Físicas</t:div>
+							<h:outputText style="text-align:justify"
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"
+								value="Diligencie este espacio si en su laboratorio se hacen mediciones en magnitudes físicas relacionando sus CMC´s - 
+								Capacidades de medición y calibración; en este espacio se deberá diligenciar: magnitud, magnitud relacionada o 
+								campos de aplicación, intervalo de medición, incertidumbre, unidades, factor de cobertura, equipos patrón y acreditación" />
+								<br />
+						</p:panelGrid>
+						
+						<p:panel id="panelMedFisicasInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:panelGrid id="panelMedFisica1"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoMagnitudFisica" icon="ui-icon-info" />
+
+										<p:tooltip for="infoMagnitudFisica"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+									 	Seleccione la Magnitud Física
+									</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Magnitud Física(*):" />
+									</p:column>
+									<p:column style="width:25%;font-size:10px">
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.magnitudFisicaSel}"
+											id="selectMagnitudFisica" filter="true"
+											filterMatchMode="contains" effect="fade"
+											style="width: 150px;" panelStyle="width: 200px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemMagnitudFisica}" />
+											<p:ajax
+												update=":InformacionLaboratorioMetrologia:tabViewMetrologia:selectCampoAplicacion"
+												listener="#{ManejadorLaboratoriosMetrologia.cambiarMagnitudFisica}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:10px;">
+
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoCampoAplicacion" icon="ui-icon-info" />
+
+										<p:tooltip for="infoCampoAplicacion"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+									 	Seleccione el Campo de Aplicación
+									</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Campo de Aplicación(*):" />
+									</p:column>
+									<p:column style="width:25%;">
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.campoAplicacionSel}"
+											id="selectCampoAplicacion" filter="true"
+											filterMatchMode="contains" effect="fade"
+											style="width: 150px;" panelStyle="width: 200px;">
+											<f:selectItem itemLabel="Ninguno"
+												itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemCampoAplicacion}" />
+										</p:selectOneMenu>
+
+									</p:column>
+
+								</p:row>
+
+							</p:panelGrid>
+
+							<p:panelGrid id="panelMedFisica2"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoDescripcionMensurando"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoDescripcionMensurando"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+									 	Seleccione la Descripción del mensurando
+									</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:25%;">
+										<h:outputText value="Descripción del mensurando(*):" />
+									</p:column>
+									<p:column style="width:70%;">
+										<p:inputText id="textDescripcionMensurando" maxlength="256"
+											style="width: 400px;" panelStyle="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.descripcionMensurandoSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoFactorCoberturaK" icon="ui-icon-info" />
+
+										<p:tooltip for="infoFactorCoberturaK"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+									 	Seleccione el Factor Cobertura (k)
+									</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:30%;">
+										<h:outputText value="Factor Cobertura (K):" />
+									</p:column>
+									<p:column style="width:65%;">
+										<p:inputText id="textFactorCoberturaK" maxlength="256"
+											style="width: 400px;" panelStyle="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.factorCoberturaKSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoNormaDocumentosMetodosReferencia"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoNormaDocumentosMetodosReferencia"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+									 	Seleccione Norma, documento, metodos de referencia
+									</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:30%;">
+										<h:outputText value="Norma, documento, metodos de referencia:" />
+									</p:column>
+									<p:column style="width:65%;">
+										<p:inputText id="textNormaDocumentosMetodosReferencia"
+											maxlength="256" style="width: 400px;"
+											panelStyle="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.normaDocumentosMetodosReferenciaSel}">
+										</p:inputText>
+									</p:column>
+
+								</p:row>
+
+							</p:panelGrid>
+
+							<br />
+
+							<!-- 					Intervalo o Punto de Medición -->
+
+							<p:panelGrid columns="1" style="width:100%;"
+								id="panelMedFisica3Ext" styleClass="estilo-panelgrid-sinbordes">
+
+								<f:facet name="header">
+									Intervalo o Punto de Medición
+								</f:facet>
+
+								<p:panelGrid id="panelMedFisica3Int"
+									styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+									cellspacing="5">
+
+									<p:row>
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIntervaloPuntoMedMinimo"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIntervaloPuntoMedMinimo"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el valor Mínimo para Intervalo o Punto de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:12%;">
+											<h:outputText value="Minimo:" />
+										</p:column>
+										<p:column style="width:30%;">
+											<p:inputText id="textIntervaloPuntoMedMinimo" maxlength="15"
+												style="width: 100%;"
+												value="#{ManejadorLaboratoriosMetrologia.intervaloPuntoMedMinimoSel}">
+											</p:inputText>
+										</p:column>
+										<p:column style="width:6px;">
+
+										</p:column>
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIntervaloPuntoMedMaximo"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIntervaloPuntoMedMaximo"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el valor Máximo para Intervalo o Punto de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:12%;">
+											<h:outputText value="Máximo:" />
+										</p:column>
+										<p:column style="width:30%;">
+											<p:inputText id="textIntervaloPuntoMedMaximo" maxlength="15"
+												style="width: 100%;"
+												value="#{ManejadorLaboratoriosMetrologia.intervaloPuntoMedMaximoSel}">
+											</p:inputText>
+										</p:column>
+
+									</p:row>
+
+								</p:panelGrid>
+
+							</p:panelGrid>
+
+							<br />
+
+							<!-- 					Unidades del intervalo: -->
+
+							<p:panelGrid columns="1" style="width:100%;"
+								id="panelMedFisica4Ext" styleClass="estilo-panelgrid-sinbordes">
+
+								<f:facet name="header">
+									Unidades del intervalo
+								</f:facet>
+
+								<p:panelGrid id="panelMedFisica4Int"
+									styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+									cellspacing="5">
+
+									<p:row>
+										<p:column style="width:5%;">
+											<p:commandButton id="infoUnidadesIntervaloPrefijo"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoUnidadesIntervaloPrefijo"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el Prefijo para Unidades del intervalo
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:10%;">
+											<h:outputText value="Prefijo:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosMetrologia.unidadesIntervaloPrefijoSel}"
+												id="selectUnidadesIntervaloPrefijo" filter="true"
+												filterMatchMode="contains" effect="fade"
+												style="width: 120px;" panelStyle="width: 180px;">
+												<f:selectItem itemLabel="Ninguno"
+													itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosMetrologia.selectItemUnidIntPrefijo}" />
+											</p:selectOneMenu>
+										</p:column>
+
+										<p:column style="width:1px;">
+
+										</p:column>
+
+										<p:column style="width:5%;">
+											<p:commandButton id="infoUnidadesIntervaloUnidad"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoUnidadesIntervaloUnidad"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione la Unidad para Unidades del intervalo
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:10%;">
+											<h:outputText value="Unidad:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosMetrologia.unidadesIntervaloUnidadSel}"
+												id="selectUnidadesIntervaloUnidad" filter="true"
+												filterMatchMode="contains" effect="fade"
+												style="width: 120px;" panelStyle="width: 250px;">
+												<f:selectItem itemLabel="Ninguno"
+													itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosMetrologia.selectItemUnidIntUnidad}" />
+											</p:selectOneMenu>
+										</p:column>
+
+										<p:column style="width:1px;">
+
+										</p:column>
+
+										<p:column style="width:5%;">
+											<p:commandButton id="infoUnidadesIntervaloSimbolo"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoUnidadesIntervaloSimbolo"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el simbolo para Unidades del intervalo
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:12%;">
+											<h:outputText value="Simbolo:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="textUnidadesIntervaloSimbolo" maxlength="15"
+												style="width: 50px;"
+												value="#{ManejadorLaboratoriosMetrologia.unidadesIntervaloSimboloSel}">
+											</p:inputText>
+										</p:column>
+
+									</p:row>
+
+								</p:panelGrid>
+
+							</p:panelGrid>
+
+							<br />
+
+							<!-- 					Incertidumbre de Medición: -->
+
+							<p:panelGrid columns="1" style="width:100%;"
+								id="panelMedFisica5Ext" styleClass="estilo-panelgrid-sinbordes">
+
+								<f:facet name="header">
+									Incertidumbre de Medición
+								</f:facet>
+
+								<p:panelGrid id="panelMedFisica5Int"
+									styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+									cellspacing="5">
+
+									<p:row>
+
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIncertidumbreMedicionIncertidumbre"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIncertidumbreMedicionIncertidumbre"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione la Incertidumbre de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:10%;">
+											<h:outputText value="Incertidumbre:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosMetrologia.incertidumbreMedicionIncertidumbreSel}"
+												id="selectIncertidumbreMedicionIncertidumbre" filter="true"
+												filterMatchMode="contains" effect="fade"
+												style="width: 110px;" panelStyle="width: 200px;">
+												<f:selectItem itemLabel="Ninguno"
+													itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosMetrologia.selectItemIncertMedIncert}" />
+											</p:selectOneMenu>
+										</p:column>
+
+										<p:column style="width:1px;">
+
+										</p:column>
+
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIncertidumbreMedicionValor"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIncertidumbreMedicionValor"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el valor para Incertidumbre de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:12%;">
+											<h:outputText value="Valor:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="textIncertidumbreMedicionValor"
+												maxlength="15" style="width: 110px;"
+												value="#{ManejadorLaboratoriosMetrologia.incertidumbreMedicionValorSel}">
+											</p:inputText>
+										</p:column>
+
+									</p:row>
+
+									<p:row>
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIncertidumbreMedicionPrefijo"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIncertidumbreMedicionPrefijo"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el Prefijo para Incertidumbre de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:10%;">
+											<h:outputText value="Prefijo:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosMetrologia.incertidumbreMedicionPrefijoSel}"
+												id="selectIncertidumbreMedicionPrefijo" filter="true"
+												filterMatchMode="contains" effect="fade"
+												style="width: 110px;" panelStyle="width: 180px;">
+												<f:selectItem itemLabel="Ninguno"
+													itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosMetrologia.selectItemIncertMedPrefijo}" />
+											</p:selectOneMenu>
+										</p:column>
+
+										<p:column style="width:1px;">
+
+										</p:column>
+
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIncertidumbreMedicionUnidad"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIncertidumbreMedicionUnidad"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione la unidad para Incertidumbre de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:10%;">
+											<h:outputText value="Unidad:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosMetrologia.incertidumbreMedicionUnidadSel}"
+												id="selectIncertidumbreMedicionUnidad" filter="true"
+												filterMatchMode="contains" effect="fade"
+												style="width: 110px;" panelStyle="width: 250px;">
+												<f:selectItem itemLabel="Ninguno"
+													itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosMetrologia.selectItemIncertMedUnidad}" />
+											</p:selectOneMenu>
+										</p:column>
+
+										<p:column style="width:1px;">
+
+										</p:column>
+
+										<p:column style="width:5%;">
+											<p:commandButton id="infoIncertidumbreMedicionSimbolo"
+												icon="ui-icon-info" />
+
+											<p:tooltip for="infoIncertidumbreMedicionSimbolo"
+												styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+										 	Seleccione el simbolo para Incertidumbre de Medición
+										</t:div>
+											</p:tooltip>
+
+										</p:column>
+										<p:column style="width:12%;">
+											<h:outputText value="Simbolo:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="textIncertidumbreMedicionSimbolo"
+												maxlength="15" style="width: 50px;"
+												value="#{ManejadorLaboratoriosMetrologia.incertidumbreMedicionSimboloSel}">
+											</p:inputText>
+										</p:column>
+
+									</p:row>
+
+								</p:panelGrid>
+
+							</p:panelGrid>
+
+							<br />
+
+							<!-- 					Entidad Acreditadora: -->
+
+							<p:panelGrid columns="1" id="panelMedFisica61Int"
+								style="width:100%;" styleClass="estilo-panelgrid-sinbordes">
+
+								<f:facet name="header">
+									Entidad Acreditadora
+								</f:facet>
+
+								<p:panelGrid id="panelMedFisica611Int" style="width:150px;"
+									styleClass="estilo-panelgrid-sinbordes">
+
+									<p:row>
+										<p:column style="width:5%;">
+											<p:commandButton id="infoEstaAcreditado" icon="ui-icon-info">
+												<p:tooltip for="infoEstaAcreditado"
+													styleClass="tooltip-mesage" showDelay="999">
+													<t:div style="text-align: left; float:left;">
+												 	Seleccione si el ensayo se encuentra acreditado. Si selecciona SI entonces debe registrar la información de la Entidad Acreditadora
+												</t:div>
+												</p:tooltip>
+											</p:commandButton>
+										</p:column>
+
+										<p:column style="width:30%;">
+											<h:outputText value="Acreditado" />
+										</p:column>
+										<p:column style="width:10%;">
+											<p:selectBooleanCheckbox id="booleanEstaAcreditado"
+												disabled="#{ManejadorLaboratoriosMetrologia.soloLectura}"
+												value="#{ManejadorLaboratoriosMetrologia.acreditadoSel}">
+												<p:ajax
+													update=":InformacionLaboratorioMetrologia:tabViewMetrologia:panelMedFisica62Int,
+															:InformacionLaboratorioMetrologia:tabViewMetrologia:panelMedFisica63Int"
+													listener="#{ManejadorLaboratoriosMetrologia.estaAcreditado}" />
+											</p:selectBooleanCheckbox>
+										</p:column>
+									</p:row>
+
+								</p:panelGrid>
+
+
+							</p:panelGrid>
+
+							<p:panelGrid id="panelMedFisica62Int"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row
+									rendered="#{ManejadorLaboratoriosMetrologia.acreditadoSel}">
+									<p:column style="width:5%;">
+										<p:commandButton id="infoEntidadAcreditadoraTipoDoc"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoEntidadAcreditadoraTipoDoc"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Tipo de Documento de la Entidad Acreditadora
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Tipo Documento:" />
+									</p:column>
+									<p:column style="width:30%;">
+										<p:selectOneMenu style="width:150px"
+											value="#{ManejadorLaboratoriosMetrologia.entidadAcreditadoraTipoDocSel}"
+											disabled="#{ManejadorLaboratoriosMetrologia.soloLectura}"
+											id="selectEntidadAcreditadoraTipoDoc">
+											<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.tipoDocumentoItem}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:6px;">
+
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoEntidadAcreditadoraNumDoc"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoEntidadAcreditadoraNumDoc"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+										 	Seleccione el Número de Documento de la Entidad Acreditadora
+										</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:12%;">
+										<h:outputText value="Identificación:" />
+									</p:column>
+									<p:column style="width:30%;">
+										<p:inputText id="textEntidadAcreditadoraNumDoc" maxlength="15"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.entidadAcreditadoraNumDocSel}">
+										</p:inputText>
+									</p:column>
+
+								</p:row>
+
+							</p:panelGrid>
+
+							<p:panelGrid id="panelMedFisica63Int"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row
+									rendered="#{ManejadorLaboratoriosMetrologia.acreditadoSel}">
+									<p:column style="width:5%;">
+										<p:commandButton id="infoEntidadAcreditadoraNombre"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoEntidadAcreditadoraNombre"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+										 	Seleccione el Nombre de la Entidad Acreditadora
+										</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:13%;">
+										<h:outputText value="Nombre:" />
+									</p:column>
+									<p:column style="width:82%;">
+										<p:inputText id="textEntidadAcreditadoraNombre" maxlength="15"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.entidadAcreditadoraNombreSel}">
+										</p:inputText>
+									</p:column>
+
+								</p:row>
+
+							</p:panelGrid>
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarMedidaFisica"
+								action="#{ManejadorLaboratoriosMetrologia.agregarMedidaFisica}"
+								value="Agregar" update="tablaMedidasFisicas,messagesMF,panelMedFisicasInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarMedidaFisica}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesMF" for="botonAgregarMedidaFisica"
+							autoUpdate="true" closable="true" />
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaMedidasFisicas" var="medidaFisica"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaMedidasFisicas}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay medidas físicas asociadas">
+
+								<f:facet name="header">
+									MEDIDAS FÍSICAS ASOCIADAS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:35%;">
+									<f:facet name="header">
+										<h:outputText value="Intervalo o Punto de Medición" />
+									</f:facet>
+									
+									<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+									
+										<p:row>
+											<p:column style="width:45%;">
+												<h:outputText value="Min: #{medidaFisica.intervaloPuntoMedMinimo}"
+													style="font-size:12px;" />
+											</p:column>
+											<p:column style="width:10%;">
+												<h:outputText value=" - "
+													style="font-size:12px;" />
+											</p:column>
+											<p:column style="width:45%;">
+												<h:outputText value="Max: #{medidaFisica.intervaloPuntoMedMaximo}"
+													style="font-size:12px;" />
+											</p:column>
+										</p:row>
+										
+										<p:row>
+											<p:column style="width:100%;"
+													  sortBy="#{medidaFisica.unidadesIntervaloPrefijo.nombre}">
+												<h:outputText value="#{medidaFisica.unidadesIntervaloPrefijo.nombre}"
+													style="font-size:12px;" />
+											</p:column>
+										</p:row>
+										
+										<p:row>
+											<p:column style="width:100%;"
+													  sortBy="#{medidaFisica.unidadesIntervaloUnidad.nombre}">
+												<h:outputText value="#{medidaFisica.unidadesIntervaloUnidad.nombre}"
+													style="font-size:12px;" />
+											</p:column>
+										</p:row>
+										
+									</p:panelGrid>
+
+								</p:column>
+
+								<p:column style="width:25%;"
+										  sortBy="#{medidaFisica.magnitudFisica.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Magnitud Física" />
+									</f:facet>
+									<h:outputText value="#{medidaFisica.magnitudFisica.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:25%;"
+										  sortBy="#{medidaFisica.campoAplicacion.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Campo Aplicación" />
+									</f:facet>
+									<h:outputText value="#{medidaFisica.campoAplicacion.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:5%;"
+										  sortBy="#{medidaFisica.factorCoberturaK}">
+									<f:facet name="header">
+										<h:outputText value="K" />
+									</f:facet>
+									<h:outputText value="#{medidaFisica.factorCoberturaK}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaMedidasFisicas" icon="ui-icon-search"
+											oncomplete="medidaFisicaDetalles.show()">
+											<f:setPropertyActionListener value="#{medidaFisica}"
+												target="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla}" />
+										</p:commandButton>
+										
+										<p:dialog header="Detalles de la medida física seleccionada"
+											widgetVar="medidaFisicaDetalles"
+											modal="true" resizable="false" width="600">
+											
+											<t:div styleClass="panel-interno-tabla" id="medidaFisicaPDF"
+												style="max-height:450px; overflow: auto; text-align: right"
+												rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.id != null}">
+												<h:commandLink value="Descargar en formato PDF"
+													target="_blank"
+													action="#{ManejadorLaboratoriosMetrologia.imprimirMedidaFisica}"
+													style="text-decoration:none; 
+													color: #16A8E2;
+													font-weight: bold;">
+												</h:commandLink>
+											</t:div>
+											
+											<t:div styleClass="panel-interno-tabla"
+												id="medidaFisicaDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+		
+												<p:panelGrid cellpadding="5" cellspacing="5">
+		
+													<p:row>
+														<p:column style="width: 30%;" colspan="1">
+															<h:outputText value="Descripción del mensurando:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column style="width: 70%;" colspan="1">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.descripcionMensurando}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText value="Magnitud Física:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.magnitudFisica.nombre}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText value="Campo de Aplicación:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.campoAplicacion.nombre}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText value="Factor Cobertura (k):"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.factorCoberturaK}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText
+																value="Norma, documento, metodos de referencia:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.normaDocumentosMetodosReferencia}" />
+														</p:column>
+													</p:row>
+		
+													<!-- 								Intervalo o Punto de Medición -->
+													
+													<p:row>
+														<p:column colspan="2">
+															<p:spacer height="20" />
+															<h:outputText value="INTERVALO O PUNTO DE MEDICIÓN"
+																style="font-weight: bold;" />	
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Mínimo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.intervaloPuntoMedMinimo}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText value="Maximo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.intervaloPuntoMedMaximo}" />
+														</p:column>
+													</p:row>
+		
+													<!-- 								Unidades del intervalo: -->
+		
+													<p:row>
+														<p:column colspan="2">
+															<p:spacer height="20" />
+															<h:outputText value="UNIDADES DEL INTERVALO"
+																style="font-weight: bold;" />	
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Prefijo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.unidadesIntervaloPrefijo.nombre}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText value="Unidad:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.unidadesIntervaloUnidad.nombre}" />
+														</p:column>
+													</p:row>
+		
+													<p:row>
+														<p:column>
+															<h:outputText value="Simbolo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.unidadesIntervaloSimbolo}" />
+														</p:column>
+													</p:row>
+		
+													<!-- 								Incertidumbre de Medición -->
+													
+													<p:row>
+														<p:column colspan="2">
+															<p:spacer height="20" />
+															<h:outputText value="INCERTIDUMBRE DE MEDICIÓN"
+																style="font-weight: bold;" />	
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Incertidumbre:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.incertidumbreMedicionIncertidumbre.nombre}" />
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Valor:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.incertidumbreMedicionValor}" />
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Prefijo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.incertidumbreMedicionPrefijo.nombre}" />
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Unidad:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.incertidumbreMedicionUnidad.nombre}" />
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Simbolo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.incertidumbreMedicionSimbolo}" />
+														</p:column>
+													</p:row>
+													
+<!-- 													Entidad Acreditadora -->
+													
+													<p:row>
+														<p:column colspan="2">
+															<p:spacer height="20" />
+															<h:outputText value="ENTIDAD ACREDITADORA"
+																style="font-weight: bold;" />	
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Acreditado:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText value="SI"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.acreditado}" />
+															<h:outputText value="NO"
+																rendered="#{!ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.acreditado}" />
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Tipo Documento:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText value="Cédula de ciudadanía"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'C'}" />
+															<h:outputText value="Pasaporte"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'P'}" />
+															<h:outputText value="Cédula de Extranjería"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'E'}" />
+															<h:outputText value="Tarjeta de Identidad"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'T'}" />
+															<h:outputText value="Nit de Extranjería"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'I'}" />
+															<h:outputText value="Código"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'CD'}" />
+															<h:outputText value="Número de Identificación Tributaria"
+																rendered="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraTipoDoc == 'NT'}" />	
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Identificación:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraNumDoc}" />
+														</p:column>
+													</p:row>
+													
+													<p:row>
+														<p:column>
+															<h:outputText value="Nombre:" style="font-weight: bold;" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla.entidadAcreditadoraNombre}" />
+														</p:column>
+													</p:row>
+		
+		
+												</p:panelGrid>
+		
+											</t:div>
+										</p:dialog>
+										
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarMedidaFisica}"
+											update="tablaMedidasFisicas">
+											<f:setPropertyActionListener value="#{medidaFisica}"
+												target="#{ManejadorLaboratoriosMetrologia.medidaFisicaSeleccionadaTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+								
+							</p:dataTable>
+
+						</center>
+
+					</p:tab>
+
+					<p:tab title="Ensayos Físicos" id="panelEnsayosFisicos" titleStyle="font-size:11px">
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Ensayos Físicos</t:div>
+							<h:outputText style="text-align:justify"
+								value="Diligencie este espacio si en su laboratorio se realizan análisis de propiedades 
+									   y/o características para determinar calidad de materiales y/o especificaciones 
+									   técnicas de un producto, buscando cumplir ciertos requisitos de normas u otros 
+									   documentos normativos" />
+							<br />
+						</p:panelGrid>
+
+						<p:panel id="panelEnsayosFisicosInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5">
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoNombreEnsayo"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoNombreEnsayo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese el Nombre del Ensayo
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre del Ensayo(*):" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textNombreEnsayo" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.nombreEnsayoSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoProductosMaterialEnsayar"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoProductosMaterialEnsayar"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese los Productos o material a ensayar
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Productos o material a ensayar:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textProductosMaterialEnsayar" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.productosMaterialAEnsayarSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoPropiedadesMedibles"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoPropiedadesMedibles"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese las Propiedades Medibles
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Propiedades Medibles:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textPropiedadesMedibles" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.propiedadesMediblesSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoMinimo"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoMinimo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese el Minimo
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Minimo:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textMinimo" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.minimoSel}">
+										</p:inputText>
+									</p:column>
+									
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoMaximo"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoMaximo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese el Maximo
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Maximo:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textMaximo" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.maximoSel}">
+										</p:inputText>
+									</p:column>
+									
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoUnidades"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoUnidades"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese las Unidades
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Unidades:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textUnidades" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.unidadesSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoDescripcion"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoDescripcion"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese la Descripción
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Descripción:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textDescripcion" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.descripcionSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoNormaTecnicaProcedimiento"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoNormaTecnicaProcedimiento"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+								 				Ingrese la Norma tecnica y/o procedimiento
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Norma tecnica y/o procedimiento:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textNormaTecnicaProcedimiento" maxlength="256"
+											style="width: 400px;"
+											value="#{ManejadorLaboratoriosMetrologia.normaTecnicaProcedimientoSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+
+							</p:panelGrid>
+
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarEnsayoFisico"
+								action="#{ManejadorLaboratoriosMetrologia.agregarEnsayoFisico}"
+								value="Agregar" update="tablaEnsayosFisicos,messagesEF,panelEnsayosFisicosInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarEnsayoFisico}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesEF" for="botonAgregarEnsayoFisico"
+							autoUpdate="true" closable="true" />
+
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaEnsayosFisicos" var="ensayoFisico"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaEnsayosFisicos}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay ensayos físicos asociados">
+
+								<f:facet name="header">
+									ENSAYOS FÍSICOS ASOCIADOS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:40%;"
+										  sortBy="#{ensayoFisico.nombreEnsayo}">
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText value="#{ensayoFisico.nombreEnsayo}"
+										style="font-size:12px;" />
+								</p:column>
+
+								<p:column style="width:25%;"
+										  sortBy="#{ensayoFisico.productosMaterialAEnsayar}">
+									<f:facet name="header">
+										<h:outputText value="Productos/Material" />
+									</f:facet>
+									<h:outputText value="#{ensayoFisico.productosMaterialAEnsayar}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:25%;"
+										  sortBy="#{ensayoFisico.propiedadesMedibles}">
+									<f:facet name="header">
+										<h:outputText value="Propiedades Medibles" />
+									</f:facet>
+									<h:outputText value="#{ensayoFisico.propiedadesMedibles}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaEnsayosFisicos" icon="ui-icon-search"
+											oncomplete="ensayoFisicoDetalles.show()">
+											<f:setPropertyActionListener value="#{ensayoFisico}"
+												target="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla}" />
+										</p:commandButton>
+										<p:dialog header="Detalles del ensayo fisíco seleccionada"
+											widgetVar="ensayoFisicoDetalles"
+											modal="true" resizable="false" width="520">
+											
+											<t:div styleClass="panel-interno-tabla" id="ensayoFisicoPDF"
+												style="max-height:450px; overflow: auto; text-align: right"
+												rendered="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.id != null}">
+												<h:commandLink value="Descargar en formato PDF"
+													target="_blank"
+													action="#{ManejadorLaboratoriosMetrologia.imprimirEnsayoFisico}"
+													style="text-decoration:none; 
+													color: #16A8E2;
+													font-weight: bold;">
+												</h:commandLink>
+											</t:div>
+											
+											<t:div styleClass="panel-interno-tabla"
+												id="ensayoFisicoDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Nombre del Ensayo:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.nombreEnsayo}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Productos o material a ensayar:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.productosMaterialAEnsayar}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Propiedades Medibles:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.propiedadesMedibles}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Minimo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.minimo}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Maximo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.maximo}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Unidades:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.unidades}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Descripcion:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.descripcion}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Norma tecnica y/o procedimiento:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla.normaTecnicaProcedimiento}" />
+														</p:column>
+													</p:row>
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarEnsayoFisico}"
+											update="tablaEnsayosFisicos">
+											<f:setPropertyActionListener value="#{ensayoFisico}"
+												target="#{ManejadorLaboratoriosMetrologia.ensayoFisicoSeleccionadoTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+						<!-- 					fin -->
+
+					</p:tab>
+
+<!-- 					Pruebas Inter -->
+
+					<p:tab title="Pruebas Interlaboratorio" id="panelPruebasInter" titleStyle="font-size:11px">
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Prueba Interlaboratorio</t:div>
+							<p:spacer height="20"/>
+						</p:panelGrid>
+
+						<p:panel id="panelPruebasInterInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid columns="1" id="panelPruebasInter1"
+								style="width:100%;" styleClass="estilo-panelgrid-sinbordes">
+
+								<p:panelGrid id="panelPruebasInter11" style="width:150px;"
+									styleClass="estilo-panelgrid-sinbordes">
+
+									<p:row>
+										<p:column style="width:5%;">
+											<p:commandButton id="infoParticipa" icon="ui-icon-info">
+												<p:tooltip for="infoParticipa"
+													styleClass="tooltip-mesage" showDelay="999">
+													<t:div style="text-align: left; float:left;">
+												 	Seleccione si el laboratorio participa en pruebas interlaboratorios. Si selecciona SI, por favor registrar la información adicional.
+												</t:div>
+												</p:tooltip>
+											</p:commandButton>
+										</p:column>
+
+										<p:column style="width:30%;">
+											<h:outputText value="¿Participa?(*)" />
+										</p:column>
+										<p:column style="width:10%;">
+											<p:selectBooleanCheckbox id="booleanParticipa"
+												disabled="#{ManejadorLaboratoriosMetrologia.soloLectura}"
+												value="#{ManejadorLaboratoriosMetrologia.participaSel}">
+												<p:ajax
+													update=":InformacionLaboratorioMetrologia:tabViewMetrologia:panelPruebasInter12,
+															:InformacionLaboratorioMetrologia:tabViewMetrologia:panelPruebasInter13"/>
+											</p:selectBooleanCheckbox>
+										</p:column>
+									</p:row>
+
+								</p:panelGrid>
+
+
+							</p:panelGrid>
+
+							<p:panelGrid id="panelPruebasInter12"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row rendered="#{ManejadorLaboratoriosMetrologia.participaSel}">
+									<p:column style="width:5%;">
+										<p:commandButton id="infoCual" icon="ui-icon-info" />
+
+										<p:tooltip for="infoCual"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione Cual Prueba Interlaboratorio
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:20%;">
+										<h:outputText value="¿Cuál?(*):" />
+									</p:column>
+									<p:column style="width:75%;">
+										<p:inputText id="textCual" maxlength="256"
+											style="width:100%;"
+											value="#{ManejadorLaboratoriosMetrologia.cualSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row rendered="#{ManejadorLaboratoriosMetrologia.participaSel}">
+									<p:column>
+										<p:commandButton id="infoDesempeno" icon="ui-icon-info" />
+										
+										<p:tooltip for="infoDesempeno"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Desempeño Obtenido por el laboratorio en la prueba
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Desempeño obtenido por el laboratorio en la prueba:" />
+									</p:column>
+									<p:column>										
+										<p:selectOneRadio id="radioDesempeno"
+														  value="#{ManejadorLaboratoriosMetrologia.desempenoObtenidoSel}">
+								            <f:selectItems value="#{ManejadorLaboratoriosMetrologia.selectItemDesempeno}"/>
+								        </p:selectOneRadio>					
+									</p:column>
+								</p:row>
+				
+								<p:row rendered="#{ManejadorLaboratoriosMetrologia.participaSel}">
+									<p:column>
+										<p:commandButton id="infoProveedor" icon="ui-icon-info" />
+
+										<p:tooltip for="infoProveedor" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione naturaleza del Proveedor
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Proveedor(*):" />
+									</p:column>
+									<p:column>										
+										<p:selectOneRadio id="radioProveedor" value="#{ManejadorLaboratoriosMetrologia.proveedorSel}">
+								            <f:selectItems value="#{ManejadorLaboratoriosMetrologia.selectItemProveedor}"/>
+								            <p:ajax
+												update=":InformacionLaboratorioMetrologia:tabViewMetrologia:panelPruebasInter13"/>
+								        </p:selectOneRadio>				
+									</p:column>
+								</p:row>
+								
+								<p:row rendered="#{ManejadorLaboratoriosMetrologia.participaSel}">
+									<p:column style="width:5%;">
+										<p:commandButton id="infoNombreProveedor" icon="ui-icon-info" />
+
+										<p:tooltip for="infoNombreProveedor"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione el Nombre del Proveedor
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:30%;">
+										<h:outputText value="Nombre Proveedor(*):" />
+									</p:column>
+									<p:column style="width:70%;">
+										<p:inputText id="textNombreProveedor" maxlength="256"
+											style="width:100%;"
+											value="#{ManejadorLaboratoriosMetrologia.nombreProveedorPISel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+							
+							</p:panelGrid>
+							
+							<p:panelGrid id="panelPruebasInter13"
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+							
+								<p:row
+									rendered="#{ManejadorLaboratoriosMetrologia.participaSel and ManejadorLaboratoriosMetrologia.proveedorSel == 610}">
+									<p:column style="width:5%;">
+										<p:commandButton id="infoProveedorTipoDoc"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoProveedorTipoDoc"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+										 	Seleccione el Tipo de Documento del proveedor
+										</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:20%;">
+										<h:outputText value="Tipo Documento:" />
+									</p:column>
+									<p:column style="width:30%;">
+										<p:selectOneMenu style="width:100%"
+											value="#{ManejadorLaboratoriosMetrologia.tipoDocumentoProveedorPISel}"
+											disabled="#{ManejadorLaboratoriosMetrologia.soloLectura}"
+											id="selectProveedorTipoDoc">
+											<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.tipoDocumentoItem}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:5%;">
+										
+									</p:column>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoProveedorNumDoc"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoProveedorNumDoc"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+										 	Seleccione el Número de Documento del proveedor
+										</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:10%;">
+										<h:outputText value="Identificación:" />
+									</p:column>
+									<p:column style="width:25%;">
+										<p:inputText id="textProveedorNumDoc" maxlength="15"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.identificacionProveedorPISel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+							</p:panelGrid>
+
+						</p:panel>
+						
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarPruebaInterLab"
+								action="#{ManejadorLaboratoriosMetrologia.agregarPruebaInterlaboratorio}"
+								value="Agregar" update="tablaPruebasInterLab,messagesPI,panelPruebasInterInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarPruebaInterlab}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesPI" for="botonAgregarPruebaInterLab"
+							autoUpdate="true" closable="true" />
+
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaPruebasInterLab" var="pruebaInterlab"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaPruebasInterlaboratorios}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay pruebas interlaboratorios asociadas">
+
+								<f:facet name="header">
+									PRUEBAS INTERLABORATORIOS ASOCIADOS AL LABORATORIO
+								</f:facet>
+								
+								<p:column style="width:10%;"
+										  sortBy="#{pruebaInterlab.participa}">
+									<f:facet name="header">
+										<h:outputText value="Participa" />
+									</f:facet>
+									<h:outputText
+										value="SI" rendered="#{pruebaInterlab.participa}"
+										style="font-size:11px;"/>
+									<h:outputText
+										value="NO" rendered="#{!pruebaInterlab.participa}" 
+										style="font-size:11px;"/>
+								</p:column>
+
+								<p:column style="width:40%;"
+									sortBy="#{pruebaInterlab.cual}">
+									<f:facet name="header">
+										<h:outputText value="¿Cuál?" />
+									</f:facet>
+									<h:outputText value="#{pruebaInterlab.cual}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:40%;"
+										  sortBy="#{pruebaInterlab.nombreProveedor}">
+									<f:facet name="header">
+										<h:outputText value="Nombre Proveedor" />
+									</f:facet>
+									<h:outputText value="#{pruebaInterlab.nombreProveedor}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaPruebasInterLab" icon="ui-icon-search"
+											oncomplete="pruebaInterlabDetalles.show()">
+											<f:setPropertyActionListener value="#{pruebaInterlab}"
+												target="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla}" />
+										</p:commandButton>
+										<p:dialog header="Detalles de la prueba interlaboratorio"
+											widgetVar="pruebaInterlabDetalles"
+											modal="true" resizable="false" width="520">
+											<t:div styleClass="panel-interno-tabla"
+												id="pruebaInterlabDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Participa:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="SI" rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.participa}" />
+															<h:outputText
+																value="NO" rendered="#{!ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.participa}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="¿Cual?:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.cual}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Desempeño obtenido por 
+																			el laboratorio en la prueba:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.desempenoObtenido.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Naturaleza proveedor:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.proveedor.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Nombre proveedor:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.nombreProveedor}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Tipo documento proveedor:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText value="Cédula de ciudadanía"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'C'}" />
+															<h:outputText value="Pasaporte"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'P'}" />
+															<h:outputText value="Cédula de Extranjería"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'E'}" />
+															<h:outputText value="Tarjeta de Identidad"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'T'}" />
+															<h:outputText value="Nit de Extranjería"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'I'}" />
+															<h:outputText value="Código"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'CD'}" />
+															<h:outputText value="Número de Identificación Tributaria"
+																rendered="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.tipoDocumento == 'NT'}" />	
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Número identificación proveedor:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla.identificacion}" />
+														</p:column>
+													</p:row>
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarPruebaInterLab}"
+											update="tablaPruebasInterLab">
+											<f:setPropertyActionListener value="#{pruebaInterlab}"
+												target="#{ManejadorLaboratoriosMetrologia.pruebaInterlaboratorioSeleccionadaTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+						
+					</p:tab>
+
+					<p:tab title="Grupo de trabajo" id="panelGruposTrabajo" titleStyle="font-size:11px">
+
+						<!-- 					Ini -->
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Grupo de Trabajo</t:div>
+							<p:spacer height="20"/>
+						</p:panelGrid>
+
+						<p:panel id="panelGruposTrabajoInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoTipoGrupo" icon="ui-icon-info" />
+
+										<p:tooltip for="infoTipoGrupo" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione Tipo Grupo de Trabajo
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:30%;">
+										<h:outputText value="Tipo:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.tipoGrupoSel}"
+											id="selectTipoGrupo" filter="true" filterMatchMode="contains"
+											style="width: 100%" effect="fade">
+											<f:selectItem itemLabel="Ninguno" itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemTipoGrupo}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoNombreGrupo"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoNombreGrupo"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Ingrese el Nombre del Grupo de Trabajo
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre(*):" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textNombreGrupo" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.nombreGrupoSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoPeriodoParticipacion" icon="ui-icon-info" />
+
+										<p:tooltip for="infoPeriodoParticipacion" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione Periodo de Participacion
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Periodo de Participación:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.periodoParticipacionSel}"
+											id="selectPeriodoParticipacion" filter="true" filterMatchMode="contains"
+											style="width: 100%" effect="fade">
+											<f:selectItem itemLabel="Ninguno" itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemPeriodoParticipacion}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+							</p:panelGrid>	
+
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarGrupoTrabajo"
+								action="#{ManejadorLaboratoriosMetrologia.agregarGrupoDeTrabajo}"
+								value="Agregar" update="tablaGrupoTrabajo,messagesGT,panelGruposTrabajoInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarGrupoTrabajo}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesGT" for="botonAgregarGrupoTrabajo"
+							autoUpdate="true" closable="true" />
+
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaGrupoTrabajo" var="grupoTrabajo"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaGruposTrabajo}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay grupos de trabajo asociados">
+
+								<f:facet name="header">
+									GRUPOS DE TRABAJO ASOCIADOS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:40%;"
+										  sortBy="#{grupoTrabajo.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText value="#{grupoTrabajo.nombre}"
+										style="font-size:12px;" />
+								</p:column>
+								
+								<p:column style="width:25%;"
+										  sortBy="#{grupoTrabajo.tipoGrupo.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText value="#{grupoTrabajo.tipoGrupo.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:25%;"
+										  sortBy="#{grupoTrabajo.periodoParticipacion.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Periodo de Participacion" />
+									</f:facet>
+									<h:outputText value="#{grupoTrabajo.periodoParticipacion.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaGrupoTrabajo" icon="ui-icon-search"
+											oncomplete="grupoTrabajoDetalles.show()">
+											<f:setPropertyActionListener value="#{grupoTrabajo}"
+												target="#{ManejadorLaboratoriosMetrologia.grupoTrabajoSeleccionadoTabla}" />
+										</p:commandButton>
+										<p:dialog header="Detalles del grupo de trabajo seleccionado"
+											widgetVar="grupoTrabajoDetalles"
+											modal="true" resizable="false" width="520">
+											<t:div styleClass="panel-interno-tabla"
+												id="materialReferenciaDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Tipo de Grupo:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.grupoTrabajoSeleccionadoTabla.tipoGrupo.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Nombre:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.grupoTrabajoSeleccionadoTabla.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Periodo de Participacion:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.grupoTrabajoSeleccionadoTabla.periodoParticipacion.nombre}" />
+														</p:column>
+													</p:row>
+
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarGrupoTrabajo}"
+											update="tablaGrupoTrabajo">
+											<f:setPropertyActionListener value="#{grupoTrabajo}"
+												target="#{ManejadorLaboratoriosMetrologia.grupoTrabajoSeleccionadoTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+						<!-- 					fin -->
+
+					</p:tab>
+
+					<p:tab title="Material de referencia" id="panelMaterialReferencia" titleStyle="font-size:11px">
+
+						<!-- 					Ini -->
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="1" style="width:100%;"
+								     rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+							<p:spacer height="10" />
+							<t:div styleClass="contenido-titulo-general-ancizar-left">+ Agregar Material Referencia</t:div>
+							<p:spacer height="20"/>
+						</p:panelGrid>
+
+						<p:panel id="panelMaterialReferenciaInterno"
+								 rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}">
+
+							<p:panelGrid
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoNombreMaterialReferencia"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoNombreMaterialReferencia"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Ingrese el Nombre del Material de Referencia
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:30%;">
+										<h:outputText value="Nombre del Material de Referencia(*):" />
+									</p:column>
+									<p:column style="width:65%;">
+										<p:inputText id="textNombreMaterialReferencia" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.nombreMaterialReferenciaSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoProductor"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoProductor"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Ingrese el Productor
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Productor:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textProductor" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.productorSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoProveedorMR"
+											icon="ui-icon-info" />
+
+										<p:tooltip for="infoProveedorMR"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Ingrese el Proveedor
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Proveedor:" />
+									</p:column>
+									<p:column>
+										<p:inputText id="textProveedorMR" maxlength="256"
+											style="width: 100%;"
+											value="#{ManejadorLaboratoriosMetrologia.proveedorMRSel}">
+										</p:inputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoNecesitaUsaMR" icon="ui-icon-info" />
+
+										<p:tooltip for="infoNecesitaUsaMR" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione si necesita o utiliza el material de referencia
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Indique si necesita o utiliza el material de referencia?:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.usaMaterialReferenciaSel}"
+											id="selectNecesitaUsaMR" filter="true" filterMatchMode="contains"
+											style="width: 100%" effect="fade">
+											<f:selectItem itemLabel="Ninguno" itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemNecesitaUsaMaterialReferncia}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoTipoMR" icon="ui-icon-info" />
+
+										<p:tooltip for="infoTipoMR" styleClass="tooltip-mesage"
+											showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione Tipo de Material de Referencia
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="Tipo:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{ManejadorLaboratoriosMetrologia.tipoMRSel}"
+											id="selectTipo" filter="true" filterMatchMode="contains"
+											style="width: 100%" effect="fade">
+											<f:selectItem itemLabel="Ninguno" itemValue="0" />
+											<f:selectItems
+												value="#{ManejadorLaboratoriosMetrologia.selectItemTipoMaterialReferencia}" />
+										</p:selectOneMenu>
+
+									</p:column>
+								</p:row>
+							
+							</p:panelGrid>	
+								
+							<p:panelGrid
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5">
+
+								<p:row>
+									<p:column style="width:5%;">
+										<p:commandButton id="infoDificilAdquisicion" icon="ui-icon-info" />
+
+										<p:tooltip for="infoDificilAdquisicion"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione si considera que el material de referencia es de dificil adquisicion SI - NO
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column style="width:80%;">
+										<h:outputText value="¿Considera que el material de referencia es de dificil adquisicion?(*):" />
+									</p:column>
+									<p:column>
+										<p:selectOneButton
+											value="#{ManejadorLaboratoriosMetrologia.materialDificilAdquisicionSel}">
+											<f:selectItem itemLabel="Si" itemValue="true" />
+											<f:selectItem itemLabel="No" itemValue="false" />
+										</p:selectOneButton>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<p:commandButton id="infoUsoAseguraTrazabilildadMedicion" icon="ui-icon-info" />
+
+										<p:tooltip for="infoUsoAseguraTrazabilildadMedicion"
+											styleClass="tooltip-mesage" showDelay="999">
+											<t:div style="text-align: left; float:left;">
+											 	Seleccione si considera que el material de referencia es de dificil adquisicion SI - NO
+											</t:div>
+										</p:tooltip>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Considera que el uso de MR/MRC asegura la trazabilidad de su medición?(*):" />
+									</p:column>
+									<p:column>
+										<p:selectOneButton
+											value="#{ManejadorLaboratoriosMetrologia.usoAseguraTrazabilildadMedicionSel}">
+											<f:selectItem itemLabel="Si" itemValue="true" />
+											<f:selectItem itemLabel="No" itemValue="false" />
+										</p:selectOneButton>
+									</p:column>
+								</p:row>
+
+							</p:panelGrid>
+
+						</p:panel>
+
+						<br />
+
+						<center>
+							<p:commandButton id="botonAgregarMaterialReferencia"
+								action="#{ManejadorLaboratoriosMetrologia.agregarMaterialReferencia}"
+								value="Agregar" update="tablaMaterialReferencia,messagesMR,panelMaterialReferenciaInterno"
+								icon="ui-icon-plusthick"
+								binding="#{ManejadorLaboratoriosMetrologia.agregarMaterialesReferencia}" 
+								rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+						</center>
+
+						<br />
+						<p:message id="messagesMR" for="botonAgregarMaterialReferencia"
+							autoUpdate="true" closable="true" />
+
+
+						<p:separator rendered="#{not ManejadorLaboratoriosMetrologia.soloLectura}"/>
+
+						<center>
+							<p:dataTable id="tablaMaterialReferencia" var="materialReferencia"
+								styleClass="pequennio"
+								value="#{ManejadorLaboratoriosMetrologia.listaMaterialesReferencia}"
+								rows="15" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+								emptyMessage="No hay materiales de referencia asociadas">
+
+								<f:facet name="header">
+									MATERIALES REFERENCIA ASOCIADOS AL LABORATORIO
+								</f:facet>
+
+								<p:column style="width:35%;"
+										  sortBy="#{materialReferencia.nombreMaterialReferencia}">
+									<f:facet name="header">
+										<h:outputText value="Nombre del Material de Referencia" />
+									</f:facet>
+									<h:outputText value="#{materialReferencia.nombreMaterialReferencia}"
+										style="font-size:12px;" />
+								</p:column>
+								
+								<p:column style="width:30%;"
+										  sortBy="#{materialReferencia.tipo.nombre}">
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText value="#{materialReferencia.tipo.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column style="width:25%;"
+										  sortBy="#{materialReferencia.usaMaterialReferencia.nombre}">
+									<f:facet name="header">
+										<h:outputText value="¿Necesario o Utilizado?" />
+									</f:facet>
+									<h:outputText value="#{materialReferencia.usaMaterialReferencia.nombre}"
+										style="font-size:11px;" />
+								</p:column>
+
+								<p:column headerText="Info." style="font-size:12px;width:5%;">
+									<center>
+										<p:commandButton title="Ver información detallada"
+											update="tablaMaterialReferencia" icon="ui-icon-search"
+											oncomplete="materialReferenciaDetalles.show()">
+											<f:setPropertyActionListener value="#{materialReferencia}"
+												target="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla}" />
+										</p:commandButton>
+										
+										<p:dialog header="Detalles del material de referencia seleccionado"
+											widgetVar="materialReferenciaDetalles"
+											modal="true" resizable="false" width="520">
+											
+											<t:div styleClass="panel-interno-tabla"
+												id="materialReferenciaPDF"
+												style="max-height:450px; overflow: auto; text-align: right"
+												rendered="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.id != null}">
+												<h:commandLink value="Descargar en formato PDF"
+													target="_blank"
+													action="#{ManejadorLaboratoriosMetrologia.imprimirMaterialReferencia}"
+													style="text-decoration:none; 
+													color: #16A8E2;
+													font-weight: bold;">
+												</h:commandLink>
+											</t:div>	
+											
+											<t:div styleClass="panel-interno-tabla"
+												id="materialReferenciaDetallesDiv"
+												style="max-height:450px; overflow: auto;">
+				
+												<p:panelGrid>
+													<p:row>
+														<p:column style="width: 30%;">
+															<h:outputText value="Nombre del Material de Referencia:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3" style="width: 70%;">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.nombreMaterialReferencia}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Productor:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.productor}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Proveedor:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.proveedor}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="¿Indique si necesita o utiliza el material de referencia?:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.usaMaterialReferencia.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="Tipo:" style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText
+																value="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.tipo.nombre}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="¿Considera que el material de referencia es de dificil adquisicion?:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText value="SI"
+																rendered="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.materialDificilAdquisicion}" />
+															<h:outputText value="NO"
+																rendered="#{!ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.materialDificilAdquisicion}" />
+														</p:column>
+													</p:row>
+													<p:row>
+														<p:column>
+															<h:outputText value="¿Considere que el uso de MR/MRC asegura la trazabilidad de su medición?:"
+																style="font-weight: bold;" />
+														</p:column>
+														<p:column colspan="3">
+															<h:outputText value="SI"
+																rendered="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.usoAseguraTrazabilildadMedicion}" />
+															<h:outputText value="NO"
+																rendered="#{!ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla.usoAseguraTrazabilildadMedicion}" />
+														</p:column>
+													</p:row>
+
+												</p:panelGrid>
+				
+											</t:div>
+										</p:dialog>
+									</center>
+								</p:column>
+
+								<p:column
+									rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}"
+									style="font-size:12px;width:5%;">
+									<f:facet name="header">
+										<h:outputText value="(-)" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+											action="#{ManejadorLaboratoriosMetrologia.eliminarMaterialReferencia}"
+											update="tablaMaterialReferencia">
+											<f:setPropertyActionListener value="#{materialReferencia}"
+												target="#{ManejadorLaboratoriosMetrologia.materialReferenciaSeleccionadaTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+						<!-- 					fin -->
+
+					</p:tab>
+
+				</p:tabView>
+
+				<p:spacer height="20" />
+
+				<p:spacer height="20" />
+
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" rendered="#{!ManejadorLaboratoriosMetrologia.soloLectura}">
+						<p:commandButton
+							action="#{ManejadorLaboratoriosInformacionGeneral.volverSolicitud}"
+							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+							value="Volver a la solicitud" 
+							immediate="true" 
+							rendered="#{ManejadorLaboratoriosMetrologia.esSolicitudLab}"/>
+						
+						<p:commandButton action="#{ManejadorLaboratoriosMetrologia.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" immediate="true" 
+							rendered="#{!ManejadorLaboratoriosMetrologia.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosMetrologia.salirGuardar}"
+							value="Guardar y continuar después" update="@form" />
+					</p:panelGrid>
+				</center>
+
+			</p:panel>
+
+			<p:dialog widgetVar="informacionFaltanteLab" resizable="false"
+				closable="true" header="Información faltante para el laboratorio"
+				width="680" height="450" modal="true">
+				<p:dataList
+					value="#{ManejadorLaboratoriosMetrologia.listaInfoFaltante}"
+					var="info">    
+	        	#{info}
+    		</p:dataList>
+			</p:dialog>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<s:fieldset
+	legend="CREAR REGISTRO A CONVOCATORIA: Publicación de libros con resultados de investigación de la DIB"
+	styleClass="legend1">
+	<h:panelGrid columns="1">
+		<h:commandButton value="Salir"
+			rendered="#{ManejadorCrearConvocatoriaPublicacionLibros.guardado}"
+			action="#{ManejadorCrearConvocatoriaPublicacionLibros.salir}" />
+	</h:panelGrid>
+</s:fieldset>
+
+
+<s:fieldset legend="Datos generales" styleClass="legend1"
+	rendered="#{!ManejadorCrearConvocatoriaPublicacionLibros.guardado}">
+	<h:panelGrid columns="2" align="left">
+		<h:outputText value="Nombre del libro" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibros.nombreLibro}"
+			size="50" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+	</h:panelGrid>
+</s:fieldset>
+
+<!-- Hidden comment -->
+
+<s:fieldset legend="Datos Autores" styleClass="legend1"
+	rendered="#{!ManejadorCrearConvocatoriaPublicacionLibros.guardado}">
+
+	<h:panelGrid columns="2" align="left">
+		<h:outputText value="Identificacion" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.identificacion}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+		<h:outputText value="Tipo Documento" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+
+		<h:panelGrid columns="2" align="left">
+			<h:selectOneMenu
+				value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.tipoDocumento}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearConvocatoriaPublicacionLibros.tipoDocumentoItem}" />
+			</h:selectOneMenu>
+
+			<h:commandButton value="Buscar..."
+				action="#{ManejadorCrearConvocatoriaPublicacionLibros.buscarAutor}" />
+		</h:panelGrid>
+
+		<h:outputText value="Nombre" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.autor}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+		<h:outputText value="Universidad" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.universidad}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+
+		<h:outputText value="Facultad/Dependencia"
+			styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.facultadDependencia}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+
+		<h:outputText value="email" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.email}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+
+		<h:outputText value="Direccion" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.direccion}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+
+		<h:outputText value="Teléfono" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:inputText
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.convocatoriaPublicacionLibrosDetalle.telefono}"
+			size="70" style='font-size: 12px; font-style: normal'
+			styleClass="texto" />
+		<h:outputLabel value="" />
+
+		<h:panelGrid columns="2" align="left">
+			<h:commandButton value="Agregar Autor"
+				action="#{ManejadorCrearConvocatoriaPublicacionLibros.agregarAutor}" />
+			<h:commandButton value="Limpiar"
+				action="#{ManejadorCrearConvocatoriaPublicacionLibros.limpiarAutor}" />
+		</h:panelGrid>
+
+	</h:panelGrid>
+
+	<h:panelGrid columns="1">
+
+		<h:outputText value="Autores Registrados(*)"
+			style='font-size: 10px; font-style: normal'
+			styleClass="labels_proyecto" />
+		<h:dataTable var="autoresRegistrados"
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.listaAutores}"
+			cellpadding="1" cellspacing="8" align="center" border="1"
+			binding="#{ManejadorCrearConvocatoriaPublicacionLibros.tablaAutores}">
+
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Identificación" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.identificacion}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Tipo Documento" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.tipoDocumento}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Nombre" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.autor}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Universidad" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.universidad}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Facultad/Dependencia" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.facultadDependencia}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="email" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.email}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Dirección" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.direccion}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Teléfono" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{autoresRegistrados.telefono}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Eliminar" style='font-size: 10px;' />
+				</f:facet>
+				<h:commandButton value="Eliminar autor"
+					action="#{ManejadorCrearConvocatoriaPublicacionLibros.eliminarAutor}"
+					image="/imgplantilla/pngtitulos/cen_eliminar.png" />
+			</h:column>
+		</h:dataTable>
+	</h:panelGrid>
+</s:fieldset>
+
+<s:fieldset legend="Información Archivos Adjuntos" styleClass="legend1"
+	rendered="#{!ManejadorCrearConvocatoriaPublicacionLibros.guardado}"
+	style='font-size: 12px;'>
+
+	<h:panelGrid columns="2">
+
+		<h:outputText value="Tipo de Archivo(*):"
+			style='font-size: 10px; font-style: normal'
+			styleClass="labels_proyecto" />
+		<h:selectOneMenu
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.tipoArchivoSel}"
+			styleClass="texto" style='font-size: 10px; font-style: normal'>
+			<f:selectItems
+				value="#{ManejadorCrearConvocatoriaPublicacionLibros.tipoArchivosItem}" />
+		</h:selectOneMenu>
+
+		<h:outputLabel for="myFileId11" value="Archivo:"
+			style='font-size: 10px; font-style: normal' />
+
+		<h:panelGroup>
+			<t:inputFileUpload id="myFileId11"
+				value="#{ManejadorCrearConvocatoriaPublicacionLibros.archivoObligatorio}"
+				storage="file" size="70" />
+			<h:commandButton value="Adjuntar Archivo"
+				action="#{ManejadorCrearConvocatoriaPublicacionLibros.guardarArchivoObligatorio}" />
+		</h:panelGroup>
+
+		<h:outputText value="Archivos Registrados(*)"
+			style='font-size: 10px; font-style: normal'
+			styleClass="labels_proyecto" />
+		<h:dataTable var="archivoAdjunto"
+			value="#{ManejadorCrearConvocatoriaPublicacionLibros.listaArchivosObligatoriosSel}"
+			cellpadding="1" cellspacing="8" align="center" border="1"
+			binding="#{ManejadorCrearConvocatoriaPublicacionLibros.tablaArchivosObligatoriosSel}">
+
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Archivo Cargado" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{archivoAdjunto.nombre}" styleClass="normal"
+					style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Tipo Archivo" style='font-size: 10px;' />
+				</f:facet>
+				<h:outputText value="#{archivoAdjunto.tipoArchivo}"
+					styleClass="normal" style='font-size: 10px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Eliminar" style='font-size: 10px;' />
+				</f:facet>
+				<h:commandButton value="Eliminar archivo"
+					action="#{ManejadorCrearConvocatoriaPublicacionLibros.eliminarArchivoObligatorio}"
+					image="/imgplantilla/pngtitulos/cen_eliminar.png" />
+			</h:column>
+		</h:dataTable>
+	</h:panelGrid>
+
+</s:fieldset>
+
+
+
+	<center>
+		<br />
+
+<h:dataTable var="mensajesValidacion"
+	value="#{ManejadorCrearConvocatoriaPublicacionLibros.listaMensajesValidacion}"
+	cellpadding="1" cellspacing="8" align="center" border="0">
+	<h:column>
+		<h:outputText value="#{mensajesValidacion}" styleClass="normal"
+			style='font-size: 14px; font-style: normal' />
+	</h:column>
+</h:dataTable>
+
+	</center>
+
+
+
+
+	<center>
+		<br />
+
+<h:panelGrid columns="1">
+	<h:commandButton
+		rendered="#{!ManejadorCrearConvocatoriaPublicacionLibros.guardado}"
+		action="#{ManejadorCrearConvocatoriaPublicacionLibros.guardar}"
+		value="Guardar" image="/imgplantilla/pngtitulos/cen_guardar2.png" />
+</h:panelGrid>
+
+	</center>
+
+</h:form>
+</ui:define>
+</ui:composition>

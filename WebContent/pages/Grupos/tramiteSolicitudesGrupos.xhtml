@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="title">Solicitudes grupos</ui:define>
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Solicitudes grupos<br />
+			</t:div>
+			En esta sección puede realizar la revisión de solicitudes de grupos de investigación.<br />
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form>
+			<br />
+			<p:dataTable 
+				var="sol"
+				style="width:100%; font-size: 14px;"
+				value="#{manejadorTramitesGrupo.listaSolicitudes}"
+				emptyMessage="No tiene solicitudes para revisión." 
+				paginator="true"
+				rows="15"
+				paginatorPosition="bottom"
+				filteredValue="#{manejadorTramitesGrupo.filteredSolicitudes}">
+				<f:facet name="header">Solicitudes pendientes por revisar</f:facet>
+				<p:column 
+					style="text-align: center; width: 5%"
+					filterBy="#{sol.id}"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					sortBy="#{sol.aviId}">
+					<f:facet name="header">
+						<h:outputText value="Código" />
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{sol.id}" style='font-weight: bold;'/>
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 15%"
+					filterStyle="width: 100%; height: 24px; font-size: 13px !important;"
+					filterMatchMode="contains"
+					filterBy="#{sol.nombreTipoSolicitud}"
+					sortBy="#{sol.nombreTipoSolicitud}">
+					<f:facet name="header">
+						<h:outputText value="Tipo"/>
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{sol.tipoSolicitud.nombre}" />
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 10%">
+					<f:facet name="header">
+						<h:outputText value="Grupo" />
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{sol.grupo.id} - #{sol.grupo.nombre} " />
+				</p:column>
+				<p:column 
+					style="text-align: center; width: 15%" >
+					<f:facet name="header">
+						Solicitante
+						<br />
+						<br />
+					</f:facet>
+					<h:outputText value="#{sol.solicitante.nombreCompletoMinusculas}" />
+				</p:column>
+				<p:column
+					style="text-align: center; width: 15%">
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+						<br />
+						<h:outputText value="solicitud" />
+					</f:facet>
+					<h:outputText value="#{sol.fecha}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column style="text-align: center; width: 5%">
+					<p:commandButton
+						action="#{manejadorTramitesGrupo.revisar}"
+						icon="ui-icon-search">
+						<f:param name="idSolGrupo" value="#{sol.id}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

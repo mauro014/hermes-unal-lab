@@ -1,0 +1,538 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+	<ui:define name="title">FORMULARIO DE REGISTRO</ui:define>
+	<ui:define name="content">
+		<img
+			src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+			style="padding-bottom: 10px;" />
+		<t:div styleClass="contenido-informacion">
+			<t:div styleClass="cabezote-informacion-pagina-buscador">
+				<h:outputText value="Banco de problemas" />
+			</t:div>
+			<img
+				src="#{facesContext.externalContext.requestContextPath}/images/her-ext-ecp/2018.04.25_siun_extension_convocatoria-ext-solidaria-2018_banner-hermes-01.png"
+				style="padding-bottom: 5px;" height="181" width="703" />
+			<t:div styleClass="contenedor-informacion">
+				<h:panelGrid columns="1" style="width: 100%">
+					<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+				</h:panelGrid>
+				<br />
+				<center>
+					<p:panel id="infoResEspe" header="NOTA" style="width:80%"
+						styleClass="mypanel">
+						<h:panelGrid columns="1" id="panelContrapart1"
+							styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText
+								value="La inclusión de los problemas en el Banco no implica obligación alguna por parte de la Universidad Nacional de Colombia para su financiación." />
+						</h:panelGrid>
+						<br />
+						<h:panelGrid columns="1" id="panelContrapart2"
+							styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText
+								value="NO se tendrán en cuenta problemas u oportunidades de desarrollo,  encaminadas a construcción de infraestructura, obras, vías;  dotación de mobiliario y equipo; suministros; gastos de funcionamiento." />
+						</h:panelGrid>
+						<br />
+						<h:panelGrid columns="1" id="panelContrapart3"
+							styleClass="estilo-panelgrid-sinbordes">
+							<h:form id="form_link">
+								<h:outputText
+									value="Para consultar problemas registrados, por favor haga clic en el siguiente enlace:" />
+
+								<h:commandLink
+									action="#{ManejadorPreinscripcionBancoProblemas.verProblemasAprobados}"
+									value="[+] Consultar problemas registrados"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+									ajax="false">
+								</h:commandLink>
+							</h:form>
+						</h:panelGrid>
+						<br />
+					</p:panel>
+				</center>
+				<br />
+
+				<h:form id="form">
+					<!-- 1. PANEL INFORMACION DOCUMENTO DE IDENTIFICACION -->
+					<p:panel header="Documento de identificación" id="panel1">
+
+						<h:panelGrid columns="3" align="center" cellspacing="5">
+
+							<h:outputText value="Tipo de documento: " for="tipo_doc" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionBancoProblemas.tipo_doc}"
+								effect="fade" id="tipo_doc">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionBancoProblemas.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Número de documento: " />
+							<p:inputText id="documento"
+								value="#{ManejadorPreinscripcionBancoProblemas.documento}"
+								maxlength="25" required="true"
+								requiredMessage="Campo obligatorio"
+								validateMessage="Sólo puede tener números"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.habilita_doc}"
+								converter="#{Number}">
+								<f:validateLongRange minimum="0" maximum="999999999999" />
+								<p:tooltip for="documento" showEvent="focus" hideEvent="blur"
+									showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="Ingrese su número de documento para realizar la preinscripcion. 
+	                									 Si ya hizo este procedimiento previamente, puede actualizar los datos." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:inputText>
+							<p:message for="documento" />
+
+							<h:outputText value="" />
+							<p:commandButton value="Continuar" id="continuar"
+								action="#{ManejadorPreinscripcionBancoProblemas.buscarPreinscripcion}"
+								icon="ui-icon-triangle-1-e" styleClass="ui-priority-primary"
+								update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+
+							<p:commandButton id="volver" value="Salir"
+								styleClass="ui-priority-primary" rendered="false"
+								action="#{ManejadorPreinscripcionBancoProblemas.volver}"
+								immediate="true" />
+
+						</h:panelGrid>
+					</p:panel>
+					<br />
+					<p:panel header="Información general" id="panel2"
+						rendered="#{ManejadorPreinscripcionBancoProblemas.ins_act != 'N'}">
+
+						<h:panelGrid columns="3" id="panelInfoInicial" cellspacing="8">
+
+							<h:outputText value="Primer nombre" for="primer_nombre" />
+							<p:inputText id="primer_nombre"
+								value="#{ManejadorPreinscripcionBancoProblemas.primer_nombre}"
+								maxlength="80" required="true"
+								requiredMessage="El nombre es un campo obligatorio"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}"
+								size="35" />
+							<p:message for="primer_nombre" styleClass="texto" />
+
+							<h:outputText value="Segundo nombre" for="segundo_nombre" />
+							<p:inputText id="segundo_nombre"
+								value="#{ManejadorPreinscripcionBancoProblemas.segundo_nombre}"
+								maxlength="80"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}"
+								size="35" />
+							<p:message for="segundo_nombre" styleClass="texto" />
+
+							<h:outputText value="Primer Apellido" for="primer_apellido" />
+							<p:inputText id="primer_apellido"
+								value="#{ManejadorPreinscripcionBancoProblemas.primer_apellido}"
+								maxlength="50" required="true"
+								requiredMessage="El primer apellido es un campo obligatorio"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}"
+								size="35" />
+							<p:message for="primer_apellido" />
+
+							<h:outputText value="Segundo Apellido" for="segundo_apellido" />
+							<p:inputText id="segundo_apellido"
+								value="#{ManejadorPreinscripcionBancoProblemas.segundo_apellido}"
+								maxlength="50"
+								requiredMessage="El segundo apellido es un campo obligaorio"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}"
+								size="35" />
+							<p:message for="segundo_apellido" />
+
+							<h:outputText value="Correo Electrónico" for="correo_electronico" />
+							<p:inputText id="correo_electronico"
+								value="#{ManejadorPreinscripcionBancoProblemas.correo_electronico}"
+								maxlength="80" required="true"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}"
+								requiredMessage="El correo es un campo obligatorio"
+								validatorMessage="Correo inválido" size="35">
+								<f:validateRegex
+									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+							</p:inputText>
+							<p:message for="correo_electronico" />
+
+							<h:outputText value="Teléfono de contacto (móvil o fijo)"
+								for="tel_movil" />
+							<p:inputText id="tel_movil"
+								value="#{ManejadorPreinscripcionBancoProblemas.tel_movil}"
+								required="true"
+								readonly="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}"
+								requiredMessage="El teléfono de contacto es un campo obligatorio"
+								validateMessage="El teléfono de contacto sólo puede tener números"
+								converter="javax.faces.Long"
+								converterMessage="El teléfono de contacto debe contener sólo numeros"
+								maxlength="20">
+								<f:validateLength minimum="7" />
+							</p:inputText>
+							<p:message for="tel_movil" />
+
+							<h:outputText value="Ciudad de domicilio:" id="ciudText" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionBancoProblemas.ciudad}"
+								effect="fade" id="ciudad" filter="true" style="width: 255px"
+								filterMatchMode="contains"
+								disabled="#{ManejadorPreinscripcionBancoProblemas.ins_act == 'A' or ManejadorPreinscripcionBancoProblemas.esDocente or ManejadorPreinscripcionBancoProblemas.esEstudiante}">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionBancoProblemas.ciudadItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Rol de quien registra el problema"
+								id="rolRegText" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionBancoProblemas.tipo_vinculacion}"
+								effect="fade" id="rolRegistro" style="width: 255px">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionBancoProblemas.rolRegistroItemList}" />
+								<p:ajax update="panelInfoInicialEntidad, panel2"
+									process="panelInfoInicialEntidad, panel2" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="3" id="panelInfoInicialEntidad"
+							cellspacing="8"
+							rendered="#{ManejadorPreinscripcionBancoProblemas.tipo_vinculacion == 'INS_PUB' or ManejadorPreinscripcionBancoProblemas.tipo_vinculacion == 'SEC_PRI'}">
+							<h:outputText value="Empresa/Entidad" for="empresa" />
+							<p:inputText id="empresa"
+								value="#{ManejadorPreinscripcionBancoProblemas.empresa}"
+								maxlength="100" style="width: 450px;" />
+							<p:message for="empresa" />
+
+							<h:outputText value="Cargo" for="cargo" />
+							<p:inputTextarea
+								value="#{ManejadorPreinscripcionBancoProblemas.cargo}"
+								id="cargo" autoResize="false"
+								validatorMessage="Cargo/Funciones principales debe estar entre 1 - 500 caracteres"
+								style="width: 450px;" maxlength="500"
+								counterTemplate="{0} caracteres restantes.">
+								<f:validateLength minimum="1" maximum="500" for="cargo"></f:validateLength>
+							</p:inputTextarea>
+							<p:message for="cargo" />
+
+							<h:outputText
+								value="¿La empresa/entidad está interesada en cofinanciar el proyecto que surja de la convocatoria?"
+								for="cargo" />
+							<p:selectOneMenu id="interesFina"
+								value="#{ManejadorPreinscripcionBancoProblemas.tipo_empresa}">
+								<f:selectItem itemValue="Si" itemLabel="Si" />
+								<f:selectItem itemValue="No" itemLabel="No" />
+							</p:selectOneMenu>
+							<p:message for="interesFina" />
+						</h:panelGrid>
+
+					</p:panel>
+
+					<br />
+
+					<p:panel header="Información del problema" id="panel3"
+						rendered="#{ManejadorPreinscripcionBancoProblemas.ins_act != 'N'}">
+
+						<h:panelGrid id="panelInfoAcademica" columns="4" cellspacing="8">
+
+							<h:outputText value="Problema/ oportunidad de desarrollo" />
+							<p:inputTextarea
+								value="#{ManejadorPreinscripcionBancoProblemas.nombreProblema}"
+								id="nombreProblema" autoResize="false"
+								requiredMessage="Campo Obligatorio"
+								validatorMessage="Nombre problema debe estar entre 1 - 500 caracteres"
+								maxlength="500" counterTemplate="{0} caracteres restantes."
+								required="true" style="width: 450px;">
+								<f:validateLength minimum="1" maximum="500" for="nombreProblema"></f:validateLength>
+							</p:inputTextarea>
+							<p:commandButton id="infofte1" icon="ui-icon-info">
+								<p:tooltip for="infofte1" showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="En una frase que no supere diez (10) palabras, indique el problema u oportunidad. Tenga en cuenta que en el siguiente punto podrá describirlo más ampliamente" />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:commandButton>
+							<p:message for="nombreProblema" />
+
+							<h:outputText value="Explique el problema/oportunidad" />
+							<p:inputTextarea
+								value="#{ManejadorPreinscripcionBancoProblemas.descripcionProblema}"
+								id="descripcionProblema" autoResize="false"
+								requiredMessage="Campo Obligatorio"
+								validatorMessage="Descripción problema debe estar entre 1 - 4000 caracteres"
+								style="width: 450px;" maxlength="4000" required="true">
+								<f:validateLength minimum="1" maximum="4000"
+									for="descripcionProblema"></f:validateLength>
+							</p:inputTextarea>
+							<p:commandButton id="infofte3" icon="ui-icon-info">
+								<p:tooltip for="infofte3" showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="Tenga en cuenta: antecedentes, situación actual, magnitud del problema/oportunidad, las condiciones sociales, económicas, políticas, culturales, ambientales, tecnológicas." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:commandButton>
+							<p:message for="descripcionProblema" />
+
+							<h:outputText value="Descripción  de la comunidad" />
+							<p:inputTextarea
+								value="#{ManejadorPreinscripcionBancoProblemas.comunidadObjetivoProblema}"
+								id="comunidadObjetivoProblema" autoResize="false"
+								requiredMessage="Campo Obligatorio"
+								validatorMessage="Descripción problema debe estar entre 1 - 2000 caracteres"
+								style="width: 450px;" maxlength="2000" required="true">
+								<f:validateLength minimum="1" maximum="2000"
+									for="comunidadObjetivoProblema"></f:validateLength>
+							</p:inputTextarea>
+							<p:commandButton id="infofte4" icon="ui-icon-info">
+								<p:tooltip for="infofte4"
+									value="Identifique  el grupo poblacional que está afectado con la situación descrita"
+									showEffect="fade" hideEffect="fade" />
+							</p:commandButton>
+							<p:message for="comunidadObjetivoProblema" />
+
+						</h:panelGrid>
+
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							id="panelSolidaria" align="left" style="text-align:left">
+
+							<p:row>
+								<p:column style="width:160px;">
+									<h:outputText value="Departamento:" />
+								</p:column>
+								<p:column style="width:440px;">
+									<p:selectOneMenu
+										value="#{ManejadorPreinscripcionBancoProblemas.departamentoProblema}"
+										effect="fade" id="deptoPP" filter="true">
+										<f:selectItems
+											value="#{ManejadorPreinscripcionBancoProblemas.departamentoItemList}" />
+										<p:ajax update="panelCiudad"
+											listener="#{ManejadorPreinscripcionBancoProblemas.cambiarCiudad}"></p:ajax>
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:commandButton id="infofte9" icon="ui-icon-info">
+										<p:tooltip for="infofte9"
+											value="Seleccione el departamento en el que se presenta la situación por solucionar"
+											showEffect="fade" hideEffect="fade" />
+									</p:commandButton>
+								</p:column>
+								<p:column>
+									<h:outputText value="" />
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							id="panelCiudad">
+
+							<p:row>
+								<p:column style="width:160px;">
+									<h:outputText value="Municipio:" id="ciudText" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu
+										value="#{ManejadorPreinscripcionBancoProblemas.ciudadProblema}"
+										effect="fade" id="ciudadPP" filter="true">
+										<f:selectItems
+											value="#{ManejadorPreinscripcionBancoProblemas.ciudadItem}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:commandButton id="infofte8" icon="ui-icon-info">
+										<p:tooltip for="infofte8" value="Seleccione el municipio"
+											showEffect="fade" hideEffect="fade" />
+									</p:commandButton>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column style="width:160px;">
+									<h:outputText value="Área rural/urbana" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="esParaGrupos"
+										value="#{ManejadorPreinscripcionBancoProblemas.ubicacionProblema}">
+										<f:selectItem itemValue="Urbana" itemLabel="Urbana" />
+										<f:selectItem itemValue="Rural" itemLabel="Rural" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column>
+									<p:commandButton id="infofte2" icon="ui-icon-info">
+										<p:tooltip for="infofte2"
+											value="Seleccione si la ubicación de la comunidad es rural o urbana"
+											showEffect="fade" hideEffect="fade" />
+									</p:commandButton>
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+
+
+					</p:panel>
+
+					<br />
+
+					<p:panel id="archivosSoporte" header="Archivos de Soporte"
+						rendered="#{ManejadorPreinscripcionBancoProblemas.ins_act != 'N'}">
+
+
+						<center>
+
+							<h:panelGrid id="panelSelArch" columns="2"
+								style="width:500px; text-align:center">
+
+								<p:fileUpload style="width:50%"
+									fileUploadListener="#{ManejadorPreinscripcionBancoProblemas.subirArchivos}"
+									mode="advanced" auto="true" update="tablaArchivo"
+									label="Seleccionar archivo" />
+
+								<p:commandButton id="infofte5" icon="ui-icon-info">
+									<p:tooltip for="infofte5"
+										value="Adjunte los soportes que considere necesarios para justificar la realidad descrita [Máximo 3Mb]"
+										showEffect="fade" hideEffect="fade" />
+								</p:commandButton>
+
+							</h:panelGrid>
+
+							<br />
+							<p:dataTable style="width:70%"
+								value="#{ManejadorPreinscripcionBancoProblemas.listaArchivos}"
+								var="archivo" emptyMessage="No hay archivos asociados"
+								id="tablaArchivo">
+
+								<p:column headerText="Documentos adjuntos" style="width:50%">
+									<h:outputText value="#{archivo.nombreArchivo}" />
+								</p:column>
+
+								<p:column style="width:10%">
+									<center>
+										<p:commandButton id="selectButton" update="tablaArchivo"
+											icon="ui-icon-trash"
+											action="#{ManejadorPreinscripcionBancoProblemas.eliminarArchivo}"
+											title="Eliminar Archivo">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{ManejadorPreinscripcionBancoProblemas.archivoPre}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+
+							</p:dataTable>
+						</center>
+					</p:panel>
+
+					<br />
+
+					<p:panel header="Información Adicional" id="infoAdicional"
+						rendered="#{ManejadorPreinscripcionBancoProblemas.ins_act != 'N'}">
+
+						<h:panelGrid columns="1" cellspacing="8">
+							<h:outputText
+								value="Por cuál de los siguientes medios se enteró del banco de problemas:" />
+							<p:selectOneMenu id="medio"
+								value="#{ManejadorPreinscripcionBancoProblemas.medio_publicidad}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{ManejadorPreinscripcionBancoProblemas.medioPublicidadItemList}" />
+								<p:ajax update="infoAdicional" process="infoAdicional"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="1" cellspacing="8"
+							rendered="#{ManejadorPreinscripcionBancoProblemas.medio_publicidad eq '5' or ManejadorPreinscripcionBancoProblemas.medio_publicidad eq '6'}">
+							<h:outputText value="¿Cuál?:" />
+							<p:inputText id="uiOtroTipo"
+								value="#{ManejadorPreinscripcionBancoProblemas.otroTipoMedioInfo}"
+								style="width:350px;">
+							</p:inputText>
+						</h:panelGrid>
+
+					</p:panel>
+
+					<br />
+					<center>
+						<h:panelGrid id="panelGuardar" columns="1" align="center"
+							rendered="#{ManejadorPreinscripcionBancoProblemas.ins_act != 'N'}">
+
+
+							<h:outputText
+								value="Nos permitimos informarle que los datos personales que se relacionen a continuación tales como nombres, apellidos, dirección de residencia, números de teléfono, celular y correo electrónico, se mantendrán en estricta confidencialidad y no serán utilizados para fines distintos a los de la presente convocatoria."
+								style="text-align: justify" />
+							<br />
+
+							<p:commandButton value="Guardar" id="guardar"
+								actionListener="#{ManejadorPreinscripcionBancoProblemas.guardarPreinscripcion}"
+								icon="ui-icon-check" styleClass="ui-priority-primary"
+								update="@form"
+								disabled="#{ManejadorPreinscripcionBancoProblemas.habilita_guardar}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</h:panelGrid>
+					</center>
+					<p:messages id="msgForm" showDetail="true" autoUpdate="true"
+						closable="true" />
+
+					<br />
+
+
+
+
+					<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+									Por favor espere...
+					</p:dialog>
+				</h:form>
+
+			</t:div>
+			<t:div styleClass="final-contenedor-informacion" />
+		</t:div>
+
+
+
+
+		<t:div styleClass="contenido-menu">
+			<t:div styleClass="menu-superior">
+				<t:div styleClass="cabezote-derecho-menu">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+
+					<ul>
+						<li><h:form>
+								<p:commandLink
+									action="#{ManejadorPreinscripcionBancoProblemas.nuevaPreinscripcion}"
+									ajax="false">
+									<h:outputText value="Nuevo registro" />
+								</p:commandLink>
+							</h:form></li>
+
+						<li><h:form>
+								<p:commandLink
+									action="#{ManejadorPreinscripcionBancoProblemas.volver}"
+									ajax="false">
+									<h:outputText value="Salir" />
+								</p:commandLink>
+							</h:form></li>
+
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+
+	</ui:define>
+</ui:composition>

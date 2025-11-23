@@ -1,0 +1,959 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Información General</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<p:panel id="datosContacto"
+				header="Docente de planta responsable de la propuesta">
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+					id="formInfoGeneral">
+
+					<h:outputText value="Nombre del docente:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.nombreCompletoPersonaActual}" />
+
+					<h:outputText value="Documento de identidad:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.documentoCoinv}" />
+
+					<h:outputText value="Tipo de Documento:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.tipoDocumentoCoInv.nombre}" />
+
+					<h:outputText value="Dedicación:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.dedicacionInvPpal}" />
+
+					<h:outputText value="Sede:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.nombreSede}" />
+
+					<h:outputText value="Facultad/Instituto:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.nombreFacultad}" />
+
+					<h:outputText value="Departamento:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.nombreDepartamento}" />
+
+					<h:outputText value="Correo electrónico:" />
+					<h:outputText
+						value="#{ManejadorConvocatoriaBancoProyectos.emailPersonaActual}" />
+
+				</h:panelGrid>
+			</p:panel>
+
+			<br />
+
+			<p:panel id="docentesGrande"
+				header="Docentes que van a participar en la propuesta">
+
+				<p:tab
+					title="Docentes INTERNOS que van a participar en la propuesta"
+					id="infoGeneralDocUN">
+
+					<br />
+
+					<center>
+						<h:outputText value="Docentes INTERNOS" style='font-weight: bold;' />
+					</center>
+					<br />
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="pgFormInves" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelect"
+							style="width:160px"
+							value="#{ManejadorConvocatoriaBancoProyectos.tipoDocumentoCoInv2.id}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaBancoProyectos.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumento"
+							value="#{ManejadorConvocatoriaBancoProyectos.documentoCoinv2}" />
+
+						<h:outputText value="Horas semanales de dedicación:" />
+						<p:inputText id="horasSemanales"
+							value="#{ManejadorConvocatoriaBancoProyectos.dedicacionHorasSemana}">
+							<f:validateLongRange maximum="44" minimum="0" />
+						</p:inputText>
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvMain" style="width:160px"
+							value="#{ManejadorConvocatoriaBancoProyectos.tipoInvestigador}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaBancoProyectos.docentesUN}" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<br />
+					<center>
+						<p:commandButton value="Adicionar docente UN"
+							id="botonAdicionarInvestigador"
+							update="listaParticipantes, pgFormInves"
+							action="#{ManejadorConvocatoriaBancoProyectos.agregarParticipante}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+					<br />
+					<center>
+						<p:dataTable var="i" style="width:550px"
+							value="#{ManejadorConvocatoriaBancoProyectos.listaParticipantes}"
+							id="listaParticipantes" editable="true">
+
+							<p:column style="width:80%">
+								<f:facet name="header">
+									<h:outputText value="Nombre" />
+								</f:facet>
+								<h:outputText
+									value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<h:outputText
+									value="#{i.tipo.id == 'PIEI' ? 'Docente UN':(i.tipo.id == 'PEEI' ? 'Docente Invitado':( i.tipo.id == 'P' ? 'Principal - Docente proponente':''))}" />
+							</p:column>
+
+							<p:column headerText="Dedicación semanal" style="width:60%">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{i.dedicacionHorasSemana}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{i.dedicacionHorasSemana}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Editar" />
+								</f:facet>
+								<p:rowEditor />
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton id="botonEliminarIntegrantes"
+										update="listaParticipantes" icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaBancoProyectos.eliminarParticipante}"
+										title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+										<f:setPropertyActionListener value="#{i}"
+											target="#{ManejadorConvocatoriaBancoProyectos.participante}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+
+					</center>
+					<br />
+				</p:tab>
+
+				<br />
+
+				<p:tab
+					title="Docentes EXTERNOS que van a participar en la propuesta "
+					id="in">
+
+					<br />
+
+					<center>
+						<h:outputText value="Docentes EXTERNOS" style='font-weight: bold;' />
+					</center>
+					<br />
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="pgFormInvesExt" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelectExt"
+							style="width:160px"
+							value="#{ManejadorConvocatoriaBancoProyectos.tipoDocumentoInvExt.id}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaBancoProyectos.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumentoExt"
+							value="#{ManejadorConvocatoriaBancoProyectos.documentoInvExt}" />
+
+						<h:outputText value="Horas semanales de dedicación:" />
+						<p:inputText id="horasSemanalesExt"
+							value="#{ManejadorConvocatoriaBancoProyectos.dedicacionHorasSemanaExt}">
+							<f:validateLongRange maximum="44" minimum="0" />
+						</p:inputText>
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvExt" style="width:160px"
+							value="#{ManejadorConvocatoriaBancoProyectos.tipoInvestigadorInvExt}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaBancoProyectos.docentesInvitados}" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<br />
+					<center>
+						<p:commandButton value="Buscar Investigador"
+							id="botonBuscarInvestigadorExterno" update="panelIE"
+							action="#{ManejadorConvocatoriaBancoProyectos.buscarParticipanteExterno}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+
+					<p:outputPanel id="panelIE">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt" cellspacing="5"
+							rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarFormIE}">
+
+							<h:outputText value="Primer Nombre *" />
+							<p:inputText id="primerNombreInvestigador"
+								value="#{ManejadorConvocatoriaBancoProyectos.investigadorExterno.nombre1}"
+								size="38" requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Nombre" />
+							<p:inputText id="segundoNombreInv"
+								value="#{ManejadorConvocatoriaBancoProyectos.investigadorExterno.nombre2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Primer Apellido *" />
+							<p:inputText id="primerApellidoInvestigador"
+								value="#{ManejadorConvocatoriaBancoProyectos.investigadorExterno.apellido1}"
+								size="38" requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Apellido" />
+							<p:inputText id="segundoApellidoInv"
+								value="#{ManejadorConvocatoriaBancoProyectos.investigadorExterno.apellido2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Género" />
+							<p:selectOneMenu
+								value="#{ManejadorConvocatoriaBancoProyectos.investigadorExterno.genero}"
+								id="idGenero" style="width:40px">
+								<f:selectItems
+									value="#{ManejadorConvocatoriaBancoProyectos.generoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Institución *" />
+							<p:inputText id="insitucionNombre"
+								value="#{ManejadorConvocatoriaBancoProyectos.insitucionNombre}"
+								size="38" requiredMessage="La institución es obligatoria">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Correo electrónico *" />
+							<p:inputText id="correoExt"
+								value="#{ManejadorConvocatoriaBancoProyectos.investigadorExterno.email}"
+								size="38" requiredMessage="El correo electrónico es obligatorio">
+							</p:inputText>
+
+							<h:outputText value="País de procedencia" id="paisText" />
+							<p:selectOneMenu
+								value="#{ManejadorConvocatoriaBancoProyectos.pais}"
+								effect="fade" id="pais" filter="true" required="true"
+								validatorMessage="Por favor seleccione un país">
+								<f:selectItems
+									value="#{ManejadorConvocatoriaBancoProyectos.paisItem}" />
+								<f:validateRegex pattern="[A-Z][A-Z]" />
+								<p:ajax event="change"
+									update="departamento, deptoText, ciudad, panelDeptoCiud"
+									listener="#{ManejadorConvocatoriaBancoProyectos.cargarDepto}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid id="panelDeptoCiud" columns="2" align="center"
+							cellpadding="5" cellspacing="5">
+							<h:outputText value="Departamento:" id="deptoText"
+								rendered="#{ManejadorConvocatoriaBancoProyectos.pais == 'CO'}" />
+							<p:selectOneMenu
+								value="#{ManejadorConvocatoriaBancoProyectos.departamento}"
+								effect="fade" id="departamento" filter="true"
+								rendered="#{ManejadorConvocatoriaBancoProyectos.pais == 'CO'}">
+								<f:selectItems
+									value="#{ManejadorConvocatoriaBancoProyectos.departamentoItemList}" />
+								<p:ajax update="ciudad, ciudText" event="change"
+									listener="#{ManejadorConvocatoriaBancoProyectos.cargarCiudad}" />
+							</p:selectOneMenu>
+
+
+							<h:outputText value="Ciudad:" id="ciudText"
+								rendered="#{ManejadorConvocatoriaBancoProyectos.pais == 'CO'}" />
+							<p:selectOneMenu
+								value="#{ManejadorConvocatoriaBancoProyectos.ciudad}"
+								effect="fade" id="ciudad" filter="true"
+								rendered="#{ManejadorConvocatoriaBancoProyectos.pais == 'CO'}">
+								<f:selectItems
+									value="#{ManejadorConvocatoriaBancoProyectos.ciudadItemList}" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+						<br />
+						<center>
+							<p:commandButton value="Adicionar docente invitado"
+								rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarGuardarIE}"
+								id="botonGuardarInvestigadorExterno" ajax="false"
+								update="panelIE, pgFormInvesExt, listaParticipantesExternos, in, panelIEInt"
+								action="#{ManejadorConvocatoriaBancoProyectos.guardarParticipanteExterno}"
+								styleClass="ui-priority-primary" />
+						</center>
+
+
+					</p:outputPanel>
+
+					<p:outputPanel id="panelIEInt">
+
+						<br />
+						<center>
+							<p:dataTable var="e" style="width:600px"
+								value="#{ManejadorConvocatoriaBancoProyectos.listaParticipantesExternos}"
+								id="listaParticipantesExternos" editable="true">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText
+										value="#{e.invExt.nombre1} #{e.invExt.nombre2} #{e.invExt.apellido1} #{e.invExt.apellido2}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText
+										value="#{e.invExtProyecto.tipo.id == 'IIEI' ? 'Invitado internacional':(e.invExtProyecto.tipo.id == 'INEI' ? 'Invitado nacional':'')}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Institución" />
+									</f:facet>
+									<h:outputText value="#{e.nombreInstitucion}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Pais procedencia" />
+									</f:facet>
+									<h:outputText value="#{e.nombrePais}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Email" />
+									</f:facet>
+									<h:outputText value="#{e.invExt.email}" />
+								</p:column>
+
+								<p:column headerText="td">
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText
+												value="#{e.invExtProyecto.dedicacionHorasSemana}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText
+												value="#{e.invExtProyecto.dedicacionHorasSemana}"
+												style="width:100%" />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Editar" />
+									</f:facet>
+									<p:rowEditor />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Eliminar" />
+									</f:facet>
+									<center>
+										<p:commandButton id="botonEliminarIntegrantesInvitados"
+											update="listaParticipantesExternos" icon="ui-icon-trash"
+											action="#{ManejadorConvocatoriaBancoProyectos.eliminarParticipanteExterno}"
+											title="Eliminar">
+											<f:setPropertyActionListener value="#{e}"
+												target="#{ManejadorConvocatoriaBancoProyectos.participanteExternoSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+
+						</center>
+						<br />
+
+
+					</p:outputPanel>
+
+
+
+				</p:tab>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="entidadExterna"
+				header="Entidad externa de colaboración ">
+				<p:outputPanel id="OP_externa">
+					<p:outputPanel id="panelInfoEntExt">
+
+
+
+
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+							id="panelGridEntExterna">
+
+							<h:outputText value="Nombre de la entidad externa:" />
+							<p:inputTextarea
+								value="#{ManejadorConvocatoriaBancoProyectos.nombreEntidadExterna}"
+								id="nombreEntExt"
+								validatorMessage="El Nombre de la entidad externa debe estar entre 1 - 300 caracteres"
+								rows="5" cols="70">
+								<f:validateLength minimum="1" maximum="300" for="titulo"></f:validateLength>
+							</p:inputTextarea>
+							<p:message for="nombreEntExt" display="icon" />
+
+							<h:outputText value="NIT" />
+							<p:inputText id="nit"
+								value="#{ManejadorConvocatoriaBancoProyectos.nitEntidadExterna}"
+								size="38" requiredMessage="El NIT es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+							<p:message id="errorNit" display="icon" for="nit" />
+
+							<h:outputText value="Tipo de entidad Externa: " />
+							<p:selectOneMenu id="tipoEntidadExterna" style="width:450px"
+								value="#{ManejadorConvocatoriaBancoProyectos.tipoEntidadExterna}">
+								<f:selectItems
+									value="#{ManejadorConvocatoriaBancoProyectos.listaTipoEntidadExternaItems}" />
+							</p:selectOneMenu>
+							<p:message id="errorTipoEntidad" display="icon"
+								for="tipoEntidadExterna" />
+
+							<h:outputText value="Nombre  de persona de contacto:" />
+							<p:inputTextarea
+								value="#{ManejadorConvocatoriaBancoProyectos.nombreContactpEntidadExterna}"
+								id="nombreContEntExt"
+								validatorMessage="El Nombre de la persona de contacto en la entidad externa debe estar entre 1 - 300 caracteres"
+								rows="5" cols="70">
+								<f:validateLength minimum="1" maximum="300" for="titulo"></f:validateLength>
+							</p:inputTextarea>
+							<p:message for="nombreContEntExt" display="icon" />
+
+							<h:outputText value="Cargo de persona de contacto:" />
+							<p:inputTextarea
+								value="#{ManejadorConvocatoriaBancoProyectos.cargoPersonaEntidadExterna}"
+								id="cargoPerEntExt"
+								validatorMessage="El cargo de la persona de contacto en la entidad externa debe estar entre 1 - 1000 caracteres"
+								rows="5" cols="70">
+								<f:validateLength minimum="1" maximum="1000" for="titulo"></f:validateLength>
+							</p:inputTextarea>
+							<p:message for="cargoPerEntExt" display="icon" />
+
+							<h:outputText
+								value="Alcance de la colaboración Interinstitucional: Describa cuales son las capacidades/trayectoria de investigación, innovación o transferencia de la(s) entidad(es) externa(s) con la(s) que va a realizar el trabajo conjunto y que serán útiles a la formulación y desarrollo del proyecto.:" />
+							<p:inputTextarea
+								value="#{ManejadorConvocatoriaBancoProyectos.alcanceEntidadExterna}"
+								id="alcanceEntExt"
+								rows="5" cols="70">
+							</p:inputTextarea>
+							<p:message for="alcanceEntExt" display="icon" />
+
+						</h:panelGrid>
+
+
+						<h:panelGrid id="mostrarCont" >
+
+							<h:panelGrid id="panelContraEspEfeUno" columns="2"
+								cellpadding="5" cellspacing="5">
+								<h:outputText
+									value="¿La institución externa va a colocar contrapartida?" />
+								<p:selectOneMenu
+									value="#{ManejadorConvocatoriaBancoProyectos.esContrapartida}"
+									id="opcionContrapartida" style="width:50px">
+									<f:selectItem itemLabel="Si" itemValue="Si" />
+									<f:selectItem itemLabel="No" itemValue="No" />
+									<p:ajax update="mostrarCont, panelContraEspEfe"
+										listener="#{ManejadorConvocatoriaBancoProyectos.siHayContrapartida}" />
+								</p:selectOneMenu>
+
+
+							</h:panelGrid>
+							
+							<h:panelGrid id="panelContraEspEfe" columns="2" cellpadding="5"
+								cellspacing="5"
+								rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarContrapartida}">
+								<h:outputText value="Efectivo:"
+									rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarContrapartida}" />
+								<p:inputText
+									rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarContrapartida}"
+									value="#{ManejadorConvocatoriaBancoProyectos.contraEfectivo}"
+									id="IT_contra_efectivo" />
+
+								<h:outputText value="Especie:"
+									rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarContrapartida}" />
+								<p:inputText
+									rendered="#{ManejadorConvocatoriaBancoProyectos.mostrarContrapartida}"
+									value="#{ManejadorConvocatoriaBancoProyectos.contraEspecie}"
+									id="IT_contra_especie" />
+
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+
+
+
+
+						<br />
+						<center>
+							<p:commandButton value="Agregar entidad externa"
+								id="botonGuardarEntidadExterna" update="OP_externa, mostrarCont"
+								action="#{ManejadorConvocatoriaBancoProyectos.agregarEntidadExterna}"
+								styleClass="ui-priority-primary" />
+						</center>
+						<br />
+					</p:outputPanel>
+
+
+					<center>
+						<p:dataTable var="entExt"
+							value="#{ManejadorConvocatoriaBancoProyectos.listaEntidadesExternas}"
+							id="listaEntidadesExternas">
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre" />
+								</f:facet>
+								<h:outputText value="#{entExt.nombre}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="NIT" />
+								</f:facet>
+								<h:outputText value="#{entExt.nit}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<h:outputText value="#{entExt.tipoEntidad}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Contacto" />
+								</f:facet>
+								<h:outputText value="#{entExt.nombrePersonaContacto}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Cargo contacto" />
+								</f:facet>
+								<h:outputText value="#{entExt.cargoPersonaContacto}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Alcance colaboración" />
+								</f:facet>
+								<h:outputText value="#{entExt.alcanceColaboracion}" />
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Contrapartida" />
+								</f:facet>
+								<h:outputText value="#{entExt.contrapartida}" />
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Efectivo" />
+								</f:facet>
+								<h:outputText value="#{entExt.efectivo}" />
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Especie" />
+								</f:facet>
+								<h:outputText value="#{entExt.especie}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton id="botonEliminarEntidades"
+										update="listaEntidadesExternas" icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaBancoProyectos.eliminarEntidadExterna}"
+										title="Eliminar">
+										<f:setPropertyActionListener value="#{entExt}"
+											target="#{ManejadorConvocatoriaBancoProyectos.entidadExternaSeleccionada}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+
+						</p:dataTable>
+
+					</center>
+
+
+				</p:outputPanel>
+
+
+			</p:panel>
+
+
+			<br />
+
+			<p:panel id="PlanTrabajo" header="Plan de trabajo">
+
+				<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+					id="panelGridDescrGeneral">
+
+					<h:outputText value="Título del proyecto:" />
+					<p:inputTextarea
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.nombre}"
+						id="titulo"
+						validatorMessage="Título debe estar entre 1 - 3000 caracteres"
+						rows="5" cols="70">
+						<f:validateLength minimum="1" maximum="3000" for="titulo"></f:validateLength>
+					</p:inputTextarea>
+					<p:message for="titulo" display="icon" />
+
+
+					<h:outputText value="Objetivo general (Máx. 4000 caracteres):" />
+					<p:inputTextarea
+						validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.objetivoGeneral}"
+						rows="5" id="objetoGen" cols="70">
+						<f:validateLength minimum="1" maximum="4000" for="objetoGen"></f:validateLength>
+					</p:inputTextarea>
+					<p:message for="objetoGen" display="icon" />
+
+					<h:outputText
+						value="Describa el aporte de esta propuesta a los procesos de investigación, innovación o de transferencia de conocimiento de la Universidad:" />
+					<p:inputTextarea
+						validatorMessage="El aporte de la propuesta debe estar entre 1 - 4000 caracteres"
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.observaciones}"
+						rows="5" id="aportePropuesta" cols="70">
+						<f:validateLength minimum="1" maximum="4000" for="aportePropuesta"></f:validateLength>
+					</p:inputTextarea>
+					<p:message for="aportePropuesta" display="icon" />
+
+					<h:outputText
+						value="Describa la dinámica del trabajo en conjunto de las entidades vinculadas a la propuesta:" />
+					<p:inputTextarea
+						validatorMessage="La dinámica del trabajo en conjunto de las entidades vinculadas a la propuesta debe estar entre 1 - 4000 caracteres"
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.marcoTeorico}"
+						rows="5" id="dinamicaTrabajo" cols="70">
+						<f:validateLength minimum="1" maximum="4000" for="dinamicaTrabajo"></f:validateLength>
+					</p:inputTextarea>
+					<p:message for="dinamicaTrabajo" display="icon" />
+
+					<h:outputText
+						value="Describa los antecedentes de colaboración que se hayan desarrollado con las instituciones participantes en la propuesta:" />
+					<p:inputTextarea
+						validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.antecedentes}"
+						rows="5" id="antecedentes" cols="70">
+						<f:validateLength minimum="1" maximum="4000" for="antecedentes"></f:validateLength>
+					</p:inputTextarea>
+					<p:message for="antecedentes" display="icon" />
+
+					<h:outputText
+						value="Entidad/Convocatoria externa a la cual espera presentar el proyecto de investigación Si ya se tiene identificado (opcional):" />
+					<p:inputTextarea
+						validatorMessage="La Entidad/Convocatoria externa a la cual espera presentar el proyecto debe estar entre 1 - 500 caracteres"
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.asignatura}"
+						rows="5" id="convocatoriaExterna" cols="70">
+						<f:validateLength minimum="1" maximum="500"
+							for="convocatoriaExterna"></f:validateLength>
+					</p:inputTextarea>
+					<p:message for="convocatoriaExterna" display="icon" />
+
+					<h:outputText
+						value="Indique si la propuesta a postular contribuirá con el plan de formación en procesos de investigación o de extensión de estudiantes de pregrado o de posgrado de la Universidad Nacional de Colombia. (Campo Opcional):" />
+					<p:inputTextarea
+						value="#{ManejadorConvocatoriaBancoProyectos.proyectoActual.descripcion}"
+						rows="5" id="convocatoriaExternaCOntr" cols="70">
+					</p:inputTextarea>
+					<p:message for="convocatoriaExternaCOntr" display="icon" />
+
+				</h:panelGrid>
+
+				<p:separator></p:separator>
+				<br />
+				<center>
+					<h:outputText value="Resultados Esperados"
+						style='font-weight: bold;' />
+				</center>
+				<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+					align="center">
+
+					<h:outputText value="Por favor ingrese el resultado esperado"></h:outputText>
+					<p:inputTextarea
+						value="#{ManejadorConvocatoriaBancoProyectos.resultado}" rows="3"
+						id="uiResultado" cols="70"
+						binding="#{ManejadorConvocatoriaBancoProyectos.uiResultado}"
+						validatorMessage="El resultado debe estar entre 1 - 2000 caracteres">
+						<f:validateLength minimum="1" maximum="2000" for="resultado"></f:validateLength>
+					</p:inputTextarea>
+					<p:message id="msgErrRes" for="uiResultado" showSummary="false"></p:message>
+
+				</h:panelGrid>
+				<br />
+				<center>
+
+					<p:commandButton
+						action="#{ManejadorConvocatoriaBancoProyectos.insertarResultado}"
+						value="Adicionar resultado" icon="ui-icon-plus"
+						update="resultadoTable, uiResultado, msgErrRes" />
+
+				</center>
+				<br />
+				<p:dataTable id="resultadoTable"
+					value="#{ManejadorConvocatoriaBancoProyectos.listaResultados}"
+					var="res" emptyMessage="No se encuentran resultados registrados"
+					editable="true">
+
+					<p:column style="width:80%">
+						<f:facet name="header">
+							<h:outputText value="Resultado" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{res.descripcion}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{res.descripcion}" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Editar" />
+						</f:facet>
+						<p:rowEditor />
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<center>
+							<p:commandButton id="selectButtonRes" update="resultadoTable"
+								icon="ui-icon-trash"
+								action="#{ManejadorConvocatoriaBancoProyectos.eliminarResultado}"
+								title="Eliminar resultado">
+								<f:setPropertyActionListener value="#{res}"
+									target="#{ManejadorConvocatoriaBancoProyectos.resultadoTabla}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				<br />
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="propuestaPresupuestal" header="Propuesta presupuestal">
+
+				<p:dataTable cellpadding="6" cellspacing="3"
+					value="#{ManejadorConvocatoriaBancoProyectos.listaFinanciaciones}"
+					var="financiacion" id="listaFuentesFinan"
+					rendered="#{not empty ManejadorConvocatoriaBancoProyectos.listaFinanciaciones}">
+					<p:column style="width:40%">
+						<f:facet name="header">
+							<h:outputText value="FUENTE DE FINANCIACIÓN" />
+						</f:facet>
+						<h:outputText value="#{financiacion.fuente.descripcion}" />
+					</p:column>
+
+					<p:column style="width:20%">
+						<f:facet name="header">
+							<h:outputText value="VALOR" />
+						</f:facet>
+						<p:inputText id="valorFinanciacion" value="#{financiacion.valor}"
+							required="true" readonly="true" />
+					</p:column>
+
+				</p:dataTable>
+
+				<br />
+
+				<h:panelGrid columns="2" id="panelGastos">
+
+					<h:outputText value="Tipo de rubro" />
+					<p:selectOneMenu
+						value="#{ManejadorConvocatoriaBancoProyectos.idTipoRubro}"
+						id="selectTipoRubro">
+						<f:selectItems
+							value="#{ManejadorConvocatoriaBancoProyectos.tiposRubroItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Año" />
+					<p:spinner
+						value="#{ManejadorConvocatoriaBancoProyectos.vigenciaGasto}"
+						min="1" max="10" size="2" />
+
+					<h:outputText value="Valor" />
+					<p:inputText id="valorRubro"
+						value="#{ManejadorConvocatoriaBancoProyectos.valorGasto}">
+						<f:validateLength minimum="1" />
+					</p:inputText>
+
+					<h:outputText value="Descripción" />
+					<p:inputTextarea id="gastosDescripcion"
+						value="#{ManejadorConvocatoriaBancoProyectos.descripcionGasto}"
+						rows="4" cols="50" autoResize="false" maxlenght="3000" />
+
+
+
+				</h:panelGrid>
+
+				<center>
+					<p:commandButton id="botonAgregarGasto"
+						action="#{ManejadorConvocatoriaBancoProyectos.agregarGasto}"
+						value="Agregar"
+						update="dataTableGastoVista, panelGastos, grupoGastos , listaFuentesFinan " />
+				</center>
+
+				<br />
+
+				<p:outputPanel id="grupoGastos" align="center">
+
+					<p:dataTable id="dataTableGastoVista" var="gasto"
+						value="#{ManejadorConvocatoriaBancoProyectos.listaGastos}"
+						align="center" border="1" cellpadding="4" cellspacing="0"
+						rendered="#{!empty ManejadorConvocatoriaBancoProyectos.listaGastos }">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="RUBRO ADICIONADO" />
+							</f:facet>
+
+							<h:outputText value="#{gasto.tipoRubro.nombre}" />
+
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="AÑO" />
+							</f:facet>
+
+							<h:outputText value="#{gasto.vigencia}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="DESCRIPCIÓN" />
+							</f:facet>
+							<h:outputText value="#{gasto.descripcion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="VALOR" />
+							</f:facet>
+							<h:outputText value="#{gasto.valor}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="ELIMINAR" />
+							</f:facet>
+							<center>
+								<p:commandButton id="eliminarGastoBoton"
+									action="#{ManejadorConvocatoriaBancoProyectos.eliminarGasto}"
+									icon="ui-icon-trash" update="dataTableGastoVista" ajax="false"
+									title="Eliminar gasto">
+									<f:setPropertyActionListener
+										target="#{ManejadorConvocatoriaBancoProyectos.gastoSeleccionado}"
+										value="#{gasto}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+				</p:outputPanel>
+
+			</p:panel>
+
+			<br />
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+			<br />
+
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Salir" id="botonAtras"
+							action="#{ManejadorConvocatoriaBancoProyectos.atras}"
+							styleClass="ui-priority-primary" />
+
+						<p:commandButton value="Guardar y continuar después"
+							id="botonGuardarSalir"
+							action="#{ManejadorConvocatoriaBancoProyectos.salirGuardar}"
+							styleClass="ui-priority-primary" update="@form" />
+
+						<p:commandButton value="Guardar y avanzar"
+							id="botonGuardarSiguiente"
+							action="#{ManejadorConvocatoriaBancoProyectos.siguiente}" ajax="false"
+							styleClass="ui-priority-primary" update="@form" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

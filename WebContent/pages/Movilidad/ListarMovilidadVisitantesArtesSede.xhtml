@@ -1,0 +1,907 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<s:pprPanelGroup id="pprSelectAreas"
+	partialTriggers="somFinanciacion, somTipoPonencia">
+	<s:fieldset legend="Aval Sede - Visitantes artistas de la Universidad Nacional"
+		styleClass="legend1" style='font-size: 12px;'>
+
+		<h:panelGrid columns="1" align="center">
+			<h:panelGrid columns="2">
+					<h:outputText value="Movilidades Registradas Visitantes Artes"
+						styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+					<h:selectOneMenu
+						value="#{ManejadorEditarSedeMovilidadVisArt.codigoMovilidad}"
+						styleClass="texto" style='font-size: 10px; font-style: normal'>
+						<f:selectItems
+							value="#{ManejadorEditarSedeMovilidadVisArt.movilidadItem}" />
+					</h:selectOneMenu>					
+			</h:panelGrid>
+			<h:panelGrid columns="2" align="center">
+				<h:commandButton
+					action="#{ManejadorEditarSedeMovilidadVisArt.buscarPersona}"
+					value="Buscar" image="/imgplantilla/pngtitulos/cen_buscar.png" />
+				<h:commandButton
+					action="#{ManejadorEditarSedeMovilidadVisArt.limpiar}"
+					actionListener="#{ManejadorEditarSedeMovilidadVisArt.cancelAction}"
+					value="Limpiar" image="/imgplantilla/pngtitulos/cen_limpiar.png"
+					immediate="true" />
+			</h:panelGrid>
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" align="center"
+			rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[0]}">
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[0]}"
+				styleClass="labels_proyecto" />
+		</h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="Aval Sede" styleClass="legend1"
+		style='font-size: 12px;' rendered="#{ManejadorEditarSedeMovilidadVisArt.banderaAval}">
+		
+		<h:panelGrid columns="1" align="center">
+		        <h:outputText rendered="#{ManejadorEditarSedeMovilidadVisArt.banderaDescipcion}"
+				value="#{ManejadorEditarSedeMovilidadVisArt.errorDescripcion}"
+				styleClass="mensajeerror" />
+				<h:outputText value="Observaciones del Aval"
+					styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+				<t:inputTextarea forceId="true" id="observaciones" 
+					value="#{ManejadorEditarSedeMovilidadVisArt.avalDescripcion}"
+					rows="5" cols="60" styleClass="textarea" style='font-size: 12px; font-style: normal' >
+				</t:inputTextarea>
+				<h:panelGroup style="align:center">
+					<h:commandButton value="Aprobar" immediate="false"
+								onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false"
+						style="font-style: normal; font-size: 11px; font-weight: bold; color: #0000A0; text-transform: capitalize"
+						action="#{ManejadorEditarSedeMovilidadVisArt.avalAprobar}" />
+					<h:commandButton value="No Aprobar" immediate="false"
+									onclick="if(!confirm('¿Está seguro(a) de negar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false"
+						style="font-style: normal; font-size: 11px; font-weight: bold; color: #0000A0; text-transform: capitalize"
+						action="#{ManejadorEditarSedeMovilidadVisArt.avalNegar}" />
+				</h:panelGroup>
+				
+		</h:panelGrid>
+		
+	</s:fieldset>
+	
+	<s:fieldset legend="Aval Local" styleClass="legend1"
+		style='font-size: 12px;' rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[0]}">
+		<h:panelGrid columns="1" align="center">
+ 				<h:outputText value="Observaciones del Aval"
+					styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+				<t:inputTextarea forceId="true" id="observacionesFacultad" readonly="true"
+					value="#{ManejadorEditarSedeMovilidadVisArt.movArt.descripcionFacultad}"
+					rows="5" cols="60" styleClass="textarea" style='font-size: 12px; font-style: normal' >
+				</t:inputTextarea>			
+		</h:panelGrid>
+	</s:fieldset>
+
+	<s:fieldset legend="Información Personal Docente" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[0]}">
+
+		<h:panelGrid columns="2">
+
+			<h:outputText value="Nombre de docente" styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.nombreDocente}"
+				styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+			<h:outputText value="Documento de identidad"
+				styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.documentoDocente}"
+				styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+			<h:outputText value="Sede:" styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.sede}"
+				styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+			<h:outputText value="Facultad o instituto"
+				styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.facultadDocente}"
+				styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+			<h:outputText value="Departamento" styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.departamentoDocente}"
+				styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+			
+
+
+
+		</h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="Información Personal Visitante" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[0]}">
+		
+		<h:panelGrid columns="2">
+		
+		<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[50]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[50]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[50]}" />
+			<h:outputText value="Nombres Visitante"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="NombreVisiatente" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.nombresVisitante}"
+				style='font-size: 10px; font-style: normal'  size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[51]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[51]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[51]}" />
+			<h:outputText value="Apellidos Visitante"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="ApellidosVisiatente" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.apellidosVisitante}"
+				style='font-size: 10px; font-style: normal'  size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+				<h:outputText value="Nivel de Escolaridad(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.formacion.id}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorEditarSedeMovilidadVisArt.tipoFormacion}" />
+			</h:selectOneMenu>
+			
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[1]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[1]}" />
+			<h:outputText value="Nombre Artístico"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="NombreArtistico" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.nombreArtistico}"
+				style='font-size: 10px; font-style: normal'  size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[16]}" />
+			<h:outputText value="#{ManejadorEditarSedeMovilidadVisArt.errores[16]}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[16]}" />
+			<h:outputText value="Continente origen(*)"
+					style='font-size: 10px; font-style: normal'
+					styleClass="labels_proyecto" />
+			<h:selectOneMenu value="#{ManejadorEditarSedeMovilidadVisArt.movArt.continente.id}" readonly="true"
+					styleClass="texto" style='font-size: 10px; font-style: normal'>
+			<f:selectItems
+						value="#{ManejadorEditarSedeMovilidadVisArt.continentes}" />
+			</h:selectOneMenu>		
+		
+			
+			<h:outputText value="Nacionalidad(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.nacionalidad.id}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorEditarSedeMovilidadVisArt.nacionalidad}" />
+			</h:selectOneMenu>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[3]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[3]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[3]}" />
+			<h:outputText value="Número Pasaporte(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="NumeroPasaporte" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.pasaporte}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+		</h:panelGrid>
+	</s:fieldset>
+
+	<s:fieldset legend="Información de Contacto" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[1]}">
+
+		<h:panelGrid columns="2">
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[4]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[4]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[4]}" />
+			<h:outputText value="Página Web"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="PaginaWeb" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.paginaWeb}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[5]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[5]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[5]}" />
+			<h:outputText value="Teléfono Fijo(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TelefonoFijo" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.telefonoFijo}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[6]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[6]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[6]}" />
+			<h:outputText value="Teléfono Movil(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TelefonoMovil" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.telefonoMovil}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[7]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[7]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[7]}" />
+			<h:outputText value="Dirección(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="Direccion" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.direccion}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+
+
+		</h:panelGrid>
+
+	</s:fieldset>
+
+	<s:fieldset legend="Información General del Proyecto"
+		styleClass="legend1" style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[2]}">
+
+		<h:panelGrid columns="2">
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[8]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[8]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[8]}" />
+			<h:outputText value="Nombre del Proyecto(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="NombreProyecto" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.nombreProyecto}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[9]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[9]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[9]}" />
+			<h:outputText value="Statement del Artista(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="StatementArtista" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.statementArtista}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[10]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[10]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[10]}" />
+			<h:outputText value="Descripción del Proyecto(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="DescripcionProyecto" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.descripcionProyecto}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[11]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[11]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[11]}" />
+			<h:outputText value="Objetivo General(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="ObjetivoGeneral" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.objetivoGeneral}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[12]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[12]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[12]}" />
+			<h:outputText value="Objetivos Específicos(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="ObjetivosEspecificos" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.objetivoEspecifico}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[13]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[13]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[13]}" />
+			<h:outputText value="Escriba una breve síntesis sobre cómo su proyecto se relaciona con el perfil del programa, ver www.local.unal.edu.co.(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="RelacionLOCAL" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.proyectoRelacionLocal}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[14]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[14]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[14]}" />
+			<h:outputText value="Fecha de inicio del viaje (DD/MM/AA)(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />				
+			<h:inputText id="FechaInicio" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.fechainicial}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[15]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[15]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[15]}" />
+			<h:outputText value="Fecha de finalización del viaje (DD/MM/AA)(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />			
+			<h:inputText id="FechaFin" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.fechafinal}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>	
+			
+		</h:panelGrid>
+
+	</s:fieldset>
+	
+	
+	<s:fieldset legend="Datos de Desarrollo de la Residencia" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[3]}">
+
+		<h:panelGrid columns="2">
+			
+
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[19]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[19]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[19]}" />
+			<h:outputText value="Área del arte en la que desarrollará su residencia(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.areaArte}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorEditarSedeMovilidadVisArt.areaArte}" />
+			</h:selectOneMenu>
+		
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[21]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[21]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[21]}" />
+			<h:outputText value="Interés de realización en sedes de frontera"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="SedesFrontera" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.sedeFrontera}"
+				style='font-size: 10px; font-style: normal'  rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>		
+			
+
+		</h:panelGrid>
+			<h:outputText value="Tenga en cuenta que puede proponer parte de su estadía para complementar datos o registros de su trabajo en otra de las Sedes de la Universidad Nacional de Colombia donde no hay programas de arte: Palmira, Tumaco, Amazonía, Orinoquía y Caribe; la viabilidad se evalua por el Comité Técnico Nacional del Programa Red de Residencias Artísticas Local. El programa no cubre gastos de desplazamiento adicionales ni alojamiento a estas sedes."
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+	</s:fieldset>
+	
+	<s:fieldset legend="Cronograma" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[4]}">
+
+		<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[28]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[28]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[28]}" />				
+
+				
+			<h:outputText value="Actividades Registradas(*)" style='font-size: 10px; font-style: normal' />		
+			<h:dataTable var="actividadMovilidad"
+					value="#{ManejadorEditarSedeMovilidadVisArt.listaActividades}"
+					cellpadding="6" cellspacing="3" align="center" border="1"
+					binding="#{ManejadorEditarSedeMovilidadVisArt.tablaActividadesSel}">
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Descripción" style='font-size: 10px;' />
+						</f:facet>
+					
+							<h:inputTextarea 
+						style='font-size: 10px; font-style: normal' readonly="true"
+						value="#{actividadMovilidad.descripcion}" 
+						cols="40" rows="3" style='font-size: 12px; font-style: normal' >
+					</h:inputTextarea>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Duración" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{actividadMovilidad.duracion}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha de inicio" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{actividadMovilidad.fecha}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>			
+
+				</h:dataTable>
+				
+			
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="Presupuesto (Pesos Colombianos)" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[5]}">
+
+		<h:panelGrid columns="2">
+		
+		  
+		    
+		    <h:outputText value="Convenio Interinstitucional"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.convenio}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorEditarSedeMovilidadVisArt.convenio}" />
+			</h:selectOneMenu>
+			
+			 
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[52]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[52]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[27]}" /> 
+			<h:outputText value="Descripción Convenio" rendered="#{ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="DescripcionConvenio" rendered="#{ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.convenioDescripcion}" readonly="true"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+		   
+		  </h:panelGrid>   
+			<h:panelGrid columns="3">	 
+			   <h:outputText value="" />
+		    <h:outputText value="Recursos UN (no utilice puntos ni comas) " />
+		    <h:outputText value="Recursos propios y/o otras instituciones. (no utilice puntos ni comas)" />
+		    
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[29] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[30]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[29]}"
+				styleClass="mensajeerror" 
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[29] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[30]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[30]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[29] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[30]}" />	
+			<h:outputText value="Tiquetes"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TiqueteUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.tiquetesUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="TiqueteP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.tiquetesP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[31] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[32]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[31]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[31] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[32]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[32]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[31] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[32]}" />	
+			<h:outputText value="Taller"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TallerUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.tallerUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="TallerP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.tallerP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[33] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[34]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[33]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[33] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[34]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[34]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[33] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[34]}" />	
+			<h:outputText value="Alojamiento"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="AlojamientoUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.alojamientoUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="AlojamientoP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.alojamientoP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[35] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[36]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[35]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[35] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[36]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[36]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[35] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[36]}" />	
+			<h:outputText value="Alimentación"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="AlimentacionUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.alimentacionUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="AlimentacionP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.alimentacionP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[37] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[38]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[37]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[37] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[38]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[38]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[37] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[38]}" />	
+			<h:outputText value="Materiales"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="MaterialesUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.materialesUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="MaetrialesP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.materialesP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+		    <h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[39] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[40]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[39]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[39] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[40]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[40]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[39] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[40]}" />	
+			<h:outputText value="Transporte"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TransporteUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.transporteUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="TransporteP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.transporteP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+		    <h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[41] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[42]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[41]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[41] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[42]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[42]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[41] || ManejadorEditarSedeMovilidadVisArt.panelRenderError[42]}" />	
+					<h:outputText value="Socialización"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="SocializacionUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.socializacionUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="SocializacionP" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.socializacionP}"
+				style='font-size: 10px; font-style: normal' size="30" readonly="#{!ManejadorEditarSedeMovilidadVisArt.banderaConvenio}"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			   <h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[2]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[2]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[2]}" />
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[2]}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />	
+			<h:outputText value="Totales"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:outputText value="#{ManejadorEditarSedeMovilidadVisArt.movArt.totalUN}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			
+				<h:outputText value="#{ManejadorEditarSedeMovilidadVisArt.movArt.totalPropio}"
+					style='font-size: 10px; font-style: normal' 
+					styleClass="labels_proyecto" />				
+		
+	    </h:panelGrid>
+		<h:outputText value="*Adicionalmente especifique su presupuesto en el formato 5, disponible en los terminos de referencia de la convocatoria teniendo en cuenta los montos permitidos y adjuntelo al final del formulario."
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+	</s:fieldset>
+	
+	<s:fieldset legend="Divulgación" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[6]}">
+
+		<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[43]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[43]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[43]}" />
+			<h:outputText value="Plan de Socialización(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu value="#{ManejadorEditarSedeMovilidadVisArt.movArt.planSocializacionResidencia}"
+					styleClass="texto" style='font-size: 10px; font-style: normal'>
+			<f:selectItems
+						value="#{ManejadorEditarSedeMovilidadVisArt.socializacion}" />
+			</h:selectOneMenu>	
+			
+			<h:outputText value="Descripción del plan de socialización(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="PlanSocializacionUN" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.planSocializacionUN}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="Información Adicional" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[7]}">
+
+		<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[44]}" />
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[44]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[44]}" />
+			<h:outputText value="¿Como se enteró sobre este programa de residencias?(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.comoEntero}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorEditarSedeMovilidadVisArt.comoEntero}" />
+			</h:selectOneMenu>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[45]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[45]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[45]}" />
+			<h:outputText value="¿Cuál sería su aporte al programa para la consolidación de una red de artistas?(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="RedArtistas" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.aporteRedArtistas}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[46]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[46]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[46]}" />
+			<h:outputText value="¿Podría usted contribuir con material impreso/publicaciones de sus proyectos como catálogos, libros, dvds, a la Sala de Estudio 104 LOCAL (www.local.unal.edu.co/104/index.html) que tiene el programa?(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="Local104" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.contribucion}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[47]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[47]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[47]}" />
+			<h:outputText value="¿Relacione los datos de dos especialistas en su área de trabajo que puedan dar referencias sobre su obra (Formato: NOMBRE;TELEFONO;EMAIL)(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="especialistasArea" readonly="true"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.especialistasArea}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="Cite los vínculos web en los que se muestre su trayectoria. (videos, animaciones, fotografías, artículos, blog, otros)(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="trabajosArea"
+				value="#{ManejadorEditarSedeMovilidadVisArt.movArt.trabajos}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="Documentos Adjuntos" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRender[8]}">
+
+		<h:panelGrid columns="2">		
+			
+			<h:outputText value="" rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[48]}"/>
+			<h:outputText
+				value="#{ManejadorEditarSedeMovilidadVisArt.errores[48]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorEditarSedeMovilidadVisArt.panelRenderError[48]}" />
+			<h:outputText value="Archivos Registrados(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:dataTable var="archivoAdjunto"
+					value="#{ManejadorEditarSedeMovilidadVisArt.listaArchivosObligatoriosSel}"
+					cellpadding="1" cellspacing="8" align="center" border="1"
+					binding="#{ManejadorEditarSedeMovilidadVisArt.tablaArchivosObligatoriosSel}">
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo documento" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{archivoAdjunto.tipoArchivo.nombre}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" style='font-size: 10px;'/>
+						</f:facet>
+						<h:commandLink
+							action="#{ManejadorEditarSedeMovilidadVisArt.verArchivo}"
+							value="#{archivoAdjunto.nombre}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>				
+					
+				</h:dataTable>
+	    </h:panelGrid>
+
+	</s:fieldset>
+</s:pprPanelGroup>
+
+
+	<center><br />
+
+
+	</center>
+
+
+
+</h:form>
+</ui:define>
+</ui:composition>

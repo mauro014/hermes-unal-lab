@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad" >Áreas Temáticas</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />			
+			<br />		
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorAreasTematicas.inicioTitulo}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+			<br />
+			
+			<p:panel id="areasTematicasPanel" header="Principales Áreas Temáticas ">
+				<h:panelGrid columns="2" cellpadding="3" align="center">
+					<h:outputLink value="#{manejadorLineasProyecto.linkLineas}"
+						target="_blank">
+						<h:graphicImage id="image" alt="jsf-sun" url="/images/iconpdf.png">
+						</h:graphicImage>
+					</h:outputLink>
+					<h:outputText
+						value="Descargar líneas de áreas temáticas de la UNESCO" />
+
+					<h:outputText id="outBuscar" value="Buscar" />
+					<p:autoComplete id="palabraClaveS"
+						value="#{manejadorAreasTematicas.textoBuscar}"
+						completeMethod="#{manejadorAreasTematicas.obtenerAreasTematicasSugeridas}"
+						size="70" charset="utf-8" maxlength="100" autoComplete="False"
+						maxResults="7" />
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="1" align="center">
+					<p:commandButton id="botonAdicionar" align="center"
+						actionListener="#{manejadorAreasTematicas.adicionarAreaTematica}"
+						value="Adicionar Área Temática" update="@form" />
+					<br />
+					<h:outputText value="No hay áreas temáticas adicionadas"
+						rendered="#{empty manejadorAreasTematicas.proyectoActual.listaClasificacionConocimiento }" />
+				</h:panelGrid>
+
+				<br />
+				<p:dataTable align="center"
+					value="#{manejadorAreasTematicas.proyectoActual.listaClasificacionConocimiento}"
+					var="area" cellpadding="6" border="0" cellspacing="3"
+					id="tablaAreas"
+					rendered="#{!empty manejadorAreasTematicas.proyectoActual.listaClasificacionConocimiento }">
+
+					<f:facet name="header">
+						<h:outputText value="ÁREAS TEMÁTICAS ADICIONADAS" />
+					</f:facet>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="ÁREA" />
+						</f:facet>
+						<h:outputText value="#{area.nombre}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="VER" />
+						</f:facet>
+						<center>
+							<p:commandButton id="BotonVerDetallesArea"
+								update=":form:panelGridDetalles" icon="ui-icon-search"
+								onclick="dlg.show()"
+								action="#{manejadorAreasTematicas.verDetalle}">
+								<f:setPropertyActionListener
+									target="#{manejadorAreasTematicas.areaSeleccionada}"
+									value="#{area}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="ELIMINAR" />
+						</f:facet>
+						<center>
+							<p:commandButton id="eliminarAreas"
+								icon="ui-icon-trash" title="Eliminar Área" update="@form"
+								action="#{manejadorAreasTematicas.eliminarClasificacionConocimiento}"
+								immediate="true">
+								<f:setPropertyActionListener
+									target="#{manejadorAreasTematicas.areaSeleccionada}"
+									value="#{area}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				<p:dialog id="dialogDetalles" header="Detalles Área "
+					widgetVar="dlg" closable="true" resizable="false" modal="true">
+					<h:panelGrid id="panelGridDetalles" columns="1">
+						<h:outputText
+							value="#{manejadorAreasTematicas.nombreBisabueloDetalle}" />
+						<h:outputText
+							value="#{manejadorAreasTematicas.nombreAbueloDetalle}" />
+						<h:outputText
+							value="#{manejadorAreasTematicas.nombrePadreDetalle}" />
+					</h:panelGrid>
+				</p:dialog>
+			</p:panel>
+			<p:messages id="msgs" />
+			<center>
+				<h:panelGrid columns="3" cellpadding="3">
+					<p:commandButton action="#{manejadorAreasTematicas.atras}"
+						value="Atrás" immediate="true" />
+					<p:commandButton action="#{manejadorAreasTematicas.salirGuardar}"
+						value="Guardar y continuar después" update="msgs" />
+					<p:commandButton action="#{manejadorAreasTematicas.siguiente}"
+						value="Guardar y avanzar" update="msgs" />
+				</h:panelGrid>
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

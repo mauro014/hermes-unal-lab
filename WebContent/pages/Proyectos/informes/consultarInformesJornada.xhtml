@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">Informes proyectos jornada docente</ui:define>
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Informes proyectos jornada docente</t:div>
+			<br />
+			<p:dataTable var="informe"
+				value="#{manejadorAvalInformeUab.listaInforme}"
+				paginator="true" emptyMessage="No tiene informes para revisión"
+				rows="15" paginatorPosition="bottom" filteredValue="#{manejadorAvalInformeUab.filteredinformes}">
+				<f:facet name="header">
+					<h:outputText
+						value="Han sido encontrados #{manejadorAvalInformeUab.tamanoLista} informes pendientes de revisión." />
+				</f:facet>
+				<p:column>
+					<f:facet name="header">
+						<div style="width:250px;">
+							<h:outputText value="Información" />
+						</div>
+					</f:facet>
+					<div class="panel-interno-tabla">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Código proyecto: " />
+							<h:outputText value="#{informe.proyecto.id}"
+								style="font-weight: bold;" />
+							<h:outputText value="Código Informe: " />
+							<t:div style="width: 120px;">
+								<h:outputText value="#{informe.id}" style="font-weight: bold;" />
+							</t:div>
+							<h:outputText value="Tipo:" />
+							<h:outputText value="#{informe.tipoInforme.nombre}"
+								style="font-weight: bold;" />
+
+							<h:outputText value="Fecha informe:" />
+							<h:outputText value="#{informe.fechaGeneracion}"
+								style="font-weight: bold;" />
+						</p:panelGrid>
+					</div>
+				</p:column>
+				<p:column filterBy="#{informe.proyecto.resumen}" filterMatchMode="contains" filterStyle="width: 150px;">
+					<f:facet name="header">
+						<div style="width:250px;">
+							<h:outputText value="Docente" />
+						</div>
+					</f:facet>
+					<h:outputText value="#{informe.proyecto.resumen}"/>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Ver" />
+					</f:facet>
+					<p:commandButton
+						action="#{manejadorAvalInformeUab.aprobarInformeUAB}"
+						icon="ui-icon-search" ajax="false">
+						<f:setPropertyActionListener value="#{informe}"
+							target="#{manejadorAvalInformeUab.informeSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Imprimir" />
+					</f:facet>
+					<p:commandButton icon="ui-icon-print"
+						action="#{manejadorAvalInformeUab.imprimirInforme}"
+						ajax="false">
+						<f:setPropertyActionListener value="#{informe}"
+							target="#{manejadorAvalInformeUab.informeSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+	
+
+		</h:form>
+	</ui:define>
+</ui:composition>

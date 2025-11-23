@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">Propiedad intelectual</ui:define>
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Propiedad intelectual<br />
+			</t:div>
+			En esta sección puede realizar la solicitud de protección de la propiedad intelectual en cualquiera de sus tipologías 
+			(Derechos de autor, propiedad industrial o derechos de obtentor).<br />
+			Por favor tener en cuenta el <a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=135"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a>.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="content">
+			<p:growl id="growl" showDetail="true" sticky="true" />
+			<t:div
+				style="text-align: right; color: #16A8E2; vertical-align:center;">
+				<h:commandLink value="Exportar" style="color: #16A8E2;">
+					<p:dataExporter type="xls" target="lista-propiedad-intelectual"
+						fileName="lista-registros-propiedad-intelectual" />
+				</h:commandLink>
+			</t:div>
+			<p:dataTable var="propiedad" emptyMessage="0 registros encontrados"
+				value="#{manejadorPropiedadIntelectualListas.listaPropiedades}"
+				paginator="true" rows="15" paginatorPosition="top"
+				style="width:100%;" id="lista-propiedad-intelectual">
+
+				<f:facet name="header">  
+	            Propiedad intelectual
+	        	</f:facet>
+
+				<p:column style="width: 3%;">
+					<f:facet name="header">
+						<h:outputText value="Cód." />
+					</f:facet>
+					<h:outputText value="#{propiedad.id}" />
+				</p:column>
+
+				<p:column style="width: 12%;">
+					<f:facet name="header">
+						<h:outputText value="Tipo" />
+					</f:facet>
+					<h:outputText value="#{propiedad.subTipo.nombre}" />
+				</p:column>
+
+				<p:column style="width: 30%;">
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<h:outputText value="#{propiedad.titulo}" style="font-size:11px;" />
+				</p:column>
+
+				<p:column style="width:10%;">
+					<f:facet name="header">
+						<h:outputText value="Estado" />
+					</f:facet>
+					<h:outputText value="#{propiedad.subEstado.nombre}" />
+				</p:column>
+
+				<p:column style="width:10%;">
+					<f:facet name="header">
+						<h:outputText value="Fec. solicitud" />
+					</f:facet>
+					<h:outputText value="#{propiedad.fechaRegistro}" />
+
+				</p:column>
+
+				<p:column style="width:10%;">
+					<f:facet name="header">
+						<h:outputText value="Fec. revisión" />
+					</f:facet>
+					<h:outputText value="#{propiedad.fechaRevision}" />
+				</p:column>
+
+				<p:column headerText="" style="width:5%;" exportable="false">
+					<p:commandButton
+						action="#{manejadorPropiedadIntelectualListas.editarPropiedad}"
+						icon="ui-icon-pencil" title="Editar" ajax="false"
+						rendered="#{propiedad.esEditable and (propiedad.responsableRegistro.id.documento == manejadorPropiedadIntelectualListas.personaActual.id.documento)}">
+						<f:setPropertyActionListener value="#{propiedad.id}"
+							target="#{manejadorPropiedadIntelectualListas.idPropiedad}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{manejadorPropiedadIntelectualListas.consultarPropiedad}"
+						icon="ui-icon-search" title="Consultar" ajax="false">
+						<f:setPropertyActionListener value="#{propiedad.id}"
+							target="#{manejadorPropiedadIntelectualListas.idPropiedad}" />
+					</p:commandButton>
+					<h:commandLink
+						action="#{manejadorPropiedadIntelectualListas.imprimirPropiedad}"
+						styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+						ajax="false" style="height: 25px;" target="_blank" immediate="true">
+						<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+						<f:setPropertyActionListener value="#{propiedad.id}"
+							target="#{manejadorPropiedadIntelectualListas.idPropiedad}" />
+					</h:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

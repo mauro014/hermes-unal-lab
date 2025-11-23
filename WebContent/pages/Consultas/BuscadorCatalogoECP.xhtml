@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+		<ui:define name="content">
+			<h:form>
+				<t:div  styleClass="contenido-informacion">
+					<t:div styleClass="cabezote-buscador" rendered="#{!manejadorBuscadorCatalogoECP.error}" >
+						<h:outputText value="Buscador" />
+					</t:div>
+					<t:div styleClass="contenedor-informacion" >
+					<t:div styleClass="contenido-titulo-general-myriad" >Cursos de educación<br />continua y permanente</t:div>
+						<t:div styleClass="informacion" >
+							<t:div styleClass="informacion-titulo">
+								<h:outputText value="Criterios de búsqueda: " />
+							</t:div>
+							<t:div styleClass="informacion-texto" style="border-bottom: 0px; padding-bottom: 0px; width: 675px;">
+								<h:outputText value="Puede seleccionar una o varias combinaciones de criterios de la columna de la derecha (Filtros de búsqueda) para ampliar la
+												cobertura de su búsqueda. Para quitar un criterio puede hacer click en la X del filtro que previamente haya seleccionado.
+												Cuando termine de añadir filtros de búsqueda hága click en el botón Buscar." />
+									<br />
+								<h:outputText value="NO ES OBLIGATORIO ESCRIBIR LAS PALABRAS COMPLETAS"/>
+							</t:div>
+							<h:panelGrid columns="2" columnClasses="columna-etiquetas-buscador,''">
+								<h:outputText value="Nombre de curso:" />
+								<t:div  style="margin: 0px; padding: 0px;line-height: 0px; "><t:div style="float: left;"><img src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/img_campo_intr.png"/></t:div><h:inputText  value="#{manejadorBuscadorCatalogoECP.nombreCursoBusqueda}" styleClass="campo-buscador-nombre"/><t:div style="float: right;"><img src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/final_caja_buscador.png"/></t:div></t:div>
+							</h:panelGrid>
+							<p:panelGrid id="panelSede" columns="2" styleClass="estilo-panelgrid-buscadores-selects" columnClasses="columna-etiquetas-buscador,''" rendered="#{manejadorBuscadorCatalogoECP.opcion1}">
+								<h:outputText value="Sede:" />
+								<p:selectOneMenu value="#{manejadorBuscadorCatalogoECP.idSede}" styleClass="select-item-buscador" style="width: 437px; height: 20px;" >
+									<f:selectItems value="#{manejadorBuscadorCatalogoECP.listaSedesItem}"  />
+									<p:ajax update="selectFacultad"
+										listener="#{manejadorBuscadorCatalogoECP.cargarFacultadesSede}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<p:panelGrid id="panelFacultad" style="margin-top: 3px;" columns="2" styleClass="estilo-panelgrid-buscadores-selects" columnClasses="columna-etiquetas-buscador,''"  rendered="#{manejadorBuscadorCatalogoECP.opcion2}">
+								<h:outputText value="Facultad:" />
+								<p:selectOneMenu id="selectFacultad" value="#{manejadorBuscadorCatalogoECP.idFacultad}" styleClass="select-item-buscador" style="width: 437px; height: 20px;" >
+									<f:selectItems value="#{manejadorBuscadorCatalogoECP.facultadesSedeItem}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<p:panelGrid id="panelModalidad" columns="2"  columnClasses="columna-etiquetas-buscador,''"  styleClass="estilo-panelgrid-buscadores-selects"  rendered="#{manejadorBuscadorCatalogoECP.opcion3}">
+								<h:outputText value="Modalidad:" />
+								<p:selectOneMenu value="#{manejadorBuscadorCatalogoECP.idModalidad}" styleClass="select-item-buscador" style="width: 437px; height: 20px;" >
+									<f:selectItems value="#{manejadorBuscadorCatalogoECP.modalidadesItem}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							<t:div styleClass="panel-botones"  id="panelBuscar" rendered="#{manejadorBuscadorCatalogoECP.opcionBuscar}" >
+								<h:commandButton action="#{manejadorBuscadorCatalogoECP.buscarCursos}" styleClass="boton_buscar" value=""/>
+							</t:div>
+							<t:div  styleClass="panel-botones"  rendered="#{manejadorBuscadorCatalogoECP.opcionAgregar}"  id="panelAgregar">
+								<h:commandButton action="#{manejadorBuscadorCatalogoECP.buscarCursos}" styleClass="boton_agregar" value=""/>
+							</t:div>  
+							<t:div styleClass="resultados-buscador">
+								<t:div styleClass="informacion-titulo-buscador" rendered="#{!manejadorBuscadorCatalogoECP.visibleResultados}">
+									<h:outputText value="Resultados " />
+								</t:div>
+								<t:div styleClass="informacion-resultado-buscador" style="border-bottom: none; color: #464646; padding-bottom: 0px; padding-top: 3px;"
+									rendered="#{!manejadorBuscadorCatalogoECP.visibleResultados}">
+									<t:outputText  value = "Se han encontrado #{manejadorBuscadorCatalogoECP.numeroResultados} registros"/>
+								</t:div>
+								<t:div styleClass="panel-buscador">
+									<p:dataList    
+										id			="tablaResultadoGrupos"          
+										value        = "#{manejadorBuscadorCatalogoECP.listaCatalogo}"
+										var          = "catalogo"
+										rows		   = "8"
+										type="none"
+       									paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} " 
+       									paginator="true" 
+       									paginatorPosition="bottom"
+       									paginatorAlwaysVisible="false"
+       									style=""
+					                  >	 
+						                  <t:div styleClass="informacion-resultado-buscador">
+						                  	<p:commandLink
+													action="#{manejadorBuscadorCatalogoECP.consultarPagina}"
+													value="#{catalogo.nombre}" target="_blank"
+													>
+														<f:setPropertyActionListener value="#{catalogo}" target="#{manejadorBuscadorCatalogoECP.catalogoSeleccionado}" />
+													</p:commandLink>
+													<br/>
+													<t:outputText  value = "Objeto " style="font-weight: bold;"/>
+													<br/>
+													<t:outputText  value = "#{catalogo.objetivoGeneral}"/>
+					                 	 </t:div>
+					                  </p:dataList>
+						         </t:div>    
+							</t:div>						
+							<t:div styleClass="panel-inicio" rendered="#{manejadorBuscadorCatalogoECP.visibleResultados}"  />
+						</t:div>
+					</t:div>
+					<t:div styleClass="final-contenedor-informacion" />
+				</t:div>
+				<t:div  styleClass="contenido-menu"  rendered="#{!manejadorBuscadorCatalogoECP.error}" >
+					<t:div styleClass="menu-superior">
+					<div class="logo-hermes">
+						<a href="#{facesContext.externalContext.requestContextPath}/"><img src="#{facesContext.externalContext.requestContextPath}/images/her-general/logo_hermes.png" /></a>
+					</div>
+						<t:div styleClass="cabezote-derecho-menu">
+							<h:outputText value="Filtros de busqueda" />
+						</t:div>
+						<t:div styleClass="menu" >
+							<ul>
+								<li>
+									<p:commandLink update="panelSede, panelFacultad, panelModalidad" action="#{manejadorBuscadorCatalogoECP.cargarSede}"  ajax="false" >			
+										<h:outputText value="Sede" />
+									</p:commandLink>
+								</li>
+								<li>
+									<p:commandLink update="panelSede, panelFacultad, panelModalidad"  action="#{manejadorBuscadorCatalogoECP.cargarFacultad}" ajax="false" >			
+										<h:outputText value="Facultad" />
+									</p:commandLink>							
+								</li>
+								<li>
+									<p:commandLink update="panelSede, panelFacultad, panelModalidad" action="#{manejadorBuscadorCatalogoECP.cargarModalidad}" ajax="false">			
+										<h:outputText value="Modalidad" />
+									</p:commandLink>
+								</li>
+							</ul>
+						</t:div>
+					</t:div>
+					<t:div styleClass="menu-informacion">
+						<t:div styleClass="cabezote-derecho-menu" style="width: 195px;" rendered="#{manejadorBuscadorCatalogoECP.visibleFiltros}">
+							<h:outputText value="Filtros seleccionados"/>
+						</t:div>
+						<t:div styleClass="cabezote-derecho-buscador-filtro" style="width: 195px;" rendered="#{manejadorBuscadorCatalogoECP.visibleSedesFiltro}">
+							<t:div style="float: left;"><h:commandButton action="#{manejadorBuscadorCatalogoECP.limpiarFiltroSede}" value="" styleClass="boton-cerrar-filtro" /></t:div><t:div><h:outputText value="Sede"/></t:div>
+						</t:div>
+						<t:div  styleClass="campo-filtros-usados"  rendered="#{manejadorBuscadorCatalogoECP.visibleSedesFiltro}">
+							<p:dataList var="sede"
+								value="#{manejadorBuscadorCatalogoECP.sedesSeleccionadas}" >
+								<t:div style="float: left;"><h:commandButton action="#{manejadorBuscadorCatalogoECP.eliminarSede}" value="" styleClass="boton-cerrar-gris" >
+										<f:setPropertyActionListener value="#{sede}" target="#{manejadorBuscadorCatalogoECP.sedeSeleccionada}" />
+									</h:commandButton></t:div><h:outputText value="#{sede.nombre}" />
+							</p:dataList>
+						</t:div>
+						<t:div styleClass="cabezote-derecho-buscador-filtro" style="width: 195px;" rendered="#{manejadorBuscadorCatalogoECP.visibleFacultadesFiltro}">
+							<t:div style="float: left;"><h:commandButton action="#{manejadorBuscadorCatalogoECP.limpiarFiltroFacultad}" value="" styleClass="boton-cerrar-filtro" /></t:div><t:div><h:outputText value="Facultad"/></t:div>
+						</t:div>
+						<t:div  styleClass="campo-filtros-usados"  rendered="#{manejadorBuscadorCatalogoECP.visibleFacultadesFiltro}">
+							<p:dataList var="facultad"
+								value="#{manejadorBuscadorCatalogoECP.facultadesSeleccionadas}">
+								<t:div style="float: left;"><h:commandButton action="#{manejadorBuscadorCatalogoECP.eliminarFacultades}" value="" styleClass="boton-cerrar-gris" >
+										<f:setPropertyActionListener value="#{facultad}" target="#{manejadorBuscadorCatalogoECP.facultadSeleccionada}" />
+								</h:commandButton></t:div><h:outputText value="#{facultad.nombre}" />
+							</p:dataList>
+						</t:div>
+						<t:div styleClass="cabezote-derecho-buscador-filtro" style="width: 195px;" rendered="#{manejadorBuscadorCatalogoECP.visibleModalidadFiltro}">
+							<t:div style="float: left;"><h:commandButton action="#{manejadorBuscadorCatalogoECP.limpiarFiltroModalidad}" value="" styleClass="boton-cerrar-filtro" /></t:div><t:div><h:outputText value="Apellidos del líder"/></t:div>
+						</t:div>
+						<t:div  styleClass="campo-filtros-usados"  rendered="#{manejadorBuscadorCatalogoECP.visibleModalidadFiltro}">
+							<h:outputText value="#{manejadorBuscadorCatalogoECP.modalidad}" />
+						</t:div>
+					</t:div>
+				</t:div>
+				<t:div>
+					<h:panelGrid columns="1"  rendered="#{manejadorBuscadorCatalogoECP.error}">
+							<script language="JavaScript" type="text/javascript">
+								setTimeout ("redireccionarError()", 0);
+							</script>
+					</h:panelGrid>
+				</t:div>
+			</h:form>
+		</ui:define>
+</ui:composition>

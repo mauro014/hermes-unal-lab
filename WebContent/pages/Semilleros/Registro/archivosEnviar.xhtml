@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Semillero - Cargar Archivos y Enviar</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" action="irGeneral"
+						icon="ui-icon-down" />
+					<p:menuitem value="Integrantes" action="irIntegrantes"
+						icon="ui-icon-down" />
+					<p:menuitem value="Líneas y Áreas de Trabajo"
+						action="irLineasAreas" icon="ui-icon-down" />
+					<p:menuitem value="Plan de Trabajo" action="irPlanTrabajo"
+						icon="ui-icon-down" />
+					<p:menuitem value="Cargar Archivos y Enviar" icon="ui-icon-down" />
+				</p:menubar>
+			</h:form>
+			<h:form enctype="multipart/form-data">
+				<p:messages id="msgs" />
+				<p:panel id="panelInfo">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Id: " />
+						<h:outputText
+							value="#{manejadorSemilleroArchivosEnviar.semilleroActual.id}"
+							style=' font-weight: bold;' />
+						<h:outputText value="Nombre semillero: " />
+						<h:outputText
+							value="#{manejadorSemilleroArchivosEnviar.semilleroActual.nombre}"
+							style=' font-weight: bold;' />
+					</p:panelGrid>
+				</p:panel>
+				<p:panelGrid style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row rendered="#{!manejadorSemilleroArchivosEnviar.esConsulta}">
+						<p:column colspan="3">
+							<h:outputText
+								value="Aquí puede adjuntar los archivos que considere importante incluir, relacionados con la creación del semillero (Resoluciones, actas, acuerdos de trabajo conjunto etc.). Recuerde que el tamaño máximo permitido de los archivos
+						es de 3MB." />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorSemilleroArchivosEnviar.esConsulta}">
+						<p:column>
+							<h:outputText value="Archivo:" />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								value="#{manejadorSemilleroArchivosEnviar.archivoSeleccionado}"
+								mode="simple" />
+						</p:column>
+						<p:column style="text-align: center;">
+							<p:commandButton value="Adjuntar Archivo" ajax="false"
+								actionListener="#{manejadorSemilleroArchivosEnviar.agregarArchivo}"
+								update="@form" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:dataTable id="areasTabla" var="archivo"
+								value="#{manejadorSemilleroArchivosEnviar.semilleroActual.listaArchivos}"
+								emptyMessage="No se han agregado archivos"
+								style="width:100%; margin-top: 20px;">
+								<f:facet name="header">
+									<h:outputText value="Archivos vinculados" />
+								</f:facet>
+								<p:column>
+									<h:outputText value=" #{archivo.nombre}" />
+								</p:column>
+								<p:column>
+									<p:commandButton
+										action="#{manejadorSemilleroArchivosEnviar.descargarArchivo}"
+										update="areasTabla" icon="ui-icon-search" title="Descargar"
+										ajax="false" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorSemilleroArchivosEnviar.archivoEliminar}" />
+									</p:commandButton>
+									<p:commandButton
+										rendered="#{!manejadorSemilleroArchivosEnviar.esConsulta}"
+										action="#{manejadorSemilleroArchivosEnviar.eliminarArchivo}"
+										update="areasTabla" id="eliminarArchivo" icon="ui-icon-trash"
+										title="Eliminar" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorSemilleroArchivosEnviar.archivoEliminar}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorSemilleroArchivosEnviar.esConsulta}">
+						<p:column colspan="3">
+							<div style="width: 100%; color: #FF3300; text-align: justify;">
+								"Al dar clic en enviar usted confirma la información registrada
+								del semillero y se enviará para visto bueno de la Dirección de
+								la Unidad Académica Básica y aprobación por parte de la
+								Vicedecanatura de Investigación y Extensión de la Facultad, o la
+								dependencia que haga sus veces. Esto es realizado para llevar
+								una trazabilidad de los semilleros existentes, de los
+								estudiantes que vincula, del trabajo que realizan y logros que
+								alcancen."</div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:messages id="msgs" />
+				<div style="width: 100%; text-align: center;">
+					<p:commandButton
+						rendered="#{!manejadorSemilleroArchivosEnviar.esConsulta}"
+						action="#{manejadorSemilleroArchivosEnviar.guardarParcialmente}"
+						value="Guardar Parcialmente" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton
+						rendered="#{!manejadorSemilleroArchivosEnviar.esConsulta and manejadorSemilleroArchivosEnviar.esLider and manejadorSemilleroArchivosEnviar.semilleroActual.estadoActual.id eq 1}"
+						action="#{manejadorSemilleroArchivosEnviar.siguiente}"
+						value="Enviar Propuesta de Semillero" ajax="false" />
+				</div>
+				<center>
+					<br />
+					<h:commandLink value="Ver Reporte PDF" target="_blank"
+						action="#{manejadorSemilleroArchivosEnviar.reporteSemillero}"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" />
+				</center>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 			</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

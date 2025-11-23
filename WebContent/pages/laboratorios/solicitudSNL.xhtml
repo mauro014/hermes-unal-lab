@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../principal/PlantillaPrincipal.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Registro de solicitud al SNL</t:div>
+
+			<p:panel>
+				<p:panel header="Información del Solicitante">
+					<p:panelGrid columns="3">
+						<t:div style="width:110px;">
+							<h:outputText value="Tipo Documento" styleClass="negrilla" />
+						</t:div>
+						<p:selectOneMenu
+							value="#{manejadorSolicitudSNL.idPersona.tipoDocumento}">
+							<f:selectItems value="#{manejadorSolicitudSNL.siTipoDocumento}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="" />
+
+						<p:outputLabel value="Documento" for="itDocumento"
+							styleClass="negrilla" />
+						<p:inputText value="#{manejadorSolicitudSNL.idPersona.documento}"
+							id="itDocumento" size="30" maxlength="15" />
+						<p:commandButton value="Buscar persona" icon="ui-icon-search"
+							update="@form" action="#{manejadorSolicitudSNL.buscarPersona}" />
+
+						<p:outputLabel value="Primer nombre *" for="itNombre1"
+							styleClass="negrilla" />
+						<p:inputText id="itNombre1"
+							readonly="#{manejadorSolicitudSNL.personaEncontrada}"
+							value="#{manejadorSolicitudSNL.personaSolicitud.nombre1}"
+							size="30" maxlength="20" />
+						<h:outputText value="" />
+
+						<h:outputText value="Segundo nombre" styleClass="negrilla" />
+						<p:inputText
+							value="#{manejadorSolicitudSNL.personaSolicitud.nombre2}"
+							readonly="#{manejadorSolicitudSNL.personaEncontrada}" size="30"
+							maxlength="20" />
+						<h:outputText value="" />
+
+						<p:outputLabel value="Primer apellido *" for="itApellido1"
+							styleClass="negrilla" />
+						<p:inputText id="itApellido1"
+							value="#{manejadorSolicitudSNL.personaSolicitud.apellido1}"
+							readonly="#{manejadorSolicitudSNL.personaEncontrada}" size="30"
+							maxlength="20" />
+						<h:outputText value="" />
+
+						<h:outputText value="Segundo apellido" styleClass="negrilla" />
+						<p:inputText
+							value="#{manejadorSolicitudSNL.personaSolicitud.apellido2}"
+							readonly="#{manejadorSolicitudSNL.personaEncontrada}" size="30"
+							maxlength="20" />
+						<h:outputText value="" />
+
+						<p:outputLabel value="e-mail *" for="itEMail"
+							styleClass="negrilla" />
+						<p:inputText id="itEMail"
+							value="#{manejadorSolicitudSNL.personaSolicitud.email}"
+							readonly="#{manejadorSolicitudSNL.personaEncontrada}" size="30"
+							maxlength="60" />
+						<h:outputText value="" />
+
+						<p:outputLabel value="Teléfono *" for="itTelefono"
+							rendered="#{not manejadorSolicitudSNL.personaEncontradaInterna}"
+							styleClass="negrilla" />
+						<p:inputText id="itTelefono"
+							value="#{manejadorSolicitudSNL.personaSolicitud.telefono}"
+							readonly="#{manejadorSolicitudSNL.personaEncontrada}" size="30"
+							rendered="#{not manejadorSolicitudSNL.personaEncontradaInterna}"
+							maxlength="36" />
+						<h:outputText value=""
+							rendered="#{not manejadorSolicitudSNL.personaEncontradaInterna}" />
+
+						<p:outputLabel value="Empresa/Cargo *" for="itCargo"
+							styleClass="negrilla" />
+						<p:inputText id="itCargo"
+							value="#{manejadorSolicitudSNL.nuevaSolicitud.cargoSolicitante}"
+							size="30" maxlength="128"
+							title="Diligencie aquí el nombre de su Empresa (si Usted no pertenece a la Universidad Nacional) y su Cargo." />
+						<h:outputText value="" />
+					</p:panelGrid>
+
+					<p:panelGrid columns="3">
+						<t:div style="width:110px;">
+							<h:outputText value="Sede" styleClass="negrilla"
+								rendered="#{manejadorSolicitudSNL.personaEncontradaInterna}" />
+						</t:div>
+						<p:inputText disabled="true" size="30"
+							value="#{manejadorSolicitudSNL.personaSolicitud.dependencia.sede.nombre}"
+							rendered="#{manejadorSolicitudSNL.personaEncontradaInterna}" />
+						<h:outputText value="" />
+
+						<h:outputText value="Dependencia" styleClass="negrilla"
+							rendered="#{manejadorSolicitudSNL.personaEncontradaInterna}" />
+						<p:inputText disabled="true" size="50"
+							value="#{manejadorSolicitudSNL.personaSolicitud.dependencia.nombre}"
+							rendered="#{manejadorSolicitudSNL.personaEncontradaInterna}" />
+						<h:outputText value="" />
+
+						<p:outputLabel value="Extensión *" for="extension"
+							styleClass="negrilla"
+							rendered="#{manejadorSolicitudSNL.personaEncontradaInterna}" />
+						<p:inputText size="30" maxlength="5" id="extension"
+							disabled="#{not manejadorSolicitudSNL.editarExtension}"
+							value="#{manejadorSolicitudSNL.extensionPersonaInterna}"
+							rendered="#{manejadorSolicitudSNL.personaEncontradaInterna}"
+							title="Su número de extensión, dentro de la Universidad Nacional." />
+						<h:outputText value="" />
+
+						<h:outputText value="Laboratorio *" styleClass="negrilla"
+							rendered="#{manejadorSolicitudSNL.mostrarLaboratorios}" />
+						<p:selectOneMenu style="width:100%;"
+							value="#{manejadorSolicitudSNL.nuevaSolicitud.laboratorioSolicitante.id}"
+							rendered="#{manejadorSolicitudSNL.mostrarLaboratorios}">
+							<f:selectItems value="#{manejadorSolicitudSNL.siLabs}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+
+					<p:message for="itDocumento" />
+
+				</p:panel>
+
+				<p:spacer height="15" />
+
+				<p:panel header="Información sobre la Solicitud">
+
+					<p:panelGrid columns="2">
+
+						<t:div style="width:110px;">
+							<p:outputLabel value="Tipo" for="siTipo" styleClass="negrilla" />
+						</t:div>
+
+						<p:selectOneMenu id="siTipo" style="width:330px;" filter="true"
+							value="#{manejadorSolicitudSNL.nuevaSolicitud.tipoSolicitud}"
+							filterMatchMode="contains" converter="ConvertidorTipos">
+							<f:selectItems
+								value="#{manejadorSolicitudSNL.selectItemTipoSolicitud}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Dirigida a" for="siDestino"
+							styleClass="negrilla" />
+						<t:div
+							title="Seleccione la Dependencia de la Universidad a la que dirigira ésta Solicitud.">
+							<p:selectOneMenu id="siDestino" style="width:330px;"
+								value="#{manejadorSolicitudSNL.nuevaSolicitud.dirigidaA.id}">
+								<f:selectItems
+									value="#{manejadorSolicitudSNL.siDependenciaDestino}" />
+							</p:selectOneMenu>
+						</t:div>
+
+						<p:outputLabel value="Justificación *" for="itJust"
+							styleClass="negrilla" />
+						<p:inputTextarea id="itJust" rows="7" cols="40" autoResize="false"
+							counter="counterJustificacion" maxlength="4000"
+							counterTemplate="{0} caracteres restantes"
+							readonly="#{manejadorSolicitudSNL.soloLectura}"
+							value="#{manejadorSolicitudSNL.nuevaSolicitud.justificacion}" />
+						<h:outputText rendered="#{not manejadorSolicitudSNL.soloLectura}" />
+						<h:outputText rendered="#{not manejadorSolicitudSNL.soloLectura}"
+							id="counterJustificacion" styleClass="pequennio" />
+
+					</p:panelGrid>
+				</p:panel>
+			</p:panel>
+
+			<p:spacer height="15" />
+
+			<p:messages id="messages" autoUpdate="true" closable="true"
+				showDetail="true" showSummary="false" redisplay="false" />
+
+			<center>
+				<p:commandButton value="Enviar" icon="ui-icon-mail-closed"
+					update="@form"
+					onclick="if(!confirm('Está seguro de enviar la solicitud? Por favor confirme la información diligenciada, especialmente la de contacto.'))return false"
+					action="#{manejadorSolicitudSNL.guardarSolicitud}" />
+				<p:commandButton value="Limpiar formulario" icon="ui-icon-trash"
+					update="@form"
+					onclick="if(!confirm('Está seguro de limpiar el formulario? Toda la información diligenciada se perderá.'))return false"
+					action="#{manejadorSolicitudSNL.limpiarFormulario}" />
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

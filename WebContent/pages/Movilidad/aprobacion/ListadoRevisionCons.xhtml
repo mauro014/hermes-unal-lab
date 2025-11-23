@@ -1,0 +1,610 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="content">
+			<t:div styleClass="contenido-titulo-general-myriad">Consultar movilidades registradas</t:div>
+			<p:growl id="growl" showDetail="true" />
+			<p:growl id="growl2" showDetail="true" />
+			<p:growl id="growl3" showDetail="true" />
+			<p:growl id="growl4" showDetail="true" />
+			<p:tabView>
+				<!-- 	Visitantes internacionales -->
+				<p:tab title="Visitantes" titleStyle="font-size:12px">
+					<p:growl id="growl" showDetail="true" />
+					<p:dataTable var="movilidadVisitante"
+						value="#{manejadorAprobacionMovilidadCons.listaMovilidadesVisitante}"
+						emptyMessage="No movilidades de visitantes internacionales."
+						paginator="true" paginatorAlwaysVisible="false" rows="15"
+						filteredValue="#{manejadorAprobacionMovilidadCons.listaMovilidadesVisitanteFiltered}"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+						<p:ajax event="rowToggle" update=":content:growl" />
+						<p:column style="width:4%">
+							<p:rowToggler />
+						</p:column>
+						<p:column style="font-size:13px; width:5%; text-align: center;"
+							filterBy="#{movilidadVisitante.id}" filterMatchMode="contains"
+							filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:40%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Facultad" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.aceptacion}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{movilidadVisitante.aprobacion}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Seguimiento" />
+							</f:facet>
+							<p:commandButton id="segVisCons" title="Consultar"
+								icon="ui-icon-search"
+								rendered="#{movilidadVisitante.aprobacion == 'SI' ? (movilidadVisitante.estadoSeguimiento == 'F' ? true:false):false}"
+								action="#{manejadorAprobacionMovilidadCons.consultarSeguimientoVisExt}"
+								ajax="false">
+								<f:setPropertyActionListener value="#{movilidadVisitante}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadVisitanteSeleccionada}" />
+							</p:commandButton>
+							<h:outputText value="--"
+								rendered="#{movilidadVisitante.aprobacion == null ? true:(movilidadVisitante.aprobacion == 'NO' ? true:false)}"></h:outputText>
+							<h:outputText value="Por ingresar"
+								rendered="#{movilidadVisitante.aprobacion == 'SI' ? (movilidadVisitante.estadoSeguimiento == null or movilidadVisitante.estadoSeguimiento == 'P' ? true:false):false}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:15%;  text-align: center; ">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadCons.imprimirMovilidadVisitante}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener value="#{movilidadVisitante}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadVisitanteSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:rowExpansion>
+							<p:dataTable var="archivo"
+								value="#{movilidadVisitante.listaArchivo}" style="margin: 15px;">
+								<p:column headerText="Nombre archivo">
+									<div class="listaSencilla" style="width: 350px;">
+										<h:outputText value="#{archivo.nombre}" />
+									</div>
+								</p:column>
+								<p:column headerText="Acción">
+									<h:commandLink
+										style="text-decoration:none; 
+											color: #16A8E2;
+											font-weight: bold;"
+										action="#{manejadorAprobacionMovilidadCons.descargarDocumentoVisitante}">
+												Descargar
+										<f:param name="archivoResumen1" value="#{archivo.id}" />
+										<f:param name="movilidadVisitante"
+											value="#{movilidadVisitante.id}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:rowExpansion>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Docentes" titleStyle="font-size:12px">
+					<p:dataTable var="movilidadEvento"
+						value="#{manejadorAprobacionMovilidadCons.listaMovilidadesEvento}"
+						filteredValue="#{manejadorAprobacionMovilidadCons.listaMovilidadesEventoFiltered}"
+						emptyMessage="No movilidades de Docentes en Eventos."
+						paginator="true" paginatorAlwaysVisible="false" rows="15"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+						<f:facet name="header">
+							<h:outputText value="Ponencias orales" />
+						</f:facet>
+						<p:ajax event="rowToggle" update=":content:growl2" />
+						<p:column style="width:4%">
+							<p:rowToggler />
+						</p:column>
+						<p:column style="font-size:13px; width:5%"
+							filterBy="#{movilidadEvento.id}" filterMatchMode="contains"
+							filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+
+							<h:outputText value="#{movilidadEvento.id}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{movilidadEvento.fechainicial}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:40%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText value="#{movilidadEvento.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Facultad" />
+							</f:facet>
+							<h:outputText value="#{movilidadEvento.aceptacion}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{movilidadEvento.aprobacion}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Seguimiento" />
+							</f:facet>
+							<p:commandButton id="segDocCons" title="Consultar"
+								icon="ui-icon-search"
+								rendered="#{movilidadEvento.aprobacion == 'SI' ? (movilidadEvento.estadoSeguimiento == 'F' ? true:false):false}"
+								action="#{manejadorAprobacionMovilidadCons.consultarSeguimientoDoc}"
+								ajax="false">
+								<f:setPropertyActionListener value="#{movilidadEvento}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEventosSeleccionada}" />
+							</p:commandButton>
+							<h:outputText value="--"
+								rendered="#{movilidadEvento.aprobacion == null ? true:(movilidadEvento.aprobacion == 'NO' ? true:false)}"></h:outputText>
+							<h:outputText value="Por ingresar"
+								rendered="#{movilidadEvento.aprobacion == 'SI' ? (movilidadEvento.estadoSeguimiento == null or movilidadEvento.estadoSeguimiento == 'P' ? true:false):false}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:5%; text-align: center; ">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadCons.imprimirMovilidadEvento}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener value="#{movilidadEvento}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEventosSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+
+						<p:rowExpansion>
+							<p:dataTable var="archivo2"
+								value="#{movilidadEvento.listaArchivo}" style="margin: 15px;">
+								<p:column headerText="Nombre archivo">
+									<div class="listaSencilla" style="width: 350px;">
+										<h:outputText value="#{archivo2.nombre}" />
+									</div>
+								</p:column>
+								<p:column headerText="Acción">
+									<h:commandLink
+										style="text-decoration:none; 
+											color: #16A8E2;
+											font-weight: bold;"
+										action="#{manejadorAprobacionMovilidadCons.descargarDocumentoEvento}">
+												Descargar
+										<f:param name="archivoResumen" value="#{archivo2.id}" />
+										<f:param name="movilidadEvento" value="#{movilidadEvento.id}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:rowExpansion>
+
+					</p:dataTable>
+					<p:dataTable var="movilidadEvento"
+						value="#{manejadorAprobacionMovilidadCons.listaMovilidadesDocentesArtes}"
+						filteredValue="#{manejadorAprobacionMovilidadCons.listaMovilidadesDocentesArtesFiltered}"
+						emptyMessage="No hay movilidades de Docentes en Residencias."
+						style="margin-top: 10px;" rows="15" paginatorAlwaysVisible="false"
+						paginator="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<f:facet name="header">
+							<h:outputText value="Residencias artísticas" />
+						</f:facet>
+
+						<p:column style="font-size:13px; width:5%"
+							filterBy="#{movilidadEvento.id}" filterMatchMode="contains"
+							filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+
+							<h:outputText value="#{movilidadEvento.id}" />
+						</p:column>
+
+						<p:column style="font-size:13px; width:8%">
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEvento.estado == 'I' ? 'Ingresando':'Propuesta'}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:14%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEvento.fechainicial != null ? movilidadEvento.fechainicial:'Sin registrar'}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:40%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEvento.fechasolicitud != null ? movilidadEvento.fechasolicitud:'La residencia no se ha propuesto'}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+
+				</p:tab>
+				<p:tab title="Estudiantes-Eventos" titleStyle="font-size:12px">
+
+					<p:dataTable var="movilidadEstudiantePosgradoEventos"
+						value="#{manejadorAprobacionMovilidadCons.listaMovilidadesEstudiantePosgradoEventos}"
+						filteredValue="#{manejadorAprobacionMovilidadCons.listaMovilidadesEstudiantePosgradoEventosFiltered}"
+						emptyMessage="No movilidades de estudiantes de posgrado" rows="15"
+						paginatorAlwaysVisible="false" paginator="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:ajax event="rowToggle" update=":content:growl3" />
+						<p:column style="width:4%">
+							<p:rowToggler />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:5%"
+							filterBy="#{movilidadEstudiantePosgradoEventos.id}"
+							filterMatchMode="contains" filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantePosgradoEventos.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:5%">
+							<f:facet name="header">
+								<h:outputText value="Estudiante" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantePosgradoEventos.estudianteInv.nombre1} 
+							#{movilidadEstudiantePosgradoEventos.estudianteInv.nombre2} 
+							#{movilidadEstudiantePosgradoEventos.estudianteInv.apellido1} 
+							#{movilidadEstudiantePosgradoEventos.estudianteInv.apellido2}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantePosgradoEventos.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+
+							<h:outputText
+								value="#{movilidadEstudiantePosgradoEventos.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Facultad" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantePosgradoEventos.aceptacion}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantePosgradoEventos.aprobacion}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Seguimiento" />
+							</f:facet>
+							<p:commandButton id="segEstPosCons" title="Consultar"
+								icon="ui-icon-search"
+								rendered="#{movilidadEstudiantePosgradoEventos.aprobacion == 'SI' ? (movilidadEstudiantePosgradoEventos.estadoSeguimiento == 'F' ? true:false):false}"
+								action="#{manejadorAprobacionMovilidadCons.consultarSeguimientoEstPos}"
+								ajax="false">
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantePosgradoEventos}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+							<h:outputText value="--"
+								rendered="#{movilidadEstudiantePosgradoEventos.aprobacion == null ? true:(movilidadEstudiantePosgradoEventos.aprobacion == 'NO' ? true:false)}"></h:outputText>
+							<h:outputText value="Por registrar"
+								rendered="#{movilidadEstudiantePosgradoEventos.aprobacion == 'SI' ? (movilidadEstudiantePosgradoEventos.estadoSeguimiento == null or movilidadEstudiantePosgradoEventos.estadoSeguimiento == 'P' ? true:false):false}"></h:outputText>
+						</p:column>
+						<p:column headerText=""
+							style="font-size:13px; width:5%; text-align: center;">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadCons.imprimirMovilidadPosgrado}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantePosgradoEventos}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEstudiantesSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:rowExpansion>
+							<p:dataTable var="archivo3"
+								value="#{movilidadEstudiantePosgradoEventos.listaArchivo}"
+								style="margin: 15px;">
+								<p:column headerText="Nombre archivo">
+									<div class="listaSencilla" style="width: 350px;">
+										<h:outputText value="#{archivo3.nombre}" />
+									</div>
+								</p:column>
+								<p:column headerText="Acción">
+									<h:commandLink
+										style="text-decoration:none; 
+											color: #16A8E2;
+											font-weight: bold;"
+										action="#{manejadorAprobacionMovilidadCons.descargarDocumentoEstPosgradoEventos}">
+												Descargar
+										<f:param name="archivoResumen4" value="#{archivo3.id}" />
+										<f:param name="movilidadEstudiantePosgrado"
+											value="#{movilidadEstudiantePosgradoEventos.id}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:rowExpansion>
+					</p:dataTable>
+				</p:tab>
+				<p:tab title="Estudiantes-Pasantias/Residencias"
+					titleStyle="font-size:12px">
+
+					<p:dataTable var="movilidadEstudiantePosgrado"
+						value="#{manejadorAprobacionMovilidadCons.listaMovilidadesEstudiantePosgrado}"
+						filteredValue="#{manejadorAprobacionMovilidadCons.listaMovilidadesEstudiantePosgradoFiltered}"
+						emptyMessage="No movilidades de estudiantes de posgrado."
+						paginator="true" paginatorAlwaysVisible="false" rows="15"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<f:facet name="header">
+							<h:outputText value="Estudiantes pasantías" />
+						</f:facet>
+						<p:ajax event="rowToggle" update=":content:growl4" />
+						<p:column style="width:4%">
+							<p:rowToggler />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:5%"
+							filterBy="#{movilidadEstudiantePosgrado.id}"
+							filterMatchMode="contains" filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantePosgrado.id}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:5%">
+							<f:facet name="header">
+								<h:outputText value="Estudiante" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantePosgrado.estudianteInv.nombre1} 
+							#{movilidadEstudiantePosgrado.estudianteInv.nombre2} 
+							#{movilidadEstudiantePosgrado.estudianteInv.apellido1} 
+							#{movilidadEstudiantePosgrado.estudianteInv.apellido2}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantePosgrado.fechainicial}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEstudiantePosgrado.fechasolicitud}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Facultad" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantePosgrado.aceptacion}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Aprobado" />
+								<br />
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{movilidadEstudiantePosgrado.aprobacion}" />
+						</p:column>
+						<p:column style="text-align: center;font-size:13px; width:12%">
+							<f:facet name="header">
+								<h:outputText value="Seguimiento" />
+							</f:facet>
+							<p:commandButton id="segEstPosCons" title="Consultar"
+								icon="ui-icon-search"
+								rendered="#{movilidadEstudiantePosgrado.aprobacion == 'SI' ? (movilidadEstudiantePosgrado.estadoSeguimiento == 'F' ? true:false):false}"
+								action="#{manejadorAprobacionMovilidadCons.consultarSeguimientoEstRes}"
+								ajax="false">
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantePosgrado}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+							<h:outputText value="--"
+								rendered="#{movilidadEstudiantePosgrado.aprobacion == null ? true:(movilidadEstudiantePosgrado.aprobacion == 'NO' ? true:false)}"></h:outputText>
+							<h:outputText value="Por registrar"
+								rendered="#{movilidadEstudiantePosgrado.aprobacion == 'SI' ? (movilidadEstudiantePosgrado.estadoSeguimiento == null or movilidadEstudiantePosgrado.estadoSeguimiento == 'P' ? true:false):false}"></h:outputText>
+						</p:column>
+						<p:column headerText="" style="font-size:13px; width:5%">
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadCons.imprimirMovilidadPosgrado}"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+								ajax="false" style="height: 25px;" target="_blank">
+								<span class="ui-button-icon-left ui-icon ui-icon-print"></span>
+								<f:setPropertyActionListener
+									value="#{movilidadEstudiantePosgrado}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEstudiantesSeleccionada}" />
+							</h:commandLink>
+						</p:column>
+						<p:rowExpansion>
+							<p:dataTable var="archivo4"
+								value="#{movilidadEstudiantePosgrado.listaArchivo}"
+								style="margin: 15px;">
+								<p:column headerText="Nombre archivo">
+									<div class="listaSencilla" style="width: 350px;">
+										<h:outputText value="#{archivo4.nombre}" />
+									</div>
+								</p:column>
+								<p:column headerText="Acción">
+									<h:commandLink
+										style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;"
+										action="#{manejadorAprobacionMovilidadCons.descargarDocumentoEstPosgradoEventos2}">
+											Descargar
+									<f:param name="archivoResumen4" value="#{archivo4.id}" />
+										<f:param name="movilidadEstudiantePosgrado"
+											value="#{movilidadEstudiantePosgrado.id}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:rowExpansion>
+					</p:dataTable>
+					<p:dataTable var="movilidadEventoEst" rendered="false" style="margin-top: 10px;"
+						value="#{manejadorAprobacionMovilidadCons.listaMovilidadesEstudiantesArtes}"
+						filteredValue="#{manejadorAprobacionMovilidadCons.listaMovilidadesEstudiantesArtesFiltered}"
+						emptyMessage="No hay residencias de estudiantes registradas."
+						paginator="true" paginatorAlwaysVisible="false" rows="15"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<f:facet name="header">
+							<h:outputText value="Residencias artísticas" />
+						</f:facet>
+						<p:column style="font-size:13px; width:5%"
+							filterBy="#{movilidadEventoEst.id}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+
+							<h:outputText value="#{movilidadEventoEst.id}" />
+						</p:column>
+
+						<p:column style="font-size:13px; width:8%">
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEventoEst.estado == 'I' ? 'Ingresando':'Propuesta'}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:14%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEventoEst.fechainicial != null ? movilidadEventoEst.fechainicial:'Sin registrar'}" />
+						</p:column>
+
+						<p:column style="text-align: center;font-size:13px; width:14%">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="Solicitud" />
+							</f:facet>
+							<h:outputText
+								value="#{movilidadEventoEst.fechasolicitud != null ? movilidadEventoEst.fechasolicitud:'La residencia no se ha propuesto'}">
+								<f:convertDateTime type="both" dateStyle="short" />
+							</h:outputText>
+						</p:column>
+
+
+						<p:column headerText="Acciones" style="font-size:13px; width:5%">
+							<p:commandButton
+								action="#{manejadorAprobacionMovilidadCons.editarMovEstudiantesArtes}"
+								icon="ui-icon-pencil" title="Editar">
+								<f:setPropertyActionListener value="#{movilidadEventoEst}"
+									target="#{manejadorAprobacionMovilidadCons.movilidadEstudiantesArtesSeleccionada}" />
+							</p:commandButton>
+
+						</p:column>
+
+
+
+					</p:dataTable>
+
+				</p:tab>
+
+			</p:tabView>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,420 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Editar Ensayo o Servicio</t:div>
+			
+			<p:panelGrid style="width:100%" styleClass="estilo-panelgrid-sinbordes">
+				<p:row>
+					<p:column style="width:20px;">
+						<p:commandButton id="info" icon="ui-icon-info" />
+						<p:tooltip for="info" styleClass="tooltip-mesage"
+							showDelay="999">
+							<t:div style="text-align: left; float:left;">
+							       	Revise y si lo considera necesario, actualice toda la información relacionada con el servicio o ensayo.<br /> 
+							       	Preste atención a los campos que son obligatorios, los cuales están marcados por el simbolo (*).<br />
+							       	Al ingresar toda la información, haga clic en el botón GUARDAR. <br />
+							       	El sistema lo regresará automáticamente a la página donde se encuentra la lista de ensayos y servicios del laboratorio.<br />
+							</t:div>
+						</p:tooltip>
+					</p:column>
+					<p:column colspan="2">
+						<h:outputText
+							value=" Ingrese la información del servicio o ensayo y haga clic en el botón AGREGAR" />
+					</p:column>
+				</p:row>	
+			</p:panelGrid>
+				
+			<p:spacer height="20" />
+			
+			<p:panel id="panelEditarEnsayoServicio">
+					
+				<p:panelGrid
+					id="panel1"
+					styleClass="estilo-panelgrid-sinbordes" 
+					cellpadding="5"
+					cellspacing="5"
+					style="width:100%;"
+					rendered="true">
+					<!-- Nombre(*): -->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoNombreEnsayo" icon="ui-icon-info" />
+
+							<p:tooltip for="infoNombreEnsayo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Ingrese el nombre del servicio o ensayo
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:15%;">
+							<h:outputText value="Nombre(*):" styleClass="labels_proyecto"/>
+						</p:column>
+						<p:column style="width:70%;">
+							<p:inputText id="nombreEnsayo" style="width: 100%;"
+									maxlength="500"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.nombre}" 
+									required="true"
+									requiredMessage="El NOMBRE del ensayo o servicio es un campo obligatorio"/>
+						</p:column>
+					</p:row>
+					
+					<!-- Dedicación(*): -->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoDedicacionEnsayo" icon="ui-icon-info" />
+
+							<p:tooltip for="infoDedicacionEnsayo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Ingrese el tipo de dedicación del ensayo o servicio (Investigación, Extensión o Docencia)
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:15%;">
+							<h:outputText value="Dedicación(*):" styleClass="labels_proyecto"/>
+						</p:column>
+						<p:column style="width:70%;">
+							
+							<p:selectBooleanCheckbox id="checkDoc" value="#{ManejadorEditarEnsayoServicio.ensayoServicio.docencia}" label="Docencia" />
+							<h:outputText value=" Docencia" />
+							
+							<p:spacer width="30" />
+							
+							<p:selectBooleanCheckbox id="checkInv" value="#{ManejadorEditarEnsayoServicio.ensayoServicio.investigacion}" label="Investigación" />
+							<h:outputText value=" Investigacion" />
+							
+							<p:spacer width="30" />
+							
+							<p:selectBooleanCheckbox id="checkExt" value="#{ManejadorEditarEnsayoServicio.ensayoServicio.extension}" label="Extensión" />
+							<h:outputText value=" Extension" />
+							
+						</p:column>
+				
+					</p:row>
+					
+					<!-- Equipos -->
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoEquiposEnsayo" icon="ui-icon-info" />
+
+							<p:tooltip for="infoEquiposEnsayo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Seleccione los equipos asociados al servicio o ensayo
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:15%;">
+							<h:outputText value="Equipos:" styleClass="labels_proyecto"/>
+						</p:column>
+						<p:column style="width:70%;">
+							
+							<p:selectCheckboxMenu
+								value="#{ManejadorEditarEnsayoServicio.equiposSeleccionadosItem}"
+								label="Haga clic y seleccione los equipos asociados al ensayo o servicio" 
+								style="width: 100%;"
+								panelStyle="width: 400px;" 
+								filter="true"
+								filterMatchMode="contains">
+								<f:selectItems
+									value="#{ManejadorEditarEnsayoServicio.equiposUsadosItem}" />
+							</p:selectCheckboxMenu>
+							
+						</p:column>
+					</p:row>
+					
+					</p:panelGrid>
+					
+					<p:panelGrid id="panel2"
+							styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5"
+							cellspacing="5"
+							style="width:100%;"
+							rendered="true">
+						<p:row>
+							<!--Valor -->
+							<p:column style="width:5%;">
+								<p:commandButton id="infoValorEnsayo" icon="ui-icon-info" />
+
+								<p:tooltip for="infoValorEnsayo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el valor del servicio o ensayo
+									</t:div>
+								</p:tooltip>
+
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Valor(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:30%;">
+								
+								<p:inputText id="valorEnsayoServicio" maxlength="8"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.valorServicio}"
+									style="width:95%;">
+									<f:validateLongRange minimum="0" maximum="999999999" for="valorEnsayoServicio" />
+								</p:inputText>
+								
+							</p:column>
+							
+							<!--Ensayos / Mes -->
+							<p:column style="width:5%;">
+								<p:commandButton id="infoEMEnsayo" icon="ui-icon-info" />
+
+								<p:tooltip for="infoEMEnsayo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el número de ensayos por mes
+									</t:div>
+								</p:tooltip>
+
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Ensayos / Mes(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:20%;">
+								
+								<p:inputText id="ensayosMes" maxlength="5" size="15"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.ensayosMes}">
+									<f:validateLongRange minimum="0" maximum="99999" for="ensayosMes"  />
+								</p:inputText>
+								
+							</p:column>
+							
+						</p:row>
+						<p:row>
+							<!--Norma Técnica -->
+							<p:column style="width:5%;">
+								<p:commandButton id="infoTipoNorma" icon="ui-icon-info" />
+
+								<p:tooltip for="infoTipoNorma" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left; width:250px" >
+										 	Seleccione el tipo de la norma técnica. Si desea agregar otra opción a la lista, por favor solicitar la adición al correo hermes@unal.edu.co.
+										</t:div>
+								</p:tooltip>
+
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Tipo Norma Técnica:" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:30%;">
+								<p:selectOneMenu
+									id="tipoNormaTec"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.tipoNormaTecnica}"
+									converter="ConvertidorTipos"
+									style="width:95%;">
+									<f:selectItems value="#{ManejadorEditarEnsayoServicio.tiposNormaLista}" />
+								</p:selectOneMenu>
+							</p:column>
+						
+							<p:column style="width:5%;">
+								<p:commandButton id="infoNumeroNorma" icon="ui-icon-info" />
+
+								<p:tooltip for="infoNumeroNorma" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el número de la norma técnica
+									</t:div>
+								</p:tooltip>
+
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Número Norma Técnica:" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:20%;">
+								
+								<p:inputText id="numeroNormaTec" maxlength="25" size="15"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.numeroNormaTecnica}">
+								</p:inputText>
+								
+							</p:column>
+						</p:row>
+					
+					</p:panelGrid>
+					
+					<p:panelGrid id="panel3"
+							styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5"
+							cellspacing="5"
+							style="width:100%;">
+						<p:row>
+							<!--Tiempo Estimado -->
+							<p:column style="width:5%;">
+								<p:commandButton id="infoTEEnsayo" icon="ui-icon-info" />
+								<p:tooltip for="infoTEEnsayo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el tiempo estimado del servicio o ensayo
+									</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="T. Estimado(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:10%;">
+								<p:inputText id="TEEnsayoServicio" maxlength="5" size="5"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.tiempoTotalEstimado}">
+									<f:validateLongRange minimum="0" maximum="9999999" for="TEEnsayoServicio"  />
+								</p:inputText>
+							</p:column>	
+							<p:column style="width:20%;">	
+								<p:selectOneMenu
+									id="unidadTiempo"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.unidadTiempoTotalEstimado}"
+									converter="ConvertidorTipos"
+									style="width:95%;">
+									<f:selectItems value="#{ManejadorEditarEnsayoServicio.unidadesTiempoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+							
+							<!--Personas -->
+							<p:column style="width:5%;">
+								<p:commandButton id="infoPersonasEnsayo" icon="ui-icon-info" />
+
+								<p:tooltip for="infoPersonasEnsayo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									 	Ingrese el número de personas involucradas en el ensayo o prestación del servicio
+									</t:div>
+								</p:tooltip>
+
+							</p:column>
+							<p:column style="width:15%;">
+								<h:outputText value="Personas(*):" styleClass="labels_proyecto"/>
+							</p:column>
+							<p:column style="width:20%;">
+								
+								<p:inputText id="personasEnsayoServicio" maxlength="3" size="15"
+									value="#{ManejadorEditarEnsayoServicio.ensayoServicio.personas}">
+									<f:validateLongRange minimum="0" maximum="999" for="personasEnsayoServicio"  />
+								</p:inputText>
+							</p:column>
+						</p:row>
+					
+					</p:panelGrid>
+					
+					<p:panelGrid id="panel4" styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5" cellspacing="5" style="width:100%;">
+							
+							<!--Muestra Ensayo(*): -->
+							<p:row>
+								<p:column style="width:5%;">
+									<p:commandButton id="infoMEEnsayo" icon="ui-icon-info" />
+	
+									<p:tooltip for="infoMEEnsayo" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Muestra - Ensayo: Protocolo o procedimiento definido para la recepción de la muestra o realización del ensayo.
+										</t:div>
+									</p:tooltip>
+	
+								</p:column>
+								<p:column style="width:15%;">
+									<h:outputText value="Tipo:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:30%;">
+									
+									<p:selectOneMenu id="tipoES"
+										value="#{ManejadorEditarEnsayoServicio.ensayoServicio.tipoEnsayo}"
+										converter="ConvertidorTipos"
+										style="width:95%;">
+										<f:selectItems value="#{ManejadorEditarEnsayoServicio.tipoEnsayoItem}" />
+										<p:ajax update=":form:panel5" />
+									</p:selectOneMenu>
+									
+								</p:column>
+								
+								<!-- Acreditado -->
+								<p:column style="width:5%;">
+									<p:commandButton id="infoAcreditadoEnsayo" icon="ui-icon-info" />
+	
+									<p:tooltip for="infoAcreditadoEnsayo" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Seleccione si el ensayo o servicio se encuentra acreditado.
+										</t:div>
+									</p:tooltip>
+	
+								</p:column>
+								<p:column style="width:15%;">
+									<h:outputText value="¿Acreditado?:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:20%;">
+									<p:selectBooleanCheckbox id="checkAcreditado"
+										value="#{ManejadorEditarEnsayoServicio.ensayoServicio.acreditado}">
+									</p:selectBooleanCheckbox>
+								</p:column>
+							</p:row>
+						</p:panelGrid>	
+							
+						<p:panelGrid id="panel5" styleClass="estilo-panelgrid-sinbordes" 
+							cellpadding="5" cellspacing="5" style="width:100%;">
+							
+							<p:row rendered="#{ManejadorEditarEnsayoServicio.ensayoServicio.tipoEnsayo.id == '7246'}">
+								<p:column style="width:5%;">
+									<p:commandButton id="infoOtrosServicios" icon="ui-icon-info" />
+	
+									<p:tooltip for="infoOtrosServicios" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Indique a que otro tipo de servicio o ensayo corresponde
+										</t:div>
+									</p:tooltip>
+	
+								</p:column>
+								<p:column style="width:15%;">
+									<h:outputText value="Otros servicios:" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:75%;">
+									<p:inputText id="OtrosServicios" style="width: 100%;"
+										maxlength="500" value="#{ManejadorEditarEnsayoServicio.ensayoServicio.tipoEnsayoOtros}" />
+								</p:column>
+							</p:row>
+						
+					</p:panelGrid>
+				
+				<p:spacer height="40" />
+				
+				<center>
+					<p:panelGrid columns="2">
+						<p:commandButton value="Guardar cambios" icon="ui-icon-disk"
+							ajax="false"
+							action="#{ManejadorEditarEnsayoServicio.guardarEnsayoServicio}"
+							onclick="if(!confirm('Está seguro de guardar los cambios?'))return false" />
+
+						<p:commandButton value="Volver al Laboratorio"
+							icon="ui-icon-arrowreturnthick-1-w" ajax="false"
+							action="#{ManejadorEditarEnsayoServicio.volverLaboratorio}"
+							onclick="if(!confirm('Está seguro de regresar a la página del Laboratorio?'))return false" 
+							immediate="true"/>
+					</p:panelGrid>
+				</center>
+				
+				<br />
+				<p:messages id="messages" autoUpdate="true" closable="true" />	
+
+			</p:panel>
+				
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false" modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="title">EDITAR CURSOS DE EDUCACIÓN CONTINUA Y PERMANENTE</ui:define>
+
+<ui:define name="content">
+
+<h:form>
+	
+		<t:div styleClass="contenido-titulo-general-myriad">Cursos ECP</t:div>
+		
+		<p:growl id="growl" showDetail="true" sticky="true" />
+		<p:dataTable var="curso" 
+					 emptyMessage="No se encuentran cursos avalados"
+					 value="#{ManejadorCursosAvaladosECP.listaCursosAvaladosECP}" 
+					 paginator="true" rows="15"
+					 paginatorPosition="bottom"
+					 sortBy="#{curso.estadoProyecto.nombre}"
+					 sortMode="multiple"
+					 filteredValue="#{ManejadorCursosAvaladosECP.cursosFiltrados}">
+
+			<p:column headerText="Código" sortBy="#{curso.id}" >
+				<h:outputText value="#{curso.id}" />
+			</p:column>
+
+			<p:column headerText="Nombre" sortBy="#{curso.nombre}"
+					  filterBy="#{curso.nombre}"
+					  filterMatchMode="contains">
+				<h:outputText value="#{curso.nombre}" />
+			</p:column>
+
+			<p:column headerText="Fecha inicio" sortBy="#{curso.fechaTentativaInicio}"
+					  rendered="false">
+				<h:outputText value="#{curso.fechaTentativaInicio}" />
+			</p:column>
+
+			<p:column headerText="Responsable" sortBy="#{curso.responsable.nombre1}">
+				<h:outputText value="#{curso.responsable.nombre1}
+									 #{curso.responsable.nombre2} 
+									 #{curso.responsable.apellido1} 
+									 #{curso.responsable.apellido2}" />
+			</p:column>
+			
+			<p:column headerText="Estado" sortBy="#{curso.estadoProyecto.nombre}"
+			          filterBy="#{curso.estadoProyecto.nombre}"
+			          filterOptions="#{ManejadorCursosAvaladosECP.listaEstadosProyectoItem}"
+					  filterMatchMode="exact">
+				<h:outputText value="#{curso.estadoProyecto.nombre}" />
+			</p:column>
+
+			<p:column headerText="Editar">
+			<center>
+				<p:commandButton
+					action="#{ManejadorCursosAvaladosECP.editarCurso}" icon="ui-icon-pencil"
+					title="Editar">
+					
+					<f:setPropertyActionListener value="#{curso}"
+										target="#{ManejadorCursosAvaladosECP.cursoSeleccionado}" />
+					
+				</p:commandButton>
+			</center>
+			</p:column>
+			
+			<p:column headerText="Lista">
+			<center>
+				<p:commandButton
+					action="#{ManejadorCursosAvaladosECP.listaCurso}" icon="ui-icon-person"
+					title="Lista de inscritos">
+					
+					<f:setPropertyActionListener value="#{curso}"
+										target="#{ManejadorCursosAvaladosECP.cursoSeleccionado}" />
+					
+				</p:commandButton>
+			</center>
+			</p:column>
+			
+			<p:column headerText="Div">
+			<center>
+				<p:commandButton
+					action="#{ManejadorCursosAvaladosECP.divulgarCurso}" icon="ui-icon-mail-closed"
+					title="Divulgar">
+					
+					<f:setPropertyActionListener value="#{curso}"
+										target="#{ManejadorCursosAvaladosECP.cursoSeleccionado}" />
+					
+				</p:commandButton>
+			</center>
+			</p:column>
+
+		</p:dataTable>
+	
+</h:form>
+	
+</ui:define>
+	
+</ui:composition>
+	
+	
+		

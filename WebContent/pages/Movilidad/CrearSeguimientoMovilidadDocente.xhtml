@@ -1,0 +1,641 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">
+				 Seguimiento movilidad docente</t:div>
+
+			<h:panelGrid columns="1" cellpadding="5"
+				styleClass="estilo-panelgrid-sinbordes"
+				style="text-align: justify; font-size: 14px;">
+				<h:outputText>Con el fin de medir el impacto logrado por el programa de
+					Movilidad Internacional para la Investigación y Creación Artistica,
+					agradecemos el diligenciamiento de la siguiente información
+					relacionada con el evento:</h:outputText>
+			</h:panelGrid>
+			<p:panel style="margin-top: 10px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Nombre docente: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.personaMovilidad}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Código solicitud: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.mde.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Evento: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.mde.evento}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Fecha evento: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.mde.fechainicial}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+						<p:column style="width: 150px;">
+						</p:column>
+						<p:column>
+							<h:commandLink target="popupWindow" value="Imprimir reporte de seguimiento"
+								action="#{manejadorCrearEditarSeguimientoMovilidadDocente.imprimirInforme}"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel style="margin-top: 10px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 450px;">
+						 	¿Esta movilidad fue realizada con recursos de la (del) #{empty manejadorCrearEditarSeguimientoMovilidadDocente.mde.convocatoria.padre.titulo?'Sistema de Investigación de la Universidad Nacional':manejadorCrearEditarSeguimientoMovilidadDocente.mde.convocatoria.padre.titulo}?
+						</p:column>
+						<p:column>
+							<p:selectOneRadio id="movilidadRealizada"
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.realizacionMovilidad}"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+								<f:selectItem itemLabel="Si" itemValue="SI" />
+								<f:selectItem itemLabel="No" itemValue="NO" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			(*) Esta información es obligatoria.
+			<p:panel style="margin-top: 10px;"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.realizacionMovilidad == 'NO'}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 600px;">
+						 	Por favor diligencie las razones por las cuales no fue realizada la movilidad, 
+						 	y si lo considera necesario por favor anexe los documentos pertienentes (*):
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 600px;">
+							<p:inputTextarea id="razonesNoRealizacion"
+								style="width: 600px; height: 150px;"
+								disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}"
+								maxlength="3000"
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.razonesNoRealizacion}"
+								rows="1" cols="75" counter="counterRazonesNoRealizacion"
+								counterTemplate="{0} caracteres restantes">
+							</p:inputTextarea>
+							<br />
+							<h:outputText id="counterRazonesNoRealizacion" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<t:div
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.realizacionMovilidad == 'SI'}">
+				<p:panel header="Revisión facultad" style="margin-top: 20px;"
+					id="panelRevisionFacultad"
+					rendered="#{!empty manejadorCrearEditarSeguimientoMovilidadDocente.estadoRevisionSeguimiento}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="text-align:left; width: 100%;" cellpadding="10">
+						<p:row
+							rendered="#{!empty manejadorCrearEditarSeguimientoMovilidadDocente.comentariosInforme}">
+							<p:column style="width: 150px;">
+								<h:outputText value="Comentarios facultad: "
+									style="font-weight: bold" />
+							</p:column>
+							<p:column>
+							#{manejadorCrearEditarSeguimientoMovilidadDocente.comentariosInforme}
+						</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 150px;">
+								<h:outputText value="Estado de revisión: "
+									style="font-weight: bold" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.estadoRevisionSeguimiento == 'L'}"
+									value="Revisado facultad" />
+								<h:outputText
+									rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.estadoRevisionSeguimiento == 'D'}"
+									value="Devuelto para correciones" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 150px;">
+								<h:outputText value="Responsable: " style="font-weight: bold" />
+							</p:column>
+							<p:column>
+							#{manejadorCrearEditarSeguimientoMovilidadDocente.responsableRevision.nombreCompleto}
+						</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 150px;">
+								<h:outputText value="Fecha: " style="font-weight: bold" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorCrearEditarSeguimientoMovilidadDocente.fechaRevision}">
+									<f:convertDateTime type="both" dateStyle="short" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel id="tabImpacto" header="Indicadores de impacto (*)"
+					style="margin-top: 10px;">
+					<p:panelGrid columns="2" align="center" id="formCoproductos"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+						<h:outputText value="Tipo coproducto:"
+							style="width: font-weight: bold;" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.cooproductoSel}"
+							style="width: 520px" panelStyle="width: 520px">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoCooproducto}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="" />
+						<p:message id="errorDescCoproducto" for="uiDescripcionCoproducto"></p:message>
+
+						<h:outputText value="Descripción:"
+							style="width: font-weight: bold;" />
+						<p:inputTextarea id="uiDescripcionCoproducto"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.descripcionPro}"
+							rows="10" cols="70" autoResize="false" maxlength="3000"
+							counter="counterDescripcionCoproducto"
+							counterTemplate="{0} caracteres restantes">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterDescripcionCoproducto" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar" id="uiCoproducto"
+							update="tablaCoproductos, formCoproductos"
+							action="#{manejadorCrearEditarSeguimientoMovilidadDocente.adicionarCooproducto}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						<h:outputText value="" />
+						<p:message id="errorTablaCoproductos" for="uiCoproducto"
+							autoUpdate="true"></p:message>
+					</p:panelGrid>
+					<h:panelGrid id="grupoListaCoproductos" align="center" columns="1">
+						<p:dataTable var="cooproducto" id="tablaCoproductos"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.listaCooproductos}"
+							style="width:100%"
+							emptyMessage="No se encuentran coproductos registrados">
+
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Tipo Coproducto" />
+								</f:facet>
+								<h:outputText value="#{cooproducto[1]}" />
+							</p:column>
+
+							<p:column style="width:60%">
+								<f:facet name="header">
+									<h:outputText value="Descripción" />
+								</f:facet>
+								<h:outputText id="descripcionProduc" value="#{cooproducto[2]}" />
+							</p:column>
+
+							<p:column style="width:10%"
+								rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton title="Eliminar Coproducto"
+									onclick="if(!confirm('Esta seguro de eliminar el Coproducto?'))return false"
+									update="tablaCoproductos"
+									action="#{manejadorCrearEditarSeguimientoMovilidadDocente.eliminarCoproducto}"
+									icon="ui-icon-trash">
+									<f:setPropertyActionListener value="#{cooproducto}"
+										target="#{manejadorCrearEditarSeguimientoMovilidadDocente.coproductoTable}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabProductosMovilidad" style="margin-top: 10px;"
+					header="Resultados de la movilidad (*)">
+					<p:panelGrid columns="2" align="center" id="formProductos"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+						<h:outputText value="Tipo producto:"
+							style="width: font-weight: bold;" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoProducto}"
+							style="width: 520px" panelStyle="width: 520px">
+							<p:ajax update="tipoSubproducto" process="uiDescripcionProducto"
+								listener="#{manejadorCrearEditarSeguimientoMovilidadDocente.cargarSubproductos}" />
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoProductoSelect}" />
+						</p:selectOneMenu>
+						<h:outputText value="Tipo subproducto:"
+							style="width: font-weight: bold;" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoSubproducto}"
+							id="tipoSubproducto" style="width: 520px"
+							panelStyle="width: 520px">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoSubproductoSelect}" />
+						</p:selectOneMenu>
+						<h:outputText value="Descripción:"
+							style="width: font-weight: bold;" />
+						<p:inputTextarea id="uiDescripcionProducto"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.descripcionProducto}"
+							rows="10" cols="70" autoResize="false" maxlength="1000"
+							counter="counterDescripcionProducto"
+							counterTemplate="{0} caracteres restantes.">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterDescripcionProducto" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar" id="uiProducto"
+							update="tablaProductos, tabProductosMovilidad"
+							action="#{manejadorCrearEditarSeguimientoMovilidadDocente.adicionarProducto}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						<h:outputText value="" />
+					</p:panelGrid>
+					<h:panelGrid id="grupoListaProductos" align="center" columns="1">
+						<p:dataTable var="producto" id="tablaProductos"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.listaProductos}"
+							style="width:100%"
+							emptyMessage="No se encuentran productos registrados">
+
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Tipo producto" />
+								</f:facet>
+								<h:outputText value="#{producto.producto.nombre}" />
+							</p:column>
+
+							<p:column style="width:60%">
+								<f:facet name="header">
+									<h:outputText value="Descripción" />
+								</f:facet>
+								<h:outputText id="descripcionProduc"
+									value="#{producto.descripcion}" />
+							</p:column>
+
+							<p:column style="width:10%"
+								rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:commandButton title="Eliminar producto"
+									onclick="if(!confirm('Esta seguro de eliminar el producto?'))return false"
+									update="tablaProductos"
+									action="#{manejadorCrearEditarSeguimientoMovilidadDocente.eliminarProducto}"
+									icon="ui-icon-trash">
+									<f:setPropertyActionListener value="#{producto}"
+										target="#{manejadorCrearEditarSeguimientoMovilidadDocente.productoTable}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabCalificacion"
+					header="Calificación de la movilidad (*)" style="margin-top: 10px;">
+					<h:panelGrid columns="2" cellpadding="5"
+						styleClass="estilo-panelgrid-sinbordes" cellspacing="5">
+						<h:outputText
+							value="Concepción y alcance del Programa de Intenacionalización del Conocimiento:" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.calificacion1Sel}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoCalificacion1}" />
+						</p:selectOneMenu>
+
+						<h:outputText
+							value="Procedimiento para realizar la solicitud de apoyo de movilidad:" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.calificacion2Sel}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoCalificacion2}" />
+						</p:selectOneMenu>
+
+						<h:outputText
+							value="Procedimiento para la transferencia del apoyo economico para la movilidad:" />
+						<p:selectOneMenu
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.calificacion3Sel}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+							<f:selectItems
+								value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoCalificacion3}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabSugerencias" header="Sugerencias (*)"
+					style="margin-top: 10px;">
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						styleClass="estilo-panelgrid-sinbordes" cellspacing="5">
+
+						<h:outputText
+							value="En forma breve, realice sugerencias para mejorar Programa de Internacionalización del Conocimiento." />
+
+						<p:inputTextarea id="uiSugerencias" maxlength="1000"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.descripcionMovilidad}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}"
+							rows="3" cols="60" counterTemplate="{0} caracteres restantes"
+							counter="counterSugerencias">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterSugerencias" />
+						<h:outputText value="" />
+						<p:message id="errorSugerencias" for="uiSugerencias"
+							autoUpdate="true"></p:message>
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabPonencia" header="Ponencia (*)"
+					style="margin-top: 10px;">
+					<h:panelGrid columns="2" cellpadding="5"
+						styleClass="estilo-panelgrid-sinbordes" cellspacing="5">
+						<h:outputText
+							value="Título de la ponencia oral, póster u otra modalidad de participación:" />
+						<p:inputTextarea id="uiTituloTrabajo" maxlength="1000"
+							style="width: 500px;"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tituloTrabajoPresentado}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}"
+							counterTemplate="{0} caracteres restantes"
+							counter="counterTituloTrabajo" resize="false">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterTituloTrabajo" />
+						<h:outputText value="Experiencia de la participación:" />
+						<p:inputTextarea id="uiExperiencias" maxlength="1000"
+							style="width: 500px;"
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.experienciasTrabajo}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta}"
+							counterTemplate="{0} caracteres restantes"
+							counter="counterExperiencias" resize="false">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterExperiencias" />
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="tabFinanciacion" header="Valor total apoyado en el programa de movilidad"
+					style="margin-top: 10px;">
+				Relacione los valores totales que se ejecutaron para el apoyo a la movilidad: <br />
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Valor total del apoyo de la movilidad:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.apoyoTotal}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}"
+							maxlength="9" />
+						<h:outputText
+							value="Valor del tiquete/pasaje en pesos colombianos:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.costoTiquetes}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}"
+							maxlength="9" />
+						<h:outputText
+							value="Valor de la inscripción al evento en pesos colombianos:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.valorEvento}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}"
+							maxlength="9" />
+						<h:outputText
+							value="Valor de viáticos y gastos del viaje en pesos colombianos:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.valorTotalViativos}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}"
+							maxlength="9" />
+					</p:panelGrid>
+				</p:panel>
+				<p:panel id="tabFinancieroAdicional" header="Valor monto adicional ejecutado de movilidad"
+					style="margin-top: 10px;">
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Valor adicional del apoyo de la movilidad:"
+							style="width: font-weight: bold;" />
+						<p:inputText
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.apoyoTotalAdicional}"
+							disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.consulta and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad and !manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}"
+							maxlength="9" />
+					</p:panelGrid>
+				</p:panel>
+			</t:div>
+			<p:panel id="tabArchivos" header="Documentos Obligatorios (*)"
+				style="margin-top: 10px;">
+
+				<h:panelGrid align="center" columns="2" style="margin-bottom: 10px;"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+					<h:outputText value="Lista de documentos:" />
+					<p:selectOneMenu id="idSelTipoArchivo"
+						value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoDocumentoSel}">
+						<f:selectItems
+							value="#{manejadorCrearEditarSeguimientoMovilidadDocente.tipoDocumentoSelItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Archivo: " />
+					<p:fileUpload
+						value="#{manejadorCrearEditarSeguimientoMovilidadDocente.archivoObligatorio}"
+						sizeLimit="3145728" mode="simple" />
+					<h:outputText />
+					<p:commandButton value="Adjuntar Archivo" ajax="false"
+						id="idArchivosAdj" update="tablaArchivos"
+						actionListener="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarArchivoObligatorio}" />
+				</h:panelGrid>
+
+				<h:outputText id="uiArchivos" value=""></h:outputText>
+				<p:message id="errorArchivos" for="uiArchivos" autoUpdate="true"></p:message>
+
+				<p:dataTable var="archivoResumen1" id="tablaArchivos"
+					value="#{manejadorCrearEditarSeguimientoMovilidadDocente.listaArchivosObligatoriosSel}"
+					cellpadding="1" cellspacing="8" align="center" border="1"
+					emptyMessage="No se encuentran archivos registrados">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.nombre}" />
+					</p:column>
+
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+						<p:commandButton
+							action="#{manejadorCrearEditarSeguimientoMovilidadDocente.descargarArchivoObligatorio}"
+							icon="ui-icon-triangle-1-s" title="Descargar" ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{manejadorCrearEditarSeguimientoMovilidadDocente.archivoTabla}" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column style="text-align: center;"
+						rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+
+						<p:commandButton
+							onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+							action="#{manejadorCrearEditarSeguimientoMovilidadDocente.eliminarArchivoObligatorio}"
+							icon="ui-icon-trash" title="Eliminar archivo"
+							update="tablaArchivos">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{manejadorCrearEditarSeguimientoMovilidadDocente.archivoTabla}" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+
+			</p:panel>
+			<br />
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.realizacionMovilidad == 'SI'}">
+				<p:commandButton value="Atrás" id="botonAtras"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.atras}"
+					styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.esConsultaFacultad}" />
+				<p:commandButton id="botonGuardarParcialmente" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarParcialmente}"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}"
+					value="Guardar parcialmente" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton id="botonGuardarEnviar" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarEnviar}"
+					value="Guardar y enviar" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}" />
+			</h:panelGrid>
+			
+			<h:panelGrid columns="1" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}"
+				style="margin-top: 20px;">
+				<h:outputText value="Comentarios de revisión sede" />
+				<p:inputTextarea id="comentariosSede"
+					style="width: 500px; height: 100px;" maxlength="3000"
+					value="#{manejadorCrearEditarSeguimientoMovilidadDocente.comentariosInforme}"
+					rows="1" cols="75"
+					disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.revisadoSede}">
+				</p:inputTextarea>
+			</h:panelGrid>
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionSede}">
+				<p:commandButton value="Atrás" id="botonAtrasAprobacion"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.atrasAprobacion}"
+					styleClass="ui-priority-primary" ajax="false" />
+				<p:commandButton id="botonGuardarLectura" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarAprobacion}"
+					value="Aprobar" styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.revisadoSede}"
+					onclick="if(!confirm('¿Esta seguro de que desea dar aprobación al informe?'))return false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton id="botonGuardarDevolucion" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarDevolucionSede}"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.revisadoSede}"
+					onclick="if(!confirm('¿Esta seguro de que desea devolver para correcciones?'))return false"
+					value="Devolver para correcciones" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</h:panelGrid>
+			<h:panelGrid columns="1" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad}"
+				style="margin-top: 20px;">
+				<h:outputText value="Comentarios de revisión facultad" />
+				<p:inputTextarea id="comentariosFacultad"
+					style="width: 500px; height: 100px;" maxlength="3000"
+					value="#{manejadorCrearEditarSeguimientoMovilidadDocente.comentariosInforme}"
+					disabled="#{manejadorCrearEditarSeguimientoMovilidadDocente.revisadoFacultad}"
+					rows="1" cols="75">
+				</p:inputTextarea>
+			</h:panelGrid>
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad}">
+				<p:commandButton value="Atrás" id="botonAtrasRevision"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.atrasRevision}"
+					styleClass="ui-priority-primary" />
+				<p:commandButton id="botonGuardarLectura" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarLectura}"
+					value="Aprobar" styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.revisadoFacultad}"
+					onclick="if(!confirm('¿Esta seguro de que desea dar lectura al informe?'))return false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton id="botonGuardarDevolucion" update="@form"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.revisadoFacultad}"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarDevolucion}"
+					onclick="if(!confirm('¿Esta seguro de que desea devolver para correcciones?'))return false"
+					value="Devolver para correcciones" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</h:panelGrid>
+			<h:panelGrid columns="3" align="center"
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.realizacionMovilidad == 'NO'}">
+				<p:commandButton value="Atrás" id="botonAtras"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.atras}"
+					styleClass="ui-priority-primary"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.esConsultaFacultad}" />
+				<p:commandButton id="botonGuardarParcialMenteNorealizado"
+					update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarNoRealizacionParcial}"
+					value="Guardar parcialmente" styleClass="ui-priority-primary"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}" />
+				<p:commandButton id="botonGuardarNoRealizado" update="@form"
+					action="#{manejadorCrearEditarSeguimientoMovilidadDocente.guardarNoRealizacionEnviar}"
+					value="Guardar y enviar" styleClass="ui-priority-primary"
+					onclick="if(!confirm('¿Esta seguro de que desea enviar el informe definitivamente?'))return false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{!manejadorCrearEditarSeguimientoMovilidadDocente.consulta}" />
+			</h:panelGrid>
+			<t:div
+				rendered="#{manejadorCrearEditarSeguimientoMovilidadDocente.esRevisionFacultad}"
+				style="width: 650px; text-align: center;">
+				<h:outputText style="color: #FF0000; font-weight: bold;"
+					value="#{manejadorCrearEditarSeguimientoMovilidadDocente.mensajeRevisionFacultad}" />
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

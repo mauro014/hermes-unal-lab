@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">ADMINISTRAR MODULO</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">
+				<h:outputText value="Administrar Módulos" />
+			</t:div>
+			<center>
+				<p:dataTable id="DT_modulos" var="modulos"
+					value="#{ManejadorAdministrarModuloECP.listaModulos}"
+					paginator="true" paginatorPosition="bottom" rows="15"
+					sortBy="#{modulos.padre.ano}" sortMode="multiple"
+					filteredValue="#{ManejadorAdministrarModuloECP.modulosFiltrados}">
+
+					<f:facet name="header">
+						Módulos
+					</f:facet>
+
+					<p:column style="width:30px" sortBy="#{modulos.id}">
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value="#{modulos.id}" />
+					</p:column>
+
+					<p:column style="width:40px" sortBy="#{modulos.padre.ano}">
+						<f:facet name="header">
+							<h:outputText value="Año" />
+						</f:facet>
+						<center>
+							<h:outputText value="#{modulos.padre.ano}" />
+						</center>
+					</p:column>
+
+					<p:column style="width:300px" sortBy="#{modulos.titulo}"
+						filterBy="#{modulos.titulo}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText value="#{modulos.titulo}" />
+					</p:column>
+
+					<p:column style="width:40px" sortBy="#{modulos.modalidadModulo}"
+						filterBy="#{modulos.modalidadModulo}"
+						filterOptions="#{ManejadorAdministrarModuloECP.listaModalidadModulo}"
+						filterMatchMode="exact">
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<center>
+							<h:outputText
+								value="#{modulos.modalidadModulo == 'A' ? 'Abierto' : 'Cerrado'}" />
+						</center>
+					</p:column>
+
+
+					<p:column style="width:90px">
+						<f:facet name="header">
+							<h:outputText value="Acciones" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-pencil"
+								title="Editar módulo #{modulos.id}"
+								action="#{ManejadorAdministrarModuloECP.editarModulo}">
+								<f:setPropertyActionListener value="#{modulos}"
+									target="#{ManejadorAdministrarModuloECP.moduloSeleccionado}" />
+							</p:commandButton>
+							<p:commandButton icon="ui-icon-search"
+								title="Consultar módulo #{modulos.id}"
+								action="#{ManejadorAdministrarModuloECP.consultarModulo}">
+								<f:setPropertyActionListener value="#{modulos}"
+									target="#{ManejadorAdministrarModuloECP.moduloSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+			</center>
+			<p:messages id="msgs" />
+			<br />
+			<h:panelGrid columns="2" align="center" id="pG_botones">
+				<p:commandButton value="Volver"
+					action="#{ManejadorAdministrarModuloECP.atras}" immediate="true" />
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

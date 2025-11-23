@@ -1,0 +1,628 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Cambio de estados</t:div>
+			<p:tabView>
+				<p:tab title="Proyectos" titleStyle="font-size:12px">
+					<p:messages id="mensaje" closable="true" />
+					<p:panel style="text-align: center;">
+						<h:panelGrid columns="3" style="text-align: center; margin: auto;">
+							<t:div style="width: 170px;">
+								<h:outputText value="Código del proyecto:" />
+							</t:div>
+							<p:inputText style="width:80px;"
+								value="#{manejadorCambioEstadosAdministrador.codigoProyecto}"
+								maxlenght="10" />
+							<p:commandButton
+								action="#{manejadorCambioEstadosAdministrador.buscarProyecto}"
+								value="Buscar" update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</h:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;"
+						rendered="#{manejadorCambioEstadosAdministrador.proyectoActual != null}">
+						<p:panelGrid columns="2" style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<t:div style="width: 50px; font-weight: bold;">
+								<h:outputText value="Proyecto: " />
+							</t:div>
+							<t:div style="width: 530px;">
+								<h:outputText
+									value="#{manejadorCambioEstadosAdministrador.proyectoActual.id} 
+						- #{manejadorCambioEstadosAdministrador.proyectoActual.nombre}" />
+							</t:div>
+
+							<t:div style="width: 50px; font-weight: bold;">
+								<h:outputText value="Estado: " />
+							</t:div>
+							<t:div style="width: 530px;">
+								<h:outputText
+									value="#{manejadorCambioEstadosAdministrador.proyectoActual.estadoProyecto.nombre}" />
+							</t:div>
+						</p:panelGrid>
+						<p:panelGrid columns="1" style="margin: auto; width: 100%; margin-top: 20px;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:dataTable rows="15" id="tableHistoricoEstadoProyecto"
+								var="historico" paginator="true"
+								value="#{manejadorCambioEstadosAdministrador.historicoEstadosProyecto}"
+								emptyMessage="No se ha encontrado historico para este proyecto."
+								paginatorPosition="bottom" paginatorAlwaysVisible="false"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<f:facet name="header">
+							Histórico estado proyecto
+						</f:facet>
+								<p:column>
+									<f:facet name="header">
+								Fecha
+							</f:facet>
+									<h:outputText value="#{historico.fecha}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+								Estado asignado
+							</f:facet>			
+							#{historico.estadoProyecto.nombre}
+						</p:column>
+								<p:column>
+									<f:facet name="header">
+								Justificacion
+							</f:facet>			
+							#{historico.justificacion}
+						</p:column>
+								<p:column>
+									<f:facet name="header">
+							Responsable
+							</f:facet>			
+							#{historico.responsable.nombreCompleto}
+						</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;" header="Asignar nuevo estado"
+						rendered="#{manejadorCambioEstadosAdministrador.proyectoActual != null}">
+						<p:panelGrid columns="2" style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Nuevo estado: " />
+							<p:selectOneMenu id="car" style="width: 200px;"
+								panelStyle="width: 200px;"
+								value="#{manejadorCambioEstadosAdministrador.estadoSeleccionado}">
+								<f:selectItems
+									value="#{manejadorCambioEstadosAdministrador.estadosItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="Justificación: " />
+							<p:inputTextarea
+								value="#{manejadorCambioEstadosAdministrador.justificacion}"
+								style="width: 400px;" maxlength="500" />
+							<h:outputText value="" />
+							<p:commandButton
+								action="#{manejadorCambioEstadosAdministrador.guardarNuevoEstado}"
+								value="Guardar" update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;"
+						header="Habilitar Edición de Proyecto"
+						rendered="#{manejadorCambioEstadosAdministrador.proyectoActual != null}">
+						<p:panelGrid columns="2" style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Proyecto Habilitado para Edición: " />
+							<h:outputText
+								value="#{manejadorCambioEstadosAdministrador.proyectoActual.permitirModificacion eq 'S' ? 'Si' : 'No'}" />
+							<p:commandButton
+								action="#{manejadorCambioEstadosAdministrador.guardarHabilitacionProyecto}"
+								value="#{manejadorCambioEstadosAdministrador.proyectoActual.permitirModificacion eq 'N' ? 'Habilitar Proyecto para Edición': 'Bloquear Edición de Proyecto'}"
+								update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<h:outputText value="" />
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+				<!-- 	Avales -->
+				<p:tab title="Avales" titleStyle="font-size:12px">
+					<p:messages id="mensajeAvales" closable="true" />
+					<p:panel style="text-align: center;">
+						<h:panelGrid columns="3" style="text-align: center; margin: auto;">
+							<t:div style="width: 170px;">
+								<h:outputText value="Código del aval:" />
+							</t:div>
+							<p:inputText style="width:80px;"
+								value="#{manejadorCambioEstadosAdministrador.codigoAval}"
+								maxlenght="10" />
+							<p:commandButton id="buscarAval"
+								action="#{manejadorCambioEstadosAdministrador.buscarAval}"
+								value="Buscar" update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</h:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;"
+						rendered="#{manejadorCambioEstadosAdministrador.avalActual != null}">
+						<p:panelGrid style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Aval: " />
+								</p:column>
+								<p:column style="width: 80%;">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.avalActual.aviId}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Tipo: " />
+								</p:column>
+								<p:column style="width: 80%;">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.avalActual.nombreTipo}" />
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{manejadorCambioEstadosAdministrador.avalActual.esRegalias or manejadorCambioEstadosAdministrador.avalActual.esPaedRegalias}">
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="¿Es intersedes?: " />
+								</p:column>
+								<p:column style="width: 80%;">
+									<h:outputText value="SI"
+										rendered="#{manejadorCambioEstadosAdministrador.avalActual.interSedes == 'S'}" />
+									<h:outputText value="NO"
+										rendered="#{manejadorCambioEstadosAdministrador.avalActual.interSedes == 'N'}" />
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{!manejadorCambioEstadosAdministrador.avalActual.esGrupoInvestigacion and !manejadorCambioEstadosAdministrador.avalActual.esInvestigadorIndependiente}">
+								<p:column style="font-weight: bold;">
+									<h:outputText value="Proyecto relacionado: " />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.avalActual.idProyecto} 
+									- #{manejadorCambioEstadosAdministrador.avalActual.aviTitulo}" />
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{manejadorCambioEstadosAdministrador.avalActual.esGrupoInvestigacion}">
+								<p:column style="font-weight: bold;">
+									<h:outputText value="Grupo relacionado: " />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.avalActual.nombreGrupoPINV} 
+									- #{manejadorCambioEstadosAdministrador.avalActual.aviTitulo}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="font-weight: bold;">
+									<h:outputText value="Estado actual: " />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.avalActual.nombreEstado}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panelGrid columns="1" style="margin: auto; width: 100%; margin-top: 20px;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:dataTable rows="15" id="tableHistoricoEstadoAval"
+								var="historico" paginator="true" style="width:100%;"
+								value="#{manejadorCambioEstadosAdministrador.listaHistoricoEstadoAval}"
+								emptyMessage="No se ha encontrado historico para este aval."
+								paginatorPosition="bottom" paginatorAlwaysVisible="false"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<f:facet name="header">
+									Histórico estado aval
+								</f:facet>
+								<p:column style="width:10%;">
+									<f:facet name="header">
+												Fecha
+											</f:facet>
+									<h:outputText value="#{historico.fecha}">
+										<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+									</h:outputText>
+								</p:column>
+								<p:column style="width:30%;">
+									<f:facet name="header">
+												Estado
+											</f:facet>			
+											#{historico.nombreEstado}
+								</p:column>
+								<p:column style="width:50%;">
+									<f:facet name="header">
+												Responsable
+											</f:facet>			
+											#{historico.revisor.nombreCompletoMinusculas}
+										</p:column>
+								<p:column style="width:5%;">
+									<p:commandButton action="#" icon="ui-icon-search"
+										oncomplete="dialogHistorico.show();"
+										title="Consultar justificacion" update="@form">
+										<f:setPropertyActionListener value="#{historico}"
+											target="#{manejadorCambioEstadosAdministrador.historicoAvalSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;" header="Asignar nuevo estado"
+						rendered="#{manejadorCambioEstadosAdministrador.avalActual != null}">
+						<p:panelGrid style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column>
+									<h:outputText value="Nuevo estado: " />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="new-state-aval" style="width: 300px;"
+										panelStyle="width: 300px;"
+										value="#{manejadorCambioEstadosAdministrador.estadoAvalSeleccionado}">
+										<f:selectItems
+											value="#{manejadorCambioEstadosAdministrador.estadosAvalItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Justificación: " />
+								</p:column>
+								<p:column>
+									<p:inputTextarea id="justificacion-aval"
+										value="#{manejadorCambioEstadosAdministrador.justificacionAval}"
+										style="width: 100%;" maxlength="1000">
+										<f:validateLength minimum="0" maximum="1000"
+											for="justificacion-aval"></f:validateLength>
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="" />
+								</p:column>
+								<p:column>
+									<h:outputText id="counterJustificacion"
+										value="Tamaño máximo 1000 caracteres" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" style="text-align:center;">
+									<p:commandButton
+										action="#{manejadorCambioEstadosAdministrador.guardarNuevoEstadoAval}"
+										value="Guardar" update="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab title="Movilidades" titleStyle="font-size:12px">
+					<p:panel style="margin: auto;">
+						<h:panelGrid columns="3" style=" margin: auto;">
+							<t:div style="width: 170px;">
+								<h:outputText value="Tipo movilidad:" />
+							</t:div>
+							<p:selectOneMenu id="tipoMovilidadId" style="width: 200px;"
+								panelStyle="width: 200px;"
+								value="#{manejadorCambioEstadosAdministrador.tipoMovilidadId}">
+								<f:selectItems
+									value="#{manejadorCambioEstadosAdministrador.tipoMovilidad}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+							<t:div style="width: 170px;">
+								<h:outputText value="Código del movilidad:" />
+							</t:div>
+							<p:inputText style="width:80px;"
+								value="#{manejadorCambioEstadosAdministrador.codigoMovilidad}"
+								maxlenght="10" />
+							<h:outputText value="" />
+							<h:outputText value="" />
+							<p:commandButton id="buscarMovilidad"
+								action="#{manejadorCambioEstadosAdministrador.buscarMovilidad}"
+								value="Buscar" update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</h:panelGrid>
+					</p:panel>
+					<p:messages id="mensajeMovilidades" closable="true" />
+					<p:panel style=" margin-top: 10px;"
+						rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada != null}">
+						<p:panelGrid style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Movilidad id: " />
+								</p:column>
+								<p:column style="width: 80%;" colspan="3">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.id}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Profesor: " />
+								</p:column>
+								<p:column style="width: 80%;" colspan="3">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.personaInv.nombreCompleto}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Convocatoria: " />
+								</p:column>
+								<p:column style="width: 80%;" colspan="3">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.convocatoria.padre.titulo}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Modalidad: " />
+								</p:column>
+								<p:column style="width: 80%;" colspan="3">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.convocatoria.titulo}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Fecha solicitud: " />
+								</p:column>
+								<p:column style="width: 30%;" colspan="3">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechasolicitud}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Fecha de inicio: " />
+								</p:column>
+								<p:column style="width: 30%;">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechainicial}" />
+								</p:column>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Fecha final: " />
+								</p:column>
+								<p:column style="width: 30%;">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechafinal}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Revisión facultad: " />
+								</p:column>
+								<p:column style="width: 30%;">
+									<h:outputText value="No aprobado"
+										rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.aceptacion == 'NO'}" />
+									<h:outputText value="Aprobado"
+										rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.aceptacion == 'SI'}" />
+								</p:column>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Fecha revisión fac: " />
+								</p:column>
+								<p:column style="width: 30%;">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechaAceptacion}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Revisión sede: " />
+								</p:column>
+								<p:column style="width: 30%;">
+									<h:outputText value="No aprobado"
+										rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.aprobacion == 'NO'}" />
+									<h:outputText value="Aprobado"
+										rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.aprobacion == 'SI'}" />
+								</p:column>
+								<p:column style="width: 20%; font-weight: bold;">
+									<h:outputText value="Fecha revisión sede: " />
+								</p:column>
+								<p:column style="width: 30%;">
+									<h:outputText
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechaAprobacion}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panelGrid columns="1" style="margin: auto; width: 100%; margin-top: 20px;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:dataTable rows="15" id="tableHistoricoEstadoMovilidad"
+								var="historico" paginator="true" style="width:100%;"
+								value="#{manejadorCambioEstadosAdministrador.listaHistoricoEstadoMovilidad}"
+								emptyMessage="No se ha encontrado historico para este movilidad."
+								paginatorPosition="bottom" paginatorAlwaysVisible="false"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<f:facet name="header">
+									Histórico esta movilidad
+								</f:facet>
+								<p:column style="width:25%;">
+									<f:facet name="header">
+												Fecha
+											</f:facet>
+									<h:outputText value="#{historico.fecha}">
+										<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+									</h:outputText>
+								</p:column>
+								<p:column style="width:25%; text-align: center;">
+									<f:facet name="header">
+												Estado
+											</f:facet>
+									<h:outputText value="#{historico.estado}" />
+								</p:column>
+								<p:column style="width:25%;">
+									<f:facet name="header">
+												Responsable
+											</f:facet>			
+											#{historico.responsable.nombreCompletoMinusculas}
+								</p:column>
+								<p:column style="width:25%;">
+									<f:facet name="header">
+												Justificacion
+											</f:facet>			
+											#{historico.justificacion}
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;" header="Asignar nuevo estado"
+						rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada != null and not empty manejadorCambioEstadosAdministrador.estadosMovilidadItem}">
+						<p:panelGrid style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column>
+									<h:outputText value="Nuevo estado: " />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="new-state-movilidad" style="width: 300px;"
+										panelStyle="width: 300px;"
+										value="#{manejadorCambioEstadosAdministrador.estadoMovilidadSeleccionado}">
+										<f:selectItems
+											value="#{manejadorCambioEstadosAdministrador.estadosMovilidadItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Justificación: " />
+								</p:column>
+								<p:column>
+									<p:inputTextarea id="justificacion-movilidad"
+										value="#{manejadorCambioEstadosAdministrador.justificacionMovilidad}"
+										style="width: 100%;" maxlength="1000">
+										<f:validateLength minimum="0" maximum="1000"
+											for="justificacion-movilidad"></f:validateLength>
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="" />
+								</p:column>
+								<p:column>
+									<h:outputText id="counterJustificacion"
+										value="Tamaño máximo 1000 caracteres" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" style="text-align:center;">
+									<p:commandButton
+										action="#{manejadorCambioEstadosAdministrador.guardarNuevoEstadoMovilidad}"
+										value="Guardar" update="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<p:panel style=" margin-top: 10px;"
+						header="Cambiar Fechas de Movilidad"
+						rendered="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada != null}">
+						<p:panelGrid style="margin: auto; width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column>
+									<h:outputText value="Fecha Inicial: " />
+								</p:column>
+								<p:column>
+									<p:calendar id="finicio" navigator="true" locale="es"
+										readonlyInput="false"
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechainicial}"
+										pattern="dd/MM/yyyy" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Fecha Final: " />
+								</p:column>
+								<p:column>
+									<p:calendar id="ffinal" navigator="true" locale="es"
+										readonlyInput="false"
+										value="#{manejadorCambioEstadosAdministrador.movilidadInvestigadorEncontrada.fechafinal}"
+										pattern="dd/MM/yyyy" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:commandButton
+										action="#{manejadorCambioEstadosAdministrador.guardarFechasMovilidad}"
+										value="Actualizar Fechas" update="@form"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									</p:commandButton>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+			</p:tabView>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+			<p:dialog header="Información del cambio de estado"
+				widgetVar="dialogHistorico" modal="true" resizable="false"
+				width="600">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="width:10%;">
+							<h:outputText value="Aval: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCambioEstadosAdministrador.avalActual.aviId}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Responsable: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCambioEstadosAdministrador.historicoAvalSeleccionado.revisor.nombreCompletoMinusculas}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCambioEstadosAdministrador.historicoAvalSeleccionado.fecha}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Justificación: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorCambioEstadosAdministrador.historicoAvalSeleccionado.justificacion}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

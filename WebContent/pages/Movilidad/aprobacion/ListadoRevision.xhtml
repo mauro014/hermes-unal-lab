@@ -1,0 +1,2318 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">
+		Aprobación movilidades facultad</t:div>
+		<h:form>
+			<p:panel style="width: 670px; margin-bottom: 20px;"
+				header="Filtrar movilidades por convocatoria">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Convocatoria:" />
+					<p:selectOneMenu style="width: 520px;" id="convocatoriaPadre"
+						value="#{manejadorAprobacionMovilidad.convocatoriaPadreFiltro}"
+						panelStyle="width: 500px;" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione una convocatoria" itemValue="" />
+						<f:selectItems
+							value="#{manejadorAprobacionMovilidad.listaConvocatoriasPadreItems}" />
+						<p:ajax update="selectModalidad"
+							listener="#{manejadorAprobacionMovilidad.cambiarConvocatoriaPadre}" />
+					</p:selectOneMenu>
+					<h:outputText value="Modalidad:" />
+					<p:selectOneMenu id="selectModalidad" style="width:520px;"
+						panelStyle="width: 520px;"
+						value="#{manejadorAprobacionMovilidad.convocatoriaFiltro}">
+						<f:selectItems
+							value="#{manejadorAprobacionMovilidad.listaConvocatoriasItems}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<t:div style="weight: 100%; text-align: center;">
+					<p:commandButton title="Filtrar"
+						action="#{manejadorAprobacionMovilidad.cargarListasMovilidades}"
+						ajax="false" onstart="dialogEspere.show()" icon="ui-icon-search"
+						oncomplete="dialogEspere.hide()" value="Filtrar">
+					</p:commandButton>
+					<p:commandButton title="Limpiar filtro"
+						action="#{manejadorAprobacionMovilidad.reiniciarFiltro}"
+						ajax="false" onstart="dialogEspere.show()" icon="ui-icon-cancel"
+						oncomplete="dialogEspere.hide()" value="Reiniciar filtro">
+					</p:commandButton>
+				</t:div>
+			</p:panel>
+		</h:form>
+		<h:form>
+			<p:dataTable var="mov"
+				value="#{manejadorAprobacionMovilidad.listaMovilidadesGeneral}"
+				emptyMessage="No existen solicitudes vigentes"
+				style="width: 670px; margin-bottom: 20px;"
+				rowIndexVar="index">
+				<p:column headerText="#" style="text-align: center;">
+					<h:outputText value="#{index + 1}" />
+				</p:column>
+				<p:column headerText="Id">
+					<h:outputText value="#{mov.idSolicitud}" />
+				</p:column>
+				<p:column headerText="Convocatoria">
+					<h:outputText value="#{mov.convocatoria.padre.titulo}" />
+				</p:column>
+				<p:column headerText="Modalidad">
+					<h:outputText value="#{mov.convocatoria.titulo}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+						<br />
+						<h:outputText value="Solicitud" />
+					</f:facet>
+					<h:outputText value="#{mov.fechaSolicitud}" />
+				</p:column>
+				<p:column headerText="Solicitante">
+					<h:outputText value="#{mov.nombreSolicitante}" />
+				</p:column>
+				<p:column headerText="Acciones" style="width: 100px;">
+					<center>
+						<p:commandButton title="Modificar valores"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_ESTUDIANTE_POS'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadEstudiantes}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-pencil"
+							oncomplete="dialogEspere.hide(),movilidadEstudiantesEventos.show()">
+							<f:param name="idMovilidad"
+								value="#{movilidadEstudiantePosgrado.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton title="Modificar valores"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_VISITANTES_EXT'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadVisitante}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-pencil"
+							oncomplete="dialogEspere.hide(),movilidadVisitanteModal.show()">
+							<f:param name="idMovilidad" value="#{movilidadVisitante.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton title="Modificar valores"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_DOCENTES_EVENTOS'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadDocentes}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-pencil"
+							oncomplete="dialogEspere.hide(),movilidadDocenteModal.show()">
+							<f:param name="idMovilidad" value="#{movilidadEvento.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+					</center>
+					<center>
+						<p:commandButton title="Revisar movilidad"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_VISITANTES_EXT'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadVisitante}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-search"
+							oncomplete="dialogEspere.hide(),movilidadVisitanteModalRevision.show()">
+							<f:param name="idMovilidad" value="#{movilidadVisitante.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton title="Revisar movilidad"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_DOCENTES_EVENTOS'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadDocentes}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-search"
+							oncomplete="dialogEspere.hide(),movilidadDocentesModalRevision.show()">
+							<f:param name="idMovilidad" value="#{movilidadEvento.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton title="Revisar movilidad"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_ESTUDIANTE_POS'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadEstudiantes}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-search"
+							oncomplete="dialogEspere.hide(),movilidadEstudiantesModalRevision.show()">
+							<f:param name="idMovilidad"
+								value="#{movilidadEstudiantePosgrado.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton title="Revisar movilidad"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_DOCENTES_ART'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadDocentesArtes}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-search"
+							oncomplete="dialogEspere.hide(),movilidadDocentesArtesModalRevision.show()">
+							<f:param name="idMovilidad" value="#{movilidadEvento.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+						<p:commandButton title="Revisar movilidad"
+							rendered="#{mov.tipoMovilidad.tabla == 'HER_MOVILIDAD_ESTUDIANTES_ART'}"
+							action="#{manejadorAprobacionMovilidad.modificarMovilidadEstudiantesArtes}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-search"
+							oncomplete="dialogEspere.hide(),movilidadEstudiantesArtesModalRevision.show()">
+							<f:param name="idMovilidad" value="#{movilidadEvento.id}" />
+							<f:setPropertyActionListener value="#{mov}"
+								target="#{manejadorAprobacionMovilidad.movilidadVistaSeleccionada}" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+			<p:dialog header="Revisión de movilidad"
+				id="movilidadVisitanteModalRevision"
+				widgetVar="movilidadVisitanteModalRevision" modal="true"
+				resizable="false" width="800">
+				<t:div styleClass="panel-interno-tabla"
+					id="movilidadVisitanteModalRevisionDiv"
+					style="max-height:660px; overflow: auto;">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 120px;">
+								<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.convocatoria.padre.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.convocatoria.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Id:" style="font-weight: bold;" />
+							</p:column>
+							<p:column style="width: 200px;">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.id}" />
+							</p:column>
+							<p:column style="width: 100px;">
+								<h:outputText value="Fecha solicitud:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.fechasolicitud}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha inicio:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.fechainicial}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha fin:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.fechafinal}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.personaInv.id.tipoDocumento} - #{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.personaInv.id.documento}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.personaInv.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Año Vigencia: "
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:spinner id="AnioVigVisitante" value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.anioVigenciaAprFacultad}"
+										min="#{manejadorAprobacionMovilidad.minYear}" size="4"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Comentarios facultad:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputTextarea forceId="true"
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.comentariosFac}"
+									maxlength="3000" rows="5" style="width: 500px;">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column colspan="3">
+								<h:commandLink
+									action="#{manejadorAprobacionMovilidad.imprimirMovilidadVisitante}"
+									value="Imprimir información solicitud" target="_blank"
+									style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+									<f:param name="idMovilidad"
+										value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.id}" />
+									<f:setPropertyActionListener
+										value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion}"
+										target="#{manejadorAprobacionMovilidad.movilidadVisitanteSeleccionada}" />
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad: " style="font-weight: bold;"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{manejadorAprobacionMovilidad.dependenciaMov.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								<h:outputText value="¿La facultad cuenta con recursos para aprobar esta movilidad?" />
+							</p:column>
+						</p:row>
+						<p:row>|
+							<p:column>
+							</p:column>
+							<p:column>
+								 <p:selectOneRadio id="aprMovVisitante" value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal}" unselectable="true">
+						            <f:selectItem itemLabel="Sí" itemValue="SI" />
+						            <f:selectItem itemLabel="No" itemValue="NO" />
+						            <p:ajax update="outputPanelmovisitanteDivRevisionRequisitosPr movilidadVisitanteModalRevisionDiv"/>
+						        </p:selectOneRadio>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'SI'}">
+							<p:column>
+								<h:outputText value="Valor aporte por la facultad: "
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputText forceId="true" maxlength="10"
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.valorAprobadoFacultad}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'SI'}">
+							<p:column>
+								<h:outputText value=""/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Este valor corresponde a los aportes de la Facultad para la movilidad." style="font-weight: bold;color: #FF0000"/>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<t:div style="text-align:center; padding-top: 10px;"
+						id="movilidadVisitanteDivRevision">
+						<p:dataTable var="archivoResumen1"
+							value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.listaArchivo}"
+							rows="5" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" paginator="true"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+							<f:facet name="header">
+								<h:outputText value="Archivos adjuntos" />
+							</f:facet>
+							<p:column style="width: 20px: text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="Id" />
+								</f:facet>
+								<t:div>
+									<h:outputText value="#{archivoResumen1.id}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<t:div style="width: 255px;">
+									<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<t:div style="width: 305px;">
+									<h:commandLink
+										action="#{manejadorAprobacionMovilidad.descargarDocumentoVisitante}"
+										value="#{archivoResumen1.nombre}" ajax="false" target="_blank"
+										style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+										<f:param name="archivoResumen1" value="#{archivoResumen1.id}" />
+									</h:commandLink>
+								</t:div>
+							</p:column>
+						</p:dataTable>
+					</t:div>
+					<p:outputPanel id="outputPanelmovisitanteDivRevisionRequisitosPr">
+						<p:dataTable var="requisitoVisitante"
+							id="movilidadVisitanteDivRevisionRequisitosPr"
+							value="#{manejadorAprobacionMovilidad.listaRequisitoAuxVerificacion}"
+							rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA'
+								and manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'SI'}"
+							style="margin-top: 20px;"
+							emptyMessage="No se han asignado requisitos">
+							<f:facet name="header">
+								<h:outputText value="Revisión de requisitos"
+									style="font-size: 12px;" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Cumplió" style="font-size: 12px;" />
+								</f:facet>
+								<t:div style="width: 100%; text-align: center;">
+									<p:selectBooleanCheckbox
+										disabled="#{not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}"
+										value="#{requisitoVisitante.cumplidoCheckbox}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Requisito" style="font-size: 12px;" />
+								</f:facet>
+								<table style="width: 350px;">
+									<tr>
+										<td style="border: 1px solid #FFFFFF;"><h:outputText
+												value="#{requisitoVisitante.requisito.nombre}" />
+										</td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="width: 270px;">
+								<f:facet name="header">
+									<h:outputText value="Observaciones" style="font-size: 12px;" />
+								</f:facet>
+								<p:inputTextarea value="#{requisitoVisitante.comentario}"
+									rendered="#{empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}"
+									rows="5" style="width: 260px;" />
+								<h:outputText value="#{requisitoVisitante.comentario}"
+									style="font-size: 12px;"
+									rendered="#{not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}" />
+							</p:column>
+						</p:dataTable>
+						<p:dataTable var="requisitoVisitante"
+							id="movilidadVisitanteDivRevisionAprobacionPr"
+							value="#{manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion}"
+							rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA' and
+							not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos
+							and manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'SI'}"
+							style="margin-top: 20px;"
+							emptyMessage="No se han asignado criterios">
+							<f:facet name="header">
+								<h:outputText value="Criterios de selección"
+									style="font-size: 12px;" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Aprobado" style="font-size: 12px;" />
+								</f:facet>
+								<t:div style="width: 100%; text-align: center;">
+									<p:selectBooleanCheckbox
+										value="#{requisitoVisitante.cumplidoCheckbox}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Criterio" style="font-size: 12px;" />
+								</f:facet>
+								<table style="width: 350px;">
+									<tr>
+										<td style="border: 1px solid #FFFFFF;"><h:outputText
+												value="#{requisitoVisitante.requisito.nombre}" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="width: 270px;">
+								<f:facet name="header">
+									<h:outputText value="Concepto" style="font-size: 12px;" />
+								</f:facet>
+								<p:inputTextarea value="#{requisitoVisitante.comentario}"
+									rows="5" style="width: 260px;" />
+							</p:column>
+						</p:dataTable>
+						<p:panel
+							rendered="#{!(manejadorAprobacionMovilidad.movilidadVisitanteModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA')}">
+							<p:dataTable var="archivoReRequisitosVE"
+								paginatorAlwaysVisible="false"
+								style="margin-top: 10px;margin-bottom: 10px;" paginator="true"
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.archivosRevisionRequisitos}"
+								emptyMessage="Aún no se ha agregado un archivo de revisión de requisitos."
+								paginatorPosition="bottom"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								rows="5">
+								<f:facet name="header">
+									<h:outputText
+										value="Archivos de revisión de requisitos facultad" />
+								</f:facet>
+								<p:column style="width: 20px: text-align: center;">
+									<f:facet name="header">
+										<h:outputText value="Id" />
+									</f:facet>
+									<t:div>
+										<h:outputText value="#{archivoReRequisitosVE.id}" />
+									</t:div>
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<t:div style="width: 255px;">
+										<h:outputText
+											value="#{archivoReRequisitosVE.tipoArchivo.nombre}" />
+									</t:div>
+								</p:column>
+	
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Archivo Cargado" />
+									</f:facet>
+									<t:div style="width: 325px;">
+										<h:commandLink
+											action="#{manejadorAprobacionMovilidad.descargarDocumentoVisitante}"
+											value="#{archivoReRequisitosVE.nombre}" ajax="false"
+											target="_blank"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+											<f:param name="archivoResumen1"
+												value="#{archivoReRequisitosVE.id}" />
+										</h:commandLink>
+									</t:div>
+								</p:column>
+							</p:dataTable>
+	
+							<a
+								href="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.convocatoria.criteriosCalificacionConv}"
+								target="_blank"
+								style="text-decoration: none; color: #16A8E2; font-weight: bold;">
+								Descargar archivo para realizar la revisión de requisitos</a>
+	
+							<p:fileUpload style="margin-top: 10px;"
+								fileUploadListener="#{manejadorAprobacionMovilidad.insertarArchivoMovilidadVE}"
+								mode="advanced" update="movilidadVisitanteDivRevision"
+								auto="true" process="movilidadVisitanteDivRevision"
+								sizeLimit="#{manejadorBase.maximoTamanoArchivos}"
+								label="Seleccionar archivo revisión de requisitos diligenciado">
+								<f:attribute name="idMovilidad"
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.id}" />
+							</p:fileUpload>
+						</p:panel>
+						<br />
+						<div style="width: 100%; text-align: center; margin-bottom: 20px;">
+							<h:outputText id="mensajeRevisionMovilidadVisitante"
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.error}"
+								style="color: #F32020; font-weight: bold;" />
+							<br />
+	
+							<!-- Botones de revisión de requisitos en lista de selección -->
+							<p:commandButton value="No cumple requisitos"
+								rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.mostrarRequisitosFacultad
+									and manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'SI'}"
+								action="#{manejadorAprobacionMovilidad.noCumpleRequisitosMovilidadVisitante}"
+								update="mensajeRevisionMovilidadVisitante"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadVisitanteSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Cumple requisitos"
+								rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.mostrarRequisitosFacultad 
+									and !empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion
+									and manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'SI'}"
+								action="#{manejadorAprobacionMovilidad.cumpleRequisitosMovilidadVisitante}"
+								update="movilidadVisitanteModalRevisionDiv"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadVisitanteSeleccionada}" />
+							</p:commandButton>
+	
+							<!-- Botones de aprobación de solicitud -->
+							<p:commandButton value="No aprobar"
+								rendered="#{(manejadorAprobacionMovilidad.movilidadVisitanteModificacion.mostrarNoAprobacionFac
+									or (empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion and !manejadorAprobacionMovilidad.movilidadVisitanteModificacion.mostrarAprobacionFacSinCriterios))
+									or manejadorAprobacionMovilidad.movilidadVisitanteModificacion.dispPresupuestal == 'NO'}"
+								action="#{manejadorAprobacionMovilidad.noAprobarMovilidadVisitante}"
+								update="mensajeRevisionMovilidadVisitante"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadVisitanteSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Aprobar"
+								rendered="#{(manejadorAprobacionMovilidad.movilidadVisitanteModificacion.mostrarAprobacionFacConCriterios
+									or (empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion and manejadorAprobacionMovilidad.movilidadVisitanteModificacion.mostrarAprobacionFacSinCriterios))}"
+								action="#{manejadorAprobacionMovilidad.aprobarMovilidadVisitante}"
+								update="mensajeRevisionMovilidadVisitante"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadVisitanteSeleccionada}" />
+							</p:commandButton>
+						</div>
+					</p:outputPanel>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Revisión de movilidad"
+				id="movilidadDocentesModalRevision"
+				widgetVar="movilidadDocentesModalRevision" modal="true"
+				resizable="false" width="800">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:660px; overflow: auto;"
+					id="movilidadDocentesDivRevisionCompleto">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 120px;">
+								<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.convocatoria.padre.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.convocatoria.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Id:" style="font-weight: bold;" />
+							</p:column>
+							<p:column style="width: 200px;">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.id}" />
+							</p:column>
+							<p:column style="width: 100px;">
+								<h:outputText value="Fecha solicitud:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.fechasolicitud}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha inicio:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.fechainicial}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha fin:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.fechafinal}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.personaInv.id.tipoDocumento} - #{manejadorAprobacionMovilidad.movilidadEventosModificacion.personaInv.id.documento}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.personaInv.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Año Vigencia: " style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:spinner id="AnioVigEventos"
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.anioVigenciaAprFacultad}"
+									min="#{manejadorAprobacionMovilidad.minYear}" size="4" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Comentarios facultad:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputTextarea forceId="true"
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.comentariosFac}"
+									maxlength="3000" rows="5" style="width: 500px;">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column colspan="3">
+								<h:commandLink
+									action="#{manejadorAprobacionMovilidad.imprimirMovilidadEvento}"
+									value="Imprimir información solicitud" target="_blank"
+									style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+									<f:setPropertyActionListener
+										value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion}"
+										target="#{manejadorAprobacionMovilidad.movilidadEventosSeleccionada}" />
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad: " style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.dependenciaMov.facultad.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="¿La facultad cuenta con recursos para aprobar esta movilidad?" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								<p:selectOneRadio id="aprMovEventos"
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal}"
+									unselectable="true">
+									<f:selectItem itemLabel="Sí" itemValue="SI" />
+									<f:selectItem itemLabel="No" itemValue="NO" />
+									<p:ajax
+										update="outputPanelmovEvemtosDivRevisionRequisitosPr movilidadDocentesDivRevisionCompleto" />
+								</p:selectOneRadio>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}">
+							<p:column>
+								<h:outputText value="Valor aporte por la facultad: "
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputText forceId="true" maxlength="10"
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.valorAprobadoFacultad}" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}">
+							<p:column>
+								<h:outputText value="" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Este valor corresponde a los aportes de la Facultad para la movilidad."
+									style="font-weight: bold;color: #FF0000" />
+							</p:column>
+						</p:row>
+
+					</p:panelGrid>
+					<t:div style="text-align:center; padding-top: 10px;"
+						id="movilidadDocentesDivRevision">
+						<p:dataTable var="archivoResumen1"
+							value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.listaArchivo}"
+							rows="5" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" paginator="true"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+							<f:facet name="header">
+								<h:outputText value="Archivos adjuntos" />
+							</f:facet>
+							<p:column style="width: 20px: text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="Id" />
+								</f:facet>
+								<t:div>
+									<h:outputText value="#{archivoResumen1.id}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<t:div style="width: 255px;">
+									<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<t:div style="width: 305px;">
+									<h:commandLink
+										action="#{manejadorAprobacionMovilidad.descargarDocumentoEvento}"
+										value="#{archivoResumen1.nombre}" ajax="false" target="_blank"
+										style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+										<f:param name="archivoResumen" value="#{archivoResumen1.id}" />
+									</h:commandLink>
+								</t:div>
+							</p:column>
+						</p:dataTable>
+					</t:div>
+					<p:outputPanel id="outputPanelmovEvemtosDivRevisionRequisitosPr">
+						<p:dataTable var="requisitoDocente"
+							rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA'
+								and manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}"
+							value="#{manejadorAprobacionMovilidad.listaRequisitoAuxVerificacion}"
+							emptyMessage="No se han asignado requisitos"
+							style="margin-top: 20px;">
+							<f:facet name="header">
+								<h:outputText value="Revisión de requisitos"
+									style="font-size: 12px;" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Cumplió" style="font-size: 12px;" />
+								</f:facet>
+								<t:div style="width: 100%; text-align: center;">
+									<p:selectBooleanCheckbox
+										disabled="#{not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}"
+										value="#{requisitoDocente.cumplidoCheckbox}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Requisito" style="font-size: 12px;" />
+								</f:facet>
+								<table style="width: 350px;">
+									<tr>
+										<td style="border: 1px solid #FFFFFF;"><h:outputText
+												value="#{requisitoDocente.requisito.nombre}" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="width: 270px;">
+								<f:facet name="header">
+									<h:outputText value="Observaciones" style="font-size: 12px;" />
+								</f:facet>
+								<p:inputTextarea value="#{requisitoDocente.comentario}" rows="5"
+									rendered="#{empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}"
+									style="width: 260px;" />
+								<h:outputText value="#{requisitoDocente.comentario}"
+									style="font-size: 12px;"
+									rendered="#{not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}" />
+							</p:column>
+						</p:dataTable>
+						<p:dataTable var="requisitoDocente"
+							rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA' 
+								and not empty manejadorAprobacionMovilidad.movilidadEventosModificacion.cumpleRequisitos
+								and manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}"
+							style="margin-top: 20px;"
+							value="#{manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion}"
+							emptyMessage="No se han asignado criterios">
+							<f:facet name="header">
+								<h:outputText value="Criterios de selección"
+									style="font-size: 12px;" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Aprobado" style="font-size: 12px;" />
+								</f:facet>
+								<t:div style="width: 100%; text-align: center;">
+									<p:selectBooleanCheckbox
+										value="#{requisitoDocente.cumplidoCheckbox}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Criterio" style="font-size: 12px;" />
+								</f:facet>
+								<table style="width: 350px;">
+									<tr>
+										<td style="border: 1px solid #FFFFFF;"><h:outputText
+												value="#{requisitoDocente.requisito.nombre}" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="width: 270px;">
+								<f:facet name="header">
+									<h:outputText value="Concepto" style="font-size: 12px;" />
+								</f:facet>
+								<p:inputTextarea value="#{requisitoDocente.comentario}" rows="5"
+									style="width: 260px;" />
+							</p:column>
+						</p:dataTable>
+						<p:panel id="panelReqDoc" header="Revisión de requisitos"
+							rendered="#{!(manejadorAprobacionMovilidad.movilidadEventosModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA')
+								and manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}">
+							<t:div style="text-align:center; padding-top: 10px;"
+								id="movilidadDocentesDivRevisionReaArchivo">
+								<p:dataTable var="archivoReRequisitosDE"
+									style="margin-top: 10px;margin-bottom: 10px;" paginator="true"
+									paginatorAlwaysVisible="false"
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.archivosRevisionRequisitos}"
+									emptyMessage="Aún no se ha agregado un archivo de revisión de requisitos."
+									paginatorPosition="bottom"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									rows="5">
+									<f:facet name="header">
+										<h:outputText
+											value="Archivos de revisión de requisitos facultad" />
+									</f:facet>
+									<p:column style="width: 20px: text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Id" />
+										</f:facet>
+										<t:div>
+											<h:outputText value="#{archivoReRequisitosDE.id}" />
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Tipo" />
+										</f:facet>
+										<t:div style="width: 255px;">
+											<h:outputText
+												value="#{archivoReRequisitosDE.tipoArchivo.nombre}" />
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Archivo Cargado" />
+										</f:facet>
+										<t:div style="width: 305px;">
+											<h:commandLink
+												action="#{manejadorAprobacionMovilidad.descargarDocumentoEvento}"
+												value="#{archivoReRequisitosDE.nombre}" ajax="false"
+												target="_blank"
+												style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+												<f:param name="archivoResumen"
+													value="#{archivoReRequisitosDE.id}" />
+											</h:commandLink>
+										</t:div>
+									</p:column>
+								</p:dataTable>
+								<a
+									href="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.convocatoria.criteriosCalificacionConv}"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">
+									Descargar archivo para realizar la revisión de requisitos</a>
+								<p:fileUpload style="margin-top: 10px;"
+									fileUploadListener="#{manejadorAprobacionMovilidad.insertarArchivoMovilidadDE}"
+									mode="advanced" update="movilidadDocentesDivRevision"
+									auto="true" process="movilidadDocentesDivRevision"
+									sizeLimit="#{manejadorBase.maximoTamanoArchivos}"
+									label="Seleccionar archivo revisión de requisitos diligenciado">
+									<f:attribute name="idMovilidad"
+										value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.id}" />
+								</p:fileUpload>
+							</t:div>
+						</p:panel>
+						<br />
+						<div style="width: 100%; text-align: center; margin-bottom: 20px;">
+							<h:outputText id="mensajeRevisionMovilidadEvento"
+								value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.error}"
+								style="color: #F32020; font-weight: bold;" />
+							<br />
+
+							<!-- Botones de revisión de requisitos en lista de selección -->
+							<p:commandButton value="No cumple requisitos"
+								rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.mostrarRequisitosFacultad
+									and manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}"
+								action="#{manejadorAprobacionMovilidad.noCumpleRequisitosMovilidadEventos}"
+								update="mensajeRevisionMovilidadEvento"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEventosSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Cumple requisitos"
+								rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.mostrarRequisitosFacultad
+									and !empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion
+									and manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}"
+								action="#{manejadorAprobacionMovilidad.cumpleRequisitosMovilidadEventos}"
+								update="movilidadDocentesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEventosSeleccionada}" />
+							</p:commandButton>
+
+							<!-- Botones de aprobación de solicitud -->
+							<p:commandButton value="No aprobar"
+								action="#{manejadorAprobacionMovilidad.noAprobarMovilidadEvento}"
+								update="movilidadDocentesDivRevisionCompleto"
+								rendered="#{(manejadorAprobacionMovilidad.movilidadEventosModificacion.mostrarNoAprobacionFac
+									or (empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion and !manejadorAprobacionMovilidad.movilidadEventosModificacion.mostrarAprobacionFacSinCriterios))
+									or manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'NO'}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEventosSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Aprobar"
+								action="#{manejadorAprobacionMovilidad.aprobarMovilidadEventos}"
+								rendered="#{(manejadorAprobacionMovilidad.movilidadEventosModificacion.mostrarAprobacionFacConCriterios 
+									or (empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion and manejadorAprobacionMovilidad.movilidadEventosModificacion.mostrarAprobacionFacSinCriterios))
+									and manejadorAprobacionMovilidad.movilidadEventosModificacion.dispPresupuestal == 'SI'}"
+								update="movilidadDocentesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEventosSeleccionada}" />
+							</p:commandButton>
+							<p:panel
+								rendered="#{!manejadorAprobacionMovilidad.movilidadEventosModificacion.esFechaValidaAprobacion}">
+								<t:div style="color:#464646; text-align:justify;">
+								Tenga en cuenta que no aparece la opción de aprobar, porque la fecha de inicio de la movilidad ya pasó y no puede ser anterior a la fecha de aprobación. Esto se considera un hecho cumplido.
+								</t:div>
+							</p:panel>
+						</div>
+					</p:outputPanel>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Revisión de movilidad"
+				id="movilidadEstudiantesModalRevision"
+				widgetVar="movilidadEstudiantesModalRevision" modal="true"
+				resizable="false" width="800">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:660px; overflow: auto;"
+					id="movilidadEstudiantesDivRevisionCompleto">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 120px;">
+								<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.convocatoria.padre.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.convocatoria.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Id:" style="font-weight: bold;" />
+							</p:column>
+							<p:column style="width: 200px;">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.id}" />
+							</p:column>
+							<p:column style="width: 100px;">
+								<h:outputText value="Fecha solicitud:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.fechasolicitud}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha inicio:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.fechainicial}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha fin:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.fechafinal}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.personaInv.id.tipoDocumento} - #{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.personaInv.id.documento}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.personaInv.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Año Vigencia: "
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:spinner id="AnioVigEstudiantes" value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.anioVigenciaAprFacultad}"
+									min="#{manejadorAprobacionMovilidad.minYear}" size="4"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Comentarios facultad:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputTextarea forceId="true"
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.comentariosFac}"
+									maxlength="3000" rows="5" style="width: 500px;">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column colspan="3">
+								<h:commandLink
+									action="#{manejadorAprobacionMovilidad.imprimirMovilidadPosgrado}"
+									value="Imprimir información solicitud" target="_blank"
+									style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+									<f:setPropertyActionListener
+										value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion}"
+										target="#{manejadorAprobacionMovilidad.movilidadEstudiantesSeleccionada}" />
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad: " style="font-weight: bold;"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{manejadorAprobacionMovilidad.dependenciaMov.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								<h:outputText value="¿La facultad cuenta con recursos para aprobar esta movilidad?" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								 <p:selectOneRadio id="aprMovEstudiantes" value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal}" unselectable="true">
+						            <f:selectItem itemLabel="Sí" itemValue="SI" />
+						            <f:selectItem itemLabel="No" itemValue="NO" />
+						            <p:ajax update="outputPanelmoEstudiantesDivRevisionRequisitosPr movilidadEstudiantesDivRevisionCompleto"/>
+						        </p:selectOneRadio>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal == 'SI'}">
+							<p:column>
+								<h:outputText value="Valor aporte por la facultad: "
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputText forceId="true" maxlength="10"
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.valorAprobadoFacultad}" />
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal == 'SI'}">
+							<p:column>
+								<h:outputText value=""/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Este valor corresponde a los aportes de la Facultad para la movilidad." style="font-weight: bold;color: #FF0000"/>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<t:div style="text-align:center; padding-top: 10px;"
+						id="movilidadEstudianteDivRevision">
+						<p:dataTable var="archivoResumen1"
+							value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.listaArchivo}"
+							rows="5" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" paginator="true"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+							<f:facet name="header">
+								<h:outputText value="Archivos adjuntos" />
+							</f:facet>
+							<p:column style="width: 20px: text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="Id" />
+								</f:facet>
+								<t:div>
+									<h:outputText value="#{archivoResumen1.id}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<t:div style="width: 255px;">
+									<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<t:div style="width: 305px;">
+									<h:commandLink
+										action="#{manejadorAprobacionMovilidad.descargarDocumentoEstPosgrado}"
+										value="#{archivoResumen1.nombre}" ajax="false" target="_blank"
+										style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+										<f:param name="archivoResumen4" value="#{archivoResumen1.id}" />
+									</h:commandLink>
+								</t:div>
+							</p:column>
+						</p:dataTable>
+					</t:div>
+					<p:outputPanel id="outputPanelmoEstudiantesDivRevisionRequisitosPr">
+						<p:dataTable var="requisitoEstudiante"
+							value="#{manejadorAprobacionMovilidad.listaRequisitoAuxVerificacion}"
+							rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA'
+								and manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal == 'SI'}"
+							emptyMessage="No se han asignado requisitos"
+							style="margin-top: 20px;">
+							<f:facet name="header">
+								<h:outputText value="Revisión de requisitos"
+									style="font-size: 12px;" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Cumplió" style="font-size: 12px;" />
+								</f:facet>
+								<t:div style="width: 100%; text-align: center;">
+									<p:selectBooleanCheckbox
+										value="#{requisitoEstudiante.cumplidoCheckbox}"
+										disabled="#{not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Requisito" style="font-size: 12px;" />
+								</f:facet>
+								<table style="width: 350px;">
+									<tr>
+										<td style="border: 1px solid #FFFFFF;"><h:outputText
+												value="#{requisitoEstudiante.requisito.nombre}" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="width: 270px;">
+								<f:facet name="header">
+									<h:outputText value="Observaciones" style="font-size: 12px;" />
+								</f:facet>
+								<p:inputTextarea value="#{requisitoEstudiante.comentario}"
+									rows="5"
+									rendered="#{empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}"
+									style="width: 260px;" />
+								<h:outputText value="#{requisitoEstudiante.comentario}"
+									style="font-size: 12px;"
+									rendered="#{not empty manejadorAprobacionMovilidad.movilidadVisitanteModificacion.cumpleRequisitos}" />
+							</p:column>
+						</p:dataTable>
+						<p:dataTable var="requisitoEstudiante"
+							value="#{manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion}"
+							rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA' and
+							not empty manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.cumpleRequisitos}"
+							style="margin-top: 20px;"
+							emptyMessage="No se han asignado criterios">
+							<f:facet name="header">
+								<h:outputText value="Criterios de seleccion"
+									style="font-size: 12px;" />
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Aprobado" style="font-size: 12px;" />
+								</f:facet>
+								<t:div style="width: 100%; text-align: center;">
+									<p:selectBooleanCheckbox
+										value="#{requisitoEstudiante.cumplidoCheckbox}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Criterio" style="font-size: 12px;" />
+								</f:facet>
+								<table style="width: 350px;">
+									<tr>
+										<td style="border: 1px solid #FFFFFF;"><h:outputText
+												value="#{requisitoEstudiante.requisito.nombre}" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="width: 270px;">
+								<f:facet name="header">
+									<h:outputText value="Concepto" style="font-size: 12px;" />
+								</f:facet>
+								<p:inputTextarea value="#{requisitoEstudiante.comentario}"
+									rows="5" style="width: 260px;" />
+							</p:column>
+						</p:dataTable>
+						<p:panel id="panelReqEst" header="Revisión de requisitos"
+							rendered="#{!(manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA')}">
+							<t:div style="text-align:center; padding-top: 10px;"
+								id="movilidadEstDivRevisionReaArchivo">
+								<p:dataTable var="archivoReRequisitosEP"
+									style="margin-top: 10px;margin-bottom: 10px;" paginator="true"
+									paginatorAlwaysVisible="false"
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.archivosRevisionRequisitos}"
+									emptyMessage="Aún no se ha agregado un archivo de revisión de requisitos."
+									paginatorPosition="bottom"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									rows="5">
+									<f:facet name="header">
+										<h:outputText
+											value="Archivos de revisión de requisitos facultad" />
+									</f:facet>
+									<p:column style="width: 20px: text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Id" />
+										</f:facet>
+										<t:div>
+											<h:outputText value="#{archivoReRequisitosEP.id}" />
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Tipo" />
+										</f:facet>
+										<t:div style="width: 255px;">
+											<h:outputText
+												value="#{archivoReRequisitosEP.tipoArchivo.nombre}" />
+										</t:div>
+									</p:column>
+	
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Archivo Cargado" />
+										</f:facet>
+										<t:div style="width: 305px;">
+											<h:commandLink
+												action="#{manejadorAprobacionMovilidad.descargarDocumentoEstPosgrado}"
+												value="#{archivoReRequisitosEP.nombre}" ajax="false"
+												target="_blank"
+												style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+												<f:param name="archivoResumen4"
+													value="#{archivoReRequisitosEP.id}" />
+											</h:commandLink>
+										</t:div>
+									</p:column>
+								</p:dataTable>
+								<a
+									href="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.convocatoria.criteriosCalificacionConv}"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">
+									Descargar archivo para realizar la revisión de requisitos</a>
+								<p:fileUpload style="margin-top: 10px;"
+									fileUploadListener="#{manejadorAprobacionMovilidad.insertarArchivoMovilidadEP}"
+									mode="advanced" update="movilidadEstudianteDivRevision"
+									auto="true" process="movilidadEstudianteDivRevision"
+									sizeLimit="#{manejadorBase.maximoTamanoArchivos}"
+									label="Seleccionar archivo revisión de requisitos diligenciado">
+									<f:attribute name="idMovilidad"
+										value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.id}" />
+								</p:fileUpload>
+							</t:div>
+						</p:panel>
+						<br />
+						<div style="width: 100%; text-align: center; margin-bottom: 20px;">
+							<h:outputText id="mensajeRevisionMovilidadEstudiante"
+								value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.error}"
+								style="color: #F32020; font-weight: bold;" />
+							<br />
+	
+							<!-- Botones de revisión de requisitos en lista de selección -->
+							<p:commandButton value="No cumple requisitos"
+								rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.mostrarRequisitosFacultad
+									and manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal == 'SI'}"
+								action="#{manejadorAprobacionMovilidad.noCumpleRequisitosMovilidadEstudiantes}"
+								update="mensajeRevisionMovilidadEstudiante"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Cumple requisitos"
+								rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.mostrarRequisitosFacultad 
+									and !empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion
+									and manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal == 'SI'}"
+								action="#{manejadorAprobacionMovilidad.cumpleRequisitosMovilidadEstudiantes}"
+								update="movilidadEstudiantesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+	
+							<!-- Botones de aprobación de solicitud -->
+							<p:commandButton value="No aprobar"
+								rendered="#{(manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.mostrarNoAprobacionFac
+									or (empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion and !manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.mostrarAprobacionFacSinCriterios))
+									or manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.dispPresupuestal == 'NO'}"
+								action="#{manejadorAprobacionMovilidad.noAprobarMovilidadPosgrado}"
+								update="movilidadEstudiantesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Aprobar"
+								rendered="#{(manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.mostrarAprobacionFacConCriterios 
+									or (empty manejadorAprobacionMovilidad.listaRequisitoAuxSeleccion and manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.mostrarAprobacionFacSinCriterios))}"
+								action="#{manejadorAprobacionMovilidad.aprobarMovilidadPosgrado}"
+								update="movilidadEstudiantesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEstudiantesSeleccionada}" />
+							</p:commandButton>
+						</div>
+					</p:outputPanel>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Revisión de movilidad docentes artes"
+				id="movilidadDocentesArtesModalRevision"
+				widgetVar="movilidadDocentesArtesModalRevision" modal="true"
+				resizable="false" width="750">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:660px; overflow: auto;"
+					id="movilidadDocentesArtesDivRevisionCompleto">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 120px;">
+								<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.convocatoria.padre.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.convocatoria.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Id:" style="font-weight: bold;" />
+							</p:column>
+							<p:column style="width: 200px;">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.id}" />
+							</p:column>
+							<p:column style="width: 100px;">
+								<h:outputText value="Fecha solicitud:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.fechasolicitud}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha inicio:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.fechainicial}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha fin:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.fechafinal}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.personaInv.id.tipoDocumento} - #{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.personaInv.id.documento}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.personaInv.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Comentarios facultad:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputTextarea forceId="true"
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.descripcionFacultad}"
+									maxlength="3000" rows="5" style="width: 500px;">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column colspan="3">
+								<h:commandLink
+									action="#{manejadorAprobacionMovilidad.imprimirMovilidadDocenteArtes}"
+									value="Imprimir información solicitud" target="_blank"
+									style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+									<f:setPropertyActionListener
+										value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion}"
+										target="#{manejadorAprobacionMovilidad.movilidadDocenteArtesSeleccionada}" />
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad: " style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{manejadorAprobacionMovilidad.dependenciaMov.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								<h:outputText value="¿La facultad cuenta con recursos para aprobar esta movilidad?" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								 <p:selectOneRadio id="aprMovVisitante" value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.dispPresupuestal}" unselectable="true">
+						            <f:selectItem itemLabel="Sí" itemValue="SI" />
+						            <f:selectItem itemLabel="No" itemValue="NO" />
+						            <p:ajax update="outputPanelmovDocentesArtesDivRevisionRequisitosPr"/>
+						        </p:selectOneRadio>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<t:div style="text-align:center; padding-top: 10px;"
+						id="movilidadDocentesArtesDivRevision">
+						<p:dataTable var="archivoResumen1"
+							value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.listaArchivo}"
+							rows="5" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" paginator="true"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+							<f:facet name="header">
+								<h:outputText value="Archivos adjuntos" />
+							</f:facet>
+							<p:column style="width: 20px: text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="Id" />
+								</f:facet>
+								<t:div>
+									<h:outputText value="#{archivoResumen1.id}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<t:div style="width: 255px;">
+									<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<t:div style="width: 305px;">
+									<h:commandLink
+										action="#{manejadorAprobacionMovilidad.descargarDocumentoDocenArtes}"
+										value="#{archivoResumen1.nombre}" ajax="false" target="_blank"
+										style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+										<f:param name="archivoResumen6" value="#{archivoResumen1.id}" />
+									</h:commandLink>
+								</t:div>
+							</p:column>
+						</p:dataTable>
+					</t:div>
+					<br />
+					<p:outputPanel id="outputPanelmovDocentesArtesDivRevisionRequisitosPr">
+						<p:panel id="panelReqDocArt" header="Revisión de requisitos">
+							<t:div style="text-align:center; padding-top: 10px;"
+								id="movilidadDocentesArtesDivRevisionRequisitosPr"
+								rendered="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA'
+									and manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.dispPresupuestal == 'SI'}">
+								<p:dataTable var="requisito3"
+									value="#{manejadorAprobacionMovilidad.listaRequisitoAuxVerificacion}"
+									emptyMessage="No se han asignado requisitos">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Cumplió" style="font-size: 12px;" />
+										</f:facet>
+										<t:div style="width: 100%; text-align: center;">
+											<p:selectBooleanCheckbox
+												value="#{requisito3.cumplidoCheckbox}">
+											</p:selectBooleanCheckbox>
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Requisito" style="font-size: 12px;" />
+										</f:facet>
+										<table style="width: 230px;">
+											<tr>
+												<td style="border: 1px solid #FFFFFF;"><h:outputText
+														value="#{requisito3.requisito.nombre}" /></td>
+											</tr>
+										</table>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Observaciones" style="font-size: 12px;" />
+										</f:facet>
+										<p:inputTextarea value="#{requisito3.comentario}" rows="5"
+											cols="40" />
+									</p:column>
+								</p:dataTable>
+							</t:div>
+	
+							<t:div style="text-align:center; padding-top: 10px;"
+								id="movilidadDocentesArtesDivRevisionReaArchivo"
+								rendered="#{!(manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA')}">
+	
+								<p:dataTable var="archivoReRequisitosDA"
+									style="margin-top: 10px;margin-bottom: 10px;" paginator="true"
+									paginatorAlwaysVisible="false"
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.archivosRevisionRequisitos}"
+									emptyMessage="Aún no se ha agregado un archivo de revisión de requisitos."
+									paginatorPosition="bottom"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									rows="5">
+									<f:facet name="header">
+										<h:outputText
+											value="Archivos de revisión de requisitos facultad" />
+									</f:facet>
+									<p:column style="width: 20px: text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Id" />
+										</f:facet>
+										<t:div>
+											<h:outputText value="#{archivoReRequisitosDA.id}" />
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Tipo" />
+										</f:facet>
+										<t:div style="width: 255px;">
+											<h:outputText
+												value="#{archivoReRequisitosDA.tipoArchivo.nombre}" />
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Archivo Cargado" />
+										</f:facet>
+										<t:div style="width: 305px;">
+											<h:commandLink
+												action="#{manejadorAprobacionMovilidad.descargarDocumentoDocenArtes}"
+												value="#{archivoReRequisitosDA.nombre}" ajax="false"
+												target="_blank"
+												style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+												<f:param name="archivoResumen6"
+													value="#{archivoReRequisitosDA.id}" />
+											</h:commandLink>
+										</t:div>
+									</p:column>
+								</p:dataTable>
+								<a
+									href="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.convocatoria.criteriosCalificacionConv}"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">
+									Descargar archivo para realizar la revisión de requisitos </a>
+								<p:fileUpload style="margin-top: 10px;"
+									fileUploadListener="#{manejadorAprobacionMovilidad.insertarArchivoMovilidadDA}"
+									mode="advanced" update="movilidadDocentesArtesDivRevision"
+									auto="true" process="movilidadDocentesArtesDivRevision"
+									sizeLimit="#{manejadorBase.maximoTamanoArchivos}"
+									label="Seleccionar archivo revisión de requisitos diligenciado">
+									<f:attribute name="idMovilidad"
+										value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.id}" />
+								</p:fileUpload>
+							</t:div>
+						</p:panel>
+						<br />
+						<div
+							style="width: 100%; text-align: center; margin-top: 10px; margin-bottom: 20px;">
+							<p:commandButton value="No aprobar"
+								action="#{manejadorAprobacionMovilidad.noAprobarMovilidadDocenteArtes}"
+								update="movilidadDocentesArtesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								rendered="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.dispPresupuestal == 'NO'}">
+								<f:param name="idMovilidad"
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.id}" />
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadDocenteArtesSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Aprobar"
+								action="#{manejadorAprobacionMovilidad.aprobarMovilidadDocenteArtes}"
+								update="movilidadDocentesArtesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:param name="idMovilidad"
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion.id}" />
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadDocentesArtesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadDocenteArtesSeleccionada}" />
+							</p:commandButton>
+						</div>
+					</p:outputPanel>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Revisión de movilidad estudiantes artes"
+				id="movilidadEstudiantesArtesModalRevision"
+				widgetVar="movilidadEstudiantesArtesModalRevision" modal="true"
+				resizable="false" width="700">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:660px; overflow: auto;"
+					id="movilidadEstudiantesArtesDivRevisionCompleto">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 120px;">
+								<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.convocatoria.padre.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.convocatoria.titulo}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Id:" style="font-weight: bold;" />
+							</p:column>
+							<p:column style="width: 200px;">
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.id}" />
+							</p:column>
+							<p:column style="width: 100px;">
+								<h:outputText value="Fecha solicitud:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.fechasolicitud}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha inicio:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.fechainicial}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha fin:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.fechafinal}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.personaInv.id.tipoDocumento} - #{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.personaInv.id.documento}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.personaInv.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Comentarios facultad:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column colspan="3">
+								<p:inputTextarea forceId="true"
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.descripcionFacultad}"
+									maxlength="3000" rows="5" style="width: 500px;">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column colspan="3">
+								<h:commandLink
+									action="#{manejadorAprobacionMovilidad.imprimirMovilidadEstudiantesArtes}"
+									value="Imprimir información solicitud" target="_blank"
+									style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+									<f:setPropertyActionListener
+										value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion}"
+										target="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesSeleccionada}" />
+								</h:commandLink>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad: " style="font-weight: bold;"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{manejadorAprobacionMovilidad.dependenciaMov.facultad.nombre}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								<h:outputText value="¿La facultad cuenta con recursos para aprobar esta movilidad?" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+								 <p:selectOneRadio id="aprMovVisitante" value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.dispPresupuestal}" unselectable="true">
+						            <f:selectItem itemLabel="Sí" itemValue="SI" />
+						            <f:selectItem itemLabel="No" itemValue="NO" />
+						            <p:ajax update="outputPanelmovEstudiantesArtesDivRevisionRequisitosPr"/>
+						        </p:selectOneRadio>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<t:div style="text-align:center; padding-top: 10px;"
+						id="movilidadDocentesArtesDivRevision">
+						<p:dataTable var="archivoResumen1"
+							value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.listaArchivo}"
+							rows="5" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" paginator="true"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+							<f:facet name="header">
+								<h:outputText value="Archivos adjuntos" />
+							</f:facet>
+							<p:column style="width: 20px: text-align: center;">
+								<f:facet name="header">
+									<h:outputText value="Id" />
+								</f:facet>
+								<t:div>
+									<h:outputText value="#{archivoResumen1.id}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo" />
+								</f:facet>
+								<t:div style="width: 255px;">
+									<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+								</t:div>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<t:div style="width: 305px;">
+									<h:commandLink
+										action="#{manejadorAprobacionMovilidad.descargarDocumentoEstudiante}"
+										value="#{archivoResumen1.nombre}" ajax="false" target="_blank"
+										style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+										<f:param name="archivoResumen1" value="#{archivoResumen1.id}" />
+										<f:setPropertyActionListener
+											value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion}"
+											target="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesSeleccionada}" />
+									</h:commandLink>
+								</t:div>
+							</p:column>
+						</p:dataTable>
+					</t:div>
+					<br />
+					<p:outputPanel id="outputPanelmovEstudiantesArtesDivRevisionRequisitosPr">
+						<p:panel id="panelReqEstArt" header="Revisión de requisitos">
+							<t:div style="text-align:center; padding-top: 10px;"
+								id="movilidadEstudianteArtesDivRevisionRequisitosPr"
+								rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.convocatoria.criteriosCalificacionConv == 'CONFIGURADO_SISTEMA'
+									and manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.dispPresupuestal == 'SI'}">
+								<p:dataTable var="requisito3"
+									value="#{manejadorAprobacionMovilidad.listaRequisitoAuxVerificacion}"
+									emptyMessage="No se han asignado requisitos">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Cumplió" style="font-size: 12px;" />
+										</f:facet>
+										<t:div style="width: 100%; text-align: center;">
+											<p:selectBooleanCheckbox
+												value="#{requisito3.cumplidoCheckbox}">
+											</p:selectBooleanCheckbox>
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Requisito" style="font-size: 12px;" />
+										</f:facet>
+										<table style="width: 230px;">
+											<tr>
+												<td style="border: 1px solid #FFFFFF;"><h:outputText
+														value="#{requisito3.requisito.nombre}" /></td>
+											</tr>
+										</table>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Observaciones" style="font-size: 12px;" />
+										</f:facet>
+										<p:inputTextarea value="#{requisito3.comentario}" rows="5"
+											cols="40" />
+									</p:column>
+								</p:dataTable>
+							</t:div>
+						</p:panel>
+						<br />
+						<div
+							style="width: 100%; text-align: center; margin-top: 10px; margin-bottom: 20px;">
+							<p:commandButton value="No aprobar"
+								action="#{manejadorAprobacionMovilidad.noAprobarMovilidadEstudiantesArtes}"
+								update="movilidadEstudiantesArtesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.dispPresupuestal == 'NO'}">
+								<f:param name="idMovilidad"
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.id}" />
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Aprobar"
+								action="#{manejadorAprobacionMovilidad.aprobarMovilidadEstudiantesArtes}"
+								update="movilidadEstudiantesArtesDivRevisionCompleto"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:param name="idMovilidad"
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion.id}" />
+								<f:setPropertyActionListener
+									value="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesModificacion}"
+									target="#{manejadorAprobacionMovilidad.movilidadEstudiantesArtesSeleccionada}" />
+							</p:commandButton>
+						</div>
+					</p:outputPanel>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Actualizar información de movilidad de visitantes"
+				id="movilidadVisitanteModalid" widgetVar="movilidadVisitanteModal"
+				modal="true" resizable="false" width="450">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="movilidadVisitanteModalPanelGrid"
+					rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion != null}"
+					style="width: 100%;">
+					<p:row>
+						<p:column colspan="2">
+							<p:messages id="msgsVisitantes" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="width:100%" styleClass="mypanel">
+								<h:outputText style="font-size:11px"
+									value="Al modificar la información usted se hace responsable del 
+									cambio de los montos y las fechas, de acuerdo a los términos de 
+									referencia de la convocatoria" />
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Id:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Valor del tiquete (pesos colombianos):"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" label="Valor tiquetes"
+								maxlength="8"
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.costotiquete}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Gastos de estadía diarios (pesos colombianos):"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;"
+								label="Gastos de estadia diarios" maxlength="8"
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.monto}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Número de días a financiar por concepto de gastos de estadía:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 50px;"
+								label="Número de días a financiar por concepto de gastos de estadía"
+								maxlength="8"
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.numerodias}">
+							</p:inputText>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.movilidadTipo eq 'V'}">
+						<p:column>
+							<h:outputText
+								value="Estímulo Para modalidad virtual:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;"
+								label="Estímulo Para modalidad virtual"
+								maxlength="8"
+								value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.costoEstimuloVirtual}">
+							</p:inputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Fecha inicio:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:calendar value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.fechainicial}"
+								locale="es" 
+								pattern="dd/MM/yyyy" 
+								navigator="true"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Fecha fin:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:calendar value="#{manejadorAprobacionMovilidad.movilidadVisitanteModificacion.fechafinal}"
+								locale="es" 
+								pattern="dd/MM/yyyy" 
+								navigator="true"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align: center;">
+							<p:commandButton value="Actualizar información"
+								action="#{manejadorAprobacionMovilidad.guardarMovilidadVisitante}"
+								update="movilidadVisitanteModalPanelGrid"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Actualizar información de movilidad de docentes"
+				id="movilidadDocenteModal" widgetVar="movilidadDocenteModal"
+				modal="true" resizable="false" width="450">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="movilidadDocenteModalPanelGrid"
+					rendered="#{manejadorAprobacionMovilidad.movilidadEventosModificacion != null}"
+					style="width: 100%;">
+					<p:row>
+						<p:column colspan="2">
+							<p:messages id="msgsDocentes" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="width:100%" styleClass="mypanel">
+								<h:outputText style="font-size:11px"
+									value="Al modificar la información usted se hace responsable del 
+									cambio de los montos y las fechas, de acuerdo a los términos de 
+									referencia de la convocatoria" />
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Id:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Valor del tiquete/pasaje en pesos colombianos:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" maxlength="8"
+								label="Valor del tiquete/pasaje"
+								value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.costotiquete}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Valor de la inscripción al evento en pesos colombianos:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" maxlength="8"
+								label="Valor de la inscripción al evento"
+								value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.costoevento}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Valor de viaticos y gastos de viaje en pesos colombianos:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" maxlength="8"
+								label="Valor de viaticos y gastos de viaje"
+								value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.valorViaticos}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Fecha inicio:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:calendar value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.fechainicial}"
+								locale="es" 
+								pattern="dd/MM/yyyy" 
+								navigator="true"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Fecha fin:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:calendar value="#{manejadorAprobacionMovilidad.movilidadEventosModificacion.fechafinal}"
+								locale="es" 
+								pattern="dd/MM/yyyy" 
+								navigator="true"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align: center;">
+							<p:commandButton value="Actualizar información"
+								action="#{manejadorAprobacionMovilidad.guardarMovilidadDocentes}"
+								update="movilidadDocenteModalPanelGrid"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Actualizar información de movilidad de estudiantes a eventos"
+				id="movilidadEstudiantesEventos"
+				widgetVar="movilidadEstudiantesEventos" modal="true"
+				resizable="false" width="450">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="movilidadEstudiantesModalPanelGrid"
+					rendered="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion != null}"
+					style="width: 100%;">
+					<p:row>
+						<p:column colspan="2">
+							<p:messages id="msgsEstudiantes" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="width:100%" styleClass="mypanel">
+								<h:outputText style="font-size:11px"
+									value="Al modificar la información usted se hace responsable del 
+									cambio de los montos y las fechas, de acuerdo a los términos de 
+									referencia de la convocatoria" />
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Id:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Valor del tiquete en pesos colombianos:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" maxlength="8"
+								label="Valor del tiquete"
+								value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.costotiquete}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Valor de la inscripción al evento en pesos colombianos:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" maxlength="8"
+								label="Valor de la inscripción al evento"
+								value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.costoevento}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Valor de viaticos y gastos de viaje en pesos colombianos:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:inputText style="width: 100px;" maxlength="8"
+								label="Valor de viaticos y gastos de viaje"
+								value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.valorViaticos}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Fecha inicio:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:calendar value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.fechainicial}"
+								locale="es" 
+								pattern="dd/MM/yyyy" 
+								navigator="true"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Fecha fin:"
+								style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<p:calendar value="#{manejadorAprobacionMovilidad.movilidadEstudiantesModificacion.fechafinal}"
+								locale="es" 
+								pattern="dd/MM/yyyy" 
+								navigator="true"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align: center;">
+							<p:commandButton value="Actualizar información"
+								action="#{manejadorAprobacionMovilidad.guardarMovilidadEstudiantes}"
+								update="movilidadEstudiantesModalPanelGrid"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

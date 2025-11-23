@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue" rendered="#{manejadorAutenticacion.esConsulta}">
+			<t:div styleClass="contenido-titulo-general-no-border">Consulta proyectos<br/></t:div>
+			En esta sección puede realizar la consulta de información en el sistema.<br />
+			Por favor tener en cuenta el <a href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=10" target="_blank" style="color: #16A8E2;font-weight: bold;">instructivo</a> 
+			para el rol de Consulta.
+		</t:div>
+		<t:div rendered="#{!manejadorAutenticacion.esConsulta}" styleClass="contenido-titulo-general-myriad" >Consulta proyectos</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<p:panel id="panelConsultaProyectos">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="margin: auto; padding-top: 10px; ">
+					<p:outputLabel for="idProyecto" value="Código del proyecto:" />
+					<p:inputText id="idProyecto" style="width: 100px;" 
+						value="#{manejadorProyectosConvocatoria.idProyecto}" size="7">
+						<f:validateDoubleRange minimum="0" maximum="100000" />
+						<f:validateLength maximum="7" />
+					</p:inputText>
+					<h:outputText value="Documento del investigador:" />
+					<p:inputText id="documento"
+						value="#{manejadorProyectosConvocatoria.documentoInvestigador}"
+						style="width: 200px;" />
+					<h:outputText value="Nombre del investigador:" />
+					<p:inputText id="nombreInvestigador"
+						value="#{manejadorProyectosConvocatoria.nombreInvestigador}"
+						style="width: 300px;" />
+					<h:outputText value="Apellido del investigador:" />
+					<p:inputText id="apellidoInvestigador"
+						value="#{manejadorProyectosConvocatoria.apellidoInvestigador}"
+						style="width: 300px;"  />
+						<h:outputText
+						value="¿Aplicar BÚSQUEDA EXACTA para el nombre del investigador?:" />
+					<p:selectBooleanCheckbox
+						value="#{manejadorProyectosConvocatoria.busquedaExactaInv}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="Nombre del proyecto:" />
+					<p:inputText id="proyecto"
+						value="#{manejadorProyectosConvocatoria.nombreProyecto}"
+						style="width: 300px;" />
+						<h:outputText
+						value="¿Aplicar BÚSQUEDA EXACTA para el nombre del proyecto?:" />
+					<p:selectBooleanCheckbox
+						value="#{manejadorProyectosConvocatoria.busquedaExactaPry}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="Código QUIPU:" />
+					<p:inputText id="codigoQuipu"
+						value="#{manejadorProyectosConvocatoria.codigoQuipu}"
+						style="width: 200px;" />
+					
+				</p:panelGrid>
+				<div style="width: 100%; text-align: center; padding-bottom: 10px;">
+					<p:commandButton update="@form" 
+						action="#{manejadorProyectosConvocatoria.buscarProyectos}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						value="Buscar" icon="ui-icon-search"/>
+				</div>
+			</p:panel>
+			<p:panel  style="margin-top: 20px; text-align: center;" rendered="#{!manejadorProyectosConvocatoria.mostrarProyectos
+				&amp;&amp; manejadorProyectosConvocatoria.noPrimerBusqueda}">
+				No se han encontrado proyectos
+			</p:panel>
+			<t:div rendered="#{manejadorProyectosConvocatoria.mostrarProyectos}" style="text-align:right; padding-top: 20px; font-weight:bold; color: #16A8E2;">
+				<h:commandLink value="Descargar reporte" action="#{manejadorProyectosConvocatoria.imprimirReporteProyectos}" style="color: #16A8E2;"/>
+			</t:div>
+			<p:dataTable var="proyectoInvestigador" id="tabla1" value="#{manejadorProyectosConvocatoria.listaProyectosVista}"
+				rendered="#{manejadorProyectosConvocatoria.mostrarProyectos}"
+				paginator="true" paginatorPosition="bottom" paginatorAlwaysVisible="false" rows="5" style="padding-top: 10px;"
+				styleClass="estilo-dataTable-sinbordes" >
+				<p:column >
+					<f:facet name="header" >
+						<h:outputText value="Proyectos encontrados" />
+					</f:facet>
+					<div class="panelgrid-interno-sinbordes">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" >
+
+							<h:outputText value="Convocatoria:" style="font-weight: bold;"/>
+							<t:div  style="padding: 2px; padding-left: 10px; width: 550px;">
+								<h:outputText
+								value=" #{proyectoInvestigador.nombreConvocatoriaPadre}"/>
+							</t:div>
+							
+							<h:outputText value="Modalidad:"  style="font-weight: bold;"/>
+							<t:div  style="padding: 2px; padding-left: 10px;">
+								<h:outputText value="#{proyectoInvestigador.nombreModalidad}" />
+							</t:div>									
+
+							<h:outputText value="Título:"  style="font-weight: bold;"/>
+							<t:div  style="padding: 2px; padding-left: 10px;">
+								<h:outputText value="#{proyectoInvestigador.nombre}" />
+							</t:div>
+
+							<h:outputText value="Código Hermes:"  style="font-weight: bold;"/>
+							<t:div  style="padding: 2px; padding-left: 10px;">
+								<h:outputText value="#{proyectoInvestigador.id}" />
+							</t:div>
+
+							<h:outputText value="Código Quipu:"   style="font-weight: bold;"
+								rendered="#{proyectoInvestigador.codigoQuipu != null}" />
+							<t:div  style="padding: 2px; padding-left: 10px;" rendered="#{proyectoInvestigador.codigoQuipu != null}" >
+								<h:outputText value=" #{proyectoInvestigador.codigoQuipu} " 
+								/>
+							</t:div>
+
+							<h:outputText value="Estado:"  style="font-weight: bold;"/>
+							<t:div  style="padding: 2px; padding-left: 10px;">
+								<h:outputText
+								value=" #{proyectoInvestigador.nombreEstadoProyecto}" />
+							</t:div>
+						</p:panelGrid>
+						<div style="width: 100%; text-align: center;" >
+							<p:commandButton value="Ver información proyecto" ajax="false" action="#{manejadorProyectosConvocatoria.cargarProyecto}" >
+								 <f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{manejadorProyectosConvocatoria.proyectoSeleccionado}" /> 
+							</p:commandButton>
+						</div>
+					</div>
+				</p:column>
+			</p:dataTable>
+			<p:messages showSummary="true" autoUpdate="true" closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

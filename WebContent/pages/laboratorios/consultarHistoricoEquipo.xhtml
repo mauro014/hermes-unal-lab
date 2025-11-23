@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad" >Consulta histórico estado equipos</t:div>
+			
+			<p:panel id="panelConsultaEquipos"
+				rendered="false">
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;">
+					<p:outputLabel for="codigoProyecto" value="Código del proyecto:" />
+					<p:inputText id="codigoProyecto" 
+						value="#{manejadorConsultaHistoricosEquipos.codigo}" size="7"
+						paginatorAlwaysVisible="false">
+						<f:validateDoubleRange minimum="0" maximum="100000" />
+						<f:validateLength maximum="7" />
+					</p:inputText>
+					<p:commandButton update="@form" ajax="false"
+						action="#{manejadorConsultaHistoricosEquipos.buscarEstadoProyecto}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						value="Buscar" icon="ui-icon-search"/>
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel id="panelConsultaEquipos2"
+				rendered="false">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 150px;">
+						<h:outputText value="Código proyecto:"  style="font-weight: bold;"/>
+					</t:div>
+					<h:outputText value="#{manejadorConsultaHistoricosEquipos.codigo}" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<h:outputText value="" />
+			<h:outputText value="" />
+			<h:outputText value="EQUIPO: #{manejadorConsultaHistoricosEquipos.equipoActual.equipo} - PLACA : #{manejadorConsultaHistoricosEquipos.equipoActual.placa}" />
+			
+			<p:dataTable 
+				rows="40"
+				id="tableHistoricoEstadoEquipo" var="historico"
+				style="margin-top: 20px;"	paginator="true"
+				value="#{manejadorConsultaHistoricosEquipos.listaHistoricoEstadoEquipo}"
+				emptyMessage="No se han encontrado cambios de estado para este equipo"
+				paginatorPosition="bottom"
+				paginatorAlwaysVisible="false"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="40,80,120"
+                >
+				<p:column rendered="false">
+					<f:facet name="header">
+						Placa
+					</f:facet>
+					#{historico.equipo.placa}
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Fecha
+					</f:facet>
+					<h:outputText value="#{historico.fechaRegistro}" >
+		              	<f:convertDateTime pattern="dd-MM-yyyy" />
+					 </h:outputText>
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Hora
+					</f:facet>
+					<h:outputText value="#{historico.fechaRegistro}" >
+		              	<f:convertDateTime pattern="HH:mm:ss" type="time"/>
+					 </h:outputText>
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Tipo Cambio
+					</f:facet>			
+					#{historico.tipoOperacion.nombre}
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Responsable
+					</f:facet>			
+					#{historico.responsable.nombreCompleto}
+				</p:column>
+				
+			</p:dataTable>	
+			
+			<h:outputText value="" />
+			<h:outputText value="" />
+			
+			<p:panelGrid columns="1" style="width: 100%; text-align: right; margin-bottom: 15px;" rendered="false">
+				<h:commandLink
+					action="#{manejadorConsultaHistoricosEquipos.volverAdministrarEquipos}"
+					value="Volver a SECCIÓN EQUIPOS del laboratorio"
+					style="color: #16A8E2; font-weight: bold;">
+								
+				</h:commandLink>
+			</p:panelGrid>
+			
+			<t:div style="width: 100%; text-align: right; margin-bottom: 15px;">
+				<h:commandLink
+					action="#{manejadorConsultaHistoricosEquipos.volverAdministrarEquipos}"
+					value="Volver a SECCIÓN EQUIPOS del laboratorio"
+					style="color: #16A8E2; font-weight: bold;">
+				</h:commandLink>	
+			</t:div>
+					
+			<p:messages showSummary="true" autoUpdate="true" closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

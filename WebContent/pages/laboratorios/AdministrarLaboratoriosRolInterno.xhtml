@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formAdminLab">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Administración de Laboratorios</t:div>
+			
+			<t:div style="width: 100%; text-align: right; margin-bottom: 15px;"
+				rendered="#{ManejadorAdministrarLaboratoriosRolInterno.rolSeleccionadoLabs == 'LS' or ManejadorAdministrarLaboratoriosRolInterno.rolSeleccionadoLabs == 'LF'}"
+				title="Instructivos del Sistema Hermes">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/index.xhtml"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Instructivos del Sistema Hermes</a>
+			</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 15px;">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=39"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Instructivo módulo Administrar Laboratorios</a>
+			</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 15px;"
+				rendered="#{ManejadorAdministrarLaboratoriosRolInterno.rolSeleccionadoLabs == 'LS' or ManejadorAdministrarLaboratoriosRolInterno.rolSeleccionadoLabs == 'LF'}"
+				title="Documentos asociados al proceso de gestión de laboratorios, formatos o documentos asociados al Sistema Nacional de Laboratorios">
+				<a href="https://viceinvestigacion.unal.edu.co/nosotros/gestion-de-calidad/macroprocesos/mp-laboratorios/"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Documentos del proceso de gestión de laboratorios</a>
+			</t:div>
+
+			<p:panel id="panelAdministracionLaboratorio">
+
+				<p:dataTable var="laboratorios" id="TablaLaboratorios"
+					value="#{ManejadorAdministrarLaboratoriosRolInterno.listaLaboratorios}"
+					rows="10" paginator="true" paginatorPosition="bottom"
+					filteredValue="#{ManejadorAdministrarLaboratoriosRolInterno.laboratoriosFiltrados}"
+					pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} Laboratorios, Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No existen registros.">
+
+					<f:facet name="header">
+						#{ManejadorAdministrarLaboratoriosRolInterno.tituloTabla}
+					</f:facet>
+
+					<p:column sortBy="#{laboratorios.laboratorio.id}" filterBy="#{laboratorios.laboratorio.id}" filterStyle="width:30px;" filterMatchMode="exact" styleClass="pequennio">
+						<f:facet name="header">
+							<h:outputText value="id" />
+						</f:facet>
+						<h:outputText value="#{laboratorios.laboratorio.id}" styleClass="pequennio"
+							title="Número que identifica al Laboratorio en el sistema" />
+					</p:column>
+
+					<p:column sortBy="#{laboratorios.laboratorio.nombre}" headerText="Nombre" styleClass="pequennio"
+						filterBy="#{laboratorios.laboratorio.nombre}" filterStyle="width:200px;"
+						filterMatchMode="contains">
+						<h:outputText value="#{laboratorios.laboratorio.nombre}" styleClass="grande"/>
+						<br />
+						<h:outputText value="#{laboratorios.laboratorio.facultad.nombre}" styleClass="pequennio" />
+						<br />
+						<h:outputText value="#{laboratorios.laboratorio.acreditacion}" styleClass="azul" />
+					</p:column>
+
+					<p:column filterBy="#{laboratorios.laboratorio.sede.id}"
+						filterOptions="#{ManejadorAdministrarLaboratoriosRolInterno.sedeSelectItem}"
+						rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosNacional or ManejadorAdministrarLaboratoriosRolInterno.esConsultaLaboratorios}"
+						styleClass="pequennio">
+						<f:facet name="header">
+							Sede
+						</f:facet>
+							#{laboratorios.laboratorio.sede.nombre}
+					</p:column>
+
+					<p:column
+						rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosNacional 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosSede 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esConsultaLaboratorios 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esCoordinadorLaboratorio 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosFacultad 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosDepto
+							|| (ManejadorAdministrarLaboratoriosRolInterno.esPersonalLaboratorio)
+							}"
+						styleClass="pequennio">
+						<f:facet name="header">
+							<h:outputText value="Consultar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-search"
+								action="#{ManejadorAdministrarLaboratoriosRolInterno.consultarLaboratorios}"
+								title="Consultar Laboratorio #{laboratorios.laboratorio.id} - #{laboratorios.laboratorio.nombre}"
+								rendered="#{(ManejadorAdministrarLaboratoriosRolInterno.esRolInternoLab and laboratorios.permisoConsulta) 
+									or !ManejadorAdministrarLaboratoriosRolInterno.esRolInternoLab}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratoriosRolInterno.laboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:column
+						rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosNacional 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosSede 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esCoordinadorLaboratorio 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosFacultad 
+							|| ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosDepto
+							|| (ManejadorAdministrarLaboratoriosRolInterno.esPersonalLaboratorio)
+							}"
+						styleClass="pequennio">
+						
+						<f:facet name="header">
+							<h:outputText value="Editar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-pencil"
+								action="#{ManejadorAdministrarLaboratoriosRolInterno.editarLaboratorios}"
+								title="Editar Laboratorio #{laboratorios.laboratorio.id} - #{laboratorios.laboratorio.nombre}"
+								rendered="#{(ManejadorAdministrarLaboratoriosRolInterno.esRolInternoLab and laboratorios.permisoEdicion) 
+									or !ManejadorAdministrarLaboratoriosRolInterno.esRolInternoLab}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratoriosRolInterno.laboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:column rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esPersonalLaboratorio}">
+						<f:facet name="header">
+							<h:outputText value="Reporte" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandLink
+								action="#{ManejadorAdministrarLaboratoriosRolInterno.reporte}"
+								target="_blank"
+								ajax="false"
+								rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esRolInternoLab and (laboratorios.permisoEdicion or laboratorios.permisoConsulta)}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratoriosRolInterno.laboratorioSeleccionado}" />
+								<p:commandButton icon="ui-icon-clipboard"
+									title="Reporte Laboratorio #{laboratorios.laboratorio.id} - #{laboratorios.laboratorio.nombre}">
+								</p:commandButton>
+							</p:commandLink>
+						</center>
+					</p:column>
+					
+					<p:column styleClass="pequennio" rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esPersonalLaboratorio}">
+						<f:facet name="header">
+							<h:outputText value="Historial" />
+						</f:facet>
+						<center>
+						
+							<h:commandLink
+								action="#{ManejadorAdministrarLaboratoriosRolInterno.consultarHistoricoEstadoLaboratorio}"
+								value="Ver"
+								style="text-decoration:none; 
+								color: #16A8E2; 
+								font-weight: bold;"
+								ajax="false" target="_blank"
+								title="Historial de cambios de estado para Laboratorio #{laboratorios.laboratorio.id} - #{laboratorios.laboratorio.nombre}"
+								rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esRolInternoLab and (laboratorios.permisoEdicion or laboratorios.permisoConsulta)}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratoriosRolInterno.laboratorioSeleccionado}" />
+							</h:commandLink>
+							
+						</center>
+					</p:column>
+					
+				</p:dataTable>
+
+				<center>
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosNacional or ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosSede or ManejadorAdministrarLaboratoriosRolInterno.esConsultaLaboratorios}">
+						<p:selectBooleanCheckbox
+							value="#{ManejadorAdministrarLaboratoriosRolInterno.buscarAcreditados}">
+							<p:ajax update="@form" onstart="dlgEspere.show()"
+								oncomplete="dlgEspere.hide()"
+								listener="#{ManejadorAdministrarLaboratoriosRolInterno.buscarLaboratorios}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText
+							value="Restringir la búsqueda a laboratorios acreditados." />
+					</p:panelGrid>
+
+					<p:dialog header="Buscando Laboratorios..." widgetVar="dlgEspere"
+						resizable="false" closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+				</p:dialog>
+				</center>
+
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="width:100%;"
+					rendered="#{(ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosNacional or ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosSede or ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosFacultad or ManejadorAdministrarLaboratoriosRolInterno.esLaboratoriosDepto) and ManejadorAdministrarLaboratoriosRolInterno.esCoordinadorLaboratorio}">
+					<p:separator />
+					<h:outputText
+						value="Usted aparece como Coordinador del(los) siguiente(s) laboratorio(s):" />
+					<p:dataList
+						value="#{ManejadorAdministrarLaboratoriosRolInterno.laboratoriosCoordinador}"
+						var="lc" itemType="disc" styleClass="dataList-sin-borde">
+							#{lc.id}, #{lc.nombre}
+					</p:dataList>
+					<p:separator />
+				</p:panelGrid>
+
+				<br />
+				<center>
+					<p:commandButton icon="ui-icon-home"
+						action="#{ManejadorAdministrarLaboratoriosRolInterno.salir}"
+						onclick="if(!confirm('Está seguro de Salir?'))return false"
+						value="Inicio" />
+				</center>
+			</p:panel>
+			
+		</h:form>
+
+	</ui:define>
+</ui:composition>

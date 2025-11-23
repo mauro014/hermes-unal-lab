@@ -1,0 +1,872 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadEvento">
+			<t:div styleClass="contenido-titulo-general-myriad">Registro solicitud de movilidad</t:div>
+			<p:panel header="Participación de docente investigador">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width: 247px;">
+						<h:outputText value="Tipo de documento docente UN:" />
+					</t:div>
+					<p:selectOneMenu disable="true"
+						value="#{ManejadorCrearEditarMovilidadEvento.tipoDocumento.id}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Número de documento del docente UN:" />
+					<p:inputText id="Numero" disable="true"
+						value="#{ManejadorCrearEditarMovilidadEvento.documento}" size="20">
+					</p:inputText>
+					<h:outputText />
+					<p:commandButton value="Continuar" icon="ui-icon-search"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						action="#{ManejadorCrearEditarMovilidadEvento.buscarPersona}"
+						update="formCrearMovilidadEvento" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.noExiste1}"
+						styleClass="mensajeerror" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.noExiste}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.panelNoExiste}" />
+				</p:panelGrid>
+			</p:panel>
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEvento}" />
+			<p:panel header="Investigador" id="idDatosInvestigador"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEvento}">
+				<p:panelGrid columns="2" id="evento"
+					styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEvento}">
+					<t:div style="width: 247px;">
+						<h:outputText value="Nombre del docente" />
+					</t:div>
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.nombreDocente}" />
+					<h:outputText value="Documento de identidad" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.documentoDocente}" />
+					<h:outputText value="Facultad o instituto" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.facultadDocente}" />
+					<h:outputText value="Departamento" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.departamentoDocente}" />
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.errorGrupo}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.msgErrorGrupo}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.errorGrupo}" />
+
+					<h:outputText value="Grupo de investigación"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.validarGrupo}" />
+					<p:selectOneMenu id="somGrupo" style="width:330px;"
+						panelStyle="width:330px;"
+						value="#{ManejadorCrearEditarMovilidadEvento.idgrupo}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.validarGrupo}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.listaGrupos}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.errorPasaporte}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.msgErrorPasaporte}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.errorPasaporte}" />
+
+					<h:outputText value="Pasaporte"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarPasaporte}" />
+					<p:inputText id="numPasaporte"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.pasaporteInvestigador}"
+						style="width: 350px;" maxlength="100"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarPasaporte}">
+					</p:inputText>
+
+				</p:panelGrid>
+				<h:panelGrid columns="2" id="eventoInfoUno" cellpadding="5"
+					cellspacing="5" align="center">
+					<h:outputText
+						value="¿En los últimos 24 meses calendario se ha postulado para alguna convocatoria externa de proyectos o programas de investigación ó ha publicado uno o más artículos indexados internacionalmente en la base de datos ISI o Scopus? "
+						rendered="false" />
+					<p:selectOneMenu id="optionsConvExt"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.infoConvocatoriaExterna}"
+						rendered="false">
+						<f:selectItem itemLabel="NO" itemValue="NO" />
+						<f:selectItem itemLabel="SI" itemValue="SI" />
+						<p:ajax update="idDatosInvestigador, eventoInfoDos"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							listener="#{ManejadorCrearEditarMovilidadEvento.revisarInfoConvExt}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p:panelGrid columns="2" id="eventoInfoDos"
+					styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{ManejadorCrearEditarMovilidadEvento.siConvExt}">
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Indique cuales y adjunte al final del registro los documentos de soporte correspondientes" />
+					</t:div>
+					<p:inputTextarea id="idInTexArConvExt"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.descConvocatoriaExterna}"
+						maxlength="3000" counter="counterDetalleConvocatoriaExterna"
+						counterTemplate="{0} caracteres restantes." rows="8" cols="50">
+					</p:inputTextarea>
+					<h:outputText value="" />
+					<h:outputText id="counterDetalleConvocatoriaExterna" />
+
+				</p:panelGrid>
+			</p:panel>
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEvento}" />
+			<p:panel header="Trabajo a presentar"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEvento and !ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorListaPonencia}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[10]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorListaPonencia}" />
+					<h:outputText value="Objeto de la movilidad" />
+					<p:selectOneMenu id="somTipoPonencia1"
+						value="#{ManejadorCrearEditarMovilidadEvento.idTipoPonencia}"
+						panelStyle="width:600px;" style="width:400px">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.tipoPonencia}" />
+						<p:ajax update="@parent" process="@parent"
+							listener="#{ManejadorCrearEditarMovilidadEvento.activarOtrotipoPonencia}" />
+					</p:selectOneMenu>
+					<h:outputText value="Cual tipo de ponencia"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BOtroTipoPonencia}" />
+					<p:inputText id="otroTipoPonencia"
+						value="#{ManejadorCrearEditarMovilidadEvento.otroTipoPonencia}"
+						size="40" maxlength="200"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BOtroTipoPonencia}">
+					</p:inputText>
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorTitulo}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[2]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorTitulo}" />
+					<h:outputText value="Título del trabajo a presentar" />
+					<p:inputTextarea id="tituloPonencia"
+						value="#{ManejadorCrearEditarMovilidadEvento.tituloPonencia}"
+						rows="3" style="width: 350px;" counter="counterTituloPonencia"
+						maxlength="2000" counterTemplate="{0} caracteres restantes." />
+					<h:outputText value="" />
+					<h:outputText id="counterTituloPonencia" />
+					<center>
+						<p:commandButton value="Adicionar" icon="ui-icon-plusthick"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							action="#{ManejadorCrearEditarMovilidadEvento.adicionarPonencia}"
+							update="formCrearMovilidadEvento"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.trabajosDisponibles}">
+						</p:commandButton>
+					</center>
+				</p:panelGrid>
+
+				<p:dataTable var="ponenciaTabla"
+					value="#{ManejadorCrearEditarMovilidadEvento.listaPonencias}"
+					emptyMessage="No existen ponencias.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{ponenciaTabla.ponencia.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Objeto de la movilidad" />
+						</f:facet>
+						<h:outputText value="#{ponenciaTabla.ponencia.descripcion}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Título del trabajo" />
+						</f:facet>
+						<h:outputText value="#{ponenciaTabla.titulo}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-trash"
+							onclick="if(!confirm('Esta seguro de eliminar la ponencia?'))return false"
+							action="#{ManejadorCrearEditarMovilidadEvento.eliminarPonencia}"
+							immediate="true" update=":formCrearMovilidadEvento">
+							<f:setPropertyActionListener value="#{ponenciaTabla}"
+								target="#{ManejadorCrearEditarMovilidadEvento.movilidadPonenciaSeleccionada}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+			</p:panel>
+
+			<p:panel header="Información de la estancia de investigación"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEvento and ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+
+				<h:panelGrid columns="2" id="evento">
+
+					<h:outputText value="País donde se realizará la estancia" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEvento.idPais}">
+						<f:selectItem itemLabel="Seleccione Uno" itemValue="00" />
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.paises}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorCiudad}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorCiudad}" />
+
+					<h:outputText value="Ciudad donde se realizará la estancia" />
+					<p:inputText id="Ciudad"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.ciudad}"
+						size="40" styleClass="labels_proyecto" maxlength="200">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.bErrorNombreUniversidad}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[14]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.bErrorNombreUniversidad}" />
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Universidad o entidad extranjera donde va a realizar la estancia de investigación" />
+					</t:div>
+					<p:inputText id="univ1"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.nombreUniversidad}"
+						size="40" styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta}" />
+					<h:outputText
+						value="La fecha del viaje debe ser superior que la fecha actual en 30 días calendario."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta}" />
+
+					<h:outputText value="Fecha de inicio del viaje" />
+					<p:calendar id="fechainicio" pages="1" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.fechainicial}"
+						mindate="#{ManejadorCrearEditarMovilidadEvento.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadEvento.validarFecha}">
+						<p:ajax event="dateSelect" update="formCrearMovilidadEvento"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							process="@form" />
+					</p:calendar>
+
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta2}" />
+					<h:outputText value="La fecha de finalización viaje no es válida."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta2}" />
+
+					<h:outputText value="Fecha de finalización del viaje"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos}" />
+					<p:calendar id="fechafin" pages="1" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.fechafinal}"
+						mindate="#{ManejadorCrearEditarMovilidadEvento.fechaMinimaInicio}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos}">
+						<p:ajax event="dateSelect" update="formCrearMovilidadEvento"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							process="@form" />
+					</p:calendar>
+				</h:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEventoAux}" />
+			<p:panel header="Datos del evento, estancia o residencia artística"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarDatosEventoAux and !ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" columns="2"
+					id="pgDatosEvento" align="center">
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.errorSubmodalidad}" />
+					<h:outputText value="Por favor seleccionar el tipo de movilidad."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.errorSubmodalidad}" />
+					<h:outputText value="Tipo de movilidad"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarSubModalidades}" />
+					<p:selectOneMenu id="idListaSelDos"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.subModalidadConvocatoria}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarSubModalidades}"
+						style="width:400px" panelStyle="width:460px">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.listaSubmodalidades}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorEvento}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[1]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorEvento}" />
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Nombre del evento científico (incluir enlace del evento)" />
+					</t:div>
+					<p:inputTextarea id="nombreEvento"
+						value="#{ManejadorCrearEditarMovilidadEvento.nombreEvento}"
+						counter="counterNombreEvento" maxlength="2000"
+						counterTemplate="{0} caracteres restantes." rows="3"
+						style="width: 350px;" />
+					<h:outputText value="" />
+					<h:outputText id="counterNombreEvento" />
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.bErrorNombreUniversidad}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[14]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.bErrorNombreUniversidad}" />
+					<t:div style="width:247px;">
+						<h:outputText
+							value="Nombre de la Universidad o Institución organizadora del evento o donde se realizará la estancia o residencia artística:" />
+					</t:div>
+					<p:inputText id="nombreUniversidad"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.nombreUniversidad}"
+						style="width: 350px;" maxlength="250">
+					</p:inputText>
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorPais}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[3]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorPais}" />
+					<h:outputText
+						value="País donde se realizará el evento, la estancia o residencia artística:" />
+					<p:selectOneMenu filter="true" filterMatchMode="contains"
+						value="#{ManejadorCrearEditarMovilidadEvento.idPais}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.paises}" />
+						<p:ajax update="pgDatosEvento" process="pgDatosEvento"
+							listener="#{ManejadorCrearEditarMovilidadEvento.revisarPais}" />
+					</p:selectOneMenu>
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorCiudad}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorCiudad}" />
+					<h:outputText
+						value="Departamento donde se realizará el evento, la estancia o residencia artística:"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.siColombia}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEvento.departamentoActual.id}"
+						effect="fade" id="depto" panelStyle="width:350px;"
+						style="width:350px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.siColombia}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.departamentoItem}" />
+						<p:ajax update="depto,CiudadSel " processo="depto,CiudadSel "
+							listener="#{ManejadorCrearEditarMovilidadEvento.cambiarDepartamento}" />
+					</p:selectOneMenu>
+					<h:outputText
+						value="Ciudad donde se realizará el evento, la estancia o residencia artística:"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.siColombia}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEvento.ciudadEvento}"
+						effect="fade" id="CiudadSel" panelStyle="width:350px;"
+						style="width:350px" filter="true" filterMatchMode="contains"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.siColombia}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.ciudadItem}" />
+					</p:selectOneMenu>
+					<h:outputText
+						value="Ciudad donde se realizará el evento, la estancia o residencia artística:"
+						rendered="#{!ManejadorCrearEditarMovilidadEvento.siColombia}" />
+					<p:inputText id="Ciudad"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.ciudad}"
+						rendered="#{!ManejadorCrearEditarMovilidadEvento.siColombia}"
+						style="width: 350px;">
+					</p:inputText>
+					<h:outputText value="Tipo de Movilidad:"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarTipoMovilidad}" />
+					<p:selectOneMenu id="uiTipoMov" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.movilidadTipo}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarTipoMovilidad}">
+						<f:selectItem itemValue="P" itemLabel="Presencial" />
+						<f:selectItem itemValue="V" itemLabel="Virtual" />
+						<p:ajax
+							listener="#{ManejadorCrearEditarMovilidadEvento.definirInicioConvNal2022_2024}"
+							update="@form" process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+					<h:outputText value="Carácter del evento:" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.caracterEvento}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.caracterEventoItem}" />
+						<p:ajax
+							listener="#{ManejadorCrearEditarMovilidadEvento.definirInicio4049}"
+							update="@form" process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+
+
+					<p:column
+						rendered="#{not empty ManejadorCrearEditarMovilidadEvento.convActual.infoAdicionalFormulario}"
+						style="vertical-align: top; padding-top:10px; width:250px;">
+						<h:outputText value="Información adicional:"
+							style="font-weight:bold;" />
+					</p:column>
+
+					<p:column
+						rendered="#{not empty ManejadorCrearEditarMovilidadEvento.convActual.infoAdicionalFormulario}">
+						<h:panelGroup layout="block"
+							style="border:1px solid #7b1e3a; 
+                             background:#fdecef; 
+                             color:#4a0f1f; 
+                             border-radius:8px; 
+                             padding:10px;">
+							<h:outputText
+								value="#{ManejadorCrearEditarMovilidadEvento.convActual.infoAdicionalFormulario}"
+								style="white-space:pre-line; font-weight:500;" escape="true" />
+						</h:panelGroup>
+					</p:column>
+
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta}" />
+					<h:outputText
+						value="La fecha del viaje debe ser superior que la fecha actual en 30 días calendario."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta}" />
+					<h:outputText value="Fecha de inicio del viaje" />
+					<p:calendar id="fechainicio" pages="1" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.fechainicial}"
+						mindate="#{ManejadorCrearEditarMovilidadEvento.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadEvento.validarFecha}">
+						<p:ajax event="dateSelect" update="formCrearMovilidadEvento"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							process="@form" />
+					</p:calendar>
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta2}" />
+					<h:outputText value="La fecha de finalización viaje no es válida."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.fechaIncorrecta2}" />
+					<h:outputText value="Fecha de finalización del viaje"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos}" />
+					<p:calendar id="fechafin" pages="1" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.fechafinal}"
+						mindate="#{ManejadorCrearEditarMovilidadEvento.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearEditarMovilidadEvento.validarFechaLlegada}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos}">
+						<p:ajax event="dateSelect" update="formCrearMovilidadEvento"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							process="@form" />
+					</p:calendar>
+				</p:panelGrid>
+				<p:panelGrid columns="1" id="panelMasDatos2"
+					styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}">
+					<h:panelGrid columns="2">
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorResumen}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEvento.errores[6]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorResumen}" />
+						<t:div style="width: 243px;">
+							<p:outputLabel for="resumenPonencia"
+								value="Resumen del trabajo a presentar o estancia a realizar (Máximo 3900 caracteres)" />
+						</t:div>
+						<p:inputTextarea id="resumenPonencia" autoResize="false"
+							maxlength="3900" required="true"
+							requiredMessage="El Resumen de la Ponencia es Obligatorio."
+							value="#{ManejadorCrearEditarMovilidadEvento.mde.resumen}"
+							rows="10" style="width: 350px;" counter="counterResumenPonencia"
+							counterTemplate="{0} caracteres restantes.">
+						</p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counterResumenPonencia" />
+						<h:outputText value="Universidad"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.BFinanciacion}" />
+						<p:inputText id="Universidad"
+							value="#{ManejadorCrearEditarMovilidadEvento.mde.universidad}"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.BFinanciacion}"
+							size="60">
+						</p:inputText>
+						<h:outputText value="Título a Obtener"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.BFinanciacion}" />
+						<p:inputText id="Titulo"
+							value="#{ManejadorCrearEditarMovilidadEvento.mde.tituloAspira}"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.BFinanciacion}"
+							size="60">
+						</p:inputText>
+					</h:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}" />
+
+			<p:panel header="Actividades"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2 and ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+
+				<p:panelGrid columns="1" style="width: 650px;"
+					id="grupoInsercionActividades"
+					styleClass="estilo-panelgrid-sinbordes">
+
+					<p:panelGrid columns="2">
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadEvento.actMovi.bErrorDescripcion}" />
+
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEvento.actMovi.errorDescripcion}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.actMovi.bErrorDescripcion}" />
+						<h:outputText value="Descripción" />
+						<p:inputTextarea id="descripcion"
+							value="#{ManejadorCrearEditarMovilidadEvento.actMovi.descripcion}"
+							style="width:350px;" rows="5" maxlength="2000">
+						</p:inputTextarea>
+
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadEvento.actMovi.bErrorFecha}" />
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEvento.actMovi.errorFecha}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.actMovi.bErrorFecha}" />
+
+						<h:outputText value="Fecha de inicio" />
+						<p:calendar id="fechaactividad" locale="es" readonlyInput="true"
+							pattern="dd/MM/yyyy"
+							value="#{ManejadorCrearEditarMovilidadEvento.actMovi.fecha}"
+							mindate="#{ManejadorCrearEditarMovilidadEvento.mde.fechainicial}"
+							maxdate="#{ManejadorCrearEditarMovilidadEvento.mde.fechafinal}" />
+						<h:outputText
+							rendered="#{ManejadorCrearEditarMovilidadEvento.actMovi.bErrorDuracion}" />
+
+						<h:outputText
+							value="#{ManejadorCrearEditarMovilidadEvento.actMovi.errorDuracion}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.actMovi.bErrorDuracion}" />
+
+						<h:outputText value="Duración de la actividad (días)" />
+						<p:inputText id="duracion"
+							value="#{ManejadorCrearEditarMovilidadEvento.actMovi.duracion}"
+							size="4" />
+						<h:outputText value="" />
+						<p:commandButton value="Adicionar"
+							update="tablaActividades, grupoInsercionActividades"
+							actionListener="#{ManejadorCrearEditarMovilidadEvento.adicionarActividad}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</p:panelGrid>
+
+					<p:dataTable var="actividadMovilidad" id="tablaActividades"
+						value="#{ManejadorCrearEditarMovilidadEvento.listaActividades}"
+						emptyMessage="No existen actividades.">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descripción" />
+							</f:facet>
+							<t:div style="width: 350px;">
+								<h:outputText value="#{actividadMovilidad.descripcion}" />
+							</t:div>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Duración" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.duracion}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+								<br />
+								<h:outputText value="de inicio" />
+							</f:facet>
+							<h:outputText value="#{actividadMovilidad.fecha}" />
+						</p:column>
+
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-trash" ajax="false"
+								update="tablaActividades"
+								action="#{ManejadorCrearEditarMovilidadEvento.eliminarActividad}"
+								onclick="if(!confirm('Esta seguro de eliminar la Actividad?'))return false">
+								<f:setPropertyActionListener value="#{actividadMovilidad}"
+									target="#{ManejadorCrearEditarMovilidadEvento.actividadMovilidadSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}" />
+			<p:panel header="Apoyo económico"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}">
+				<h:panelGrid columns="2">
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorTiquete}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[8]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorTiquete}" />
+					<h:outputText />
+					<p:message for="valorTiquetes" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+					<h:outputText value="Medio de transporte"
+						rendered="#{!ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.medioTransporte}"
+						rendered="#{!ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.medioTransporteItem}" />
+					</p:selectOneMenu>
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Valor del tiquete/pasaje en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorTiquetes"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.costotiquete}"
+						rendered="true">
+					</p:inputText>
+					<h:outputText
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorInscripcion}" />
+					<h:outputText
+						value="#{ManejadorCrearEditarMovilidadEvento.errores[9]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorInscripcion}" />
+					<h:outputText />
+					<p:message for="valorInscripcion" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+					<t:div style="width: 247px;"
+						rendered="#{!ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+						<h:outputText
+							value="Valor de la inscripción al evento en pesos colombianos"
+							rendered="#{!ManejadorCrearEditarMovilidadEvento.BFinanciacion}" />
+					</t:div>
+					<p:inputText id="valorInscripcion"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.inscripcionevento}"
+						rendered="#{!ManejadorCrearEditarMovilidadEvento.BFinanciacion and !ManejadorCrearEditarMovilidadEvento.esEstanciaInvestigacionDocente}">
+					</p:inputText>
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Valor de viaticos y gastos de viaje en pesos colombianos"
+							rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarValorViaticos}" />
+					</t:div>
+					<p:inputText id="valorViaticosGastosViaje"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.valorViaticos}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarValorViaticos}">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarAportesOtrasDependencias}">
+						<h:outputText value="Valor del apoyo de otras dependencias" />
+					</t:div>
+					<p:inputText id="valorApOtDep"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.valorOtrosAportes}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarAportesOtrasDependencias}">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarAportesOtrasDependencias}">
+						<h:outputText value="Nombre de las dependencias" />
+					</t:div>
+					<p:inputTextarea id="depApOtDep"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.dependenciaOtrosAportes}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mostrarAportesOtrasDependencias}"
+						rows="9" cols="50" maxlength="3900">
+					</p:inputTextarea>
+				</h:panelGrid>
+			</p:panel>
+			<ui:fragment
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}">
+				<br />
+			</ui:fragment>
+			<p:panel header="Sede de financiamiento"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}"
+				id="pgSolDep">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText id="uiMovOtraDepOt"
+						binding="#{ManejadorCrearEditarMovilidadEvento.uiMovOtraDep}"
+						value="¿La movilidad se va a dirigir a una facultad o sede diferente a la que pertenece?" />
+					<p:selectOneMenu id="uiMovOtraDep" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{ManejadorCrearEditarMovilidadEvento.mde.movilidadDirigidaOtraDependencia}">
+						<f:selectItem itemValue="N" itemLabel="No" />
+						<f:selectItem itemValue="S" itemLabel="Sí" />
+						<p:ajax update="pgSolDep" process="pgSolDep"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+					</p:selectOneMenu>
+
+					<h:outputText id="uiSedeOtraDepOt"
+						binding="#{ManejadorCrearEditarMovilidadEvento.uiSedeOtraDep}"
+						value="Sede de la solicitud"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mde.movilidadDirigidaOtraDependencia eq 'S'}" />
+					<p:selectOneMenu id="uiSedeOtraDep" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{ManejadorCrearEditarMovilidadEvento.sedeSolicitud}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mde.movilidadDirigidaOtraDependencia eq 'S'}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.sedeSolicitudItem}" />
+						<p:ajax
+							listener="#{ManejadorCrearEditarMovilidadEvento.cargarFacultadSolcitud}"
+							update="pgSolDep" process="pgSolDep"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+					<h:outputText id="uiFacOtraDepOt"
+						binding="#{ManejadorCrearEditarMovilidadEvento.uiFacOtraDep}"
+						value="Facultad de la solicitud"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mde.movilidadDirigidaOtraDependencia eq 'S' and (ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '2' or ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '3' or ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '4' or ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '5')}" />
+					<p:selectOneMenu id="uiFacOtraDep" style="width:350px;"
+						panelStyle="width: 350px;"
+						value="#{ManejadorCrearEditarMovilidadEvento.facultadSolicitud}"
+						rendered="#{ManejadorCrearEditarMovilidadEvento.mde.movilidadDirigidaOtraDependencia eq 'S' and (ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '2' or ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '3' or ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '4' or ManejadorCrearEditarMovilidadEvento.sedeSolicitud eq '5')}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.facultadItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panel>
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}" />
+			<p:panel header="Documentos obligatorios" id="panelDocumentos"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}">
+				<h:outputText
+					rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorDocumentos}" />
+				<h:outputText
+					value="#{ManejadorCrearEditarMovilidadEvento.errores[13]}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadEvento.BErrorDocumentos}" />
+				<h:panelGrid columns="2" style="width:100%;">
+					<h:outputText value="Tipos de documentos:" />
+					<p:selectOneMenu style="width:430px;"
+						value="#{ManejadorCrearEditarMovilidadEvento.tipoDocumentoSel}"
+						panelStyle="width:430px">
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadEvento.tipoDocumentoSelItem}" />
+						<p:ajax update="panelDocumentos"
+							listener="#{ManejadorCrearEditarMovilidadEvento.seleccionarTipoDocumento}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<br />
+				<center>
+					<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+						mode="advanced" showButtons="false"
+						update="dtArchivosObligatorios"
+						fileUploadListener="#{ManejadorCrearEditarMovilidadEvento.guardarArchivoMovDE}"
+						disabled="#{!ManejadorCrearEditarMovilidadEvento.puedeSubirArchivos}">
+					</p:fileUpload>
+				</center>
+				<br />
+				<p:dataTable var="archivoResumen1" id="dtArchivosObligatorios"
+					value="#{ManejadorCrearEditarMovilidadEvento.listaArchivosObligatoriosSel}"
+					emptyMessage="No existen archivos.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo Documento" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.nombre}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-trash"
+							action="#{ManejadorCrearEditarMovilidadEvento.eliminarArchivoObligatorio}"
+							update="dtArchivosObligatorios"
+							onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearEditarMovilidadEvento.archivoMovilidadDESeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+
+						<p:commandButton id="descargar"
+							action="#{ManejadorCrearEditarMovilidadEvento.descargarArchivoMovDE}"
+							icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearEditarMovilidadEvento.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+
+			<p:panel id="opcionEnvioMov"
+				header="Confirmar el envío de la solicitud de movilidad para revisión"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}">
+				<p:panelGrid columns="2">
+					<h:outputText
+						value="Por favor confirme el envío de la solicitud de movilidad para su revisión, una vez confirmada ya no podrá editar la información registrada." />
+					<p:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadEvento.estado}">
+						<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+						<f:selectItem itemValue="P" itemLabel="Si" />
+						<f:selectItem itemValue="I" itemLabel="No" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:messages id="msg" autoUpdate="true" closable="true" />
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}" />
+			<center>
+				<p:commandButton value="Guardar" icon="ui-icon-check" ajax="false"
+					action="#{ManejadorCrearEditarMovilidadEvento.guardar}"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					rendered="#{ManejadorCrearEditarMovilidadEvento.panelMasDatos2}"
+					update="formCrearMovilidadEvento" />
+			</center>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

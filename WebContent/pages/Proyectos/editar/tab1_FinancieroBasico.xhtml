@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad" >Fuentes de	Financiación</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorFuentesFinancieras.inicioTitulo}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+
+			<br />
+
+			<p:panel header="Fuentes de Financiación">
+				<h:panelGrid columns="3">
+					<h:outputText value="Tipo de fuente" />
+					<p:selectOneMenu id="selectTipoFuentes"
+						value="#{manejadorFuentesFinancieras.tipoFuenteActual}"
+						valueChangeListener="#{manejadorFuentesFinancieras.cambiarFuentes}">
+						<f:selectItems
+							value="#{manejadorFuentesFinancieras.tiposFuenteItem}" />
+						<p:ajax update="@form" event="change" />
+					</p:selectOneMenu>
+					<h:panelGrid id="botonExterna">
+						<p:commandButton id="nuevaFuente"
+							rendered="#{manejadorFuentesFinancieras.tipoFuenteActual==2}"
+							actionListener="#{manejadorFuentesFinancieras.ingresarFuenteExterna}"
+							value="Agregar fuente externa (NO Disponible en la convocatoria)"
+							update="@form">
+						</p:commandButton>
+					</h:panelGrid>
+				</h:panelGrid>
+				<p:panelGrid id="addFuenteExterna" border="1"
+					rendered="#{manejadorFuentesFinancieras.banderaExterna and manejadorFuentesFinancieras.tipoFuenteActual == 2}"
+					style="width:100%">
+					<p:row>
+						<p:column colspan="1">
+							<h:outputText value="1. AGREGAR FUENTE EXTERNA EXISTENTE" />
+						</p:column>
+
+						<p:column colspan="1">
+							<p:panelGrid columns="3">
+								<h:outputText
+									value="Ingrese una palabra clave de la fuente externa a agregar" />
+								<p:inputText
+									value="#{manejadorFuentesFinancieras.nombreExterna}" size="40" />
+								<p:commandButton id="nuevaFuenteConsulta"
+									rendered="#{manejadorFuentesFinancieras.tipoFuenteActual==2}"
+									action="#{manejadorFuentesFinancieras.consultarFuentesExternas}"
+									value="Consultar" update="@form" />
+								<h:outputText
+									rendered="#{not empty manejadorFuentesFinancieras.listaExternas}" />
+								<p:dataTable id="fuentesExternasTabla" var="externas"
+									rendered="#{not empty manejadorFuentesFinancieras.listaExternas}"
+									value="#{manejadorFuentesFinancieras.listaExternas}"
+									paginator="true" rows="10"
+									paginatorPosition="bottom" 
+									cellpadding="6" cellspacing="3" align="center" border="1">
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Convocatoria"  />
+										</f:facet>
+										<h:outputText value="#{externas.descripcion}"/>
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Adicionar"  />
+										</f:facet>
+										<p:commandButton id="fuenteExternaAgregar"
+											action="#{manejadorFuentesFinancieras.agregarFuentesExternas}"
+											value="Adicionar" immediate="true" update="@form">
+											<f:setPropertyActionListener
+												target="#{manejadorFuentesFinancieras.fuenteFinanciacionSeleccionada}"
+												value="#{externas}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<h:outputText
+									rendered="#{not empty manejadorFuentesFinancieras.listaExternas}" />
+							</p:panelGrid>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1">
+							<h:outputText value="2. CREAR NUEVA FUENTE EXTERNA" />
+						</p:column>
+						<p:column colspan="1">
+							<h:outputText
+								value="Nota: Por favor antes de agregar una nueva fuente de financiación externa verifique que NO exista en el sistema" />
+							<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Nombre Fuente" style='width:50%' />
+								<p:inputText
+									value="#{manejadorFuentesFinancieras.nombreFuenteExterna}" size="50" />
+								<p:commandButton id="fuenteExternaAgregar"
+									action="#{manejadorFuentesFinancieras.agregarNuevaFuentesExterna}"
+									icon="ui-icon-plusthick" value="Adicionar" update="@form">
+								</p:commandButton>
+							</p:panelGrid>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGrid columns="2">
+					<h:outputText value="Fuentes disponibles" />
+					<p:selectOneMenu
+						value="#{manejadorFuentesFinancieras.fuenteFinancieraActual.id}"
+						immediate="true" style="width:500px">
+						<f:selectItems
+							value="#{manejadorFuentesFinancieras.fuentesFinancierasItem}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Rol" rendered="#{manejadorFuentesFinancieras.esExtensionSolidaria}"/>
+					<p:selectOneMenu rendered="#{manejadorFuentesFinancieras.esExtensionSolidaria}"
+						value="#{manejadorFuentesFinancieras.rol}"
+						immediate="true" style="width:500px">
+						<f:selectItems
+							value="#{manejadorFuentesFinancieras.listaRol}" />
+					</p:selectOneMenu>
+					
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="1" align="center">
+					<p:commandButton
+						action="#{manejadorFuentesFinancieras.ingresarFinanciacion}"
+						value="Agregar fuente de financiación" update="@form"
+						icon="ui-icon-plusthick">
+					</p:commandButton>
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="1" align="center">
+					<h:outputText value="No hay fuentes de financiación adicionadas"
+						rendered="#{empty manejadorFuentesFinancieras.listaFinanciaciones }" />
+				</h:panelGrid>
+				<p:dataTable cellpadding="6" cellspacing="3"
+					value="#{manejadorFuentesFinancieras.listaFinanciaciones}"
+					var="financiacion" id="listaFuentesFinan"
+					rendered="#{not empty manejadorFuentesFinancieras.listaFinanciaciones}" >
+					<p:column style="width:40%">
+						<f:facet name="header">
+							<h:outputText value="NOMBRE FUENTE ADICIONADA" />
+						</f:facet>
+						<h:outputText value="#{financiacion.fuente.descripcion}"
+							rendered="#{!financiacion.borrable}" />
+					</p:column>
+					
+					<p:column style="width:20%" rendered="#{manejadorFuentesFinancieras.esExtensionSolidaria}">
+						<f:facet name="header">
+							<h:outputText value="ROL"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<h:outputText value="#{financiacion.rol == 'ROL_FT_FIN' ? 'Entidad Financiadora' : financiacion.rol == 'ROL_FT_EJE' ? 'Entidad Ejecutora' : financiacion.rol == 'ROL_FT_BEN' ? 'Comunidad o Institución Beneficiaria':'Por Establecer'}"
+							rendered="#{!financiacion.borrable}" />
+					</p:column>
+					
+					<p:column style="width:10%" rendered="#{manejadorFuentesFinancieras.esExtensionSolidaria}">
+						<f:facet name="header">
+							<h:outputText value="TIPO"
+								style="font-weight: bold; font-style: italic;" />
+							<br/>
+							<h:outputText value="DE ENTIDAD"
+								style="font-weight: bold; font-style: italic;" />							
+						</f:facet>
+						<h:outputText value="#{financiacion.fuente.naturaleza == 'NAT_PUBLIC' ? 'Pública' : financiacion.fuente.naturaleza == 'NAT_PRIVAD' ? 'Privada' : financiacion.fuente.naturaleza == 'NAT_OTRA' ? 'Otra' : financiacion.fuente.naturaleza == 'NAT_MIXTA' ? 'Mixta' : financiacion.fuente.naturaleza == 'NAT_INTERN' ? 'Internacional' : 'Por Establecer'}"
+							rendered="#{!financiacion.borrable}" />
+					</p:column>
+
+					<p:column style="width:20%">
+						<f:facet name="header">
+							<h:outputText value="VALOR" />
+						</f:facet>
+						<p:panelGrid columns="1">
+							<p:inputText id="valorFinanciacion" value="#{financiacion.valor}"
+								rendered="#{!financiacion.borrable}" required="true">
+								<f:validateDoubleRange minimum="0" maximum="10000000000" />
+								<f:validateLength maximum="11" />
+							</p:inputText>
+						</p:panelGrid>
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="ELIMINAR" />
+						</f:facet>
+						<center>
+							<p:commandButton
+								onclick="if(!confirm('¿Está seguro(a) de eliminar la financiación?'))return false"
+								action="#{manejadorFuentesFinancieras.eliminarFinanciacion}"
+								immediate="true" rendered="#{!financiacion.borrable}"
+								update="@form"
+								icon="ui-icon-trash">
+								<f:setPropertyActionListener value="#{financiacion}"
+									target="#{manejadorFuentesFinancieras.fuenteSeleccionada}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				<p:message for="listaFuentesFinan" value="No se han ingresado fuentes de financiación"
+					rendered="#{empty manejadorFuentesFinancieras.listaFinanciaciones}"/>
+			</p:panel>
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3"
+				align="center">
+				<p:messages id="msgs" />
+				<h:panelGrid columns="4" cellpadding="3" rendered="false">
+					<h:outputText value="* Si su proyecto NO requiere financiación: "
+						style="text-transform: capitalize" />
+					<h:outputText value=" " />
+					<p:commandLink
+						style="text-transform: capitalize"
+						action="#{manejadorFuentesFinancieras.siguienteUno}"
+						value="Haga Click Aquí." />
+					<h:outputText value="Para omitir este Formulario"
+						style="text-transform: capitalize" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" cellpadding="3" align="center">
+					<p:commandButton action="#{manejadorFuentesFinancieras.atras}"
+						value="Atrás" immediate="true" />
+					<p:commandButton
+						action="#{manejadorFuentesFinancieras.salirGuardar}"
+						value="Guardar y continuar después"
+						ajax="false">
+						<p:ajax update="@form"/>
+					</p:commandButton>
+					<p:commandButton action="#{manejadorFuentesFinancieras.siguiente}"
+						value="Guardar y avanzar"
+						ajax="false">
+						<p:ajax update="@form"/> 
+					</p:commandButton>												
+				</h:panelGrid>
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

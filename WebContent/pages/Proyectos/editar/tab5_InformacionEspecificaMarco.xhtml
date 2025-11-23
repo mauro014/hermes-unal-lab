@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Información Permiso Marco</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+
+			<br />
+			<p:panel>
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+				<p:row>
+					<p:column style="width: 10%;">
+						<t:div>
+							<p:selectOneButton value="#{manejadorInformacionMarco.opcion0}">  
+								<f:selectItem itemLabel="Si" itemValue="true" />  
+								<f:selectItem itemLabel="No" itemValue="false" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneButton>
+						</t:div> 
+					</p:column>
+					<p:column>
+					<h:outputText
+						value="Declaro que el proyecto tiene como finalidad exclusiva investigación científica no comercial y NO CONTIENE 
+						actividades de recolección con fines industriales, comerciales, prospección biológica o estudios ambientales." />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{!manejadorInformacionMarco.opcion0}">
+					<p:column colspan="2">
+							<p:panel style="text-align:justify;"
+								id="investigadoresExtranjeros">
+								<h:outputText
+									value="El PMR otorgado mediante Resolución 000697 del 18 de Abril de 2024 de la AUTORIDAD NACIONAL DE LICENCIAS AMBIENTALES - ANLA de 2024 no ampara actividades de recolección de 
+									especímenes de especies silvestres de la diversidad biológica con fines industriales, 
+									comerciales, prospección biológica o estudios ambientales. 
+									Si su investigación tiene estos fines debe realizar por medio de la Vicerrectoría de Investigación 
+									el trámite del correspondiente permiso el cual se regirá por la 
+									reglamentación específica, expedida por el Gobierno Nacional para tal efecto.	" />
+							</p:panel>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputText value="Ámbito general:" />
+					</p:column>
+					<p:column>
+						<p:selectOneMenu value="#{manejadorInformacionMarco.proyectoActual.ambitoGeneralPM}"
+						style="width: 100%;" panelStyle="width: 400px;" disabled="true">
+						<f:selectItems
+							value="#{manejadorInformacionMarco.ambitoRecolecta}" />
+					</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<t:div style="width: 100px;">
+							<p:selectOneButton value="#{manejadorInformacionMarco.opcion1}">  
+								<f:selectItem itemLabel="Sí" itemValue="true" />  
+								<f:selectItem itemLabel="No" itemValue="false" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneButton>
+						</t:div>
+					</p:column>
+					<p:column style="text-align:justify;">
+						<h:outputText
+						value="Declaro que me comprometo a depositar los especímenes recolectados en el proyecto en una 
+						colección biológica de la Universidad Nacional registrada ante el Instituto de Investigación de Recursos Biológicos Alexander von Humboldt 
+						una vez finalizadas las actividades de investigación, y que aportaré al informe final el correspondiente certificado." />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{manejadorInformacionMarco.opcion1}">
+					<p:column>
+						<h:outputText
+							value="Colección Biológica: " />
+					</p:column>
+					<p:column>
+						<p:selectOneMenu
+							value="#{manejadorInformacionMarco.proyectoActual.coleccionBiologicaPM}"
+							style="width: 100%;" panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{manejadorInformacionMarco.listaColeccionesItem}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row rendered="#{!manejadorInformacionMarco.opcion1}">
+					<p:column>
+						<h:outputText value="Justificación no depósito en colección:" />
+					</p:column>
+					<p:column>
+						<p:inputTextarea style="width: 100%;"
+						value="#{manejadorInformacionMarco.proyectoActual.noColeccionBiologicaPM}" />					
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<t:div style="width: 100px;">
+							<p:selectOneButton value="#{manejadorInformacionMarco.opcion2}">  
+								<f:selectItem itemLabel="Si" itemValue="true" />  
+								<f:selectItem itemLabel="No" itemValue="false" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneButton>
+						</t:div>
+					</p:column>
+					<p:column>
+						<h:outputText
+						value="Pretende recolectar especies amenazadas, vedadas o endémicas." />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{manejadorInformacionMarco.opcion2}">
+					<p:column colspan="2" style="text-align:justify;">
+						<p:panel id="especiesVedadas">
+							<h:outputText
+								value="Deberá solicitar autorización previa a través del sistema Hermes, a la Vicerrectoría de Investigación de acuerdo al instructivo 
+								 (link) y adjuntar el Formato de Solicitud de Autorización de Recolección de Especies Amenazadas, Vedadas o Endémicas. 
+								Esto se deberá realizar con un tiempo prudente previo a la recolección." />
+							<br />
+							<h:outputLink
+								value="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=124"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar Instructivo Sistema Hermes" />
+							</h:outputLink>
+							<br />
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/descargas/biodiversidad/FO_47-solicitud-auto-recoleccion-sp-amenazadas.doc"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar formato solicitud" />
+							</h:outputLink>
+						</p:panel>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+							<t:div style="width: 100px;">
+								<p:selectOneButton value="#{manejadorInformacionMarco.opcion3}">  
+									<f:selectItem itemLabel="Si" itemValue="true" />  
+									<f:selectItem itemLabel="No" itemValue="false" />
+									<p:ajax update="@form" process="@form" />
+								</p:selectOneButton>
+							</t:div>
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="La recolección de especimenes se realizará en área de comunidades étnicas" />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{manejadorInformacionMarco.opcion3}">
+					<p:column colspan="2" style="text-align:justify;">
+						<p:panel id="consultaPrevia">
+							<h:outputText
+								value="Deberá solicitar autorización previa a través del sistema Hermes, a la Vicerrectoría de Investigación de acuerdo al instructivo (link) y adjuntar el Formato. Esto se deberá realizar con un tiempo prudente previo a la recolección." />
+							<br />
+							<h:outputLink
+								value="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=124"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar Instructivo Sistema Hermes" />
+							</h:outputLink>
+							<br />
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/descargas/biodiversidad/anexo-1-solicitud-determinacion-procedencia.doc"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar formato solicitud" />
+							</h:outputLink>
+						</p:panel>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<t:div style="width: 100px;">
+							<p:selectOneButton value="#{manejadorInformacionMarco.opcion4}">  
+								<f:selectItem itemLabel="Si" itemValue="true" />  
+								<f:selectItem itemLabel="No" itemValue="false" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneButton>
+						</t:div>
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="Pretende recolectar especimenes al interior de un área del sistema de parques nacionales." />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{manejadorInformacionMarco.opcion4}">
+					<p:column colspan="2" style="text-align:justify;">
+						<p:panel id="parquesNacionales">
+							<h:outputText
+								value="Deberá solicitar autorización previa a través del sistema Hermes, a la Vicerrectoría de Investigación de acuerdo al instructivo (link) y adjuntar el Formato. Esto se deberá realizar con un tiempo prudente previo a la recolección." />
+							<br />
+							<h:outputLink
+								value="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=124"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar Instructivo Sistema Hermes" />
+							</h:outputLink>
+							<br />
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/descargas/biodiversidad/FO_45-solicitud-auto-de-recoleccion-PNN.docx"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar formato solicitud" />
+							</h:outputLink>
+						</p:panel>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputText
+						value="Grupo taxonómico a ser recolectado:" />
+					</p:column>
+					<p:column>
+						<p:inputTextarea style="width: 100%;"
+						value="#{manejadorInformacionMarco.proyectoActual.cateogoriasTaxonomicasPM}" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+							<t:div style="width: 100px;">
+								<p:selectOneButton value="#{manejadorInformacionMarco.opcion5}">  
+									<f:selectItem itemLabel="Si" itemValue="true" />  
+									<f:selectItem itemLabel="No" itemValue="false" />
+									<p:ajax update="@form" process="@form" />
+								</p:selectOneButton>
+							</t:div>
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="Pretende realizar exportación de especímenes y/o muestras" />
+					</p:column>
+				</p:row>
+				<p:row rendered="#{manejadorInformacionMarco.opcion5}">
+					<p:column colspan="2" style="text-align:justify;">
+						<p:panel id="exporta">
+							<h:outputText
+								value="Deberá solicitar autorización previa a través del sistema Hermes, a la Vicerrectoría de Investigación de acuerdo al instructivo (link) y adjuntar el Formato. Esto se deberá realizar con un tiempo prudente previo a la recolección." />
+							<br />
+							<h:outputLink
+								value="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=124"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar Instructivo Sistema Hermes" />
+							</h:outputLink>
+							<br />
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/descargas/biodiversidad/F-M-INA-37_V4-Formato-exportacion-importacion-CITES.xlsx"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar formato solicitud especímenes CITES" />
+							</h:outputLink>
+							<br />
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/descargas/biodiversidad/formulario-solicitud-no-cites.xlsx"
+								target="_blank"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<h:outputText value="- Descargar formato solicitud especímenes NO CITES" />
+							</h:outputLink>
+						</p:panel>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column colspan="2">
+						<p:panel id="advertencia" styleClass="confirmaEdicion"
+									style="color:#464646; text-align:justify;">
+									<t:div style="color:#464646; text-align:justify;">
+										 Si tiene inquietudes sobre estos procesos por favor comunicarse al correo electrónico: 
+										 <a href="mailto:perminambiente@unal.edu.co">perminambiente@unal.edu.co</a>
+									</t:div>
+								</p:panel>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column colspan="2" style="text-align:center;">
+						<p:commandButton
+							disabled="#{!manejadorInformacionMarco.opcion0}"
+							action="#{manejadorInformacionMarco.siguiente}"
+							value="Guardar y avanzar" update="@form" ajax="false"/>
+					</p:column>
+				</p:row>
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

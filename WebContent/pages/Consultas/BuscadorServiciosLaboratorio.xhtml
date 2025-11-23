@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-buscador"
+					rendered="#{!manejadorBuscadorEnsayos.error}">
+					<h:outputText value="Buscador" />
+				</t:div>
+				<t:div styleClass="contenedor-informacion">
+					<t:div styleClass="contenido-titulo-general-myriad">Laboratorios (Ensayos y servicios) </t:div>
+					<t:div styleClass="informacion">
+						<t:div styleClass="informacion-titulo">
+							<h:outputText value="Criterios de búsqueda: " />
+						</t:div>
+						<t:div styleClass="informacion-texto"
+							style="border-bottom: 0px; padding-bottom: 0px; width: 675px;">
+							<h:outputText
+								value="Puede seleccionar una o varias combinaciones de criterios de la columna de la derecha (Filtros de búsqueda) para ampliar la
+												cobertura de su búsqueda. Para quitar un criterio puede hacer click en la X del filtro que previamente haya seleccionado.
+												Cuando termine de añadir filtros de búsqueda hága click en el botón Buscar." />
+							<br />
+							<h:outputText
+								value="NO ES OBLIGATORIO ESCRIBIR LAS PALABRAS COMPLETAS" />
+						</t:div>
+						<h:panelGrid columns="2"
+							columnClasses="columna-etiquetas-buscador,''">
+							<h:outputText value="Nombre de laboratorio, ensayo o servicio:" />
+							<t:div style="margin: 0px; padding: 0px;line-height: 0px; ">
+								<t:div style="float: left;">
+									<f:verbatim>
+										<img
+											src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/img_campo_intr.png" />
+									</f:verbatim>
+								</t:div>
+								<h:inputText
+									value="#{manejadorBuscadorEnsayos.nombreEnsayoBusqueda}"
+									styleClass="campo-buscador-nombre" />
+								<t:div style="float: right;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/final_caja_buscador.png" />
+								</t:div>
+							</t:div>
+						</h:panelGrid>
+						<p:panelGrid id="panelSede" columns="2"
+							styleClass="estilo-panelgrid-buscadores-selects"
+							columnClasses="columna-etiquetas-buscador,''"
+							rendered="#{manejadorBuscadorEnsayos.opcion1}">
+							<h:outputText value="Sede:" />
+							<p:selectOneMenu value="#{manejadorBuscadorEnsayos.idSede}"
+								styleClass="select-item-buscador"
+								style="width: 437px; height: 20px;">
+								<f:selectItems
+									value="#{manejadorBuscadorEnsayos.listaSedesItem}" />
+								<p:ajax update="selectFacultad"
+									listener="#{manejadorBuscadorEnsayos.cargarFacultadesSede}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panelGrid id="panelFacultad" style="margin-top: 3px;"
+							columns="2" styleClass="estilo-panelgrid-buscadores-selects"
+							columnClasses="columna-etiquetas-buscador,''"
+							rendered="#{manejadorBuscadorEnsayos.opcion2}">
+							<h:outputText value="Facultad:" />
+							<p:selectOneMenu id="selectFacultad"
+								value="#{manejadorBuscadorEnsayos.idFacultad}"
+								styleClass="select-item-buscador"
+								style="width: 437px; height: 20px;">
+								<f:selectItems
+									value="#{manejadorBuscadorEnsayos.facultadesSedeItem}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<t:div styleClass="panel-botones" id="panelBuscar"
+							rendered="#{manejadorBuscadorEnsayos.opcionBuscar}">
+							<h:commandButton
+								action="#{manejadorBuscadorEnsayos.buscarEnsayos}"
+								styleClass="boton_buscar" value="" />
+						</t:div>
+						<t:div styleClass="panel-botones"
+							rendered="#{manejadorBuscadorEnsayos.opcionAgregar}"
+							id="panelAgregar">
+							<h:commandButton
+								action="#{manejadorBuscadorEnsayos.buscarEnsayos}"
+								styleClass="boton_agregar" value="" />
+						</t:div>
+						<t:div styleClass="resultados-buscador">
+							<t:div styleClass="informacion-titulo-buscador"
+								rendered="#{!manejadorBuscadorEnsayos.visibleResultados}">
+								<h:outputText value="Resultados " />
+							</t:div>
+							<t:div styleClass="informacion-resultado-buscador"
+								style="border-bottom: none; color: #464646; padding-bottom: 0px; padding-top: 3px;"
+								rendered="#{!manejadorBuscadorEnsayos.primeraVez}">
+								<t:outputText
+									value="Se han encontrado #{manejadorBuscadorEnsayos.numeroResultados} registros" />
+							</t:div>
+							<t:div styleClass="panel-buscador">
+								<p:dataList id="tablaResultadoGrupos"
+									value="#{manejadorBuscadorEnsayos.listaEnsayos}" var="ensayo"
+									rows="8" type="none"
+									paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+									paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" style="">
+									<t:div
+										styleClass="informacion-resultado-buscador-convocatorias">
+										<p:commandLink
+											action="#{manejadorBuscadorEnsayos.consultarPagina}"
+											value="#{ensayo.laboratorio.nombre}" target="_blank">
+											<f:setPropertyActionListener value="#{ensayo}"
+												target="#{manejadorBuscadorEnsayos.ensayoSeleccionado}" />
+										</p:commandLink>
+										<br />
+										<t:outputText value="Sede: " style="font-weight: bold;" />
+										<t:outputText value="#{ensayo.laboratorio.sede.nombre} " />
+									</t:div>
+								</p:dataList>
+							</t:div>
+						</t:div>
+						<t:div styleClass="panel-inicio"
+							rendered="#{manejadorBuscadorEnsayos.visibleResultados}" />
+					</t:div>
+				</t:div>
+				<t:div styleClass="final-contenedor-informacion" />
+			</t:div>
+			<t:div styleClass="contenido-menu"
+				rendered="#{!manejadorBuscadorEnsayos.error}">
+				<t:div styleClass="menu-superior">
+					<div class="logo-hermes">
+						<a href="#{facesContext.externalContext.requestContextPath}/"><img
+							src="#{facesContext.externalContext.requestContextPath}/images/her-general/logo_hermes.png" /></a>
+					</div>
+					<t:div styleClass="cabezote-derecho-menu">
+						<h:outputText value="Filtros de búsqueda" />
+					</t:div>
+					<t:div styleClass="menu">
+						<ul>
+							<li><p:commandLink
+									action="#{manejadorBuscadorEnsayos.cargarSede}" ajax="false">
+									<h:outputText value="Sede" />
+								</p:commandLink></li>
+							<li><p:commandLink
+									action="#{manejadorBuscadorEnsayos.cargarFacultad}"
+									ajax="false">
+									<h:outputText value="Facultad" />
+								</p:commandLink></li>
+							<!-- 
+								<li>
+									<p:commandLink >			
+										<h:outputText value="Laboratorio" />
+									</p:commandLink>
+								</li> -->
+						</ul>
+					</t:div>
+				</t:div>
+				<t:div styleClass="menu-informacion">
+					<t:div styleClass="cabezote-derecho-menu" style="width: 195px;"
+						rendered="#{manejadorBuscadorEnsayos.visibleFiltros}">
+						<h:outputText value="Filtros seleccionados" />
+					</t:div>
+					<t:div styleClass="cabezote-derecho-buscador-filtro"
+						style="width: 195px;"
+						rendered="#{manejadorBuscadorEnsayos.visibleSedesFiltro}">
+						<t:div style="float: left;">
+							<h:commandButton
+								action="#{manejadorBuscadorEnsayos.limpiarFiltroSede}" value=""
+								styleClass="boton-cerrar-filtro" />
+						</t:div>
+						<t:div>
+							<h:outputText value="Sede" />
+						</t:div>
+					</t:div>
+					<t:div styleClass="campo-filtros-usados"
+						rendered="#{manejadorBuscadorEnsayos.visibleSedesFiltro}">
+						<p:dataList var="sede"
+							value="#{manejadorBuscadorEnsayos.sedesSeleccionadas}">
+							<t:div style="float: left;">
+								<h:commandButton
+									action="#{manejadorBuscadorEnsayos.eliminarSede}" value=""
+									styleClass="boton-cerrar-gris">
+									<f:setPropertyActionListener value="#{sede}"
+										target="#{manejadorBuscadorEnsayos.sedeSeleccionada}" />
+								</h:commandButton>
+							</t:div>
+							<h:outputText value="#{sede.nombre}" />
+						</p:dataList>
+					</t:div>
+					<t:div styleClass="cabezote-derecho-buscador-filtro"
+						style="width: 195px;"
+						rendered="#{manejadorBuscadorEnsayos.visibleFacultadesFiltro}">
+						<t:div style="float: left;">
+							<h:commandButton
+								action="#{manejadorBuscadorEnsayos.limpiarFiltroFacultad}"
+								value="" styleClass="boton-cerrar-filtro" />
+						</t:div>
+						<t:div>
+							<h:outputText value="Facultad" />
+						</t:div>
+					</t:div>
+					<t:div styleClass="campo-filtros-usados"
+						rendered="#{manejadorBuscadorEnsayos.visibleFacultadesFiltro}">
+						<p:dataList var="facultad"
+							value="#{manejadorBuscadorEnsayos.facultadesSeleccionadas}">
+							<t:div style="float: left;">
+								<h:commandButton
+									action="#{manejadorBuscadorEnsayos.eliminarFacultades}"
+									value="" styleClass="boton-cerrar-gris">
+									<f:setPropertyActionListener value="#{facultad}"
+										target="#{manejadorBuscadorEnsayos.facultadSeleccionada}" />
+								</h:commandButton>
+							</t:div>
+							<h:outputText value="#{facultad.nombre}" />
+						</p:dataList>
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

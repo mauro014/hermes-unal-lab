@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+
+	<class name="Financiacion" table="HER_FINANCIACION">
+
+		<id column="FIN_ID" name="id" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_FINANCIACION</param>
+			</generator>
+		</id>
+
+		<property name="valor" column="FIN_VALOR" type="long"
+			not-null="true" />
+		<property name="rol" column="FIN_PRY_EXT_SOL_ROL" />
+		<property name="nit" column="FIN_IDENTIFICACION_NIT" />
+		<property name="contrato" column="FIN_CONTRATO" />
+		<property name="fechaContrato" column="FIN_FECHA_CONTRATO" />
+		<property name="convenio" column="FIN_CONVENIO" />
+
+		<many-to-one name="proyecto" column="PRY_ID" class="Proyecto"
+			not-null="true" />
+		<many-to-one name="fuente" column="FFI_ID" class="FuenteFinanciacion"
+			not-null="true" lazy="false" />
+		<property name="tipoEntidad" column="FFE_TIPO_ENTIDAD" />
+		<property name="valorEspecie" column="FFE_VALOR_ESPECIE" />
+		<property name="esLegalizacion" column="FIN_ES_LEGALIZACION" />
+
+		<set name="gastos" table="HER_GASTO" inverse="true" lazy="false"
+			cascade="all-delete-orphan">
+			<key column="FIN_ID" />
+			<one-to-many class="Gasto" />
+		</set>
+
+		<many-to-one name="modalidadFuenteFinanciacion" column="MDF_ID"
+			class="ModalidadFuenteFinanciacion" lazy="false" />
+
+		<many-to-one name="subtipoFinanciacion" class="co.edu.unal.hermes.modelo.Tipos"
+			lazy="false">
+			<column name="FIN_SUBTIPO" />
+		</many-to-one>
+
+	</class>
+</hibernate-mapping>

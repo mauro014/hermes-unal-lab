@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="Persona" table="HER_PERSONA">
+
+		<composite-id class="IdPersona" name="id" unsaved-value="none">
+			<key-property name="documento" column="PER_ID" />
+			<key-property name="tipoDocumento" column="TDO_ID" />
+		</composite-id>
+
+		<many-to-one name="estadoCivil" class="EstadoCivil"
+			column="ECI_ID" />
+		<many-to-one name="ciudadDomicilio" class="Ciudad"
+			column="CIU_DOMICILIO_ID" />
+		<many-to-one name="ciudadNacimiento" class="Ciudad"
+			column="CIU_NACIMIENTO_ID" />
+		<many-to-one name="ciudadExpedicion" class="Ciudad"
+			column="CIU_EXPEDICION_ID" />
+		<property name="nombre1" column="PER_NOMBRE1" />
+		<property name="nombre2" column="PER_NOMBRE2" />
+		<property name="apellido1" column="PER_APELLIDO1" />
+		<property name="apellido2" column="PER_APELLIDO2" />
+		<property name="genero" column="PER_GENERO" />
+		<property name="email" column="PER_EMAIL" />
+		<property name="direccion" column="PER_DIRECCION" />
+		<property name="telefono" column="PER_TELEFONO" />
+		<property name="telefonoHojaVida" column="PER_TELEFONO_HV" />
+		
+		<property name="fechaNacimiento" column="PER_FNACIMIENTO"
+			type="date" />
+		<property name="nacionalidad" column="PER_NACIONALIDAD" />
+		<property name="paisOrigen" column="PER_SIGLA_PAIS" />
+
+		<property name="celular" column="PER_CELULAR" />
+		<property name="profesion" column="PER_PROFESION" />
+		<property name="resumenHojaDeVida" column="PER_RESUMEN_HDV" />
+		
+		<property name="edad" column="PER_EDAD" />
+		<property name="fechaTituloPregrado" column="PER_FECH_TITU_PREGRADO" type="date"/>
+		<property name="promedioPregrado" column="PER_PROMEDIO_PREGRADO" />
+		<property name="facultadPregrado" column="PER_FACULTAD_PREGRADO" />
+		
+		<property name="esActivoSara" column="PER_ACTIVO_SARA" />
+		
+		<set name="personaRoles" table="HER_PERSONA_ROL" lazy="false">
+		    <key>
+		        <column name="PER_ID" />
+		        <column name="TDO_ID" />
+		    </key>
+		    <one-to-many class="co.edu.unal.hermes.modelo.PersonaRol" />
+		</set>
+
+		<set name="roles" table="HER_PERSONA_ROL" lazy="false">
+			<key>
+				<column name="PER_ID" />
+				<column name="TDO_ID" />
+			</key>
+			<many-to-many class="Rol" column="ROL_ID" />
+		</set>
+
+		<set name="proyectosAsesor" table="HER_SEG_PROYECTO_PERSONA">
+			<key>
+				<column name="PER_ID" />
+				<column name="TDO_ID" />
+			</key>
+			<many-to-many class="Proyecto" column="PRY_ID" />
+		</set>
+
+		<!-- Herencia para los investigadores -->
+		<joined-subclass name="Investigador" table="HER_INVESTIGADOR">
+			<key>
+				<column name="INV_ID" />
+				<column name="TDO_ID" />
+			</key>
+			<many-to-one name="categoriaInvestigador" class="CategoriaInvestigador"
+				column="CAT_ID" lazy="false" />
+
+			<property name="telOficina" column="INV_TELEFONO_OF" />
+
+			<property name="urlColciencias" column="INV_URL_COLCIENCIAS" />
+			<property name="interno" column="INV_INTERNO" />
+			<property name="evaluador" column="INV_EVALUADOR" />
+			<property name="areaOcde" column="INV_AREA_OCDE" />
+			<property name="subareaOcde" column="INV_SUB_AREA_OCDE" />
+			
+			<property name="esFuncionario" column="INV_FUNCIONARIO" />
+
+			<set name="proyectosInvestigador" table="HER_INVESTIGADOR_PROYECTO"
+				inverse="true" cascade="all-delete-orphan" order-by="PRY_ID DESC">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<one-to-many class="InvestigadorProyecto" />
+			</set>
+
+			<set name="proyectosEvaluador" table="HER_PROYECTO_EVALUADOR"
+				inverse="true" sort="natural" cascade="all-delete-orphan">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<one-to-many class="ProyectoEvaluador" />
+			</set>
+
+			<!-- <map name="grupos" table="HER_INVESTIGADOR_GRUPO"> <key> <column 
+				name="INV_ID"/> <column name="TDO_ID"/> </key> <index-many-to-many class="Grupo" 
+				column="GRU_ID"/> <element column="TIPO" type="string"/> </map> -->
+
+			<set name="gruposInvestigador" table="HER_INVESTIGADOR_GRUPO"
+				inverse="true" cascade="all-delete-orphan">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<one-to-many class="InvestigadorGrupo" />
+			</set>
+
+			<set name="lineas" table="HER_INVESTIGADOR_LINEA">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<many-to-many class="LineaInvestigacion" column="LIN_ID" />
+			</set>
+
+			<set name="clasificacionesConocimiento" table="HER_INVESTIGADOR_CLA_CON">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<many-to-many class="ClasificacionConocimiento" column="CLC_ID" />
+			</set>
+			
+			<joined-subclass name="InvestigadorInterno" table="HER_INVESTIGADOR_INTERNO">
+                <key>
+                    <column name="INV_ID" />
+                    <column name="TDO_ID" />
+                </key>
+                <many-to-one name="dependencia" class="Dependencia"
+                    column="DPN_ID" lazy="false" />
+                <many-to-one name="dependencia2" class="Dependencia"
+                    column="DPN_ID2" lazy="false" />
+                <many-to-one name="tipoDedicacion" class="TipoDedicacion"
+                    column="TDE_ID" lazy="false" />
+                <many-to-one name="tipoFormacion" class="TipoFormacion"
+                    column="TFO_ID" lazy="false" />
+                <many-to-one name="tipoVinculacion" class="TipoVinculacion"
+                    column="TVI_ID" lazy="false" />
+                <property name="telExtension" column="INI_TEXTENSION" />
+                <property name="urlWebDocente" column="INI_URL_WEB_DOCENTE" />
+                <property name="investigador_2017" column="INI_2017" type="yes_no" />
+                <property name="investigador_2007" column="INI_2007" type="yes_no" />
+                <property name="valorHora" column="INI_VALOR_HORA" />
+                <property name="tienePermisoMarco" column="INI_PERMISO_MARCO" />
+                <property name="perfil" column="INI_PERFIL" />
+                <property name="evaluadorMinciencias" column="INI_EVA_MINCIENCIAS" />
+                <property name="areaExperticia" column="INI_AREA_EXPERTICIA" />
+                <property name="periodoPrueba" column="INV_PERIODO_PRUEBA" />
+                <many-to-one name="tipoCargo" class="TipoCargo" column="TCA_ID"
+                    lazy="false" />
+            </joined-subclass>
+
+			<!-- Herencia para los investigadores externos e internos -->
+			<joined-subclass name="InvestigadorExterno" table="HER_INVESTIGADOR_EXTERNO">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<many-to-one name="institucion" class="Institucion"
+					column="INS_ID" lazy="false"/>
+				<property name="contrasena" column="INE_CLAVE" type="long" />
+				<many-to-one name="tipoFormacion" class="TipoFormacion"
+                    column="TFO_ID" lazy="false" />
+                <many-to-one name="institucionInvestigador" class="FuenteFinanciacion"
+					column="FFI_ID" lazy="false"/>
+			</joined-subclass>
+
+			<joined-subclass name="Evaluador" table="HER_EVALUADOR">
+                <key>
+                    <column name="INV_ID" />
+                    <column name="TDO_ID" />
+                </key>
+                <property name="areaExperticia" column="EVA_AREA_EXPERTICIA"/>
+			    <property name="formacion" column="EVA_FORMACION"/>             
+				<property name="tesis" column="EVA_TESIS"/>
+				<property name="areaCiencia" column="EVA_AREA_CIENCIA"/>
+				<property name="subAreaCiencia" column="EVA_SUBAREA_CIENCIA"/>
+				<property name="cvlac" column="EVA_CVLAC"/>
+				<property name="tipo" column="EVA_TIPO"/>
+				<property name="minciencias" column="EVA_MINCIENCIAS"/>
+                <many-to-one name="institucionLabora" class="FuenteFinanciacion"
+                    column="FFI_ID_LABORA" lazy="false" />
+                <many-to-one name="institucionEstudio" class="FuenteFinanciacion"
+                    column="FFI_ID_ESTUDIO" lazy="false" />
+                    
+		
+			<!-- <set name="lineasInvestigacion" table="HER_EVALUADOR_LINEA_INV">
+				<key>
+					<column name="INV_ID" />
+					<column name="TDO_ID" />
+				</key>
+				<many-to-many class="LineaInvestigacion" column="LIN_ID" />
+			</set> -->
+                
+            </joined-subclass>
+
+			<!-- Herencia para los evaluadores -->
+			<!-- <joined-subclass name="Evaluador" table="HER_EVALUADOR"> <key> <column 
+				name="INV_ID"/> <column name="TDO_ID"/> </key> <property name="areaExperticia" 
+				column="EVA_AREA_EXPERTICIA"/> <set name="proyectosEvaluador" table="HER_PROYECTO_EVALUADOR" 
+				inverse="true" cascade="all-delete-orphan"> <key> <column name="INV_ID"/> 
+				<column name="TDO_ID"/> </key> <one-to-many class="ProyectoEvaluador"/> </set> 
+				<set name="palabrasClaves" table="HER_EVALUADOR_PALABRA_CLAVE"> <key> <column 
+				name="INV_ID"/> <column name="TDO_ID"/> </key> <many-to-many class="PalabraClave" 
+				column="PCL_ID"/> </set> </joined-subclass> -->
+
+			<!-- Fin de herencia para los evaluadores -->
+
+		</joined-subclass>
+
+	</class>
+</hibernate-mapping>

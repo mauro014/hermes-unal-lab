@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<div >
+
+
+<div id="queryresultado" style="overflow:auto; width:100%; height:200px">
+<h:form>
+ 
+ <h:outputText value="Han sido encontrados #{manejadorConsultas.tamañoListaGrupos} grupos" styleClass="titulo"/>
+ </center><br />
+
+
+ 
+ <t:buffer into= "#{tablaProyectos}"> 
+     <h:dataTable styleClass   = "resultadobusq"                
+                  id		   = "tablaResultadoGrupos"       
+                  styleClass    = "tablaSimple"                
+	              headerClass   = "cabeceraSimple"        
+	              value        = "#{manejadorConsultas.listaGrupos}" 
+	              var          = "consultaGrupo"
+	              binding      = "#{manejadorConsultas.tablaConsultas}"
+                  rows		   = "25">	 
+	  <h:column>
+	     <f:facet name="header">
+	       <h:outputText value="Nombre del grupo" styleClass="titulo"/>
+	     </f:facet>                
+	     <h:commandLink action="#{manejadorConsultas.setObjetoActual}" styleClass="linkSimple">
+	       <h:outputText value="#{consultaGrupo.nombre}"/>
+	     </h:commandLink>  
+	   </h:column>	   
+	  <h:column>
+	     <f:facet name="header">
+	       <h:outputText value="Facultad o dependencia" styleClass="titulo"/>
+	     </f:facet>                
+	       <h:outputText value="#{consultaGrupo.dependencia.nombre}"/>
+	   </h:column>	   
+	  <h:column>
+	     <f:facet name="header">
+	       <h:outputText value="Categoría Colciencias" styleClass="titulo"/>
+	     </f:facet>                
+	       <h:outputText value="#{consultaGrupo.categoria.nombre}"/>	     
+	   </h:column>	   
+	 </h:dataTable> 
+ </t:buffer>
+ 
+ 
+ <t:buffer into="#{tablaScroller}">
+	<h:panelGrid columns="1">
+       <t:dataScroller id="scrollProyectos"
+                       for="tablaResultadoGrupos"
+                       fastStep="5"
+                       pageCountVar="pageCount"
+                       pageIndexVar="pageIndex"
+                       paginator="true"
+                       paginatorMaxPages="9"
+                       paginatorTableClass="paginator"
+                       paginatorActiveColumnStyle="font-weight:bold;">
+			<f:facet name="first">
+				<t:outputText  value = "<<"/>
+	        </f:facet>
+	        
+	        <f:facet name="previous">
+				<t:outputText  value = "<"/>
+	        </f:facet>
+
+			<f:facet name="next">
+				<t:outputText  value = ">"/>
+	        </f:facet>
+	        
+	        <f:facet name="last">
+				<t:outputText  value = ">>"/>
+	        </f:facet>
+
+		</t:dataScroller>
+
+	</h:panelGrid>
+  </t:buffer>
+
+ <center>
+   <h:outputText value="#{tablaScroller}" escape="false"/>
+  <h:outputText value="#{tablaProyectos}" escape="false"/>
+  <h:outputText value="#{tablaScroller}" escape="false"/>
+</center>
+
+	 
+	 <center>
+	 <br />
+	       	 <h:commandLink action="#{manejadorConsultas.volver_busqueda}" styleClass="linkResaltado">
+	       	 
+	     
+	     <h:outputText value="[Nueva búsqueda]"/>
+	 </h:commandLink>	  
+	 </center>
+</h:form>
+</div>
+</div></h:form>
+</ui:define>
+</ui:composition>

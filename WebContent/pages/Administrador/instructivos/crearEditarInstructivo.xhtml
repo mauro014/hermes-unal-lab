@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Crear / editar instructivo </t:div>
+			<t:div style="padding:15px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelConvocatoria">
+					<p:row>
+						<p:column>
+							<h:outputText value="Componente:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="componente"
+								value="#{manejadorCrearEditarInstructivos.instructivo.componente}"
+								style="width:480px" panelStyle="width: 400px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarInstructivos.componenteInstructivo}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Clasificación:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="clasificacion"
+								value="#{manejadorCrearEditarInstructivos.instructivo.clasificacion.id}"
+								style="width:480px" panelStyle="width: 400px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarInstructivos.listaClasificacionesActivasItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Nombre del instructivo:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorCrearEditarInstructivos.instructivo.nombre}"
+								id="instructivoNombre" size="68" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<h:outputText value="Descripción del instructivo:" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="65" rows="4" maxlength="3000"
+								value="#{manejadorCrearEditarInstructivos.instructivo.descripcion}"
+								id="instructivoDescripcion">
+							</p:inputTextarea>
+
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+						</p:column>
+						<p:column>
+							<h:outputText id="counterDescripcion" value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Rol:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:300px;"
+								value="#{manejadorCrearEditarInstructivos.instructivo.rol.id}"
+								panelStyle="width: 300px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarInstructivos.listaRolesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Estado:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:120px;"
+								value="#{manejadorCrearEditarInstructivos.instructivo.estado}"
+								panelStyle="width: 120px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarInstructivos.estadoInstructivo}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<center>
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									style="width:100%">
+									<p:row>
+										<p:column>
+											<p:fileUpload
+												fileUploadListener="#{manejadorCrearEditarInstructivos.adjuntarArchivo}"
+												mode="advanced" auto="true" update="tabla-archivo"
+												multiple="true" label="Seleccionar archivo" 
+												allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="El formado de archivo no es permitido. Sólo archivos PDF para garantizar su visualización."/>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:dataTable
+												value="#{manejadorCrearEditarInstructivos.listaArchivos}"
+												width="100%" var="archivo"
+												emptyMessage="No hay archivos asociados" id="tabla-archivo">
+
+												<p:column headerText="Id" style="width:3%">
+													<div>
+														<h:outputText value="#{archivo.id}"
+															style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+													</div>
+												</p:column>
+												<p:column headerText="Documentos adjuntos" tyle="width:90%">
+													<div style="width: 450px;">
+														<h:outputText value="#{archivo.nombre}"
+															style="text-align: left; width: 500px; text-transform:uppercase; padding-bottom: 10px;" />
+													</div>
+												</p:column>
+												<p:column headerText="Descargar"
+													style="width:3%; text-align:center;">
+													<p:commandButton id="descargar"
+														action="#{manejadorCrearEditarInstructivos.descargarArchivo}"
+														icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+														ajax="false">
+														<f:setPropertyActionListener value="#{archivo}"
+															target="#{manejadorCrearEditarInstructivos.archivoSeleccionado}" />
+													</p:commandButton>
+												</p:column>
+												<p:column style="width:3%; text-align:center;"
+													headerText="(-)">
+													<p:commandButton id="selectButton" update="tabla-archivo"
+														icon="ui-icon-trash"
+														action="#{manejadorCrearEditarInstructivos.eliminarArchivo}"
+														title="Eliminar archivo">
+														<f:setPropertyActionListener value="#{archivo}"
+															target="#{manejadorCrearEditarInstructivos.archivoSeleccionado}" />
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</center>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<br />
+							<p:commandButton
+								action="#{manejadorCrearEditarInstructivos.guardar}"
+								value="Guardar" icon="ui-icon-disk" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			<p:messages id="msgs" autoUpdate="true" showDetail="true"
+				closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

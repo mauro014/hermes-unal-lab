@@ -1,0 +1,1 @@
+<jsp:forward page="pages/BancoProblemas/ProblemasAprobados.xhtml" />

@@ -1,0 +1,559 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión aval</t:div>
+
+			<br />
+			
+							<p:panel rendered="#{manejadorSolicitarAvalDRE.convocatoriaExterna.convocatoriaCerrada}">
+			<t:div style="color:#464646; text-align:justify;">
+					La convocatoria asociada a esta solicitud de aval<strong
+					style="color: #FF0000;"> ya se encuentra cerrada ante la entidad externa</strong>, 
+					por lo que es su responsabilidad el proceso aprobar o no la solicitud de aval después de esas fechas y 
+					coordinar con las dependencias responsables.
+			</t:div>
+			<br/>
+			<strong
+					style="color: #000000;">Convocatoria: </strong>
+			<h:outputText style="text-weight:bold;" value="#{manejadorSolicitarAvalDRE.convocatoriaExterna.nombre}"></h:outputText>
+			<br />
+			<h:outputText style="text-weight:bold;" value="Fecha de cierre: "></h:outputText>
+			<h:outputText style="text-weight:bold;" value="#{manejadorSolicitarAvalDRE.convocatoriaExterna.fechaCierre}"></h:outputText>
+			
+		</p:panel>
+		<t:div rendered="#{manejadorSolicitarAvalDRE.convocatoriaExterna.convocatoriaCerrada}">
+		<br/>
+		</t:div>
+			<p:panel id="panelAvalInfo">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelAval"
+					style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Código aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorSolicitarAvalDRE.aval.aviId}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalDRE.aval.nombreTipo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalDRE.nombreInvestigador}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Consultar información aval: " />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+							<h:commandLink value="Ver reporte específico"
+								action="#{manejadorSolicitarAvalDRE.imprimirAval}"
+								target="_popUpWindow1"
+								onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column>
+							<h:outputText
+								value="Consultar información de proyecto relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte de proyecto"
+								target="_popUpWindow2"
+								action="#{manejadorSolicitarAvalDRE.imprimirProyecto}"
+								onclick="javascript: void window.open('', '_popUpWindow2', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalDRE.aval.tipo == 'GR'}">
+						<p:column>
+							<h:outputText
+								value="Consultar información del grupo relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte grupo" target="_popUpWindow3"
+								action="#{manejadorSolicitarAvalDRE.imprimirGrupo}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.aval.aviConvocatoria >= 1}">
+						<p:column>
+							<h:outputText value="Consultar la convocatoria: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Consultar página externa"
+								action="#{manejadorSolicitarAvalDRE.consultarPaginaConvocatoriaExterna}"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								target="_popUpWindow"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<f:param name="aviNumeroConvocatoria"
+									value="#{manejadorSolicitarAvalDRE.aval.aviConvocatoria}" />
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.aval.avalRelacionado!=null and manejadorSolicitarAvalDRE.aval.avalRelacionado!=0}">
+						<p:column>
+							<h:outputText value="Solicitud relacionada con el aval: " />
+						</p:column>
+						<p:column>
+							<h:commandLink
+								value="#{manejadorSolicitarAvalDRE.aval.avalRelacionado}"
+								target="_popUpWindow3"
+								action="#{manejadorSolicitarAvalDRE.imprimirReporteRelacionado}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.aval.interSedes!=null and manejadorSolicitarAvalDRE.aval.interSedes=='S'}">
+						<p:column colspan="2">
+							<h:outputText
+								value="El docente ha indicado que la solicitud de aval involucra más de una sede de la Universidad " />
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+				<br />
+
+				<p:dataTable var="documento" id="tablaArchivoDoc"
+					value="#{manejadorSolicitarAvalDRE.listaArchivos}"
+					emptyMessage="No hay archivos adjuntos." cellpadding="1"
+					cellspacing="8" align="center" border="1" style="width:100%">
+					<f:facet name="header">Archivos Adjuntos</f:facet>
+
+					<p:column headerText="Id">
+
+						<h:outputText value=" #{documento.id}" />
+					</p:column>
+
+					<p:column headerText="Archivo">
+
+						<h:outputText value=" #{documento.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value=" #{documento.nombreTipo}" styleClass="normal" />
+					</p:column>
+					<p:column headerText="Descargar">
+						<p:commandButton id="descargar"
+							action="#{manejadorSolicitarAvalDRE.descargarArchivo}"
+							icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{manejadorSolicitarAvalDRE.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<br />
+			<p:fieldset legend="Aval de la Dirección de Relaciones Exteriores"
+				id="panelAvalRevision">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPrincipal" style="text-align:left">
+					<p:row>
+						<p:column style="width:50%;">
+							<h:outputText value="Aval Dirección de Relaciones Exteriores" />
+						</p:column>
+						<p:column style="width:50%;">
+							<p:selectOneMenu id="somCategoriaGrupos"
+								value="#{manejadorSolicitarAvalDRE.selItem}" style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSolicitarAvalDRE.categoriaItems}" />
+								<p:ajax update="panelPrincipal" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalDRE.selItem eq '4'}">
+						<p:column colspan="2">
+							<h:outputText style="color: #FF0000; font-weigt: bold"
+								value="La devolución del aval se remite a la Dirección de Investigación de la sede para su revisión y analizar si requiere adjuntar documento o modificar información." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="70" rows="5" style="width:100%"
+								autoResize="false" id="dev1"
+								value="#{manejadorSolicitarAvalDRE.aval.textoDRE}"
+								maxlength="3800">
+								<f:validateLength minimum="0" maximum="3800" for="dev1"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterDev1"
+								value="Tamaño máximo 3800 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText
+								value="NOTA: Recomendamos no usar caracteres especiales como '$', puede haber problemas con el texto, en caso de envío de e-mail."
+								style='font-weight: bold' />
+						</p:column>
+					</p:row>
+					<p:row id="commentsProyecto"
+						rendered="#{manejadorSolicitarAvalDRE.selItem == '4' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column colspan="2" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<h:outputText
+								rendered="#{manejadorSolicitarAvalDRE.aval.esAvalParaRevisionVice eq 'N'}">Al seleccionar la opción <strong>DEVOLVER
+									PARA CORRECCIONES</strong> se remitirá el aval a la Dirección de Sede respectiva para su trámite.</h:outputText>
+							<h:outputText
+								rendered="#{manejadorSolicitarAvalDRE.aval.esAvalParaRevisionVice eq 'S'}">Al seleccionar la opción <strong>DEVOLVER
+									PARA CORRECCIONES</strong> se remitirá el aval a la Vicerrectoría de Investigación para su trámite.</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.selItem == '2' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column colspan="2" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<p:fieldset legend="Datos para el formato estándar de la UNAL"
+								id="pnlFormatoStd">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									id="pnlFormatoStd" style="width:100%;">
+									<p:row>
+										<p:column style="width:50%">
+											<h:outputText value="* Idioma:" />
+										</p:column>
+										<p:column style="width:50%">
+											<p:selectOneRadio
+												value="#{manejadorSolicitarAvalDRE.formatoIngles}">
+												<f:selectItem itemLabel="Español" itemValue="false" />
+												<f:selectItem itemLabel="Inglés" itemValue="true" />
+												<p:ajax event="change" update="pnlFormatoStd"
+													process="pnlFormatoStd" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="* #{manejadorSolicitarAvalDRE.formatoIngles?'Consecutivo Rectoría':'Consecutivo Rectoría'}:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.consecutivo}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorSolicitarAvalDRE.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Nombre de Institución:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.nombreInstitucion}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorSolicitarAvalDRE.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Nombre de la convocatoria:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.nombreConvocatoria}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorSolicitarAvalDRE.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Nombre del proyecto:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.nombreProyecto}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorSolicitarAvalDRE.formatoIngles}">
+										<p:column>
+											<h:outputText value="* Rol de la Universidad:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.nombreRol}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align:center;">
+											<h:commandLink value="Generar formato Estándar"
+												action="#{manejadorSolicitarAvalDRE.generarFormatoStdDRE}"
+												target="_blank"
+												update="pnlFormatoStd" process="pnlFormatoStd"
+												style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+											</h:commandLink>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:fieldset>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalDRE.selItem == '2' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column colspan="2" style="text-align:center;">
+							<p:separator id="customSeparator2" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.selItem == '2' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column colspan="2" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<p:fieldset
+								legend="Datos para el formulario de concepto favorable"
+								id="pnlFormConcepto">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									id="pnlFormatoConcepto" style="width:100%;">
+									<p:row>
+										<p:column>
+											<h:outputText value="* Consecutivo DRE:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.consecutivoConcepto}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="* Número del trámite DRE:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.numeroTramite}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="* Descripción de la institución externa:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.descripcion}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="width:50%">
+											<h:outputText
+												value="* ¿Se cuenta con antecedentes de cooperación?:" />
+										</p:column>
+										<p:column style="width:50%">
+											<p:selectOneRadio
+												value="#{manejadorSolicitarAvalDRE.antecedentesCooperacion}">
+												<f:selectItem itemLabel="SI" itemValue="true" />
+												<f:selectItem itemLabel="NO" itemValue="false" />
+												<p:ajax event="change" update="pnlFormConcepto"
+													process="pnlFormConcepto" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorSolicitarAvalDRE.antecedentesCooperacion}">
+										<p:column>
+											<h:outputText
+												value="* Detalle los antecedentes de cooperación:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.antecedentes}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="* ¿La persona que firma el concepto es Director Encargado (E) de la DRE?" />
+										</p:column>
+										<p:column>
+											<p:selectBooleanCheckbox
+												value="#{manejadorSolicitarAvalDRE.encargado}">
+												<p:ajax update="pnlFormConcepto" process="pnlFormConcepto" />
+											</p:selectBooleanCheckbox>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorSolicitarAvalDRE.encargado}">
+										<p:column>
+											<h:outputText value="* Cargo:" />
+										</p:column>
+										<p:column>
+											<p:selectOneRadio value="#{manejadorSolicitarAvalDRE.cargo}">
+												<f:selectItem itemLabel="Director (E)" itemValue="Director (E)" />
+												<f:selectItem itemLabel="Directora (E)" itemValue="Directora (E)" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{manejadorSolicitarAvalDRE.encargado}">
+										<p:column>
+											<h:outputText value="* Nombre de director(a) encargado (a) (E) de la DRE:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSolicitarAvalDRE.directorDRE}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align:center;">
+											<h:commandLink value="Generar Formato de Concepto"
+												action="#{manejadorSolicitarAvalDRE.generarFormatoConcepto}"
+												target="_blank"
+												update="@form" process="@form"
+												style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+											</h:commandLink>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:fieldset>
+						</p:column>
+					</p:row>
+														<p:row >
+										<p:column colspan="2">
+											<p:messages id="msgConcepto" autoUpdate="true" />
+										</p:column>
+						</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalDRE.selItem == '2' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column colspan="2" style="text-align:center;">
+							<p:separator id="customSeparator2" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.selItem == '2' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column styleClass="confirmaEdicion" style="text-align:justify;">
+							<h:outputText value="Tipo de Archivo:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:300px" panelStyle="width:300px"
+								value="#{manejadorSolicitarAvalDRE.idTipoArchivo}">
+								<f:selectItems
+									value="#{manejadorSolicitarAvalDRE.selTipoArchivoAvalInt}" />
+								<p:ajax listener="#{manejadorSolicitarAvalDRE.actualizarTipo}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalDRE.selItem == '2' and manejadorSolicitarAvalDRE.aval.tipo != 'GR' and manejadorSolicitarAvalDRE.aval.tipo != 'INI'}">
+						<p:column colspan="2">
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalDRE.guardarArchivoDRE}"
+								mode="advanced" auto="true" update="tablaArchivo" process="tablaArchivo"
+								sizeLimit="3072000" label="Seleccionar archivo" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:separator id="customSeparator2" />
+				<br />
+				<center>
+					<p:dataTable var="archivoResumen"
+						value="#{manejadorSolicitarAvalDRE.aval.archivosCoorList}"
+						id="tablaArchivo" emptyMessage="No tiene documentos vinculados."
+						style="width:100%">
+						<f:facet name="header">Documentos Vinculados</f:facet>
+						<p:column style="width:76%;" headerText="Archivo">
+							<h:outputText value="#{archivoResumen.nombre}" />
+							<br />
+							<h:outputText
+								value="&lt;strong&gt;Tipo de Archivo: &lt;/strong&gt; #{archivoResumen.tipoArchivo.nombre}"
+								escape="false" />
+						</p:column>
+						<p:column style="width:12%;" headerText="Eliminar">
+							<p:commandButton
+								onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+								action="#{manejadorSolicitarAvalDRE.eliminarArchivoCoor}"
+								value="Eliminar" update="tablaArchivo">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorSolicitarAvalDRE.arCoor}" />
+							</p:commandButton>
+						</p:column>
+						<p:column style="text-align: center; width: 12%;">
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<p:commandButton id="descargar"
+								action="#{manejadorSolicitarAvalDRE.descargarArchivo}"
+								icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorSolicitarAvalDRE.documentoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						id="panelGuardar">
+						<p:commandButton
+							action="#{manejadorSolicitarAvalDRE.guardarRevision}"
+							value="Guardar revisión aval" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+						<p:commandButton action="#{manejadorSolicitarAvalDRE.anterior}"
+							value="Regresar" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</p:panelGrid>
+				</center>
+			</p:fieldset>
+			<p:messages id="msgs" autoUpdate="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

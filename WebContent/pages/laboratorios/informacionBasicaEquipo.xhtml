@@ -1,0 +1,325 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+		if (window.addEventListener) {
+			  window.addEventListener('pageshow', function(event) {
+			    if (event.persisted) {
+			      // Eliminar caché de la página
+			      window.location.reload(); 
+			    }
+			  }, false);
+			}
+		</script>
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Información básica Equipo Laboratorio</t:div>
+
+			<p:panel>
+				<center>
+					<p:panelGrid columns="2" style="width:500px;">
+						<t:div style="width:150px;">
+							<h:outputText value="Laboratorio/Sede" styleClass="negrilla" />
+						</t:div>
+						<h:outputText
+							value="#{manejadorInformacionBasicaEquipo.equipo.laboratorio.nombre} / #{manejadorInformacionBasicaEquipo.equipo.laboratorio.sede.nombre}" />
+
+						<h:outputText value="Placa" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInformacionBasicaEquipo.equipo.placa}" />
+
+						<h:outputText value="Equipo" styleClass="negrilla" />
+						<p:inputText maxlength="256" size="30"
+							value="#{manejadorInformacionBasicaEquipo.equipo.equipo}"
+							readonly="#{manejadorInformacionBasicaEquipo.soloLectura}">
+						</p:inputText>
+
+						<h:outputText value="Marca" styleClass="negrilla" />
+						<p:inputText maxlength="100" size="30"
+							value="#{manejadorInformacionBasicaEquipo.equipo.marca}"
+							readonly="#{manejadorInformacionBasicaEquipo.soloLectura}">
+						</p:inputText>
+
+						<h:outputText value="Modelo" styleClass="negrilla" />
+
+						<p:inputText maxlength="100" size="30"
+							value="#{manejadorInformacionBasicaEquipo.equipo.modelo}"
+							readonly="#{manejadorInformacionBasicaEquipo.soloLectura}">
+						</p:inputText>
+
+						<h:outputText value="Número serial" styleClass="negrilla" />
+						<p:inputText maxlength="20" size="30"
+							value="#{manejadorInformacionBasicaEquipo.equipo.serial}"
+							readonly="#{manejadorInformacionBasicaEquipo.soloLectura}">
+						</p:inputText>
+
+						<h:outputText value="Especializado" styleClass="negrilla" />
+						<t:div
+							title="Active si considera que el equipo es especializado.  Esto hará que aparezca en buscador externo de Hermes.">
+							<p:selectBooleanCheckbox
+								value="#{manejadorInformacionBasicaEquipo.equipo.especializado}"
+								disabled="#{manejadorInformacionBasicaEquipo.soloLectura}">
+							</p:selectBooleanCheckbox>
+						</t:div>
+					</p:panelGrid>
+
+					<p:spacer height="15" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left" style="width:500px;">Estado del equipo</t:div>
+					<p:spacer height="15" />
+
+					<p:panelGrid id="equipoEnUso" columns="2" style="width:500px;">
+						
+						<h:outputText value="Estado físico" styleClass="negrilla" />
+						<t:div title="Estado físico del Equipo.">
+							<p:selectOneMenu
+								disabled="#{manejadorInformacionBasicaEquipo.soloLectura}"
+								value="#{manejadorInformacionBasicaEquipo.equipo.estadoFisicoCenso}"
+								style="width:200px;">
+								<f:selectItems value="#{manejadorInformacionBasicaEquipo.estadoFisicoSI}" />
+							</p:selectOneMenu>
+						</t:div>
+
+						<h:outputText value="En uso" styleClass="negrilla" />
+						<p:selectBooleanCheckbox
+							id="enUso"
+							value="#{manejadorInformacionBasicaEquipo.equipo.enUso}"
+							disabled="#{manejadorInformacionBasicaEquipo.soloLectura
+										or manejadorInformacionBasicaEquipo.equipo.danado
+										or manejadorInformacionBasicaEquipo.equipo.perdido}">
+							<p:ajax update=":form:equipoNoEnUso" process=":form:dadoDeBaja"/>
+						</p:selectBooleanCheckbox>
+					
+					</p:panelGrid>
+					
+					<p:spacer height="10" />
+					
+					<p:panelGrid id="equipoNoEnUso" cellpadding="5" cellspacing="5" style="width:250px;">
+					
+						<p:row>
+							<p:column style="width:10%;text-align:center">
+								<h:outputText value="Dañado" styleClass="negrilla"/>
+							</p:column>
+							<p:column style="width:5%;text-align:left">
+								<t:div title="Active si el equipo se encuentra dañado. Para activar esta opción, el campo EN USO no debe estar marcado">
+									<p:selectBooleanCheckbox
+										id="equipoDanado"
+										value="#{manejadorInformacionBasicaEquipo.equipo.danado}"
+										disabled="#{manejadorInformacionBasicaEquipo.soloLectura or manejadorInformacionBasicaEquipo.equipo.enUso}">
+										<p:ajax update=":form:equipoEnUso"/>
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+							<p:column style="width:10%;text-align:center">
+								<h:outputText value="Perdido" styleClass="negrilla"/>
+							</p:column>
+							<p:column style="width:5%;text-align:left">
+								<t:div title="Active si el equipo se encuentra perdido. Para activar esta opción, el campo EN USO no debe estar marcado">
+									<p:selectBooleanCheckbox
+										id="equipoPerdido"
+										value="#{manejadorInformacionBasicaEquipo.equipo.perdido}"
+										disabled="#{manejadorInformacionBasicaEquipo.soloLectura or manejadorInformacionBasicaEquipo.equipo.enUso}">
+										<p:ajax update=":form:equipoEnUso"/>
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:spacer height="15" />
+				
+					<p:panel style="width:80%; margin: auto; font-size: 11px" styleClass="mypanel">
+						<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText
+								value="Si selecciona que el equipo está en uso, no podrá seleccionar que el equipo está dañado o perdido. 
+								Igualmente, si selecciona que el equipo está dañado o perdido entonces no podrá seleccionar que se encuentra en uso." />
+						</h:panelGrid>
+					</p:panel>
+					<p:panel style="width:80%; margin: auto; font-size: 11px" styleClass="mypanel">
+						<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+							Si el equipo se encuentra dado de baja en QUIPU, por favor comuníquese con la Dirección de Laboratorios de sede. 
+							Recuerde que también puede solicitar la desvinculación del equipo al laboratorio en la opción mencionada en la página 
+							12 Punto 3.2 del <a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=40"
+							target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo de administrar equipos.</a>
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:spacer height="10" />
+					
+					<p:panelGrid columns="1" style="width:500px;"
+						rendered="#{manejadorInformacionBasicaEquipo.permitirDarBaja}">
+					
+						<p:spacer height="15" />
+						<t:div styleClass="contenido-titulo-general-ancizar-left" style="width:500px;">Dado de baja</t:div>
+						<p:spacer height="15" />
+					
+						<p:panelGrid id="equipoDadoBaja" cellpadding="5" cellspacing="5" style="width:500px;">
+						
+							<p:row>
+								<p:column style="width:20%;">
+									<h:outputText value="Dar de baja" styleClass="negrilla" />
+								</p:column>
+								<p:column style="width:80%;text-align:left">
+									<t:div title="Marque si el equipo se encuentra dado de baja">
+										<p:selectBooleanCheckbox
+											id="dadoDeBaja"
+											value="#{manejadorInformacionBasicaEquipo.equipo.dadoDeBaja}"
+											disabled="#{manejadorInformacionBasicaEquipo.soloLectura or !manejadorInformacionBasicaEquipo.permitirDarBaja}">
+											<p:ajax update=":form:equipoDadoBaja"/>
+										</p:selectBooleanCheckbox>
+									</t:div>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{manejadorInformacionBasicaEquipo.equipo.dadoDeBaja}">
+								<p:column colspan="2">
+									<p:panel style="width:100%; margin: auto; font-size: 13px" styleClass="mypanel">
+										<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+											Recuerde que esta opción aplica si el equipo ya fue dado de baja, si el equipo se va a dar de baja 
+											o está en trámite, es mejor solicitarle al coordinador del laboratorio hacerlo a través de la opción de 
+											solicitar desvinculación de equipo en la opción mencionada en la página 12 Punto 3.2 del
+											<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=40"
+												target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo de administrar equipos.</a>
+										</h:panelGrid>
+									</p:panel>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{manejadorInformacionBasicaEquipo.equipo.dadoDeBaja}">
+								<p:column>
+									<h:outputText value="Fecha dado de baja" styleClass="negrilla" />
+								</p:column>
+								<p:column style="text-align:left">
+									<t:div title="Fecha dado de baja">
+										<p:calendar readonlyInput="true"
+											disabled="#{manejadorInformacionBasicaEquipo.soloLectura}"
+											value="#{manejadorInformacionBasicaEquipo.equipo.fechaDadoBaja}"
+											id="FechaActoCreacion" locale="es" pattern="dd/MM/yyyy" navigator="true"/>
+									</t:div>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{manejadorInformacionBasicaEquipo.equipo.dadoDeBaja}">
+								<p:column>
+									<h:outputText value="Motivo" styleClass="negrilla" />
+								</p:column>
+								<p:column style="text-align:left">
+									<t:div title="Motivo dado de baja">
+										<p:inputTextarea rows="4" cols="45" autoResize="false"
+											counter="counterMotivo" maxlength="500"
+											counterTemplate="{0} caracteres restantes"
+											readonly="#{manejadorInformacionBasicaEquipo.soloLectura}"
+											value="#{manejadorInformacionBasicaEquipo.equipo.motivoDadoBaja}" 
+											disabled="#{!manejadorInformacionBasicaEquipo.equipo.dadoDeBaja}"/>
+										<br />
+										<h:outputText id="counterMotivo" styleClass="pequennio" 
+											rendered="#{!manejadorInformacionBasicaEquipo.soloLectura}"/>
+									</t:div>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{manejadorInformacionBasicaEquipo.equipo.dadoDeBaja}">
+								<p:column>
+									<h:outputText value="Archivos soporte" styleClass="negrilla" />
+								</p:column>
+								<p:column style="text-align:left">
+									<t:div title="Archivos soporte de baja">
+										<p:fileUpload label="Agregar" update="dtArchivos"
+											fileUploadListener="#{manejadorInformacionBasicaEquipo.subirArchivo}"
+											auto="true" mode="advanced" showButtons="false"
+											sizeLimit="3145728" 
+											invalidSizeMessage="Tamaño máximo: 3 MB"
+											allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+											invalidFileMessage="El archivo debe ser de formato PDF, JPG o PNG."
+											style="width:100%;"/>
+										
+										<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+											value="#{manejadorInformacionBasicaEquipo.listaArchivos}"
+											rows="6" paginator="true" paginatorPosition="bottom"
+											paginatorAlwaysVisible="false" pageLinks="5"
+											paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+											currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+											emptyMessage="No existen archivos registrados."
+											style="width: 100%">
+											<p:column>
+												<f:facet name="header" style="width:25%">
+													<h:outputText value="Fecha" styleClass="pequennio" />
+												</f:facet>
+												<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+													styleClass="pequennio">
+													<f:convertDateTime pattern="yyyy-MM-dd" />
+												</h:outputText>
+											</p:column>
+											<p:column style="width:65%">
+												<f:facet name="header">
+													<h:outputText value="Nombre" styleClass="pequennio" />
+												</f:facet>
+												<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+													styleClass="pequennio" />
+											</p:column>
+											<p:column style="width:5%">
+												<f:facet name="header">
+													<h:outputText value="D" styleClass="pequennio" />
+												</f:facet>
+												<center>
+													<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+														action="#{manejadorInformacionBasicaEquipo.descargarArchivo}">
+														<f:setPropertyActionListener value="#{archivoLaboratorio}"
+															target="#{manejadorInformacionBasicaEquipo.archivoLaboratorioSeleccionado}" />
+													</p:commandButton>
+												</center>
+											</p:column>
+											<p:column
+												style="width:5%">
+												<f:facet name="header">
+													<h:outputText value="(-)" styleClass="pequennio" />
+												</f:facet>
+												<center>
+													<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+														action="#{manejadorInformacionBasicaEquipo.eliminarArchivo}"
+														onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+														<f:setPropertyActionListener value="#{archivoLaboratorio}"
+															target="#{manejadorInformacionBasicaEquipo.archivoLaboratorioSeleccionado}" />
+													</p:commandButton>
+												</center>
+											</p:column>
+										</p:dataTable>
+									</t:div>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panelGrid>
+					
+				</center>
+				
+				<p:messages id="messages" autoUpdate="true" closable="true" redisplay="false" />
+				
+				<p:spacer height="15" />
+				<center>
+					<p:panelGrid columns="2">
+						<p:commandButton value="Guardar cambios" icon="ui-icon-disk"
+							ajax="false"
+							rendered="#{not manejadorInformacionBasicaEquipo.soloLectura}"
+							action="#{manejadorInformacionBasicaEquipo.guardarEquipo}"
+							onclick="if(!confirm('Está seguro de guardar los cambios?'))return false" />
+
+						<p:commandButton value="Volver al Laboratorio"
+							icon="ui-icon-arrowreturnthick-1-w" ajax="false"
+							action="#{manejadorInformacionBasicaEquipo.volverLaboratorio}"
+							onclick="if(!confirm('Está seguro de regresar a la página del Laboratorio?'))return false" />
+					</p:panelGrid>
+				</center>
+			</p:panel>
+
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

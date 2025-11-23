@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Asignación de proyectos a coordinadores</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto; ">
+					<h:outputText value="Buscar proyectos por:" />
+					<p:selectOneButton
+						value="#{manejadorAsignacionProyectos.tipoBusqueda}">
+						<f:selectItem itemLabel="Convocatoria" itemValue="Convocatoria" />
+						<f:selectItem itemLabel="Código proyecto" itemValue="Individual" />
+						<p:ajax event="change" update="@form"
+							listener="#{manejadorAsignacionProyectos.cambiarForm}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneButton>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel rendered="#{manejadorAsignacionProyectos.panelRender[2]}"
+				style="margin-top: 10px;" id="groupIndividual">
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+					style="margin:auto;" id="panelBusquedaProyectosEvaluadoresxCodigo">
+					<t:div style="width: 120px;">
+						<h:outputText value="Código del proyecto:" />
+					</t:div>
+					<p:inputText id="numCom" style="width:80px;"
+						value="#{manejadorAsignacionProyectos.codigoProyecto}" />
+					<p:commandButton
+						action="#{manejadorAsignacionProyectos.buscarProyectoxCodigo}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						value="Consultar" update="@form">
+					</p:commandButton>
+				</p:panelGrid>
+				<div style="width: 100%; text-align: center;">
+					<h:outputText
+						value="#{manejadorAsociarEvaluadoresProyecto.mensajeBusqueProyecto}"
+						style="font-size: 11px; font-weight: bold; color: #FF0000;" />
+				</div>
+			</p:panel>
+			<p:panel rendered="#{manejadorAsignacionProyectos.panelRender[1]}"
+				style="margin-top: 10px;">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelBusquedaProyectosEvaluadoresxConvocatoria">
+					<t:div style="width: 120px;">
+						<h:outputText value="Nombre convocatoria:" />
+					</t:div>
+					<t:div>
+						<p:inputText id="numCom" style="width:418px;"
+							value="#{manejadorAsignacionProyectos.nombreConvocatoria}" />
+						<p:commandButton
+							action="#{manejadorAsignacionProyectos.consultarConvocatorias}"
+							value="Consultar" update="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</t:div>
+					<h:outputText value="Convocatoria:" />
+					<p:selectOneMenu id="selectConvocatoria"
+						value="#{manejadorAsignacionProyectos.convocatoriaPadre}"
+						style="width:520px;" panelStyle="width: 520px;">
+						<f:selectItems
+							value="#{manejadorAsignacionProyectos.convocatoriaPadreItem}" />
+						<p:ajax update="selectModalidadAsignacion"
+							listener="#{manejadorAsignacionProyectos.cambiarConvocatoriaPadre}" />
+					</p:selectOneMenu>
+					<h:outputText value="Modalidad:" />
+					<p:selectOneMenu id="selectModalidadAsignacion"
+						style="width:520px;" panelStyle="width: 520px;"
+						value="#{manejadorAsignacionProyectos.convocatoria}">
+						<f:selectItems
+							value="#{manejadorAsignacionProyectos.convocatoriaItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Sede: " />
+					<p:selectOneMenu id="selectSede"
+						value="#{manejadorAsignacionProyectos.sede}" style="width:150px;">
+						<f:selectItems value="#{manejadorAsignacionProyectos.sedeItem}" />
+						<p:ajax update="@parent"
+							listener="#{manejadorAsignacionProyectos.cargarFacultad}" />
+					</p:selectOneMenu>
+					<h:outputText value="Estado: " />
+					<p:selectOneMenu id="selectEstado"
+						value="#{manejadorAsignacionProyectos.estado}"
+						style="width:170px;">
+						<f:selectItems value="#{manejadorAsignacionProyectos.estadoItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Buscar por facultad: " />
+					<p:selectOneRadio id="busqFac"
+						value="#{manejadorAsignacionProyectos.buscarFac}"
+						styleClass="ui-radiobutton">
+						<f:selectItem itemValue="Si" itemLabel="Si" />
+						<f:selectItem itemValue="No" itemLabel="No" />
+						<p:ajax update="@parent"
+							listener="#{manejadorAsignacionProyectos.habilitarBuscarFacultad}" />
+					</p:selectOneRadio>
+					<h:outputText value="Facultad ó Instituto: "
+						rendered="#{manejadorAsignacionProyectos.panelRender[3]}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:selectOneMenu id="selectFacultad"
+						value="#{manejadorAsignacionProyectos.facultad}"
+						rendered="#{manejadorAsignacionProyectos.panelRender[3]}"
+						style="width:520px;" panelStyle="width: 520px;">
+						<f:selectItems
+							value="#{manejadorAsignacionProyectos.facultadItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					<p:commandButton
+						action="#{manejadorAsignacionProyectos.buscarProyectosxModalidad}"
+						value="Buscar por facultad"
+						rendered="#{manejadorAsignacionProyectos.panelRender[3]}"
+						update="@form" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+					<p:commandButton
+						action="#{manejadorAsignacionProyectos.buscarProyectosxModalidadxSede}"
+						value="Buscar por sede"
+						rendered="#{manejadorAsignacionProyectos.panelRender[4]}"
+						update="@form" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Asignación de coordinadores a todos los proyectos"
+				rendered="#{manejadorAsignacionProyectos.mostrarTabla}"
+				style="margin-top: 10px;">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText
+						value="En la siguiente lista de coordinadores seleccione aquel que desee asignar 
+							a todos los proyectos y haga clic sobre 
+							el tipo de asignación que va a realizar (Revisión, evaluación, seguimiento)." 
+							rendered="#{!manejadorAsignacionProyectos.esModLegalizacion}"/>
+					<h:outputText
+						value="En la siguiente lista de coordinadores seleccione aquel que desee asignar 
+							a todos los proyectos y haga clic sobre 
+							el tipo de asignación que va a realizar (Legalización, seguimiento)." 
+							rendered="#{manejadorAsignacionProyectos.esModLegalizacion}"/>
+					<h:outputText
+						value="Si el coordinador que desea actualizar no aparece en la lista, agreguelo en la opción 'Asociar coordinadores'." />
+					<h:outputText
+						value="	Para finalizar es necesarios dar clic sobre el botón 'Guardar Coordinadores' 
+							en la parte inferior." />
+				</p:panelGrid>
+				<p:panelGrid id="asigCadaUno" columns="2"
+					styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto; margin-top: 10px; margin-bottom: 10px;">
+					<h:outputText value=" Coordinador:  " />
+					<p:selectOneMenu
+						value="#{manejadorAsignacionProyectos.coordinadorNuevo}"
+						style="width:550px;" panelStyle="width: 550px;">
+						<f:selectItems
+							value="#{manejadorAsignacionProyectos.coordinadorNuevoItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<t:div style="text-align: center; width: 100%;">
+					<p:commandButton id="revi" rendered="#{!manejadorAsignacionProyectos.esModLegalizacion}"
+						action="#{manejadorAsignacionProyectos.asignarCoordinadorRevisionProyectoTodos}"
+						update="@form" value="Asignar para revision"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />						
+					<p:commandButton id="legal" rendered="#{manejadorAsignacionProyectos.esModLegalizacion}"
+						action="#{manejadorAsignacionProyectos.asignarCoordinadorRevisionProyectoTodos}"
+						update="@form" value="Asignar para legalización"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton id="eval" rendered="#{!manejadorAsignacionProyectos.esModLegalizacion}"
+						action="#{manejadorAsignacionProyectos.asignarCoordinadorEvaluacionProyectoTodos}"
+						update="@form" value="Asignar para evaluacion"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton id="seg" 
+						action="#{manejadorAsignacionProyectos.asignarCoordinadorProyectoTodos}"
+						value="Asignar para seguimiento" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				</t:div>
+			</p:panel>
+			<t:div style="width: 100%; text-align: center; margin: 10px;"
+				rendered="#{!empty manejadorAsignacionProyectos.mensajeAsignacion}">
+				<h:outputText
+					value="#{manejadorAsignacionProyectos.mensajeAsignacion}"
+					style="margin: 10px; color: #FF0000; font-weight: bold;" />
+			</t:div>
+			<p:panel header="Asignación de coordinadores individualmente"
+				rendered="#{manejadorAsignacionProyectos.mostrarTabla}"
+				style="margin-top: 10px;">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText
+						value="En la siguiente tabla podrá asignar coordinadores de forma individual seleccionando el nombre
+								en la lista. 
+								Para finalizar es necesarios dar clic sobre el botón 'Guardar Coordinadores' en la parte inferior." />
+				</p:panelGrid>
+				<p:dataTable var="proyectoCoordinador" id="tabla_pry"
+					emptyMessage="No existen proyectos relacionados"
+					value="#{manejadorAsignacionProyectos.listaProyectosCoordinador}"
+					border="1" cellpadding="0" cellspacing="1" align="center"
+					style="width:100%; margin-top: 10px;"
+					rendered="#{manejadorAsignacionProyectos.mostrarTabla}"
+					paginator="true" rows="10" paginatorPosition="bottom">
+
+					<p:column headerText="Proyecto">
+						<div class="panel-interno-tabla">
+							<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+								style="margin: auto; text-align: left; margin-top: 10px;">
+								<t:div>
+									<h:outputText value="#{proyectoCoordinador.idProyecto}" style="font-weight: bold;"/> -
+									<h:outputText value="#{proyectoCoordinador.nombreProyecto}"
+										style="font-weight: normal !important;" />
+									<br />
+									<br />
+									<h:outputText value="#{proyectoCoordinador.nombreFacultad}"
+										style="font-weight: normal !important;" />
+								</t:div>
+							</p:panelGrid>
+						</div>
+					</p:column>
+
+					<p:column headerText="Revisión" style="width: 130px;" 
+						rendered="#{!manejadorAsignacionProyectos.esModLegalizacion}">
+						<p:selectOneMenu value="#{proyectoCoordinador.perRevision}"
+							style="width: 100px;"
+							rendered="#{proyectoCoordinador.coordinadorRequisitosAsociadoAsesor}">
+							<f:selectItems
+								value="#{manejadorAsignacionProyectos.coordinadoresItemRev}" />
+						</p:selectOneMenu>
+						<h:outputText value="#{proyectoCoordinador.nombreRevision}"
+							style="color:#FF8000;"
+							rendered="#{!proyectoCoordinador.coordinadorRequisitosAsociadoAsesor}" />
+					</p:column>
+					
+					<p:column headerText="Legalización" style="width: 130px;" 
+						rendered="#{manejadorAsignacionProyectos.esModLegalizacion}">
+						<p:selectOneMenu value="#{proyectoCoordinador.perRevision}"
+							style="width: 100px;"
+							rendered="#{proyectoCoordinador.coordinadorRequisitosAsociadoAsesor}">
+							<f:selectItems
+								value="#{manejadorAsignacionProyectos.coordinadoresItemRev}" />
+						</p:selectOneMenu>
+						<h:outputText value="#{proyectoCoordinador.nombreRevision}"
+							style="color:#FF8000;"
+							rendered="#{!proyectoCoordinador.coordinadorRequisitosAsociadoAsesor}" />
+					</p:column>
+
+					<p:column headerText="Evaluación" style="width: 130px;" 
+						rendered="#{!manejadorAsignacionProyectos.esModLegalizacion}">
+						<p:selectOneMenu value="#{proyectoCoordinador.perEvaluacion}"
+							style="width: 100px;"
+							rendered="#{proyectoCoordinador.coordinadorEvaluacionAsociadoAsesor}">
+							<f:selectItems
+								value="#{manejadorAsignacionProyectos.coordinadoresItemEv}" />
+						</p:selectOneMenu>
+						<h:outputText value="#{proyectoCoordinador.nombreEvaluacion}"
+							style="color:#FF8000;"
+							rendered="#{!proyectoCoordinador.coordinadorEvaluacionAsociadoAsesor}" />
+					</p:column>
+
+					<p:column headerText="Seguimiento" style="width: 130px;">
+						<p:selectOneMenu value="#{proyectoCoordinador.perId}"
+							style="width: 100px;"
+							rendered="#{proyectoCoordinador.coordinadorSeguimientoAsociadoAsesor}">
+							<f:selectItems
+								value="#{manejadorAsignacionProyectos.coordinadoresItem}" />
+						</p:selectOneMenu>
+						<h:outputText value="#{proyectoCoordinador.nombreSeguimiento}"
+							style="color:#FF8000;"
+							rendered="#{!proyectoCoordinador.coordinadorSeguimientoAsociadoAsesor}" />
+					</p:column>
+				</p:dataTable>
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto; text-align: left; margin-top: 10px;">
+					<t:div style="width: 100%;">
+						<h:outputText value="Los nombres en color " />
+						<h:outputText value="naranja"
+							style="color:#FF8000; font-weigth: bold;" />
+						<h:outputText
+							value=" corresponden a coordinadores que no estan asociados a su rol de Asesor." />
+					</t:div>
+				</p:panelGrid>
+			</p:panel>
+			<t:div style="width: 100%; text-align: center; margin-top: 20px;">
+				<p:commandButton
+					action="#{manejadorAsignacionProyectos.guardarAsociacionProyectosCoordinador}"
+					value="Guardar Coordinadores"
+					rendered="#{manejadorAsignacionProyectos.mostrarTabla}"
+					ajax="false">
+				</p:commandButton>
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="SemilleroIntegrante"
+		table="HER_SEMILLERO_INTEGRANTE">
+		<id name="id" column="SEI_ID" type="integer">
+			<generator class="sequence">
+				<param name="sequence">SEQ_SEMILLERO_INTEGRANTE</param>
+			</generator>
+		</id>
+		<property name="estado" column="SEI_ESTADO" />
+		<many-to-one name="semillero" class="Semillero"
+			column="SEM_ID" not-null="true" lazy="false" />
+		<many-to-one name="integrante" class="Investigador"
+			not-null="true" lazy="false">
+			<column name="INV_ID" />
+			<column name="TDO_ID" />
+		</many-to-one>
+		<many-to-one name="tipo" class="SemilleroIntegranteTipo"
+			not-null="true" lazy="false">
+			<column name="SIT_ID" />
+		</many-to-one>
+		<property name="actividades" column="SEI_ACTIVIDADES" />
+		<property name="horasDedicacion" column="SEI_HORAS_DEDICACION" />
+		<set name="planTrabajo" table="HER_SEMILLERO_ACTIVIDAD"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SEI_ID" />
+			<one-to-many class="SemilleroActividad" />
+		</set>
+	</class>
+</hibernate-mapping>

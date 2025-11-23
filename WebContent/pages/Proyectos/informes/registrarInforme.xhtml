@@ -1,0 +1,2480 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorRegistroInforme.editable and !manejadorRegistroInforme.esSolicitudRenovacion}">Registrar informe proyecto</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{!manejadorRegistroInforme.editable and !manejadorRegistroInforme.esSolicitudRenovacion}">Consultar informe proyecto</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorRegistroInforme.esSolicitudRenovacion}">Solicitud de renovación de crédito</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Código de proyecto: "
+						rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion}" />
+					<h:outputText value="#{manejadorRegistroInforme.proyecto.id}"
+						style=' font-weight: bold'
+						rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion}" />
+					<h:outputText value="Nombre proyecto: "
+						rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion}" />
+					<h:outputText value="#{manejadorRegistroInforme.proyecto.nombre}"
+						rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Código de informe:"
+						rendered="#{!empty manejadorRegistroInforme.proyectoInformeActual.id and manejadorRegistroInforme.proyectoInformeActual.id != 0}" />
+					<h:outputText
+						value="#{manejadorRegistroInforme.proyectoInformeActual.id}"
+						rendered="#{!empty manejadorRegistroInforme.proyectoInformeActual.id and manejadorRegistroInforme.proyectoInformeActual.id != 0}"
+						style=' font-weight: bold' />
+					<h:outputText value="Facultad: " />
+					<h:outputText value="#{manejadorRegistroInforme.facultad}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Dependencia: " />
+					<h:outputText id="dependenciaInvestigador"
+						value="#{manejadorRegistroInforme.dependencia}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Fecha de entrega: " />
+					<h:outputText id="fechaEntrega"
+						value="#{manejadorRegistroInforme.fechaEntrega}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Beneficiario: "
+						rendered="#{manejadorRegistroInforme.mostrarEstudianteLider}" />
+					<h:outputText
+						value="#{manejadorRegistroInforme.estudianteLiderInforme.nombreCompleto}"
+						rendered="#{manejadorRegistroInforme.mostrarEstudianteLider}"
+						style=' font-weight: bold;' />
+					<h:outputText value=""
+						rendered="#{!empty manejadorRegistroInforme.proyectoInformeActual.id and manejadorRegistroInforme.proyectoInformeActual.id != 0}"
+						style=' font-weight: bold;' />
+					<h:commandLink action="#{manejadorRegistroInforme.imprimirImforme}"
+						rendered="#{!empty manejadorRegistroInforme.proyectoInformeActual.id and manejadorRegistroInforme.proyectoInformeActual.id != 0}"
+						value="Imprimir" target="_blank"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+						ajax="false" />
+				</p:panelGrid>
+			</p:panel>
+			<p:panel
+				rendered="#{!empty manejadorRegistroInforme.mensajeInicioConvocatoria 
+				and manejadorRegistroInforme.tipoInformeAccion != 1}"
+				style="margin-top: 20px;">
+				<h:outputText
+					value="#{manejadorRegistroInforme.mensajeInicioConvocatoria}"
+					escape="false" />
+			</p:panel>
+			<br />
+			<h:outputText
+				value="INFORMACIÓN IMPORTANTE: Por favor, evitar tildes o cualquier otro caracter especial dentro de los campos presentados en el siguiente formulario."
+				style="text-align:center; font-weight: bold; color:#007ad9" />
+			<br />
+			<p:messages id="msgs" />
+			<br />
+
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+				rendered="#{manejadorRegistroInforme.bloquearAprobacionInforme}"
+				columns="1">
+				<br />
+				<h:outputText
+					value="No se puede aprobar o devolver para correcciones el informe hasta que el código QUIPU del proyecto sea asignado."
+					style="color: #FF0000; font-weight: bold;" />
+				<br />
+			</p:panelGrid>
+
+			<p:panel header="Información general *"
+				style="margin-bottom: 20px; witdh: 100%;"
+				rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion  and manejadorRegistroInforme.tipoFormularioInforme == 'FC'}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%">
+					<p:row>
+						<p:column>
+							<h:outputText value="Avance de objetivos "
+								rendered="#{manejadorRegistroInforme.tipoInformeAccion == 1}" />
+							<h:outputText value="Cumplimiento de objetivos "
+								rendered="#{manejadorRegistroInforme.tipoInformeAccion == 2}" />
+						</p:column>
+					</p:row>
+					<p:row style="width: 100%">
+						<p:column style="width: 100%">
+							<p:dataTable id="objetivoEspTable"
+								value="#{manejadorRegistroInforme.proyectoInformeActual.listaObjetivos}"
+								var="obj" sortBy="#{obj.objetivo.numeroOrden}"
+								emptyMessage="No se encuentran objetivos específicos registrados"
+								style="width:650px; overflow-x: scroll;">
+
+								<p:column sortBy="#{obj.objetivo.numeroOrden}" style="font-weight: bold;width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Objetivo" />
+									</f:facet>
+									<h:outputText value="#{obj.objetivo.nombre}" />
+								</p:column>
+
+								<p:column style="width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Medio de verificación" />
+									</f:facet>
+									<h:outputText value="#{obj.objetivo.medioVerificacion}" />
+								</p:column>
+								<p:column style="width:10%;">
+									<f:facet name="header">
+										<h:outputText value="% Cumplimiento" />
+									</f:facet>
+									<p:inputText id="porcentajeCumplimiento"
+										value="#{obj.porcentajeAvance}" style="width:100%"
+										disabled="#{!manejadorRegistroInforme.editable}">
+										<f:validateDoubleRange minimum="0" maximum="100" />
+									</p:inputText>
+								</p:column>
+								<p:column style="width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Justificacion de Avance" rendered="#{manejadorRegistroInforme.tipoInformeAccion == 1}"/>
+										<h:outputText value="Justificacion de Cumplimiento" rendered="#{manejadorRegistroInforme.tipoInformeAccion == 2}"/>
+									</f:facet>
+									<p:inputTextarea rows="3" cols="5" maxlength="1500"
+										disabled="#{!manejadorRegistroInforme.editable}"
+										value="#{obj.justificacionAvance}" style="width:100%;overflow-y: scroll; height:100px"
+										counter="counterObj"
+										counterTemplate="{0} caracteres restantes." />
+									<h:outputText id="counterObj" />
+								</p:column>
+								<p:column style="width:30%;"
+									rendered="#{(obj.comentariosCoordinador!=null and obj.comentariosCoordinador != '') or (manejadorRegistroInforme.revisionInforme == 'C') }">
+									<f:facet name="header">
+										<h:outputText value="Comentarios coordinador" />
+									</f:facet>
+									<p:inputTextarea rows="3" cols="5" maxlength="3000"
+										disabled="#{!manejadorRegistroInforme.editable and manejadorRegistroInforme.revisionInforme != 'C'}"
+										value="#{obj.comentariosCoordinador}" style="width:100%;overflow-y: scroll; height:100px"
+										counter="counterObjCoord"
+										counterTemplate="{0} caracteres restantes." />
+									<h:outputText id="counterObjCoord" />
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Avance de actividades "
+								rendered="#{manejadorRegistroInforme.tipoInformeAccion == 1}" />
+							<h:outputText value="Cumplimiento de actividades "
+								rendered="#{manejadorRegistroInforme.tipoInformeAccion == 2}" />
+						</p:column>
+					</p:row>
+					<p:row style="width: 100%">
+						<p:column style="width: 100%">
+							<p:dataTable id="actividadesTable"
+								value="#{manejadorRegistroInforme.proyectoInformeActual.listaActividades}"
+								var="act"
+								emptyMessage="No se encuentran actividades registradas"
+								style="width:650px; overflow-x: scroll;">
+
+								<p:column style="font-weight: bold;width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Actvidad" />
+									</f:facet>
+									<h:outputText value="#{act.actividad.descripcion}" />
+								</p:column>
+								<p:column style="width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Objetivo" />
+									</f:facet>
+									<p:selectOneMenu id="objetivo"
+										disabled="#{!manejadorRegistroInforme.editable}"
+										value="#{act.idObjetivo}" panelStyle="width:300px;"
+										style="width:100%">
+										<f:selectItems
+											value="#{manejadorRegistroInforme.listaObjetivosItem}" />
+									</p:selectOneMenu>
+								</p:column>
+								<p:column style="width:10%;">
+									<f:facet name="header">
+										<h:outputText value="% de avance" />
+									</f:facet>
+									<p:inputText maxlength="2000" value="#{act.porcentajeAvance}"
+										style="width:100%"
+										disabled="#{!manejadorRegistroInforme.editable}">
+										<f:validateDoubleRange minimum="0" maximum="100" />
+										</p:inputText>
+										
+								</p:column>
+								<p:column style="width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Avance de actividad" />
+									</f:facet>
+									<p:inputTextarea rows="3" cols="5" maxlength="1500"
+										value="#{act.justificacionAvance}" style="width:100%;overflow-y: scroll; height:100px"
+										disabled="#{!manejadorRegistroInforme.editable}"
+										counter="counterAct"
+										counterTemplate="{0} caracteres restantes." />
+									<h:outputText id="counterAct" />
+								</p:column>
+								<p:column style="width:30%;"
+									rendered="#{(act.comentariosCoordinador!=null and act.comentariosCoordinador != '') or (manejadorRegistroInforme.revisionInforme == 'C') }">
+									<f:facet name="header">
+										<h:outputText value="Comentarios coordinador" />
+									</f:facet>
+									<p:inputTextarea rows="3" cols="5" maxlength="3000"
+										disabled="#{!manejadorRegistroInforme.editable and manejadorRegistroInforme.revisionInforme != 'C'}"
+										value="#{act.comentariosCoordinador}" style="width:100%;overflow-y: scroll; height:100px"
+										counter="counterActCoord"
+										counterTemplate="{0} caracteres restantes." />
+									<h:outputText id="counterActCoord" />
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Avance de resultados "
+								rendered="#{manejadorRegistroInforme.tipoInformeAccion == 1}" />
+							<h:outputText value="Cumplimiento de resultados "
+								rendered="#{manejadorRegistroInforme.tipoInformeAccion == 2}" />
+						</p:column>
+					</p:row>
+					<p:row style="width: 100%">
+						<p:column style="width: 100%">
+							<t:div style="width: 650px; overflow-x:scroll;">
+								<p:dataTable id="resultadosTable"
+									value="#{manejadorRegistroInforme.proyectoInformeActual.listaResultados}"
+									var="res"
+									emptyMessage="No se encuentran resultados registrados">
+									<p:column style="font-weight: bold;width:20%;">
+										<f:facet name="header">
+											<h:outputText value="Resultado" />
+										</f:facet>
+										<h:outputText value="#{res.resultado.descripcion}" />
+									</p:column>
+									<p:column style="width:20%;">
+										<f:facet name="header">
+											<h:outputText value="Entregable" />
+										</f:facet>
+										<h:outputText value="#{res.resultado.entregable}" />
+									</p:column>
+									<p:column style="width:15%;">
+										<f:facet name="header">
+											<h:outputText value="Fecha propuesta" />
+										</f:facet>
+										<h:outputText value="#{res.resultado.fechaEntregable}" />
+									</p:column>
+									<p:column style="width:5%;">
+										<f:facet name="header">
+											<h:outputText value="Se entrega" />
+										</f:facet>
+										<p:selectOneMenu value="#{res.seEntrega}"
+											panelStyle="width:80px;" style="width:100%"
+											disabled="#{!manejadorRegistroInforme.editable}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{manejadorRegistroInforme.sinoitems}" />
+											<p:ajax update="@this" process="@this" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column style="width:5%;">
+										<f:facet name="header">
+											<h:outputText value="Fecha de entrega real" />
+										</f:facet>
+										<p:calendar id="fechaRealEntregable" navigator="true"
+											locale="es" disabled="#{!manejadorRegistroInforme.editable}"
+											value="#{res.fechaRealEntrega}"
+											mindate="#{manejadorRegistroInforme.proyecto.fechaTentativaInicio}"
+											maxdate="#{manejadorRegistroInforme.fechaFinalProyecto}"
+											style="width:120px;" />
+									</p:column>
+									<p:column style="width:30%;">
+										<f:facet name="header">
+											<h:outputText value="Justificación de avance" />
+										</f:facet>
+										<p:inputTextarea rows="3" cols="5" maxlength="1500"
+											disabled="#{!manejadorRegistroInforme.editable}"
+											value="#{res.justificacion}" style="width:100%;overflow-y: scroll; height:100px"
+											counter="counterResultado"
+											counterTemplate="{0} caracteres restantes." />
+										<h:outputText id="counterResultado" />
+									</p:column>
+									<p:column style="width:30%;"
+										rendered="#{(res.comentariosCoordinador!=null and res.comentariosCoordinador != '') or (manejadorRegistroInforme.revisionInforme == 'C') }">
+										<f:facet name="header">
+											<h:outputText value="Comentarios coordinador" />
+										</f:facet>
+										<p:inputTextarea rows="3" cols="5" maxlength="3000"
+											disabled="#{!manejadorRegistroInforme.editable and manejadorRegistroInforme.revisionInforme != 'C'}"
+											value="#{res.comentariosCoordinador}" style="width:100%"
+											counter="counterResultadoCoord"
+											counterTemplate="{0} caracteres restantes." />
+										<h:outputText id="counterResultadoCoord" />
+									</p:column>
+								</p:dataTable>
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="#{manejadorRegistroInforme.nombre1} "
+						rendered="#{(manejadorRegistroInforme.resumenAvances != null and manejadorRegistroInforme.resumenAvances != '') or manejadorRegistroInforme.tipoInformeAccion == 2 }" />
+					<p:inputTextarea value="#{manejadorRegistroInforme.resumenAvances}"
+						id="resumenAvance" rows="10" maxlength="4000"
+						style="width:630px;overflow-y: scroll; height:200px"
+						readonly="#{!manejadorRegistroInforme.editable}"
+						counter="counter0" counterTemplate="{0} caracteres restantes."
+						rendered="#{(manejadorRegistroInforme.resumenAvances != null and manejadorRegistroInforme.resumenAvances != '') or manejadorRegistroInforme.tipoInformeAccion == 2}">
+						<f:validateLength minimum="0" maximum="4000" for="resumenAvance"></f:validateLength>
+					</p:inputTextarea>
+
+					<h:outputText id="counter0"
+						rendered="#{(manejadorRegistroInforme.resumenAvances != null and manejadorRegistroInforme.resumenAvances != '') or manejadorRegistroInforme.tipoInformeAccion == 2}" />
+
+					<h:outputText value="#{manejadorRegistroInforme.nombre2} "
+						rendered="#{(manejadorRegistroInforme.resumenResultados != null and manejadorRegistroInforme.resumenResultados != '') or manejadorRegistroInforme.tipoInformeAccion == 2}" />
+					<p:inputTextarea
+						value="#{manejadorRegistroInforme.resumenResultados}" rows="10"
+						rendered="#{(manejadorRegistroInforme.resumenResultados != null and manejadorRegistroInforme.resumenResultados != '') or manejadorRegistroInforme.tipoInformeAccion == 2}"
+						id="resumenResultados" maxlength="4000" style="width:630px;overflow-y: scroll; height:200px"
+						readonly="#{!manejadorRegistroInforme.editable}"
+						counter="counter1" counterTemplate="{0} caracteres restantes.">
+						<f:validateLength minimum="0" maximum="4000"
+							for="resumenResultados"></f:validateLength>
+					</p:inputTextarea>
+
+					<h:outputText id="counter1"
+						rendered="#{(manejadorRegistroInforme.resumenResultados != null and manejadorRegistroInforme.resumenResultados != '') or manejadorRegistroInforme.tipoInformeAccion == 2}" />
+
+					<h:outputText value="#{manejadorRegistroInforme.nombre3} "
+						styleClass="texto"
+						rendered="#{(manejadorRegistroInforme.dificultades != null and manejadorRegistroInforme.dificultades != '') or manejadorRegistroInforme.tipoInformeAccion == 1}" />
+					<p:inputTextarea readonly="#{!manejadorRegistroInforme.editable}"
+						id="dificultades" maxlength="4000" style="width:630px;overflow-y: scroll; height:200px"
+						value="#{manejadorRegistroInforme.dificultades}" rows="10"
+						counter="counter2" counterTemplate="{0} caracteres restantes."
+						rendered="#{(manejadorRegistroInforme.dificultades != null and manejadorRegistroInforme.dificultades != '') or manejadorRegistroInforme.tipoInformeAccion == 1}">
+						<f:validateLength minimum="0" maximum="4000" for="dificultades"></f:validateLength>
+					</p:inputTextarea>
+
+					<h:outputText id="counter2"
+						rendered="#{(manejadorRegistroInforme.dificultades != null and manejadorRegistroInforme.dificultades != '') or manejadorRegistroInforme.tipoInformeAccion == 1}" />
+
+					<h:outputText value="Conclusiones: " styleClass="texto"
+						rendered="#{manejadorRegistroInforme.mostrarConclusiones and (manejadorRegistroInforme.conclusiones!=null and manejadorRegistroInforme.conclusiones != '')}" />
+					<p:inputTextarea
+						rendered="#{manejadorRegistroInforme.mostrarConclusiones and (manejadorRegistroInforme.conclusiones!=null and manejadorRegistroInforme.conclusiones != '')}"
+						id="conclusiones" readonly="#{!manejadorRegistroInforme.editable}"
+						style="width:630px;overflow-y: scroll; height:200px" maxlength="4000"
+						value="#{manejadorRegistroInforme.conclusiones}" rows="10"
+						counter="counter3" counterTemplate="{0} caracteres restantes.">
+						<f:validateLength minimum="0" maximum="4000" for="conclusiones"></f:validateLength>
+					</p:inputTextarea>
+
+					<h:outputText id="counter3"
+						rendered="#{manejadorRegistroInforme.mostrarConclusiones and (manejadorRegistroInforme.conclusiones!=null and manejadorRegistroInforme.conclusiones != '')}" />
+
+				</p:panelGrid>
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%"
+					rendered="#{manejadorRegistroInforme.tipoInformeAccion == 2}">
+					<p:row>
+						<p:column>
+							<h:outputText value="Impacto" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<p:panelGrid id="panelGridImpacto"
+								styleClass="estilo-panelgrid-sinbordes" style="width: 100%;">
+								<p:row>
+									<p:column style="width:180px;">
+										<h:outputText value="Tipo de impacto:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorRegistroInforme.tipoImpacto}"
+											style="width: 200px;" id="tipoImpact">
+											<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+											<f:selectItems
+												value="#{manejadorRegistroInforme.tipoImpactoItems}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="width:180px;">
+										<h:outputText value="Medición del impacto:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorRegistroInforme.medicionImpacto}"
+											style="width: 200px;" id="medicionImpact">
+											<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+											<f:selectItems
+												value="#{manejadorRegistroInforme.medicionImpactoItems}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Objetivos de desarrollo sostenible:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorRegistroInforme.odsSeleccionado}"
+											style="width: 300px;" panelStyle="width: 480px;" id="categoriaPpal">
+											<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+											<f:selectItems
+												value="#{manejadorRegistroInforme.objetivosDesarrolloSostenibleImpactoItems}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Detalle del impacto:" />
+									</p:column>
+									<p:column>
+									<p:inputTextarea rows="3" cols="5" maxlength="1500"
+										value="#{manejadorRegistroInforme.detalleImpacto}" style="width:100%; overflow-y: scroll; height:100px"
+										disabled="#{!manejadorRegistroInforme.editable}"
+										counter="countImpacto"
+										counterTemplate="{0} caracteres restantes." />
+									<h:outputText id="countImpacto" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorRegistroInforme.editable}">
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar impacto "
+									actionListener="#{manejadorRegistroInforme.agregarImpacto}"
+									update="panelGridImpacto,impactoTable">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+							</p:panelGrid>
+						</p:column>
+					</p:row>
+					<p:row style="width: 100%">
+						<p:column style="width: 100%">
+							<p:dataTable id="impactoTable"
+								value="#{manejadorRegistroInforme.listaImpacto}"
+								var="impacto"
+								emptyMessage="No se encuentran items de impacto registrados"
+								style="width:100%;">
+
+								<p:column style="font-weight: bold;width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Tipo de impacto" />
+									</f:facet>
+									<h:outputText value="#{impacto.tipo}" />
+									<h:outputText value=" - #{impacto.otroTipo}" rendered="#{impacto.otroTipo!=null}"/>
+								</p:column>
+
+								<p:column style="width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Medición del impacto" />
+									</f:facet>
+									<h:outputText value="#{impacto.medicion}" />
+								</p:column>
+								<p:column style="width:10%;">
+									<f:facet name="header">
+										<h:outputText value="Objetivo de desarrollo sostenible" />
+									</f:facet>
+									<h:outputText value="#{impacto.nombreOds}" />
+
+								</p:column>
+								<p:column style="width:30%;">
+									<f:facet name="header">
+										<h:outputText value="Detalle del impacto" />
+									</f:facet>
+									<h:outputText value="#{impacto.detalleImpacto}" />
+								</p:column>
+								<p:column style="width:10%;" rendered="#{manejadorRegistroInforme.editable}">
+									<f:facet name="header">
+										<h:outputText value="(X)" />
+									</f:facet>
+									<p:commandButton value="Eliminar"
+								action="#{manejadorRegistroInforme.eliminarImpacto}" update="@form">
+								<f:setPropertyActionListener value="#{impacto}"
+									target="#{manejadorRegistroInforme.impactoSeleccionado}" />
+							</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Información relacionada con compra de equipos"
+				id="panelAdministracionEquipos" style="margin-bottom: 20px;"
+				rendered="#{(manejadorRegistroInforme.tipoInformeAccion != 1 
+					and !manejadorRegistroInforme.esSolicitudRenovacion 
+					and manejadorRegistroInforme.tipoFormularioInforme == 'FC') and (!manejadorRegistroInforme.esPryContrapartida) 
+					and manejadorRegistroInforme.editable}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 300px;">
+						<h:outputText value="Se realizó compra de equipos:  " />
+					</t:div>
+					<p:selectOneMenu
+						value="#{manejadorRegistroInforme.proyectoInformeActual.compraEquipos}">
+						<f:selectItems value="#{manejadorRegistroInforme.listaOpciones}" />
+						<p:ajax update="panelAdministracionEquipos,msgs"
+							listener="#{manejadorRegistroInforme.mostrarPanelEquipos}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<t:div rendered="#{manejadorRegistroInforme.mostrarEquipos}"
+					id="panelListadoEquipos">
+					<br />
+					<h:outputText
+						value="A continuación, podrá buscar los equipos que se encuentren registrados en el sistema de información de BIENES Y SERVICIOS y asociarlos al proyecto de investigación."
+						rendered="#{manejadorRegistroInforme.editable}" style="bold" />
+					<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate; padding-top: 20px; padding-bottom: 20px;"
+						rendered="#{manejadorRegistroInforme.editable}">
+						<h:outputText value="Placa:  " />
+						<p:inputText value="#{manejadorRegistroInforme.placaBien}"
+							size="20">
+						</p:inputText>
+						<p:commandButton value="Buscar"
+							action="#{manejadorRegistroInforme.buscarBien}"
+							update="panelAdministracionEquipos,msgs" />
+						<p:panel rendered="#{manejadorRegistroInforme.mostrarBien}">
+							<p:panelGrid columns="2" align="left"
+								styleClass="estilo-panelgrid-sinbordes"
+								style="border-collapse: separate;">
+								<h:outputText value="Placa:" />
+								<h:outputText value="#{manejadorRegistroInforme.bien.placa}"
+									style="font-weight: bold;" />
+								<h:outputText value="Descripción:" />
+								<h:outputText
+									value="#{manejadorRegistroInforme.bien.descripcion}"
+									style="font-weight: bold;" />
+								<h:outputText value="Ubicación:" />
+								<h:outputText value="#{manejadorRegistroInforme.bien.ubicacion}"
+									style="font-weight: bold;" />
+								<h:outputText value="Responsable:" />
+								<h:outputText
+									value="#{manejadorRegistroInforme.bien.responsable}"
+									style="font-weight: bold;" />
+								<h:outputText value="Valor:" />
+								<h:outputText value="#{manejadorRegistroInforme.bien.valor}"
+									style="font-weight: bold;" />
+							</p:panelGrid>
+							<div style="text-align: center; width: 300px;">
+								<p:commandButton value="Agregar"
+									action="#{manejadorRegistroInforme.agregarBien}"
+									rendered="#{manejadorRegistroInforme.editable}"
+									update="panelAdministracionEquipos,msgs" />
+							</div>
+						</p:panel>
+					</p:panelGrid>
+					<p:dataTable var="bien"
+						value="#{manejadorRegistroInforme.proyectoInformeActual.bienesList}"
+						rendered="#{manejadorRegistroInforme.proyectoInformeActual.bienesList != null}"
+						style="width: 640px;"
+						emptyMessage="No se han agregado bienes o equipos">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Placa" />
+							</f:facet>
+							<h:outputText value=" #{bien.placa}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descripción" />
+							</f:facet>
+							<h:outputText value=" #{bien.descripcion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Ubicación" />
+							</f:facet>
+							<h:outputText value=" #{bien.ubicacion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
+							<h:outputText value=" #{bien.valor}" />
+						</p:column>
+
+						<p:column rendered="#{manejadorRegistroInforme.editable}">
+
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+
+							<p:commandButton value="Eliminar"
+								action="#{manejadorRegistroInforme.eliminarBien}" update="@form">
+								<f:setPropertyActionListener value="#{bien}"
+									target="#{manejadorRegistroInforme.bienSeleccionado}" />
+							</p:commandButton>
+
+						</p:column>
+					</p:dataTable>
+				</t:div>
+			</p:panel>
+			<p:dataTable var="bien"
+				value="#{manejadorRegistroInforme.proyectoInformeActual.bienesList}"
+				style="width: 100%;margin-top: 20px;"
+				emptyMessage="No se han agregado bienes o equipos"
+				rendered="#{(manejadorRegistroInforme.tipoInformeAccion != 1 
+					and !manejadorRegistroInforme.esSolicitudRenovacion 
+					and manejadorRegistroInforme.tipoFormularioInforme == 'FC'
+					and !manejadorRegistroInforme.mostrarEstudianteLider) and (!manejadorRegistroInforme.esPryContrapartida) 
+					and !manejadorRegistroInforme.editable}">
+				<f:facet name="header">
+					<h:outputText value="Información relacionada con compra de equipos" />
+				</f:facet>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Placa" />
+					</f:facet>
+					<h:outputText value=" #{bien.placa}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Descripción" />
+					</f:facet>
+					<h:outputText value=" #{bien.descripcion}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Ubicación" />
+					</f:facet>
+					<h:outputText value=" #{bien.ubicacion}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Valor" />
+					</f:facet>
+					<h:outputText value=" #{bien.valor}" />
+				</p:column>
+			</p:dataTable>
+			<p:panel header="Información general"
+				rendered="#{manejadorRegistroInforme.esSolicitudRenovacion and manejadorRegistroInforme.tipoFormularioInforme == 'FC'}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 150px;">
+						<h:outputText value="Año solicitud:" />
+					</t:div>
+					<h:selectOneMenu value="#{manejadorRegistroInforme.anoSolicitud}"
+						rendered="#{manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar los meses de sostenimiento">
+						<f:selectItem itemLabel="#{manejadorRegistroInforme.anoActual}"
+							itemValue="#{manejadorRegistroInforme.anoActual}" />
+						<f:selectItem itemLabel="#{manejadorRegistroInforme.anoActual+1}"
+							itemValue="#{manejadorRegistroInforme.anoActual}+1" />
+					</h:selectOneMenu>
+					<p:inputText value="#{manejadorRegistroInforme.anoSolicitud}"
+						rendered="#{!manejadorRegistroInforme.editable}" size="15"
+						readonly="true" />
+
+
+					<h:outputText value="Semestre solicitud: " />
+					<h:selectOneMenu
+						value="#{manejadorRegistroInforme.semestreSolicitud}"
+						rendered="#{manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar los meses de sostenimiento">
+						<f:selectItem itemLabel="Primer Semestre"
+							itemValue="Primer Semestre" />
+						<f:selectItem itemLabel="Segundo Semestre"
+							itemValue="Segundo Semestre" />
+					</h:selectOneMenu>
+
+					<p:inputText value="#{manejadorRegistroInforme.semestreSolicitud}"
+						rendered="#{!manejadorRegistroInforme.editable}" size="15"
+						readonly="true" />
+
+					<h:outputText value="Valor matrícula: " />
+					<p:inputText id="valorMatricula"
+						value="#{manejadorRegistroInforme.valorMatricula}" size="20"
+						readonly="#{!manejadorRegistroInforme.editable}"
+						validatorMessage="El valor ingresado no debe contener puntos, comas o signo pesos "
+						required="true"
+						requiredMessage="Debe ingresar el valor de la matrícula">
+						<f:validateRegex pattern="[0-9]+" />
+					</p:inputText>
+
+
+					<h:outputText value="Meses pasantía: " style="width: 150px;" />
+					<h:selectOneMenu value="#{manejadorRegistroInforme.mesesPasantia}"
+						rendered="#{manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar los meses de pasantia">
+						<f:selectItem itemLabel="0" itemValue="0" />
+						<f:selectItem itemLabel="1" itemValue="1" />
+						<f:selectItem itemLabel="2" itemValue="2" />
+						<f:selectItem itemLabel="3" itemValue="3" />
+						<f:selectItem itemLabel="4" itemValue="4" />
+						<f:selectItem itemLabel="5" itemValue="5" />
+						<f:selectItem itemLabel="6" itemValue="6" />
+					</h:selectOneMenu>
+					<p:inputText value="#{manejadorRegistroInforme.mesesPasantia}"
+						rendered="#{!manejadorRegistroInforme.editable}" size="5"
+						readonly="true" />
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 150px;">
+						<h:outputText value="Meses sostenimiento: " />
+					</t:div>
+					<h:selectOneMenu
+						value="#{manejadorRegistroInforme.mesesSostenimiento}"
+						rendered="#{manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar los meses de sostenimiento">
+						<f:selectItem itemLabel="0" itemValue="0" />
+						<f:selectItem itemLabel="1" itemValue="1" />
+						<f:selectItem itemLabel="2" itemValue="2" />
+						<f:selectItem itemLabel="3" itemValue="3" />
+						<f:selectItem itemLabel="4" itemValue="4" />
+						<f:selectItem itemLabel="5" itemValue="5" />
+						<f:selectItem itemLabel="6" itemValue="6" />
+					</h:selectOneMenu>
+					<p:inputText value="#{manejadorRegistroInforme.mesesSostenimiento}"
+						rendered="#{!manejadorRegistroInforme.editable}" size="5"
+						readonly="true" />
+
+					<h:outputText value="Valor sostenimiento: "
+						rendered="#{!manejadorRegistroInforme.editable}" />
+					<p:commandButton value="Calcular Valor sostenimiento:"
+						style="width: 150px;"
+						rendered="#{manejadorRegistroInforme.editable}"
+						action="#{manejadorRegistroInforme.calcularValorTotalSostenimiento}"
+						update="@form" process="@form">
+					</p:commandButton>
+					<h:inputText value="#{manejadorRegistroInforme.valorSostenimiento}"
+						readonly="true">
+						<f:convertNumber currencySymbol="$" groupingUsed="true"
+							maxFractionDigits="2" type="currency" />
+					</h:inputText>
+				</p:panelGrid>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 150px;">
+						<h:outputText value="Apoyo a tesis: " />
+					</t:div>
+					<p:selectOneRadio value="#{manejadorRegistroInforme.apoyoTesis}"
+						disabled="#{!manejadorRegistroInforme.editable}">
+						<f:selectItem itemLabel="SI" itemValue="SI" />
+						<f:selectItem itemLabel="NO" itemValue="NO" />
+						<p:ajax event="change" update="@parent" process="@this" />
+					</p:selectOneRadio>
+					<h:outputText value="Valor Apoyo a tesis: "
+						rendered="#{manejadorRegistroInforme.apoyoTesis=='SI'}" />
+					<p:inputText id="tesis"
+						value="#{manejadorRegistroInforme.valorApoyoTesis}" size="60"
+						rendered="#{manejadorRegistroInforme.apoyoTesis=='SI'}"
+						readonly="true">
+						<f:convertNumber currencySymbol="$" groupingUsed="true"
+							maxFractionDigits="2" type="currency" />
+					</p:inputText>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Actividades registradas" rendered="false">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Actividad: " />
+					<p:inputText id="actividadDescripEv"
+						value="#{manejadorRegistroInforme.actividad}" size="60">
+					</p:inputText>
+					<h:outputText value="Tipo de Contrato y número**: " />
+					<p:inputText id="actividadDescripEv"
+						value="#{manejadorRegistroInforme.tipoContrato}" size="60">
+					</p:inputText>
+					<h:outputText value="Cantidad: (en números)" />
+					<p:inputText id="actividadDescripEv"
+						value="#{manejadorRegistroInforme.cantidad}" size="20">
+					</p:inputText>
+					<h:outputText value="Valor Unitario: (sin signos, puntos ni comas)" />
+					<p:inputText id="actividadDescripEv"
+						value="#{manejadorRegistroInforme.valorUnitario}" size="20">
+					</p:inputText>
+					<h:outputText value="Descripción:" />
+					<p:inputTextarea id="actividadDescripEv"
+						value="#{manejadorRegistroInforme.descripcion}" cols="60">
+					</p:inputTextarea>
+
+				</p:panelGrid>
+				<br />
+				<h:outputText
+					value="** Tipo de Contrato que se realizó, con el cuál se pueda comprobar en el sistema Quipú la veracidad del mismo: Ejemplo ODS N° 008 ó ODC N° 013." />
+				<br />
+				<h:outputText
+					value="** Si es otro tipo de documento, especificarlo e indicar el número. Ejemplo: Factura N°12." />
+				<br />
+				<br />
+				<t:div style="width: 100%; text-align: center;">
+					<p:commandButton value="Adicionar Actividad"
+						action="#{manejadorRegistroInforme.adicionarActividad}"
+						ajax="false" />
+				</t:div>
+				<p:dataTable var="actividad"
+					value="#{manejadorRegistroInforme.listaActividades}">
+					<f:facet name="header">
+						<h:outputText value="Tareas agregadas" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Actividad" />
+						</f:facet>
+						<h:outputText value="#{actividad.nombre}" styleClass="normal"
+							style="font-size: 10px; font-style: normal" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de Contrato" />
+						</f:facet>
+						<h:outputText value="#{actividad.tipoContrato}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Cantidad" />
+						</f:facet>
+						<h:outputText value="#{actividad.cantidad}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Valor Unitario" />
+						</f:facet>
+						<h:outputText value="#{actividad.valorUnitario}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Valor Total" />
+						</f:facet>
+						<h:outputText value="#{actividad.valor}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descripción" />
+						</f:facet>
+						<p:inputTextarea readonly="true" value="#{actividad.descripcion}"
+							cols="40" rows="3">
+						</p:inputTextarea>
+					</p:column>
+
+					<p:column>
+
+						<f:facet name="header">
+							<h:outputText value="Eliminar" style='font-size: 10px;' />
+						</f:facet>
+						<p:commandButton value="Eliminar actividad"
+							onclick="if(!confirm('Esta seguro de eliminar la Actividad?'))return false"
+							action="#{manejadorRegistroInforme.eliminarActividad}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel
+				header="Información relacionada con la formación de estudiantes (Opcional)"
+				id="panelAdministracionEstudiantes" style="margin-bottom: 20px;"
+				rendered="#{(manejadorRegistroInforme.tipoInformeAccion != 1 and
+				 !manejadorRegistroInforme.esSolicitudRenovacion  
+				 and manejadorRegistroInforme.tipoFormularioInforme == 'FC'
+				 and !manejadorRegistroInforme.mostrarEstudianteLider) and (!manejadorRegistroInforme.esPryContrapartida) and manejadorRegistroInforme.editable}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Formación esperada:" />
+					<p:dataTable var="formacion"
+						value="#{manejadorRegistroInforme.listaFormacionEsperada}"
+						emptyMessage="No se realizaron registros" style="width:560px;">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Formación" />
+							</f:facet>
+							<h:outputText value="#{formacion.producto.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Cantidad" />
+							</f:facet>
+							<h:outputText value="#{formacion.cantidad}" />
+						</p:column>
+					</p:dataTable>
+					<h:outputText value="Formación Lograda:" />
+					<p:panel>
+						<t:div rendered="#{manejadorRegistroInforme.editable}">
+							<h:outputText
+								value="A continuación, podrá buscar los estudiantes que se encuentren registrados en el sistema de información SIA y asociarlos al proyecto de investigación" />
+							<br />
+							<br />
+						</t:div>
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorRegistroInforme.editable}"
+							style="border-collapse: separate;">
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+								style="border-collapse: separate;">
+								<h:outputText value="Tipo de documento:" />
+								<p:selectOneMenu
+									value="#{manejadorRegistroInforme.tipoDocumento.id}">
+									<f:selectItems
+										value="#{manejadorRegistroInforme.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+								<h:outputText value="Documento:  " />
+								<p:inputText id="estudiante"
+									value="#{manejadorRegistroInforme.docEstudiante}" size="20" />
+							</p:panelGrid>
+							<p:commandButton value="Buscar"
+								action="#{manejadorRegistroInforme.buscarEstudiante}"
+								update="panelAdministracionEstudiantes,msgs" />
+							<h:outputText value="#{manejadorRegistroInforme.errores[2]}"
+								style="color:#FF3939; font-weight:bold;"
+								rendered="#{manejadorRegistroInforme.panelRenderError[2]}" />
+						</p:panelGrid>
+						<p:panel
+							rendered="#{manejadorRegistroInforme.mostrarEstudiante  &amp;&amp;  manejadorRegistroInforme.editable}"
+							style="margin-bottom: 15px;">
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+								style="border-collapse: separate;">
+								<h:outputText value="Documento: " />
+								<h:outputText
+									value="#{manejadorRegistroInforme.estudiante.id.documento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Nombre: " />
+								<h:outputText
+									value="#{manejadorRegistroInforme.estudiante.nombre1} #{manejadorRegistroInforme.estudiante.nombre2} #{manejadorRegistroInforme.estudiante.apellido1} #{manejadorRegistroInforme.estudiante.apellido2}"
+									style="font-weight: bold;" />
+								<h:outputText value="Programa: " />
+								<h:outputText
+									value="#{manejadorRegistroInforme.estudiante.plan.nombre}"
+									style="font-weight: bold;" />
+							</p:panelGrid>
+							<div style="width: 500px; text-align: center;">
+								<p:commandButton value="Agregar"
+									action="#{manejadorRegistroInforme.agregarEstudiante}"
+									rendered="#{manejadorRegistroInforme.editable}"
+									update="panelAdministracionEstudiantes,msgs" />
+							</div>
+							<h:outputText value="#{manejadorRegistroInforme.errores[1]}"
+								style="color:#FF3939; font-weight:bold;"
+								rendered="#{manejadorRegistroInforme.panelRenderError[1]}" />
+						</p:panel>
+						<p:dataTable id="estudiantes" var="estudianteAgregado"
+							value="#{manejadorRegistroInforme.listaEstudiantes}"
+							style="width: 530px;"
+							emptyMessage="No han sido agregados estudiantes">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo Documento" />
+								</f:facet>
+								<h:outputText value=" #{estudianteAgregado.id.tipoDocumento}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Documento" />
+								</f:facet>
+								<h:outputText value=" #{estudianteAgregado.id.documento}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre" />
+								</f:facet>
+								<h:outputText value="#{estudianteAgregado.nombreCompleto}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Programa" />
+								</f:facet>
+								<h:outputText value=" #{estudianteAgregado.plan.nombre}" />
+							</p:column>
+							<p:column rendered="#{manejadorRegistroInforme.editable}">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+
+								<p:commandButton value="Eliminar"
+									action="#{manejadorRegistroInforme.eliminarEstudiante}"
+									update="@form">
+									<f:setPropertyActionListener value="#{estudianteAgregado}"
+										target="#{manejadorRegistroInforme.estudianteSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</p:panelGrid>
+			</p:panel>
+			<p:dataTable id="estudiantes" var="estudiante"
+				rendered="#{(manejadorRegistroInforme.tipoInformeAccion != 1 and
+				 !manejadorRegistroInforme.esSolicitudRenovacion  
+				 and manejadorRegistroInforme.tipoFormularioInforme == 'FC'
+				 and !manejadorRegistroInforme.mostrarEstudianteLider) and (!manejadorRegistroInforme.esPryContrapartida) and !manejadorRegistroInforme.editable}"
+				value="#{manejadorRegistroInforme.listaEstudiantes}"
+				style="width: 100%; margin-top: 20px;"
+				emptyMessage="No han sido agregados estudiantes">
+				<f:facet name="header">
+					<h:outputText value="Formación estudiantes" />
+				</f:facet>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Tipo Documento" />
+					</f:facet>
+					<h:outputText value=" #{estudiante.id.tipoDocumento}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Documento" />
+					</f:facet>
+					<h:outputText value=" #{estudiante.id.documento}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<h:outputText
+						value=" #{estudiante.nombre1} #{estudiante.nombre2} #{estudiante.apellido1} #{estudiante.apellido2}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Programa" />
+					</f:facet>
+					<h:outputText value=" #{estudiante.plan.nombre}" />
+				</p:column>
+			</p:dataTable>
+			<p:panel
+				header="Información relacionada con los productos académicos *"
+				id="panelCumplimientoResultados"
+				style="margin-bottom: 20px;margin-top: 20px;"
+				rendered="#{manejadorRegistroInforme.tipoInformeAccion != 1 and !manejadorRegistroInforme.esSolicitudRenovacion and manejadorRegistroInforme.tipoFormularioInforme == 'FC'}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelResultados" style="border-collapse: separate;">
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<h:outputText
+								value="Recuerde que debe agregar un producto académico alcanzado por cada producto propuesto en el proyecto." />
+							<br />
+							<br />
+							<h:outputText
+								value="Por favor seleccione un ítem de la siguiente sección (Producto esperado) e indique si se cumplió con la entrega de este producto:" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<h:outputText value="Objetivo:" style="font-weight: bold" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<p:selectOneMenu value="#{manejadorRegistroInforme.objetivoId}"
+								style="width: 635px;" panelStyle="width: 635px;" id="objetivos">
+								<f:selectItems
+									value="#{manejadorRegistroInforme.listaObjetivos}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<h:outputText value="Producto esperado" style="font-weight: bold" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorRegistroInforme.productoEsperadoId}"
+								style="width: 635px;" panelStyle="width: 635px;"
+								id="productosEsperados">
+								<f:selectItems
+									value="#{manejadorRegistroInforme.listaProductosEsperadosItem}" />
+								<p:ajax
+									update="panelCumplimientoResultados,informacionEspecificaProducto"
+									listener="#{manejadorRegistroInforme.consultarProductoSeleccionado}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row id="infoProductoSeleccionado"
+						rendered="#{manejadorRegistroInforme.productoEsperadoId!=0}">
+						<p:column>
+							<h:outputText value="Tipo producto esperado: "
+								style="font-weight: bold" />
+							<h:outputText
+								value="#{manejadorRegistroInforme.productoEsperadoSeleccionado.padre.padre.nombre}" />
+							<br />
+							<h:outputText value="Subtipo producto esperado:"
+								style="font-weight: bold" />
+							<h:outputText
+								value="#{manejadorRegistroInforme.productoEsperadoSeleccionado.padre.nombre}" />
+							<br />
+
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:panel>
+								<t:div
+									style="color:#464646; text-align:justify; font-weight:bold;">
+									Si se cumplió con la entrega del producto esperado, recuerde que en el producto entregado debe seleccionar el mismo tipo y subtipo de producto comprometido en el proyecto. 
+									Para facilitar la selección del producto, tenga el cuenta el listado de productos académicos en el archivo PDF adjunto. <br />
+									<br/>
+							<h:outputText
+								value="Listado de productos académicos: "/>
+							<h:outputLink value="#{manejadorRegistroInforme.linkProductos}"
+											target="_blank" icon="ui-icon-search">
+											<h:graphicImage id="images" alt="jsf-sun"
+												url="/images/iconpdf.png">
+											</h:graphicImage>
+										</h:outputLink>
+										<br/>
+										<br/>
+										
+									Adicionalmente recuerde que debe registrar la información correspondiente a todos los productos esperados en las cantidades correspondientes. Para enviar el informe debe tener '0 por agregar' en cada uno de los productos.
+						</t:div>
+						
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.editable}">
+						<p:column>
+							<p:panel id="informacionEspecificaProducto">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+									id="panelResultados" style="border-collapse: separate;">
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="¿Cumplió con la entrega de este producto?"
+												style="font-weight: bold" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:selectOneRadio id="console"
+												value="#{manejadorRegistroInforme.resultadoEsp.completado}">
+												<f:selectItem itemLabel="Si" itemValue="SI" />
+												<f:selectItem itemLabel="No" itemValue="NO" />
+												<p:ajax update="informacionEspecificaProducto"
+													event="change"
+													listener="#{manejadorRegistroInforme.cambiarCumplimientoProducto}" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorRegistroInforme.resultadoEsp.completado == 'NO'}">
+										<p:column>
+											<t:div style="margin-top: 20px;">
+												<h:outputText
+													value="Por favor describa las razones por las cuales este producto no fue completado:"
+													style="font-weight: bold" />
+											</t:div>
+											<t:div>
+												<p:inputTextarea id="udNombreProducto"
+													value="#{manejadorRegistroInforme.resultadoEsp.motivoNoEntrega}"
+													style="width: 600px; height: 100px;" maxlength="3000" />
+											</t:div>
+											<t:div
+												style="width: 100%; text-align: center; margin-top: 20px;">
+												<p:commandButton value="Agregar"
+													action="#{manejadorRegistroInforme.agregarProductoNuevo}"
+													rendered="#{manejadorRegistroInforme.editable}"
+													update="panelCumplimientoResultados,msgs" process="@form"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</t:div>
+										</p:column>
+									</p:row>
+									<!-- <p:row
+										rendered="#{manejadorRegistroInforme.resultadoEsp.completado == 'SI'}">
+										<p:column>
+											<t:div style="margin-top: 20px;">
+												<h:outputText
+													value="¿Este producto está registrado en SARA?"
+													style="font-weight: bold" />
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row
+										rendered="#{manejadorRegistroInforme.resultadoEsp.completado == 'SI'}">
+										<p:column>
+											<p:selectOneRadio id="productoSara"
+												value="#{manejadorRegistroInforme.proyectoInformeActual.productosEnSara}">
+												<f:selectItems
+													value="#{manejadorRegistroInforme.listaOpciones}" />
+												<p:ajax update="informacionEspecificaProducto"
+													event="change" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row> -->
+									<p:row
+										rendered="#{!empty manejadorRegistroInforme.proyectoInformeActual.productosEnSara and manejadorRegistroInforme.resultadoEsp.completado == 'SI'}">
+										<p:column>
+											<t:div style="padding-top: 20px; padding-bottom: 20px;">
+												<t:div id="formularioProductosSARA"
+													rendered="#{manejadorRegistroInforme.proyectoInformeActual.productosEnSara == 'SI'}">
+													<h:outputText
+														value="A continuación, podrá buscar productos por palabra clave que tenga registrados en el sistema de información SARA y asociarlos al proyecto de investigación." />
+													<p:panelGrid columns="3"
+														rendered="#{manejadorRegistroInforme.editable}"
+														styleClass="estilo-panelgrid-sinbordes"
+														style="border-collapse: separate; margin-top: 20px; margin-bottom: 20px;">
+														<h:outputText
+															value="Nombre del producto (palabra clave):  " />
+														<p:inputText id="udNombreProducto"
+															value="#{manejadorRegistroInforme.nombreProducto}"
+															style="width: 300px;" />
+														<p:commandButton value="Buscar"
+															action="#{manejadorRegistroInforme.buscarProductos}"
+															update="formularioProductosSARA,msgs"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()" />
+													</p:panelGrid>
+													<t:div
+														rendered="#{manejadorRegistroInforme.editable and !empty manejadorRegistroInforme.nombreProducto and empty manejadorRegistroInforme.productosTmp}"
+														style="text-align: center;">
+														<h:outputText
+															style="text-align:center; font-weight: bold; color:#FF5426"
+															value="No se ha encontrado ningún producto en SARA con este valor." />
+														<br />
+													</t:div>
+													<t:div
+														rendered="#{manejadorRegistroInforme.editable and !empty manejadorRegistroInforme.nombreProducto and !empty manejadorRegistroInforme.productosTmp}"
+														id="productosSaraItems1">
+														<h:outputText
+															value="Seleccione el producto (Antes de dar clic sobre 'Adicionar'):" />
+														<br />
+														<p:selectOneMenu
+															value="#{manejadorRegistroInforme.productoLlave}"
+															style="width: 600px;" panelStyle="width: 600px;">
+															<f:selectItems
+																value="#{manejadorRegistroInforme.productosSaraItems}" />
+															<p:ajax update="panelCumplimientoResultados,msgs"
+																listener="#{manejadorRegistroInforme.dropdownPS_processValueChange}" />
+														</p:selectOneMenu>
+													</t:div>
+													<p:panelGrid columns="2"
+														rendered="#{manejadorRegistroInforme.productoLlave != '0' and manejadorRegistroInforme.productoLlave != ' ' and manejadorRegistroInforme.productoLlave != '' and manejadorRegistroInforme.productoLlave != null}"
+														styleClass="estilo-panelgrid-sinbordes"
+														style="border-collapse: separate;">
+														<h:outputText value="Nombre: " />
+														<h:outputText
+															value="#{manejadorRegistroInforme.productoSara.nombreProducto}"
+															maxlength="500" style="font-weight: bold;" />
+														<h:outputText value="Tipo:  " />
+														<h:outputText
+															value="#{manejadorRegistroInforme.productoSara.nombreSeccion}"
+															style="font-weight: bold;" />
+														<h:outputText value="Título 1:  " />
+														<h:outputText
+															value="#{manejadorRegistroInforme.productoSara.titulo1}"
+															style="font-weight: bold;" />
+														<h:outputText value="Título 2:  " />
+														<h:outputText
+															value="#{manejadorRegistroInforme.productoSara.titulo2}"
+															style="font-weight: bold;" />
+													</p:panelGrid>
+													<t:div
+														rendered="#{manejadorRegistroInforme.productoLlave != '0' and manejadorRegistroInforme.productoLlave != ' ' and manejadorRegistroInforme.productoLlave != '' and manejadorRegistroInforme.productoLlave != null}"
+														style="width: 600px; text-align: center; margin-top: 30px;">
+														<p:commandButton value="Agregar"
+															action="#{manejadorRegistroInforme.agregarProductoNuevo}"
+															rendered="#{manejadorRegistroInforme.editable}"
+															update="panelCumplimientoResultados,msgs" process="@form"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()" />
+													</t:div>
+												</t:div>
+												<t:div
+													rendered="#{manejadorRegistroInforme.proyectoInformeActual.productosEnSara == 'NO'}">
+													<h:outputText
+														value="#{manejadorRegistroInforme.errores[3]}"
+														style="color: #FF3939; font-wight: bold;"
+														rendered="#{manejadorRegistroInforme.panelRenderError[3]}" />
+													<p:panelGrid columns="2"
+														styleClass="estilo-panelgrid-sinbordes"
+														rendered="#{manejadorRegistroInforme.editable}"
+														style="border-collapse: separate;">
+
+														<h:outputText value="Tipo de producto: " />
+														<p:selectOneMenu style="width: 500px;"
+															panelStyle="width: 500px;"
+															value="#{manejadorRegistroInforme.productoNivel1}">
+															<f:selectItems
+																value="#{manejadorRegistroInforme.productoNivel1Item}" />
+															<p:ajax update="nivel2,nivel3"
+																listener="#{manejadorRegistroInforme.cambiarProductoNivel1}" />
+														</p:selectOneMenu>
+														<h:outputText value="Subtipo 1: " />
+														<p:selectOneMenu style="width: 500px;" id="nivel2"
+															panelStyle="width: 500px;"
+															value="#{manejadorRegistroInforme.productoNivel2}">
+															<f:selectItems
+																value="#{manejadorRegistroInforme.productoNivel2Item}" />
+															<p:ajax update="nivel3"
+																listener="#{manejadorRegistroInforme.cambiarProductoNivel2}" />
+														</p:selectOneMenu>
+														<h:outputText value="Subtipo 2: " />
+														<p:selectOneMenu style="width: 500px;" id="nivel3"
+															panelStyle="width: 500px;"
+															value="#{manejadorRegistroInforme.productoNivel3}">
+															<f:selectItems
+																value="#{manejadorRegistroInforme.productoNivel3Item}" />
+														</p:selectOneMenu>
+														<h:outputText value="Ubicación del producto: "
+															rendered="false" />
+														<p:selectOneMenu style="width: 500px;"
+															panelStyle="width: 500px;" rendered="false"
+															value="#{manejadorRegistroInforme.productoNivel3}">
+															<f:selectItems
+																value="#{manejadorRegistroInforme.productoNivel3Item}" />
+														</p:selectOneMenu>
+														<h:outputText value="Nombre del producto:  " />
+														<p:inputTextarea rows="3" cols="5" maxlength="1000"
+															disabled="#{!manejadorRegistroInforme.editable}"
+															value="#{manejadorRegistroInforme.nombreProductoDos}"
+															style="width:100%; overflow-y: scroll; height:150px" counter="counterNombreProd"
+															counterTemplate="{0} caracteres restantes." />
+														<h:outputText id="a" />
+														<h:outputText id="counterNombreProd" />
+													</p:panelGrid>
+													<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+														rendered="#{manejadorRegistroInforme.editable}"
+														id="panelLinkPublico" style="border-collapse: separate;">
+														<p:row>
+															<p:column colspan="2">
+																<h:outputText
+																	value="¿Existe un link público en donde este producto pueda ser consultado?:  "
+																	style="font-weight: bold;" />
+															</p:column>
+														</p:row>
+														<p:row>
+															<p:column colspan="2">
+																<p:selectOneRadio id="linpPublicoRadio"
+																	value="#{manejadorRegistroInforme.existeLinkPublico}">
+																	<f:selectItem itemLabel="Si" itemValue="SI" />
+																	<f:selectItem itemLabel="No" itemValue="NO" />
+																	<p:ajax update="panelLinkPublico" event="change" />
+																</p:selectOneRadio>
+															</p:column>
+														</p:row>
+														<p:row
+															rendered="#{manejadorRegistroInforme.existeLinkPublico == 'SI'}">
+															<p:column>
+																<h:outputText value="Ingrese link público:  "
+																	id="labelLinkPublico" />
+															</p:column>
+															<p:column>
+																<p:inputText
+																	value="#{manejadorRegistroInforme.linkPublico}"
+																	id="inputLinkPublico" style="width: 400px;"
+																	maxlength="3000" />
+															</p:column>
+														</p:row>
+													</p:panelGrid>
+													<p:panelGrid id="PG_InfProd"
+														styleClass="estilo-panelgrid-sinbordes">
+														<p:row>
+															<p:column>
+																<h:outputText value="Fecha de Entrega:" />
+															</p:column>
+															<p:column>
+																<p:calendar id="idFechaTerminacionEsperada" locale="es"
+																	readonlyInput="true" pattern="dd/MM/yyyy"
+																	navigator="true"
+																	value="#{manejadorRegistroInforme.fechaEntregaProd}" />
+															</p:column>
+														</p:row>
+														<p:row>
+															<p:column>
+																<h:outputText value="¿Susceptible de protección?:" />
+															</p:column>
+															<p:column>
+																<p:selectOneRadio
+																	value="#{manejadorRegistroInforme.susceptibleProteccionProd}">
+																	<f:selectItem itemLabel="Sí" itemValue="Si" />
+																	<f:selectItem itemLabel="No" itemValue="No" />
+																</p:selectOneRadio>
+															</p:column>
+														</p:row>
+														<p:row>
+															<p:column>
+																<h:outputText value="Lugar de depósito:" />
+															</p:column>
+															<p:column>
+																<p:inputTextarea rows="3" cols="20" maxlength="1000"
+																	disabled="#{!manejadorRegistroInforme.editable}"
+																	value="#{manejadorRegistroInforme.lugarDepositoProd}"
+																	counter="counterDeposito"
+																	counterTemplate="{0} caracteres restantes."
+																	style="width:100%; overflow-y: scroll; height:50px" />
+																<h:outputText id="counterDeposito" />
+															</p:column>
+														</p:row>
+													</p:panelGrid>
+													<p:separator />
+													<t:div
+														style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+														<h:outputText value="OBJETIVO DE DESARROLLO SOSTENIBLE"
+															style="font-weight: bold;" />
+													</t:div>
+													<p:panelGrid id="PG_ClasificacionProdODS"
+														styleClass="estilo-panelgrid-sinbordes">
+														<p:row>
+															<p:column style="width: 180px;">
+																<h:outputText value="Objetivo de Desarrollo Sostenible:" />
+															</p:column>
+															<p:column>
+																<p:selectOneMenu style="width:350px"
+																	panelStyle="width:350px"
+																	value="#{manejadorRegistroInforme.objetivoDesarrolloSosteniblePrimarioProd}"
+																	id="objetivoDesarrolloSostenible">
+																	<f:selectItem itemLabel="Seleccione una opción"
+																		itemValue="0" />
+																	<f:selectItems
+																		value="#{manejadorRegistroInforme.objetivosDesarrolloSostenibleItems}" />
+																</p:selectOneMenu>
+																<h:outputLink id="paginaODS"
+																	value="#{manejadorRegistroInforme.linkObjetivosDesarrolloSostenible}"
+																	target="_blank">
+																	<h:graphicImage id="paginaODSPri" alt="jsf-sun"
+																		url="/images/NU-icono2.PNG">
+																	</h:graphicImage>
+																</h:outputLink>
+																<p:tooltip for="paginaODS"
+																	value="Consultar página web con la descripción de los objetivos de desarrollo sostenible."
+																	showEffect="fade" hideEffect="fade" />
+															</p:column>
+														</p:row>
+													</p:panelGrid>
+													<p:separator />
+													<t:div
+														style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+														<h:outputText value="ÁREA OCDE" style="font-weight: bold;" />
+													</t:div>
+													<p:panelGrid id="PG_ClasificacionProd"
+														styleClass="estilo-panelgrid-sinbordes">
+														<p:row>
+															<p:column style="width: 180px;">
+																<h:outputText
+																	value="Área científica y tecnológica principal:" />
+															</p:column>
+															<p:column>
+																<p:selectOneMenu style="width:350px"
+																	panelStyle="width:350px"
+																	value="#{manejadorRegistroInforme.areaCienciaProd}"
+																	id="areaCiencia">
+																	<f:selectItem itemLabel="Seleccione una opción"
+																		itemValue="" />
+																	<f:selectItems
+																		value="#{manejadorRegistroInforme.areaCienciaItems}" />
+																	<p:ajax
+																		listener="#{manejadorRegistroInforme.cambiarArea}"
+																		update="subareaCiencia" onstart="dialogEspere.show()"
+																		oncomplete="dialogEspere.hide()" />
+																</p:selectOneMenu>
+																<h:outputLink
+																	value="#{manejadorRegistroInforme.linkLineas}"
+																	target="_blank">
+																	<h:graphicImage id="imageee" alt="jsf-sun"
+																		url="/images/iconpdf.png">
+																	</h:graphicImage>
+																</h:outputLink>
+																<p:tooltip for="imageee"
+																	value="Descargar pdf con la clasificación de las áreas."
+																	showEffect="fade" hideEffect="fade" />
+															</p:column>
+														</p:row>
+														<p:row>
+															<p:column>
+																<h:outputText value="Sub-área de la ciencia:" />
+															</p:column>
+															<p:column>
+																<p:selectOneMenu style="width:350px"
+																	panelStyle="width:350px"
+																	value="#{manejadorRegistroInforme.subAreaCienciaProd}"
+																	id="subareaCiencia">
+																	<f:selectItem
+																		itemLabel="Seleccione una Sub-área secundaria"
+																		itemValue="" />
+																	<f:selectItems
+																		value="#{manejadorRegistroInforme.subAreaCienciaItems}" />
+																</p:selectOneMenu>
+															</p:column>
+														</p:row>
+													</p:panelGrid>
+													<div
+														style="width: 600px; text-align: center; margin-top: 30px;">
+														<p:commandButton value="Agregar"
+															action="#{manejadorRegistroInforme.agregarProductoNuevo}"
+															rendered="#{manejadorRegistroInforme.editable}"
+															update="panelCumplimientoResultados,msgs" process="@form"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()" />
+													</div>
+												</t:div>
+											</t:div>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:dataTable var="compromisos" id="productos-entregados"
+					value="#{manejadorRegistroInforme.listaProductosEntregados}"
+					style="width:650px; overflow-x: scroll; margin-top: 20px;"
+					emptyMessage="No ha sido agregado ningún resultado">
+					<f:facet name="header">
+						<div style="text-align: center;">Productos entregados</div>
+					</f:facet>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<div style="text-align: center;">Objetivo</div>
+						</f:facet>
+						<h:outputText value="#{compromisos.objetivo}" />
+					</p:column>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<div style="text-align: center;">Tipo producto <br />Esperado</div>
+						</f:facet>
+						<h:outputText value="#{compromisos.productoResultadoEsperado}" />
+					</p:column>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<div style="text-align: center;">
+								Tipo<br /> producto<br /> obtenido
+							</div>
+						</f:facet>
+						<h:outputText value="#{compromisos.tipoProduccion}" />
+					</p:column>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<div style="text-align: center;">
+								Detalle del producto<br /> obtenido / Fecha / Link
+							</div>
+						</f:facet>
+						<t:div>
+							<h:outputText value="#{compromisos.nombreProducto}" />
+							<br />
+							<br />
+							<h:outputText value="Fecha:" style="font-weight: bold;" />
+							<h:outputText value="#{compromisos.fechaEntrega}" />
+						</t:div>
+						<t:div style="margin-top: 15px;"
+							rendered="#{!empty compromisos.linkPublico}">
+							<h:outputText value="Link:" style="font-weight: bold;" />
+							<h:outputText value="#{compromisos.linkPublico}" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<div style="text-align: center;">
+								Lugar<br /> depósito / Protección
+							</div>
+						</f:facet>
+						<t:div>
+							<h:outputText value="#{compromisos.lugarDeposito}" />
+						</t:div>
+						<t:div style="margin-top: 15px;">
+							<h:outputText value="Protección:" style="font-weight: bold;" />
+							<h:outputText value="#{compromisos.susceptibleProteccion}" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<div style="text-align: center;">
+								ODS -<br /> OCDE
+							</div>
+						</f:facet>
+						<t:div>
+							<h:outputText value="Objetivo desarrollo sostenible:" style="font-weight: bold;" />
+							<h:outputText value="#{compromisos.nombreOds}" />
+						</t:div>
+						<t:div style="margin-top: 15px;">
+							<h:outputText value="Área OCDE:" style="font-weight: bold;" />
+							<h:outputText value="#{compromisos.nombreOcde}" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 5%; text-align:center;" rendered="#{manejadorRegistroInforme.editable}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-trash" title="Eliminar"
+							action="#{manejadorRegistroInforme.eliminarCompromisos}"
+							update="productos-entregados">
+							<f:setPropertyActionListener value="#{compromisos}"
+								target="#{manejadorRegistroInforme.productoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="compromisos"
+					value="#{manejadorRegistroInforme.listaProductosNoEntregados}"
+					rendered="#{!empty manejadorRegistroInforme.listaProductosNoEntregados}"
+					style="width: 100%; margin-top: 20px;"
+					emptyMessage="No ha sido agregado ningún resultado">
+					<f:facet name="header">
+						<div style="text-align: center;">Productos NO entregados</div>
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<div style="text-align: center;">Producto Esperado</div>
+						</f:facet>
+						<h:outputText value="#{compromisos.productoResultadoEsperado}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<div style="text-align: center;">Motivo de no entrega</div>
+						</f:facet>
+						<t:div style="width: 170px;">
+							<h:outputText value="#{compromisos.motivoNoEntrega}" />
+						</t:div>
+					</p:column>
+					<p:column rendered="#{manejadorRegistroInforme.editable}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton value="Eliminar"
+							action="#{manejadorRegistroInforme.eliminarCompromisos}"
+							update="@form">
+							<f:setPropertyActionListener value="#{compromisos}"
+								target="#{manejadorRegistroInforme.productoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel header="Periodo y ejecución del informe"
+				style="margin-bottom: 20px;"
+				rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion  and manejadorRegistroInforme.tipoFormularioInforme == 'FC'}">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 520px;">
+						<b>NOTA:</b> Por favor colocar el periodo y la ejecución del proyecto a nivel técnico y presupuestal.
+		                </t:div>
+					<p:panel>
+						<t:div
+							style="color:#464646; text-align:justify; font-weight:bold;">
+									Recuerde que el Monto Total Ejecutado Interno es el valor de ejecución en efectivo del proyecto, por lo que no incluye el valor en especie ni el tiempo del docente.
+								</t:div>
+					</p:panel>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<p:row>
+						<p:column>
+							<h:outputText value="* Desde:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaDesde" navigator="true" locale="es" mindate="#{manejadorRegistroInforme.proyecto.fechaTentativaInicio}" 
+											maxdate="#{manejadorRegistroInforme.fechaFinalProyecto}"
+								value="#{manejadorRegistroInforme.fechaDesdeInforme}"
+								disabled="#{!manejadorRegistroInforme.editable and !(manejadorRegistroInforme.revisionInforme == 'C')}" />
+							<p:watermark for="fechaDesde" value="*" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="* Porcentaje de ejecución técnica acumulada:"
+								style="display:block;width:210px;" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="porcEjecTecAcum"
+								value="#{manejadorRegistroInforme.porcentajeEjecucion}"
+								disabled="#{manejadorRegistroInforme.validoPorcEjecTecnicaAcum}"
+								style="width:70px;">
+								<f:selectItems
+									value="#{manejadorRegistroInforme.listaPorcentajesEjecucion}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<p:selectBooleanCheckbox id="CB_PorcentajeEjecucionTecnicaValido"
+								rendered="#{!manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco 
+											and !manejadorRegistroInforme.proyectoInformeActual.proyecto.esContratoBiodiversidad
+											and manejadorRegistroInforme.revisionInforme == 'C'}"
+								value="#{manejadorRegistroInforme.validoPorcEjecTecnicaAcum}"
+								itemLabel="¿Porcentaje Válido?">
+								<p:ajax update="@form" process="@form"
+									oncomplete="location.reload();" />
+							</p:selectBooleanCheckbox>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="* Hasta:" />
+						</p:column>
+						<p:column>
+							<p:calendar id="fechaHasta" navigator="true" locale="es" maxdate="#{manejadorRegistroInforme.fechaFinalProyecto}"
+							mindate="#{manejadorRegistroInforme.proyecto.fechaTentativaInicio}"
+								value="#{manejadorRegistroInforme.fechaHastaInforme}"
+								disabled="#{!manejadorRegistroInforme.editable and manejadorRegistroInforme.revisionInforme != 'C'}" />
+							<p:watermark for="fechaHasta" value="*" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								rendered="#{!manejadorRegistroInforme.mostrarMontoEjecExt}"
+								value="* Monto Total Ejecutado Interno:" />
+							<h:outputText
+								rendered="#{manejadorRegistroInforme.mostrarMontoEjecExt}"
+								value="* Monto Total Ejecutado Interno:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="montoEjecutado" maxlength="20"
+								value="#{manejadorRegistroInforme.montoEjecutado}" size="20"
+								readonly="#{!manejadorRegistroInforme.editable and (manejadorRegistroInforme.revisionInforme != 'VIF' and manejadorRegistroInforme.revisionInforme != 'C')}"
+								onkeyup="puntitos(this,this.value.charAt(this.value.length-1))">
+								<p:ajax event="blur"
+									listener="#{manejadorRegistroInforme.calculcarPorcEjecPresup}"
+									update="porcEjecPresupAcum, montoEjecutado, msgs"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								rendered="#{!manejadorRegistroInforme.mostrarMontoEjecExt}"
+								value="* Porcentaje de ejecución presupuestal acumulada:"
+								style="display:block;width:210px;" />
+							<h:outputText
+								rendered="#{manejadorRegistroInforme.mostrarMontoEjecExt}"
+								value="* Porcentaje de Ejecución Presupuestal Interno:"
+								style="display:block;width:210px;" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorRegistroInforme.porcentajeEjecucionPresupuestal}"
+								disabled="#{manejadorRegistroInforme.validoPorcEjecPresupuestoAcum
+									or manejadorRegistroInforme.revisionInforme != 'C'}"
+								style="width:70px;" id="porcEjecPresupAcum">
+								<f:selectItems
+									value="#{manejadorRegistroInforme.listaPorcentajesEjecucion}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<p:selectBooleanCheckbox
+								id="CB_PorcentajeEjecucionPresupuestoValido"
+								rendered="#{(!manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco 
+											and !manejadorRegistroInforme.proyectoInformeActual.proyecto.esContratoBiodiversidad
+											and manejadorRegistroInforme.revisionInforme == 'C') and !manejadorRegistroInforme.mostrarMontoEjecExt}"
+								value="#{manejadorRegistroInforme.validoPorcEjecPresupuestoAcum}"
+								itemLabel="¿Porcentaje Válido?">
+								<p:ajax update="@form" process="@form"
+									oncomplete="location.reload();" />
+							</p:selectBooleanCheckbox>
+							<p:selectBooleanCheckbox
+								id="CB_PorcentajeEjecucionPresupuestoValido"
+								rendered="#{(!manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco 
+											and !manejadorRegistroInforme.proyectoInformeActual.proyecto.esContratoBiodiversidad
+											and manejadorRegistroInforme.revisionInforme == 'C') and manejadorRegistroInforme.mostrarMontoEjecExt}"
+								value="#{manejadorRegistroInforme.validoPorcEjecPresupuestoAcum}"
+								itemLabel="¿Porcentajes de Ejecución Válidos?">
+								<p:ajax update="@form" process="@form" oncomplete="location.reload();" />
+							</p:selectBooleanCheckbox>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.mostrarMontoEjecExt}">
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText value="* Monto Total Ejecutado Externo:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="montoEjecutadoExt" maxlength="20" size="20"
+								readonly="#{!manejadorRegistroInforme.editable and (manejadorRegistroInforme.revisionInforme != 'VIF' and manejadorRegistroInforme.revisionInforme != 'C')}"
+								value="#{manejadorRegistroInforme.montoEjecutadoExt}"
+								onkeyup="puntitos(this,this.value.charAt(this.value.length-1))">
+								<p:ajax event="blur"
+									listener="#{manejadorRegistroInforme.calculcarPorcEjecPresupExt}"
+									update="porcEjecPresupAcumExt, montoEjecutadoExt, msgs"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorRegistroInforme.mostrarMontoEjecExt}">
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="* Porcentaje de Ejecución Presupuestal Externo:"
+								style="display:block;width:210px;" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorRegistroInforme.porcentajeEjecucionPresupuestalExt}"
+								disabled="#{manejadorRegistroInforme.validoPorcEjecPresupuestoAcum
+									or manejadorRegistroInforme.revisionInforme != 'C'}"
+								style="width:70px;" id="porcEjecPresupAcumExt">
+								<f:selectItems
+									value="#{manejadorRegistroInforme.listaPorcentajesEjecucion}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{manejadorRegistroInforme.revisionInforme == 'C'}"
+					columns="1">
+					<br />
+					<h:outputText
+						value="El botón de lectura se habilitará cuando se validen los porcentajes de ejecución técnica y presupuestal."
+						style="color: #FF0000; font-weight: bold;" />
+					<br />
+				</p:panelGrid>
+				<br />
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;"
+					rendered="#{manejadorRegistroInforme.revisionInforme == 'C'}">
+					<t:div style="width: 520px;">
+						<b>NOTA:</b> Coordinador, por favor valide el periodo y ejecución del proyecto y tenga en cuenta estos valores para finalizar el proyecto.
+		                </t:div>
+				</p:panelGrid>
+				<br />
+			</p:panel>
+			<p:panel header="Información especifica eventos"
+				style="margin-bottom: 20px;"
+				rendered="#{(manejadorRegistroInforme.restriccionModalidad == 'CE1'
+							or manejadorRegistroInforme.restriccionModalidad == 'CE2') and
+							manejadorRegistroInforme.tipoInformeAccion == '2' }">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Total ejecución presupuestal:" />
+					<p:inputText id="valorTotalEjecutado" maxlength="9"
+						value="#{manejadorRegistroInforme.valorEjecucionPresupuestas}"
+						size="20" readonly="#{!manejadorRegistroInforme.editable}">
+					</p:inputText>
+					<h:outputText value="Número total de asistentes:" />
+
+					<p:inputText id="numeroTotalAsistentes" maxlength="5"
+						value="#{manejadorRegistroInforme.numeroTotalParticipantes}"
+						size="10" readonly="#{!manejadorRegistroInforme.editable}">
+					</p:inputText>
+					<h:outputText value="Número total de estudiantes:" />
+					<p:inputText id="numeroEstudiantes" maxlength="5"
+						value="#{manejadorRegistroInforme.numeroTotalEstudiantes}"
+						size="10" readonly="#{!manejadorRegistroInforme.editable}">
+					</p:inputText>
+					<h:outputText value="Número total de externos:" />
+					<p:inputText id="numeroExternos" maxlength="5"
+						value="#{manejadorRegistroInforme.numeroTotalExternos}" size="10"
+						readonly="#{!manejadorRegistroInforme.editable}">
+					</p:inputText>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Calificación" style="margin-bottom: 20px;"
+				rendered="#{
+					!manejadorRegistroInforme.esSolicitudRenovacion 
+					and manejadorRegistroInforme.tipoFormularioInforme == 'FC' 
+					and (
+						(manejadorRegistroInforme.mostrarEstudianteLider and !manejadorRegistroInforme.esEstudianteLider and manejadorRegistroInforme.esConvocatoriaJovInvestigadores)
+							||	(!manejadorRegistroInforme.editable and manejadorRegistroInforme.calificacion != null)
+						)
+					}">
+				Califique al beneficiario segun su nivel de satisfacción:
+				<t:div>
+					<p:selectOneRadio id="options"
+						value="#{manejadorRegistroInforme.calificacion}" required="true"
+						disabled="#{!manejadorRegistroInforme.editable}">
+						<f:selectItem itemLabel="Excelente" itemValue="5" />
+						<f:selectItem itemLabel="Bueno" itemValue="4" />
+						<f:selectItem itemLabel="Aceptable" itemValue="3" />
+					</p:selectOneRadio>
+				</t:div>
+			</p:panel>
+			<p:panel id="pPasantias" header="Pasantias"
+				rendered="#{manejadorRegistroInforme.esSolicitudRenovacion and manejadorRegistroInforme.tipoFormularioInforme == 'FC'}">
+				<p:dataTable var="pasantia" id="pasantiasEnSolicitud"
+					emptyMessage="No ha registrado a ninguna pasantia para la solicitud"
+					value="#{manejadorRegistroInforme.pasantias}" style="width: 620px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Año" />
+						</f:facet>
+						<h:outputText value=" #{pasantia.duenoVista}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Duración" />
+						</f:facet>
+						<h:outputText value=" #{pasantia.longitudTipoTexto}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Ubicación" />
+						</f:facet>
+						<h:outputText value=" #{pasantia.nombreSuperVista}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Institución" />
+						</f:facet>
+						<h:outputText value=" #{pasantia.nombre}" />
+					</p:column>
+					<p:column rendered="#{!manejadorRegistroInforme.editable}">
+						<f:facet name="header">
+							<h:outputText value=" " />
+						</f:facet>
+						<p:commandButton icon="ui-icon-search"
+							action="#{manejadorRegistroInforme.verPasantia}" ajax="false">
+							<f:setPropertyActionListener value="#{pasantia}"
+								target="#{manejadorRegistroInforme.pasantiaSeleccionada}" />
+						</p:commandButton>
+					</p:column>
+					<p:column rendered="#{manejadorRegistroInforme.editable}">
+						<f:facet name="header">
+							<h:outputText value=" " />
+						</f:facet>
+						<p:commandButton icon="ui-icon-pencil"
+							action="#{manejadorRegistroInforme.verPasantia}" ajax="false"
+							update="@parent">
+
+							<f:setPropertyActionListener value="#{pasantia}"
+								target="#{manejadorRegistroInforme.pasantiaSeleccionada}" />
+						</p:commandButton>
+					</p:column>
+					<p:column rendered="#{manejadorRegistroInforme.editable}">
+						<f:facet name="header">
+							<h:outputText value=" " />
+						</f:facet>
+						<p:commandButton icon="ui-icon-close"
+							rendered="#{manejadorRegistroInforme.editable}"
+							action="#{manejadorRegistroInforme.eliminarPasantia}"
+							update="@parent">
+							<f:setPropertyActionListener value="#{pasantia}"
+								target="#{manejadorRegistroInforme.pasantiaSeleccionada}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:commandButton value="Agregar pasantia"
+					style="width: 200px; text-align: center"
+					rendered="#{manejadorRegistroInforme.editable and !manejadorRegistroInforme.mostrarPasantia}"
+					action="#{manejadorRegistroInforme.nuevaPasantia}"
+					update="pPasantias" process="@this">
+				</p:commandButton>
+
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;"
+					rendered="#{manejadorRegistroInforme.mostrarPasantia}">
+
+					<h:outputText value="País: " />
+					<p:inputText id="p" value="#{manejadorRegistroInforme.pais}"
+						size="40" readonly="#{!manejadorRegistroInforme.editable}"
+						required="true" requiredMessage="Debe ingresar la tesis">
+					</p:inputText>
+					<h:outputText value="Ciudad: " />
+					<p:inputText id="ciudadPasantia"
+						value="#{manejadorRegistroInforme.ciudad}" size="40"
+						readonly="#{!manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar la tesis">
+					</p:inputText>
+					<h:outputText value="Institución: " />
+					<p:inputText id="institucionPasantia"
+						value="#{manejadorRegistroInforme.institucion}" size="70"
+						readonly="#{!manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar la tesís">
+					</p:inputText>
+					<h:outputText value="Año: " />
+					<p:inputText id="anioPasantia"
+						value="#{manejadorRegistroInforme.anio}" size="20"
+						readonly="#{!manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar la tesís">
+					</p:inputText>
+					<h:outputText value="Duración: " />
+					<h:selectOneMenu value="#{manejadorRegistroInforme.duracion}"
+						rendered="#{manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar los meses de sostenimiento">
+						<f:selectItem itemLabel="1" itemValue="1" />
+						<f:selectItem itemLabel="2" itemValue="2" />
+						<f:selectItem itemLabel="3" itemValue="3" />
+						<f:selectItem itemLabel="4" itemValue="4" />
+						<f:selectItem itemLabel="5" itemValue="5" />
+						<f:selectItem itemLabel="6" itemValue="6" />
+					</h:selectOneMenu>
+					<p:inputText value="#{manejadorRegistroInforme.duracion}"
+						rendered="#{!manejadorRegistroInforme.editable}" size="5"
+						readonly="true" />
+					<h:outputText value="Tema: " />
+					<p:inputText id="temaPasantia"
+						value="#{manejadorRegistroInforme.tema}" size="70"
+						readonly="#{!manejadorRegistroInforme.editable}" required="true"
+						requiredMessage="Debe ingresar la tesís">
+					</p:inputText>
+
+					<p:commandButton value="Guardar"
+						style="width: 200px; text-align: center"
+						rendered="#{manejadorRegistroInforme.editable}"
+						action="#{manejadorRegistroInforme.agregarPasantia}"
+						update="pPasantias" process="@parent">
+					</p:commandButton>
+					<p:commandButton value="Cancelar"
+						style="width: 200px; text-align: center"
+						rendered="#{manejadorRegistroInforme.editable}"
+						action="#{manejadorRegistroInforme.cancelarNuevaPasantia}"
+						update="pPasantias" process="@this">
+					</p:commandButton>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:panel
+				rendered="#{manejadorRegistroInforme.esPermisoMarcoAsignatura
+					or manejadorRegistroInforme.esPermisoMarco
+					or (manejadorRegistroInforme.esPermisoMarco and manejadorRegistroInforme.consultaRenovacionCoordindador)}"
+				style="margin-bottom:10px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column colspan="2"
+							style="color:#464646; text-align:justify; width:100%;"
+							styleClass="confirmaEdicion" id="confirmaEdicion">
+							<table>
+								<tr>
+									<td><h:outputText
+											value="¿Se realizó la recolección y movilización de especímenes? Marque la siguiente casilla en caso de que su respuesta sea afirmativa. 
+											En caso de que su respuesta sea negativa, por favor justifique en el campo de observaciones 
+											y envíe el informe sin ningún documento adjunto." /></td>
+									<td style="vertical-align: middle;"><p:selectBooleanCheckbox
+											value="#{manejadorRegistroInforme.movilizacionEspecimenes}"
+											disabled="#{!manejadorRegistroInforme.editable or (manejadorRegistroInforme.tipoInformeAccion == 2 and manejadorRegistroInforme.tieneInformeAvanceRecolecta)}">
+											<p:ajax update="@form" />
+										</p:selectBooleanCheckbox></td>
+								</tr>
+							</table>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRegistroInforme.movilizacionEspecimenes and !manejadorRegistroInforme.consultaRenovacionCoordindador}">
+						<p:column colspan="2">
+							<h:outputText style="font-weight:bold;"
+								value="El informe de avance para las actividades de recolección debe tener obligatoriamente los siguientes documentos:" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRegistroInforme.movilizacionEspecimenes and manejadorRegistroInforme.consultaRenovacionCoordindador}">
+						<p:column colspan="2">
+							<h:outputText style="font-weight:bold;"
+								value="Documentos que como mínimo deben estar incluidos:" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRegistroInforme.movilizacionEspecimenes and manejadorRegistroInforme.tipoInformeAccion == 1}">
+						<p:column colspan="2">
+							<h:outputText
+								value="- Formato único nacional relación del material recolectado diligenciado " />
+							<a
+								href="#{facesContext.externalContext.requestContextPath}/pages/descargas/Anexo_11F_Relacion_Material_Recolectado_Julio_2014.docx"
+								target="_blank"
+								style="text-decoration: none; color: #16A8E2; font-weight: bold;">Descargar
+								Formato</a>
+							<br />
+							<h:outputText
+								value="- Planilla de Registros Biológicos SiB Colombia" />
+							<a
+								href="#{facesContext.externalContext.requestContextPath}/pages/descargas/Plantilla_de_registros_biologicos_CR-SiB.xlsx"
+								target="_blank"
+								style="text-decoration: none; color: #16A8E2; font-weight: bold;">Descargar
+								Formato</a>
+							<br />
+							<h:outputText
+								value="- Certificado de reporte material recolectado del SiB-Colombia (CR-SIB)." />
+							<br />
+							<br />
+							<p>
+								Para obtener el <b>Certificado de reporte material
+									recolectado del SiB-Colombia (CR-SIB)</b>, siga las instrucciones
+								del siguiente enlace: <a
+									href="https://biodiversidad.co/compartir/guia-para-reportar/"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">https://biodiversidad.co/compartir/guia-para-reportar/</a>.
+								Iniciando en el numeral 1.2. La universidad se encuentra registrada en la Plataforma SiB-Colombia/Permisos 
+								(<a
+									href="https://ipt.biodiversidad.co/permisos/"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">https://ipt.biodiversidad.co/permisos/</a>) 
+									y usted podrá ingresar con el usuario <b>unal@unal.edu.co</b>
+								y la contraseña <b>NseVRX</b>. 
+								<br /> <br /> 
+								Adicionalmente,
+								para la presentación del informe final debe incluir: <br /> -
+								Copia de la constancia de depósito emitida por una Colección biológica registrada en el RNC. <br /> -
+								Productos académicos finales generados (Documento de Tesis aprobado, Trabajo de grado, artículos publicados,
+								certificados de presentación en eventos y/o informe técnico de resultados, entre otros).
+							</p>
+							<br />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorRegistroInforme.movilizacionEspecimenes and manejadorRegistroInforme.tipoInformeAccion == 2}">
+						<p:column colspan="2">
+							<h:outputText
+								value="- Informe acumulado en el Formato único nacional relación del material recolectado " />
+							<a
+								href="#{facesContext.externalContext.requestContextPath}/pages/descargas/Anexo 11F Relacion Material Recolectado_Julio 2014.docx"
+								target="_blank"
+								style="text-decoration: none; color: #16A8E2; font-weight: bold;">Descargar
+								Formato</a>
+							<h:outputText
+								value="- Certificado de reporte material recolectado del SiB-Colombia (CR-SIB)." />
+							<br />
+							<br />
+							<p>
+								Para obtener el <b>Certificado de reporte material
+									recolectado del SiB-Colombia (CR-SIB)</b>, siga las instrucciones
+								del siguiente enlace: <a
+									href="https://biodiversidad.co/compartir/guia-para-reportar/"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">https://biodiversidad.co/compartir/guia-para-reportar/</a>.
+								Iniciando en el numeral 1.2. La universidad se encuentra registrada en la Plataforma SiB-Colombia/Permisos 
+								(<a
+									href="https://ipt.biodiversidad.co/permisos/"
+									target="_blank"
+									style="text-decoration: none; color: #16A8E2; font-weight: bold;">https://ipt.biodiversidad.co/permisos/</a>) 
+									y usted podrá ingresar con el usuario <b>unal@unal.edu.co</b>
+								y la contraseña <b>NseVRX</b>. 
+								<br /> <br /> 
+								Adicionalmente,
+								para la presentación del informe final debe incluir: <br /> -
+								Copia de la constancia de depósito emitida por una Colección biológica registrada en el RNC. <br /> -
+								Productos académicos finales generados (Documento de Tesis aprobado, Trabajo de grado, artículos publicados,
+								certificados de presentación en eventos y/o informe técnico de resultados, entre otros).
+							</p><br />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Observaciones:" style="font-weight:bold;" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="justificacion"
+								rendered="#{!manejadorRegistroInforme.consultaRenovacionCoordindador}"
+								value="#{manejadorRegistroInforme.observaciones}" rows="3"
+								style="width:100%;" cols="100" autoResize="false"
+								validatorMessage="Las observaciones deben estar entre 1 - 2000 caracteres"
+								maxlength="2000"
+								readonly="#{!manejadorRegistroInforme.editable}">
+							</p:inputTextarea>
+							<h:outputText value="#{manejadorRegistroInforme.observaciones}"
+								rendered="#{manejadorRegistroInforme.consultaRenovacionCoordindador}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorRegistroInforme.consultaRenovacionCoordindador}">
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="justificacion-texto"
+								value="Tamaño máximo 2000 caracteres" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:panel header="Documentos adicionales" id="pDocumentosAdicionales">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText
+						value="No olvide adjuntar el documento de Informe de Colciencias"
+						style="text-align:center; font-weight: bold; color:#FF5426"
+						rendered="#{manejadorRegistroInforme.esSolicitudRenovacion and manejadorRegistroInforme.editable}" />
+
+					<h:outputText
+						value="INFORMACIÓN IMPORTANTE: Por favor adjunte el informe técnico a presentar a la entidad externa para acompañamiento de la facultad o instituto"
+						style="text-align:center; font-weight: bold; color:#007ad9"
+						rendered="#{manejadorRegistroInforme.esFichaMinima 
+						and !manejadorRegistroInforme.esJornadaDocente 
+						and manejadorRegistroInforme.editable 
+						and (manejadorRegistroInforme.proyectoInformeActual.tipoInforme.id == 2 or manejadorRegistroInforme.tipoInformeAccion == 2)}" />
+					<h:outputText
+						value="INFORMACIÓN IMPORTANTE: Por favor adjunte el informe técnico"
+						style="text-align:center; font-weight: bold; color:#007ad9"
+						rendered="#{!manejadorRegistroInforme.esFichaMinima
+							and !manejadorRegistroInforme.esJornadaDocente
+							and !manejadorRegistroInforme.convocatoriasExcepcionSoporte
+							and manejadorRegistroInforme.editable 
+							and (manejadorRegistroInforme.proyectoInformeActual.tipoInforme.id == 2 or manejadorRegistroInforme.tipoInformeAccion == 2)}" />
+					<br />
+					<h:outputText
+						value="INFORMACIÓN IMPORTANTE: Por favor, evitar cargar documentos con nombres largos."
+						style="text-align:center; font-weight: bold; color:#007ad9" />
+					<br />
+
+					<h:panelGrid id="subirArchivos" columns="2" border="0"
+						cellspacing="5" align="center"
+						rendered="#{manejadorRegistroInforme.editable}">
+						<h:outputText value="Tipo de Archivo:"
+							rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion}" />
+						<p:selectOneMenu
+							value="#{manejadorRegistroInforme.tipoArchivo.id}"
+							rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion}">
+							<f:selectItems
+								value="#{manejadorRegistroInforme.tipoArchivoItem}" />
+						</p:selectOneMenu>
+						<h:outputText value="Archivo: " />
+						<p:fileUpload value="#{manejadorRegistroInforme.archivoCargar}"
+							mode="simple" rendered="#{manejadorRegistroInforme.editable}" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid id="botonSubirArchivos" columns="1" border="0"
+						cellspacing="5" rendered="#{manejadorRegistroInforme.editable}">
+						<p:commandButton value="Adjuntar Archivo" ajax="false"
+							actionListener="#{manejadorRegistroInforme.guardarArchivo}"
+							update="tablaArchivoadicionales,msgs"
+							sizeLimit="#{manejadorBase.maximoTamanoArchivos}"
+							invalidSizeMessage="Solo son permitidos archivos de máximo 3 megas." />
+					</h:panelGrid>
+
+					<br />
+					<p:dataTable var="archivoResumen" id="tablaArchivoadicionales"
+						emptyMessage="No ha adjuntado ningún archivo"
+						value="#{manejadorRegistroInforme.listaArchivos}"
+						style="width: 620px;">
+						<p:column
+							rendered="#{archivoResumen.tipoArchivo.id != null
+								and !manejadorRegistroInforme.esSolicitudRenovacion}">
+							<f:facet name="header">
+								<h:outputText value="Tipo de archivo" />
+							</f:facet>
+							<h:outputText value=" #{archivoResumen.tipoArchivo.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre del archivo" />
+							</f:facet>
+							<h:outputText value=" #{archivoResumen.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<p:commandButton value="ver"
+								action="#{manejadorRegistroInforme.verArchivo}" ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorRegistroInforme.archivoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+						<p:column rendered="#{manejadorRegistroInforme.editable}">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton value="Eliminar"
+								rendered="#{manejadorRegistroInforme.editable}"
+								action="#{manejadorRegistroInforme.eliminarArchivo}"
+								update="tablaArchivoadicionales">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorRegistroInforme.archivoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<br />
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:messages id="msgs" />
+			<br />
+			<p:panel header="Evaluar Solicitud" style="margin-top:10px;"
+				rendered="#{manejadorRegistroInforme.estadoInforme > '1' and manejadorRegistroInforme.consultaRenovacionCoordindador}">
+
+				<h:panelGrid columns="2">
+					<h:outputText value="Observaciones: " />
+					<p:inputTextarea value="#{manejadorRegistroInforme.observaciones}"
+						cols="73" rows="8" style="width:100%;"
+						readonly="#{!manejadorRegistroInforme.consultaRenovacionCoordindador and manejadorRegistroInforme.estadoInforme ==2}"
+						autoResize="false" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="width: 100%; text-align: center;">
+					<p:commandButton value="Aprobar"
+						style="width: 200px; text-align: center"
+						onclick="if(!confirm('¿Está seguro(a) de aprobar esta solicitud?'))return false"
+						action="#{manejadorRegistroInforme.guardarLecturaRenovacion}"
+						rendered="#{manejadorRegistroInforme.consultaRenovacionCoordindador and manejadorRegistroInforme.estadoInforme ==2}"
+						ajax="false" />
+					<p:commandButton value="Devolver"
+						style="width: 200px; text-align: center"
+						onclick="if(!confirm('¿Está seguro(a) de devolver esta solicitud?'))return false"
+						action="#{manejadorRegistroInforme.guardarDevolverRenovacion}"
+						rendered="#{manejadorRegistroInforme.consultaRenovacionCoordindador and manejadorRegistroInforme.estadoInforme ==2}"
+						ajax="false" />
+				</h:panelGrid>
+			</p:panel>
+			<t:div style="width: 660px; text-align: center; margin-top: 30px;"
+				rendered="#{!manejadorRegistroInforme.esSolicitudRenovacion and empty manejadorRegistroInforme.revisionInforme}">
+				<p:commandButton value="Guardar parcialmente"
+					onclick="if(!confirm('¿Está seguro(a) de guardar el informe?'))return false"
+					action="#{manejadorRegistroInforme.guardar}"
+					rendered="#{manejadorRegistroInforme.editable}" ajax="false" />
+				<p:commandButton value="Guardar y enviar"
+					onclick="if(!confirm('¿Está seguro(a) de guardar el informe?'))return false"
+					action="#{manejadorRegistroInforme.guardarEnviar}"
+					rendered="#{manejadorRegistroInforme.editable and !manejadorRegistroInforme.esEstudianteLider}"
+					ajax="false" />
+				<p:commandButton value="Volver"
+					action="#{manejadorRegistroInforme.atras}" ajax="false" />
+			</t:div>
+			<t:div style="width: 100%; text-align: center;"
+				rendered="#{manejadorRegistroInforme.esSolicitudRenovacion}">
+				<p:commandButton value="Enviar solicitud de renovación"
+					onclick="if(!confirm('¿Está seguro(a) de guardar el informe?'))return false"
+					action="#{manejadorRegistroInforme.guardarSolicitudRenovacion}"
+					rendered="#{manejadorRegistroInforme.editable}" ajax="false" />
+			</t:div>
+
+			<p:panel header="Pago solicitud"
+				rendered="#{(manejadorRegistroInforme.estadoInforme ==3 or manejadorRegistroInforme.estadoInforme ==6) and manejadorRegistroInforme.esSolicitudRenovacion }">
+				<h:panelGrid columns="2">
+					<h:outputText value="Valor pago"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==3 or manejadorRegistroInforme.estadoInforme ==6}" />
+					<p:spinner value="#{manejadorRegistroInforme.valorPagado}"
+						prefix="$" min="0"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==3 or manejadorRegistroInforme.estadoInforme ==6}"
+						size="20"
+						readonly="#{!(manejadorRegistroInforme.consultaRenovacionCoordindador and manejadorRegistroInforme.estadoInforme ==3)}" />
+					<h:outputText value="Fecha pago"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==3 or manejadorRegistroInforme.estadoInforme ==6}" />
+					<p:calendar value="#{manejadorRegistroInforme.fechaPago}"
+						mode="popup"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==3}" size="20" />
+					<p:inputText value="#{manejadorRegistroInforme.fechaPago}"
+						mode="popup"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==6}"
+						readonly="true" size="20" />
+					<h:outputText value="Nro. Resolución pago"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==3 or manejadorRegistroInforme.estadoInforme ==6}" />
+					<p:inputText value="#{manejadorRegistroInforme.nroResolucion}"
+						rendered="#{manejadorRegistroInforme.estadoInforme ==3 or manejadorRegistroInforme.estadoInforme ==6}"
+						size="20"
+						readonly="#{!(manejadorRegistroInforme.consultaRenovacionCoordindador and manejadorRegistroInforme.estadoInforme ==3)}" />
+				</h:panelGrid>
+				<t:div style="width: 100%; text-align: center;"
+					rendered="#{manejadorRegistroInforme.consultaRenovacionCoordindador and manejadorRegistroInforme.estadoInforme ==3}">
+					<p:commandButton value="Pago"
+						style="width: 200px; text-align: center"
+						onclick="if(!confirm('¿Está seguro(a) de dar pago a esta solicitud?'))return false"
+						action="#{manejadorRegistroInforme.guardarDarPagoRenovacion}"
+						ajax="false" />
+				</t:div>
+			</p:panel>
+			<p:panel header="Revision informe"
+				style="margin-top: 20px; text-align: center;"
+				rendered="#{manejadorRegistroInforme.revisionInforme == 'UAB' || manejadorRegistroInforme.revisionInforme == 'VIF' }"
+				id="P_RevisionInforme">
+				<br />
+				<h:outputText value="Comentarios:" />
+				<br />
+				<p:inputTextarea value="#{manejadorRegistroInforme.comentariosVIF}"
+					id="comentariosVIF" rows="10" maxlength="2000"
+					style="width: 530px; margin-top: 20px; margin-bottom: 20px;">
+				</p:inputTextarea>
+				<br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Nombre archivo:" />
+					<h:outputLabel
+						value="#{manejadorRegistroInforme.nombreDocumentoRevisionFacultad}"
+						style="font-weight: bold;" />
+				</p:panelGrid>
+				<p:fileUpload
+					fileUploadListener="#{manejadorRegistroInforme.guardarArchivoRevisionFacultad}"
+					mode="advanced" auto="true" update="@form" multiple="false"
+					sizeLimit="3145728" label="Seleccionar archivo"
+					style="margin: auto;" />
+				<br />
+				<p:commandButton value="Aprobar"
+					rendered="#{manejadorRegistroInforme.revisionInforme == 'VIF'}"
+					action="#{manejadorRegistroInforme.revisarAvalVIF}" ajax="false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton value="Aprobar"
+					rendered="#{manejadorRegistroInforme.revisionInforme == 'UAB'}"
+					action="#{manejadorRegistroInforme.revisarAvalUAB}" ajax="false"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton value="Devolver para correcciones"
+					action="#{manejadorRegistroInforme.devolverCorreccionesVIF}"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+					ajax="false" />
+				<p:commandButton value="Volver"
+					action="#{manejadorRegistroInforme.atras}" ajax="false" />
+				<br />
+
+				<h:outputText value="#{manejadorRegistroInforme.errores[1]}"
+					style="color:#FF3939; font-weight:bold;"
+					rendered="#{manejadorRegistroInforme.panelRenderError[1]}" />
+			</p:panel>
+			<p:panel header="Revision informe"
+				style="margin-top: 20px; text-align: center;"
+				rendered="#{manejadorRegistroInforme.revisionInforme == 'C'}">
+				<br />
+				
+				<p:panel>
+				<t:div style="color:#464646; text-align:justify;">
+				Si desea adjuntar algún documento adicional o modificarlo, 
+				lo puede realizar al consultar el proyecto en la opción "informes y compromisos"" en administrar archivos de cada informe.
+						</t:div>
+				</p:panel>
+				
+				<br />
+				<h:outputText value="Comentarios:" />
+				<br />
+				<p:inputTextarea
+					value="#{manejadorRegistroInforme.comentariosCoordinadorLectura}"
+					id="comentariosCoordinador" rows="10" maxlength="2000"
+					style="width: 530px; margin-top: 20px; margin-bottom: 20px;">
+				</p:inputTextarea>
+				<br />
+				<p:commandButton value="Revisión entidad externa"
+					rendered="#{!manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco
+					and !manejadorRegistroInforme.proyectoInformeActual.proyecto.esContratoBiodiversidad
+					and manejadorRegistroInforme.proyectoInformeActual.proyecto.modalidad.id == 10
+					and manejadorRegistroInforme.tipoInformeAccion == 2}"
+					action="#{manejadorRegistroInforme.asignarEstadoRevisionEntidad}"
+					disabled="#{manejadorRegistroInforme.proyectoInformeActual.estadoInforme.id == 8}"
+					ajax="false" />
+				<p:commandButton value="Lectura"
+					rendered="#{!manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarcoAsignatura and !manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco and !manejadorRegistroInforme.proyectoInformeActual.proyecto.esContratoBiodiversidad}"
+					action="#{manejadorRegistroInforme.aprobarInformeCoordinador}"
+					ajax="false"
+					disabled="#{manejadorRegistroInforme.bloquearAprobacionInforme or !manejadorRegistroInforme.validoPorcEjecPresupuestoAcum or !manejadorRegistroInforme.validoPorcEjecTecnicaAcum}" />
+				<p:commandButton value="Aprobar"
+					rendered="#{manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarcoAsignatura or manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco or manejadorRegistroInforme.proyectoInformeActual.proyecto.esContratoBiodiversidad}"
+					action="#{manejadorRegistroInforme.aprobarInformeCoordinador}"
+					ajax="false" />
+				<p:commandButton value="En estudio en ANLA"
+					rendered="#{manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarcoAsignatura or manejadorRegistroInforme.proyectoInformeActual.proyecto.esPermisoMarco}"
+					action="#{manejadorRegistroInforme.estudioAnlaInformeCoordinador}"
+					ajax="false" />
+				<p:commandButton value="Devolver para correcciones"
+					action="#{manejadorRegistroInforme.rechazarInformeCoordinador}"
+					ajax="false"
+					disabled="#{manejadorRegistroInforme.bloquearAprobacionInforme}" />
+				<p:commandButton value="Volver"
+					action="#{manejadorRegistroInforme.atras}" ajax="false" />
+			</p:panel>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

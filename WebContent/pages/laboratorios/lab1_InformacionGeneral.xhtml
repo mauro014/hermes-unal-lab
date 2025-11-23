@@ -1,0 +1,1024 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Información General</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="5" />
+		</h:form>
+
+		<h:form id="InformacionLaboratorio">
+			
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;
+									        ">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="5" />
+			
+			<p:panel
+				header="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.nombre} - #{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.id}"
+				id="panelInformacionLaboratorio">
+				
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelGridInformacionLaboratorio">
+
+					<h:outputText value="Nombre" for="Nombre"
+						styleClass="negrilla" />
+					<p:inputText id="Nombre" maxlength="256" size="50" required="true"
+						title="Nombre del Laboratorio, en lo posible, evite usar la palabra 'Laboratorio'."
+						requiredMessage="El Nombre del Laboratorio no puede ser nulo."
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.nombre}">
+					</p:inputText>
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.nombre}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						styleClass="negrilla"/>
+
+					<h:outputText value="Sede" styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.sede.nombre}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+					<p:selectOneMenu
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.sedeActual.id}"
+						id="cambia1">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosInformacionGeneral.sedeItem}" />
+						<p:ajax update="campuss, facultades, departamentos, edificios"
+							listener="#{ManejadorLaboratoriosInformacionGeneral.cambiarSede}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Núcleo, centro o campus"
+						styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.campus.nombre}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+					<p:selectOneMenu
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.campus.id}"
+						id="campuss"
+						panelStyle="width: 500px"
+						style="width: 390px">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosInformacionGeneral.campusItem}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Departamento / Ciudad" styleClass="negrilla" />
+					<t:div
+						title="Si la ciudad o municipio de la sede no aparece en la lista, por favor enviar correo a hermes@unal.edu.co">
+						<p:selectOneMenu
+							id="deptoCiudadLista"
+							value="#{ManejadorLaboratoriosInformacionGeneral.deptoCiudadSel}"
+							style="width: 390px">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{ManejadorLaboratoriosInformacionGeneral.deptoCiudadItem}" />
+						</p:selectOneMenu>
+					</t:div>
+
+					<h:outputText value="Facultad o Instituto"
+						styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.facultad.nombre}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+					<p:selectOneMenu
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.facultadActual.id}"
+						id="facultades"
+						style="width: 390px">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosInformacionGeneral.facultadItem}" />
+						<p:ajax update="departamentos"
+							listener="#{ManejadorLaboratoriosInformacionGeneral.cambiarFacultad}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Departamento o Escuela"
+						styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.departamento.nombre}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+					<p:selectOneMenu
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.departamentoActual.id}"
+						id="departamentos"
+						style="width: 390px">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosInformacionGeneral.departamentoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Edificio" for="edificios"
+						styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.edificio.codigo} - #{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.edificio.nombre}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+					<p:selectOneMenu 
+						id="edificios"
+						required="true"
+						style="width: 390px"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.edificio.id}"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosInformacionGeneral.edificiosItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Salón o Laboratorio" styleClass="negrilla" />
+					<p:inputText id="salon" maxlength="100" size="50"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.salon}">
+					</p:inputText>
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.salon}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+
+					<h:outputText value="Piso" styleClass="negrilla" />
+					<p:inputText id="Piso" size="50" maxlength="32"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.piso}">
+					</p:inputText>
+					<h:outputText
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.piso}"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}" />
+
+					<h:outputText value="Área del Laboratorio (m2)"
+						styleClass="negrilla" />
+					<p:inputText id="aream2" required="true" size="50"
+						readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.areaM2}">
+					</p:inputText>
+
+					<h:outputText value="E-mail" styleClass="negrilla" />
+					<p:inputText id="email" maxlength="60" size="50"
+						readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.email}">
+					</p:inputText>
+
+					<h:outputText value="Página Web" styleClass="negrilla" />
+					<p:inputText id="paginaWeb" maxlength="255" size="50"
+						readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.paginaWeb}">
+					</p:inputText>
+
+					<h:outputText value="Teléfono" styleClass="negrilla" />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelGridTel1">
+						<p:selectOneRadio id="tipoTelefono" value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoTelefono}">
+				            <f:selectItem itemValue="FIJO" itemLabel="Fijo" />
+				            <f:selectItem itemValue="CEL" itemLabel="Celular" />
+				            <p:ajax update="telefono" process="telefono2" listener="#{ManejadorLaboratoriosInformacionGeneral.cambiarTipoTelefono}"/>
+				        </p:selectOneRadio>
+				    	<p:inputMask id="telefono" maxlength="64" size="35"
+							title="Por favor para actualizar la información del teléfono, el formato recomendado es (+57 2) 3165000 Ext. 10605"
+							readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.telefono}"
+							mask="#{ManejadorLaboratoriosInformacionGeneral.telefonoMask}">
+						</p:inputMask>
+				    </p:panelGrid>
+
+					<h:outputText value="Teléfono 2" styleClass="negrilla" />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelGridTel2">
+						<p:selectOneRadio id="tipoTelefono2" value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoTelefono2}">
+				            <f:selectItem itemValue="FIJO" itemLabel="Fijo" />
+				            <f:selectItem itemValue="CEL" itemLabel="Celular" />
+				            <p:ajax update="telefono2" process="telefono2" listener="#{ManejadorLaboratoriosInformacionGeneral.cambiarTipoTelefono2}"/>
+				        </p:selectOneRadio>
+				        <p:inputMask id="telefono2" maxlength="64" size="35"
+							title="Por favor para actualizar la información del teléfono secundario, el formato recomendado es (+57 2) 3165000 Ext. 10605"
+							readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.telefono2}"
+							mask="#{ManejadorLaboratoriosInformacionGeneral.telefonoMask2}">
+						</p:inputMask>
+					 </p:panelGrid>
+
+					<h:outputText value="Fax" styleClass="negrilla" />
+					<p:inputText id="fax" maxlength="32" size="50"
+						readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.fax}">
+					</p:inputText>
+
+					<h:outputText value="Tipo" styleClass="negrilla" />
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString}"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}"
+						id="cambia5">
+						<f:selectItems value="#{ManejadorLaboratoriosInformacionGeneral.tipoLaboratorioItem}" />
+						<p:ajax update="panelGridInformacionLaboratorio" process="panelGridInformacionLaboratorio" />	
+					</p:selectOneMenu>
+					
+					<t:div title="Este campo sólo se modifica por parte de la Dirección Nacional de Investigación y Laboratorios, si requiere modificarlo debe comunicarse con esta dependencia"
+						rendered="#{not ManejadorLaboratoriosInformacionGeneral.puedeModificarCamposProtegidos}">
+						<h:outputText value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.nombre}" />
+						<br />
+						<h:outputText styleClass="pequennio" 
+							value="Nota: Este campo sólo se modifica por parte de la Dirección Nacional de Investigación y Laboratorios, si requiere modificarlo debe comunicarse con esta dependencia" />
+					</t:div>
+					
+					<h:outputText value="Laboratorios de ensayo" styleClass="negrilla" rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}"/>
+					<t:div title="Laboratorio que posee la competencia necesaria para llevar a cabo en forma general la determinación de las características, aptitud o el funcionamiento de materiales y productos."
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}">
+						<p:selectBooleanCheckbox id="booleanLabEnsayo"
+							disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabEnsayo}"
+							>
+						</p:selectBooleanCheckbox>
+					</t:div>
+					
+					<h:outputText value="Laboratorios de calibración" styleClass="negrilla" rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}"/>
+					<t:div title="Laboratorio que reúne la competencia e idoneidad técnica, logística y de personal necesarias para determinar la aptitud o el funcionamiento de instrumentos de medición empleados por empresas u otros laboratorios."
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}">
+						<p:selectBooleanCheckbox id="booleanLabCalib"
+							disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabCalibracion}"
+							>
+							<p:ajax update="panelGridInformacionLaboratorio" process="panelGridInformacionLaboratorio" />
+						</p:selectBooleanCheckbox>
+					</t:div>	
+					
+					<h:outputText value="Laboratorios de muestreo" styleClass="negrilla" rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}"/>
+					<t:div title="Laboratorio que posee la competencia y el personal necesario para la recolección de muestras para la realización de los análisis respectivos."
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}">
+						<p:selectBooleanCheckbox id="booleanLabMuestreo"
+							disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabMuestreo}"
+							>
+						</p:selectBooleanCheckbox>
+					</t:div>
+					
+					<h:outputText value="Otro tipo" styleClass="negrilla" rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}"/>
+					<t:div title="Laboratorios que no clasifiquen en las definiciones anteriores."
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}">
+						<p:selectBooleanCheckbox id="booleanLabOtro"
+							disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabOtro}"
+							>
+							<p:ajax update="panelGridInformacionLaboratorio" process="panelGridInformacionLaboratorio" />
+						</p:selectBooleanCheckbox>
+					</t:div>	
+					
+					<h:outputText value="¿Cual?" styleClass="negrilla" rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabOtro and ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}"/>
+					<t:div title="Laboratorios que no clasifiquen en las definiciones anteriores." 
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabOtro and ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipo.idString == '39'}">
+						<p:inputText id="otroTipoCual" maxlength="300" size="50"
+							readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoLabOtroCual}"
+							>
+						</p:inputText>
+					</t:div>
+					
+					<h:outputText value="Portafolio de Servicios"
+						styleClass="negrilla"/>
+					<p:selectOneMenu id="portafolioServicios"
+						disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.portafolioServicios.idString}">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosInformacionGeneral.portafolioServiciosItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Descripción breve de las actividades"
+						styleClass="negrilla" />
+					<p:inputTextarea rows="5" cols="50" autoResize="false"
+						counter="counterDescripcion" maxlength="1000"
+						counterTemplate="{0} caracteres restantes"
+						readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.descripcion}" />
+
+					<h:outputText
+						rendered="#{!ManejadorLaboratoriosInformacionGeneral.soloLectura}" />
+					<h:outputText
+						rendered="#{!ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						id="counterDescripcion" styleClass="pequennio" />
+						
+					<h:outputText value="Aplica metrología" styleClass="negrilla"/>
+					<p:selectBooleanCheckbox id="booleanAplicaMetrologia"
+						disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura or not ManejadorLaboratoriosInformacionGeneral.esLaboratorios}"
+						value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.aplicaMetrología}">
+						<p:ajax update="@form" />
+					</p:selectBooleanCheckbox>
+						
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Imagen del laboratorio</t:div>
+				<p:spacer height="20" />
+				
+				<center>
+				<p:panelGrid id="localCroppedImage" columns="1" styleClass="estilo-panelgrid-sinbordes" >
+						
+<!-- 					<h:outputText value="Imagen de fondo genérica vacia" style="text-weight:bold;" rendered="#{!ManejadorLaboratoriosInformacionGeneral.bandera &amp;&amp; !ManejadorLaboratoriosInformacionGeneral.banderaDos}"/> -->
+					<p:graphicImage id="localCroppedImage3"
+						value="/images/imagen_labs.png"
+						rendered="#{!ManejadorLaboratoriosInformacionGeneral.bandera &amp;&amp; !ManejadorLaboratoriosInformacionGeneral.banderaDos}" />
+						
+					<p:messages id="msgs" />
+					<p:fileUpload id="fileUpFoto" label="Seleccionar imagen" 
+						update="InformacionLaboratorio:localCroppedImage"
+						style="max-width:666px;" allowTypes="/(\.|\/)(jpg|jpeg)$/"
+						fileUploadListener="#{ManejadorLaboratoriosInformacionGeneral.subirArchivo}"
+						auto="true" mode="advanced" showButtons="true"
+						sizeLimit="3145728"
+						invalidFileMessage="El formato del archivo no es permitido. Sólo imágenes jpg."
+						invalidSizeMessage="El tamaño máximo por archivo es de 3MB." />
+
+<!-- 					<h:outputText value="Cortada en vivo antes de guardar. Luego de FIJAR IMAGEN" style="text-weight:bold;" rendered="#{ManejadorLaboratoriosInformacionGeneral.banderaDos}"/> -->
+					<p:graphicImage id="localCroppedImage1" value="/images/#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.id}.jpg"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.banderaDos}" />
+					
+<!-- 					<h:outputText value="Imagen ya guardada" style="text-weight:bold;" rendered="#{ManejadorLaboratoriosInformacionGeneral.bandera &amp;&amp; !ManejadorLaboratoriosInformacionGeneral.banderaDos}"/> -->
+					<p:graphicImage id="localCroppedImage2" value="#{ManejadorLaboratoriosInformacionGeneral.imagen}"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.bandera &amp;&amp; !ManejadorLaboratoriosInformacionGeneral.banderaDos}" />
+
+					<p:panel id="panelfoto" closable="true" style="max-width:666px;overflow:scroll;" 
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.banderaUno}">
+						<p:imageCropper initialCoords="0,0,160,160" minSize="160,160" aspectRatio="1"
+							value="#{ManejadorLaboratoriosInformacionGeneral.croppedImage}" image="/images/#{ManejadorLaboratoriosInformacionGeneral.newImageNameActual}" />
+						<p:commandButton value="Fijar imagen" action="#{ManejadorLaboratoriosInformacionGeneral.crop}" update="localCroppedImage" />
+						<p:commandButton value="Cerrar" action="#{ManejadorLaboratoriosInformacionGeneral.cerrar}" update="localCroppedImage" />
+					</p:panel>
+				</p:panelGrid>
+				</center>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Reglamento del laboratorio</t:div>
+				<p:spacer height="20" />
+				
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5" style="width:100%;">
+					<p:row>
+						<p:column style="width:25%;">
+							<h:outputText value="Tipo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:selectOneMenu id="selectTipoReglamento" style="width:50%;"
+								value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoReglamento}"
+								converter="ConvertidorTipos">
+								<f:selectItems value="#{ManejadorLaboratoriosInformacionGeneral.listaSIReglamento}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Reglamento (PDF):" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" id="pgAdjuntoReglamento" style="width:100%;">
+								
+								<p:fileUpload id="fileUpReglamento" label="Agregar" update="dtArchivosReg"
+									fileUploadListener="#{ManejadorLaboratoriosInformacionGeneral.subirArchivoReglamento}"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="3145728" 
+									invalidSizeMessage="Tamaño máximo: 3 MB"
+									allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+									invalidFileMessage="El archivo debe ser de formato PDF, JPG o PNG."
+									style="width:100%;"/>
+								
+								<p:dataTable var="archivoLaboratorio" id="dtArchivosReg"
+									value="#{ManejadorLaboratoriosInformacionGeneral.listaArchivosReglamento}"
+									rows="6" paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+									emptyMessage="No existen archivos registrados."
+									style="width: 100%">
+									<p:column>
+										<f:facet name="header" style="width:25%">
+											<h:outputText value="Fecha" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+											styleClass="pequennio">
+											<f:convertDateTime pattern="yyyy-MM-dd" />
+										</h:outputText>
+									</p:column>
+									<p:column style="width:65%">
+										<f:facet name="header">
+											<h:outputText value="Nombre" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="D" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+												action="#{ManejadorLaboratoriosInformacionGeneral.descargarArchivoReglamento}">
+												<f:setPropertyActionListener value="#{archivoLaboratorio}"
+													target="#{ManejadorLaboratoriosInformacionGeneral.archivoLaboratorioSeleccionadoReglamento}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									<p:column
+										rendered="#{not ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+										style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="(-)" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-trash" update="dtArchivosReg"
+												action="#{ManejadorLaboratoriosInformacionGeneral.eliminarArchivoReglamento}"
+												onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+												<f:setPropertyActionListener value="#{archivoLaboratorio}"
+													target="#{ManejadorLaboratoriosInformacionGeneral.archivoLaboratorioSeleccionadoReglamento}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+							</p:dataTable>
+								
+							</p:panelGrid>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Link:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<p:inputText id="linkReglamento"
+								title="Si tiene el reglamento en algún servicio en la nube, puede poner el link en este campo"
+								readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+								maxlength="1990"
+								style="width:100%;"
+								value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.linkReglamento}">
+							</p:inputText>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Dedicación (%)</t:div>
+				<p:spacer height="20" />
+				
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					id="panelGridInformacionLaboratorioDedicacion" style="width:100%;">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+						<p:row>
+							<p:column style="width:25%;">
+								<h:outputText value="Docencia" styleClass="negrilla" />
+							</p:column>
+							<p:column style="width:75%;">
+								<p:inputText id="dedicacionDocencia"
+									validatorMessage="La Dedicación debe ser un número entre 0 y 100."
+									converterMessage="La Dedicación debe ser un número entre 0 y 100."
+									readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+									value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.dedicacionDocencia}">
+									<f:validateDoubleRange minimum="0" maximum="100" />
+									<p:ajax
+										update="dedicacionDocencia, dedicacionInvestigacion, dedicacionExtension"
+										listener="#{ManejadorLaboratoriosInformacionGeneral.validar}" />
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Investigación" styleClass="negrilla" />
+							</p:column>
+							<p:column>
+								<p:inputText id="dedicacionInvestigacion"
+									validatorMessage="La Dedicación debe ser un número entre 0 y 100."
+									converterMessage="La Dedicación debe ser un número entre 0 y 100."
+									readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+									value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.dedicacionInvestigacion}">
+									<f:validateDoubleRange minimum="0" maximum="100" />
+									<p:ajax
+										update="dedicacionDocencia, dedicacionInvestigacion, dedicacionExtension"
+										listener="#{ManejadorLaboratoriosInformacionGeneral.validar}" />
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Extensión" styleClass="negrilla" />
+							</p:column>
+							<p:column>
+								<p:inputText id="dedicacionExtension"
+									validatorMessage="La Dedicación debe ser un número entre 0 y 100."
+									converterMessage="La Dedicación debe ser un número entre 0 y 100."
+									readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+									value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.dedicacionExtension}">
+									<f:validateDoubleRange minimum="0" maximum="100" />
+									<p:ajax
+										update="dedicacionDocencia, dedicacionInvestigacion, dedicacionExtension"
+										listener="#{ManejadorLaboratoriosInformacionGeneral.validar}" />
+								</p:inputText>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+			</p:panelGrid>
+					
+			<p:spacer height="20" />
+			<t:div styleClass="contenido-titulo-general-ancizar-left">Acto de creación</t:div>
+			<p:spacer height="20" />
+					
+			<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					id="panelGridInformacionLaboratorioActo" style="width: 100%">
+					
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="width: 100%">
+						<h:outputText value="Tipo" styleClass="negrilla" />
+						<p:inputText id="tipoActoCreacion"
+							title="Oficio, Resolución, Acuerdo, Acta, etc."
+							readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							maxlength="32"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.tipoActoCreacion}">
+						</p:inputText>
+
+						<h:outputText value="Número" styleClass="negrilla" />
+						<p:inputText id="numeroActoCreacion"
+							readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							maxlength="20"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.numeroActoCreacion}">
+						</p:inputText>
+
+						<h:outputText value="Emitido por" styleClass="negrilla" />
+						<p:inputText id="emanadaPorActoCreacion" size="50"
+							title="Dependencia o Entidad."
+							readonly="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							maxlength="100"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.emanadaPorActoCreacion}">
+						</p:inputText>
+
+						<h:outputText value="Fecha" styleClass="negrilla" />
+						<p:calendar readonlyInput="true"
+							disabled="#{ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.fechaActoCreacion}"
+							id="FechaActoCreacion" locale="es" pattern="dd/MM/yyyy" navigator="true"/>
+							
+						<p:spacer height="20" />
+						<p:spacer height="20" />
+						
+						<h:outputText value="Acto de creación (PDF) " styleClass="negrilla" />
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="pgDocumentosGestionTablaArchivos" style="width: 100%">
+							
+							<p:fileUpload id="fileUpActoCreacion" label="Agregar" update="dtArchivos"
+								fileUploadListener="#{ManejadorLaboratoriosInformacionGeneral.subirArchivoActoCreacion}"
+								auto="true" mode="advanced" showButtons="false"
+								sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB"
+								allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+								invalidFileMessage="El archivo debe ser de formato PDF." style="width: 100%"/>
+							
+							<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+								value="#{ManejadorLaboratoriosInformacionGeneral.listaArchivosInfGral}"
+								rows="6" paginator="true" paginatorPosition="bottom"
+								paginatorAlwaysVisible="false" pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen archivos registrados."
+								style="width: 100%">
+								<p:column>
+									<f:facet name="header" style="width:25%">
+										<h:outputText value="Fecha" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+										styleClass="pequennio">
+										<f:convertDateTime pattern="yyyy-MM-dd" />
+									</h:outputText>
+								</p:column>
+								<p:column style="width:65%">
+									<f:facet name="header">
+										<h:outputText value="Nombre" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column rendered="false">
+									<f:facet name="header">
+										<h:outputText value="Tipo" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.tipoArchivo.nombre}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column style="width:5%">
+									<f:facet name="header">
+										<h:outputText value="D" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+											action="#{ManejadorLaboratoriosInformacionGeneral.descargarArchivo}">
+											<f:setPropertyActionListener value="#{archivoLaboratorio}"
+												target="#{ManejadorLaboratoriosInformacionGeneral.archivoLaboratorioSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+								<p:column
+									rendered="#{not ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+									style="width:5%">
+									<f:facet name="header">
+										<h:outputText value="(-)" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+											action="#{ManejadorLaboratoriosInformacionGeneral.eliminarArchivo}"
+											onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+											<f:setPropertyActionListener value="#{archivoLaboratorio}"
+												target="#{ManejadorLaboratoriosInformacionGeneral.archivoLaboratorioSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+						</p:dataTable>
+							
+						</p:panelGrid>
+						
+					</p:panelGrid>
+			
+			</p:panelGrid>
+			
+			<p:spacer height="20" />
+			<t:div styleClass="contenido-titulo-general-ancizar-left">Clasificación OCDE - Áreas científicas y tecnológicas y ODS</t:div>
+			<p:spacer height="20" />
+			
+			<t:div
+				style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+				<h:outputText value="OBJETIVO SOCIOECONÓMICO"
+					style="font-weight: bold;" />
+				<h:outputLink value="#{ManejadorLaboratoriosInformacionGeneral.linkObjetivos}"
+					target="_blank">
+					<h:graphicImage id="imageee" alt="jsf-sun" url="/images/iconpdf.png">
+					</h:graphicImage>
+				</h:outputLink>
+				<p:tooltip for="imageee"
+					value="Descargar pdf con la clasificación de las áreas."
+					showEffect="fade" hideEffect="fade" />
+			</t:div>
+			
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5" style="width:100%;">
+				<p:row>
+					<p:column style="width:20%;">
+						<h:outputText value="Objetivo Socioeconómico(*):" styleClass="negrilla"/>
+					</p:column>
+					<p:column style="width:75%;">
+						<p:selectOneMenu
+							value="#{ManejadorLaboratoriosInformacionGeneral.objetivoSocioeconomicoSel}"
+							id="selectObjSocioeconomico"
+							style="width: 100%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{ManejadorLaboratoriosInformacionGeneral.listaSelectItemObjetivosSocieconomicos}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+			</p:panelGrid>	
+			
+			<p:separator />
+			
+			<t:div
+				style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+				<h:outputText value="ÁREA PRINCIPAL"
+					style="font-weight: bold;" />
+				<h:outputLink value="#{ManejadorLaboratoriosInformacionGeneral.linkLineas}"
+					target="_blank">
+					<h:graphicImage id="imageee" alt="jsf-sun" url="/images/iconpdf.png">
+					</h:graphicImage>
+				</h:outputLink>
+				<p:tooltip for="imageee"
+					value="Descargar pdf con la clasificación de las áreas."
+					showEffect="fade" hideEffect="fade" />
+			</t:div>
+			
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5" style="width:100%;">
+				
+				<p:row>
+					<p:column style="width:20%;">
+						<h:outputText value="Área principal(*):" styleClass="negrilla"/>
+					</p:column>
+					<p:column style="width:75%;">
+						<p:selectOneMenu
+							value="#{ManejadorLaboratoriosInformacionGeneral.areaOCDEPrincipalSel}"
+							id="selectAreaPrincipal"
+							style="width: 100%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{ManejadorLaboratoriosInformacionGeneral.listaSelectItemAreasPrincipales}" />
+							<p:ajax
+								update=":InformacionLaboratorio:selectSubAreaPrincipal"
+								listener="#{ManejadorLaboratoriosInformacionGeneral.cargarSubAreasOCDE}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				
+				<p:row>
+					<p:column style="width:20%;">
+						<h:outputText value="Sub Área principal(*):" styleClass="negrilla"/>
+					</p:column>
+					<p:column style="width:75%;">
+						<p:selectOneMenu
+							value="#{ManejadorLaboratoriosInformacionGeneral.subAreaOCDEPrincipalSel}"
+							id="selectSubAreaPrincipal"
+							style="width: 100%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{ManejadorLaboratoriosInformacionGeneral.listaSelectItemSubAreasPrincipales}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+			
+			</p:panelGrid>
+			
+			<p:separator />
+			
+			<t:div
+				style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+				<h:outputText value="ÁREAS SECUNDARIAS"
+					style="font-weight: bold;" />
+				<h:outputLink value="#{ManejadorLaboratoriosInformacionGeneral.linkLineas}"
+					target="_blank">
+					<h:graphicImage id="imageee" alt="jsf-sun" url="/images/iconpdf.png">
+					</h:graphicImage>
+				</h:outputLink>
+				<p:tooltip for="imageee"
+					value="Descargar pdf con la clasificación de las áreas."
+					showEffect="fade" hideEffect="fade" />
+			</t:div>
+			
+			<p:panel id="panelAreasSecundarias" rendered="#{not ManejadorLaboratoriosInformacionGenera.soloLectura}">
+				
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5" style="width:100%;"
+							 rendered="#{not ManejadorLaboratoriosInformacionGeneral.soloLectura}">
+	
+					<p:row>
+						<p:column style="width:5%;">
+							<h:outputText value="Área:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:35%;">
+							<p:selectOneMenu
+								value="#{ManejadorLaboratoriosInformacionGeneral.areaOCDESecundariaSel}"
+								id="selectAreaSecundaria"
+								style="width: 100%">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{ManejadorLaboratoriosInformacionGeneral.listaSelectItemAreasSecundarias}" />
+								<p:ajax
+									update=":InformacionLaboratorio:selectSubAreaSecundaria"
+									listener="#{ManejadorLaboratoriosInformacionGeneral.cargarSubAreasSecOCDE}" />
+							</p:selectOneMenu>
+						</p:column>
+						
+						<p:column style="width:5%;">
+							
+						</p:column>
+						
+						<p:column style="width:15%;">
+							<h:outputText value="Sub-Área:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:35%;">
+							<p:selectOneMenu
+								value="#{ManejadorLaboratoriosInformacionGeneral.subAreaOCDESecundariaSel}"
+								id="selectSubAreaSecundaria"
+								style="width: 100%">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{ManejadorLaboratoriosInformacionGeneral.listaSelectItemSubAreasSecundarias}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column style="width:5%;">
+							<p:commandButton id="botonAgregarAreaSecundaria"
+								action="#{ManejadorLaboratoriosInformacionGeneral.agregarAreaSecundaria}"
+								value="Agregar" update="tablaAreasSecundarias,panelAreasSecundarias"
+								icon="ui-icon-plusthick"
+								rendered="#{not ManejadorLaboratoriosInformacionGeneral.soloLectura}"/>
+						</p:column>
+					</p:row>
+				</p:panelGrid>			
+			</p:panel>
+			
+			<br />
+			
+			<center>
+				<p:dataTable id="tablaAreasSecundarias" var="areaSecundaria"
+					styleClass="pequennio"
+					value="#{ManejadorLaboratoriosInformacionGeneral.listaAreasSecundarias}"
+					rows="15" paginator="true" paginatorPosition="bottom"
+					pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, pagina: {currentPage}/{totalPages})"
+					emptyMessage="No hay áreas secundarias asociadas">
+
+					<f:facet name="header">
+						ÁREAS SECUNDARIAS ASOCIADAS AL LABORATORIO
+					</f:facet>
+
+					<p:column style="width:35%;"
+						sortBy="#{areaSecundaria.area.nombre}">
+						<f:facet name="header">
+							<h:outputText value="Área" />
+						</f:facet>
+						<h:outputText value="#{areaSecundaria.area.nombre}" />
+					</p:column>
+
+					<p:column style="width:35%;"
+						sortBy="#{areaSecundaria.subarea.nombre}">
+						<f:facet name="header">
+							<h:outputText value="Sub-Área" />
+						</f:facet>
+						<h:outputText value="#{areaSecundaria.subarea.nombre}" />
+					</p:column>
+
+					<p:column
+						rendered="#{!ManejadorLaboratoriosInformacionGeneral.soloLectura}"
+						style="width:5%;">
+						<f:facet name="header">
+							<h:outputText value="(-)" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash"
+								onclick="if(!confirm('¿Está seguro(a) de eliminar la opción seleccionada?'))return false"
+								action="#{ManejadorLaboratoriosInformacionGeneral.eliminarAreaSecundaria}"
+								update="tablaAreasSecundarias">
+								<f:setPropertyActionListener value="#{areaSecundaria}"
+									target="#{ManejadorLaboratoriosInformacionGeneral.areaSecundariaSeleccionadaTabla}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+				</p:dataTable>
+			</center>
+			
+			<p:separator />
+			
+			<t:div style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+				<h:outputText value="OBJETIVOS DE DESARROLLO SOSTENIBLE" style="font-weight: bold;" />
+				<p:spacer width="5" />
+				<h:outputLink id="paginaODS"
+					value="#{ManejadorLaboratoriosInformacionGeneral.linkObjetivosDesarrolloSostenible}"
+					target="_blank">
+						<h:graphicImage id="paginaODSPri" alt="jsf-sun" url="/images/NU-icono2.PNG" />
+				</h:outputLink>
+				<p:tooltip for="paginaODS" showEffect="fade" hideEffect="fade"
+					value="Consultar página web con la descripción de los objetivos de desarrollo sostenible." />
+			</t:div>
+			
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5" style="width:100%;">
+				<p:row>
+					<p:column style="width:20%;">
+						<h:outputText value="Objetivo principal(*):" styleClass="negrilla"/>
+					</p:column>
+					<p:column style="width:80%;">
+						<p:selectOneMenu id="selectODSPrin" 
+							style="width:480px;"
+							panelStyle="width: 600px;"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.ODSPrincipal}"
+							converter="ConvertidorTipos"
+							filter="true"
+							filterMatchMode="contains">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{ManejadorLaboratoriosInformacionGeneral.listaODS}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputText value="Objetivo secundario:" styleClass="negrilla"/>
+					</p:column>
+					<p:column>
+						<p:selectOneMenu id="selectODSSec"
+							style="width:480px;"
+							panelStyle="width: 600px;"
+							value="#{ManejadorLaboratoriosInformacionGeneral.ODSSecundarioSel}"
+							converter="ConvertidorTipos"
+							filter="true"
+							filterMatchMode="contains">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{ManejadorLaboratoriosInformacionGeneral.listaODS}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column colspan="2">
+						<p:spacer height="20" />
+						<center>
+							<p:commandButton id="btnObjDesSosSec"
+								action="#{ManejadorLaboratoriosInformacionGeneral.agregarODSSecundario}"
+								value="Adicionar objetivo secundario" 
+								icon="ui-icon-plus"
+								update="tablaObjDesSos, selectODSSec"/>
+						</center>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column colspan="2">
+						<p:spacer height="20" />
+						<center>
+							<p:dataTable id="tablaObjDesSos"
+								value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.listaODSSec}"
+								var="ods" emptyMessage="No hay objetivos secundarios adicionados">
+								<p:column headerText="Objetivo">
+									<h:outputText value="#{ods.ODS.nombre}"/>
+								</p:column>
+								<p:column style="width:10%" headerText="(-)">
+									<center>
+										<p:commandButton id="eliminarObjDesSos"
+											update="tablaObjDesSos" icon="ui-icon-trash"
+											action="#{ManejadorLaboratoriosInformacionGeneral.eliminarODSSecundario}"
+											title="Eliminar">
+											<f:setPropertyActionListener value="#{ods}"
+												target="#{ManejadorLaboratoriosInformacionGeneral.ODSSecundarioSelTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+						</center>
+					</p:column>
+				</p:row>
+			</p:panelGrid>	
+			
+			<p:spacer height="20" rendered="#{ManejadorLaboratoriosInformacionGeneral.coordinador == ManejadorLaboratoriosInformacionGeneral.personaActual}"/>
+			<t:div styleClass="contenido-titulo-general-ancizar-left" rendered="#{ManejadorLaboratoriosInformacionGeneral.coordinador == ManejadorLaboratoriosInformacionGeneral.personaActual}">Actualización datos del laboratorio</t:div>
+			<p:spacer height="20" rendered="#{ManejadorLaboratoriosInformacionGeneral.coordinador == ManejadorLaboratoriosInformacionGeneral.personaActual}"/>
+			
+			<center>	
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelGridInformacionLabValidaDatos" style="width:100%;"
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.coordinador == ManejadorLaboratoriosInformacionGeneral.personaActual}">
+				<p:row>
+					<p:column style="width:15%;">
+						<p:selectBooleanCheckbox id="booleanInformacionLabValidaDatos"
+							value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.validaInformacionLabXCoordinador}">
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column style="width:85%;">
+						<h:outputText value="Yo #{ManejadorLaboratoriosInformacionGeneral.coordinador.nombreCompleto} confirmo que la información del laboratorio se encuentra actualizada a la fecha" styleClass="negrilla"/>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column style="width:15%;">
+						<h:outputText value="Fecha" styleClass="negrilla"/>
+					</p:column>
+					<p:column style="width:85%;">
+						<h:outputText value="#{ManejadorLaboratoriosInformacionGeneral.laboratorioActual.fechaValidaInformacionLabXCoordinador}" styleClass="negrilla"/>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			</center>
+
+			<p:messages id="messages" autoUpdate="true" closable="true" redisplay="false" />
+				
+			<p:spacer height="20" />
+
+			<center>
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" rendered="#{!ManejadorLaboratoriosInformacionGeneral.soloLectura}">
+					<p:commandButton
+						action="#{ManejadorLaboratoriosInformacionGeneral.volverSolicitud}"
+						onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+						value="Volver a la solicitud" 
+						immediate="true" 
+						rendered="#{ManejadorLaboratoriosInformacionGeneral.esSolicitudLab}"/>
+					
+					<p:commandButton
+						action="#{ManejadorLaboratoriosInformacionGeneral.salir}"
+						onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+						value="Salir" immediate="true" 
+						rendered="#{!ManejadorLaboratoriosInformacionGeneral.esSolicitudLab}"/>
+					<p:commandButton
+						action="#{ManejadorLaboratoriosInformacionGeneral.salirGuardar}"
+						value="Guardar y continuar después"
+						update="InformacionLaboratorio" 
+						rendered="#{!ManejadorLaboratoriosInformacionGeneral.esSolicitudLab}"/>
+					<p:commandButton value="Guardar y avanzar"
+						action="#{ManejadorLaboratoriosInformacionGeneral.siguiente}"
+						update="panelInformacionLaboratorio, messages" />
+				</p:panelGrid>
+			</center>
+
+		</p:panel>
+			
+		<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+						header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+			<p:dataList value="#{ManejadorLaboratoriosInformacionGeneral.listaInfoFaltante}" var="info">    
+	        	#{info}
+    		</p:dataList>
+		</p:dialog>
+			
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

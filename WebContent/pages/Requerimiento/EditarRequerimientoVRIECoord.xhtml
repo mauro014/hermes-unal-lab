@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+
+
+
+	<ui:define name="content">
+		<h:form id="content" enctype="multipart/form-data">
+
+
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitudes a la VRIE</t:div>
+
+			<p:panel
+				header="Vicerrectoría de Investigación y Extensión"
+				align="center" id="requerimiento">
+
+				<p:messages id="msgs" />
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelReq">
+
+					<p:outputLabel value="Nombre del solicitante:" 
+						for="personaReq" styleClass="negrilla" />
+					<p:inputText id="personaReq" maxlength="256" size="70" 
+						readonly="#{ManejadorRevisarRequerimientoVRIE.esConsulta}"
+						value="#{ManejadorRevisarRequerimientoVRIE.requerimiento.personaRequerimiento}">
+					</p:inputText>
+
+					<p:outputLabel value="E-mail del solicitante:" 
+						for="emailReq" styleClass="negrilla" />
+					<p:inputText id="emailReq" maxlength="256" size="70" 
+						readonly="#{ManejadorRevisarRequerimientoVRIE.esConsulta}"
+						value="#{ManejadorRevisarRequerimientoVRIE.requerimiento.emailSolicitante}">
+					</p:inputText>
+
+					<p:outputLabel value="Dependencia a la que se dirige:"
+						for="modulo" styleClass="negrilla" />					
+					<p:selectOneMenu
+						value="#{ManejadorRevisarRequerimientoVRIE.requerimiento.modulo}"
+						id="modulo" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorRevisarRequerimientoVRIE.moduloItems}" />
+						<p:ajax update="panelReq"  listener="#{ManejadorRevisarRequerimientoVRIE.cargarSubModulo}"/> 
+					</p:selectOneMenu>					
+								
+					<h:outputText value="Descripción (máx. 2000 caracteres):" styleClass="negrilla"/>
+					<p:inputTextarea value="#{ManejadorRevisarRequerimientoVRIE.requerimiento.descripcionSolic}" id="descripcion" 
+						autoResize="false" rows="10" cols="55" readonly="#{ManejadorRevisarRequerimientoVRIE.esConsulta}"
+						validatorMessage="Descripción debe estar entre 1 - 2000 caracteres"
+						counter="counter" maxlength="2000" counterTemplate="{0} caracteres restantes.">	
+						<f:validateLength minimum="1" maximum="2000" for="descripcion"></f:validateLength>							
+					</p:inputTextarea>
+					<p:message for="descripcion" display="icon" />
+					<h:outputText id="counter" />
+					
+					<h:outputText value="Comentarios al usuario:" for="comentarios" 
+						styleClass="negrilla" />
+					<p:inputTextarea id="comentarios" maxlength="1000" rows="5"
+						cols="55" autoResize="false" counter="counter2" counterTemplate="{0} caracteres restantes."
+						value="#{ManejadorRevisarRequerimientoVRIE.requerimiento.comentarios}">
+					</p:inputTextarea>
+					<h:outputText />
+					<h:outputText id="counter2" />
+									
+				</p:panelGrid>
+				
+				<br></br>
+				<center>
+					<p:commandButton value="Reasignar dependencia" 
+					action="#{ManejadorRevisarRequerimientoVRIE.reasignar}" update="msgs"
+					icon="ui-icon-disk" ajax="false" />
+					
+					<p:commandButton value="Enviar al usuario" 
+					action="#{ManejadorRevisarRequerimientoVRIE.guardar}" update="msgs"
+					icon="ui-icon-disk" ajax="false" />
+				</center>
+				
+			</p:panel>
+			
+			<br/>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

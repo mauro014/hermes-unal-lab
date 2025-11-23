@@ -1,0 +1,865 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Gestión de colecciones científicas<br />
+			</t:div>
+			En esta sección puede actualizar los certificados y fechas de registro de las colecciones, 
+			así como consultarlas o actualizar su estado.<br />
+			Por favor tener en cuenta el 
+			<a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=356"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a> 
+			para gestionar las colecciones cientificas de la UN.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="coleccionesBiologicas">
+			<p:panel rendered="#{manejadorColeccionesBiologicas.verReporte}">
+				<br />
+				<h:outputText value="Colecciones científicas de la UNal"
+					style='color:#646464; font-size:22px;'
+					rendered="#{manejadorColeccionesBiologicas.verReporte}" />
+				<br />
+				<br />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;">
+					<p:row>
+						<p:column style="width:230px;">
+							<h:outputText value="Reporte agregado de colecciones científicas"
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<p:commandButton
+								action="#{manejadorColeccionesBiologicas.reporteColecciones}"
+								value="Generar" ajax="false" target="blank">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:messages id="messagesfin" showDetail="true" closable="true" />
+			<p:panel rendered="#{manejadorColeccionesBiologicas.verReporte}">
+				<br />
+				<h:outputText value="Adjuntar certificaciones de registro"
+					style='color:#646464; font-size:22px;'
+					rendered="#{manejadorColeccionesBiologicas.verReporte}" />
+				<br />
+				<br />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;">
+					<p:row>
+						<p:column style="width:140px;">
+							<h:outputText value="Seleccione la colección:"
+								style="font-weight: bold" />
+						</p:column>
+						<p:column style="width:300px;">
+							<p:selectOneMenu style="width:450px;" id="idCol"
+								value="#{manejadorColeccionesBiologicas.idColeccion}"
+								filter="true" filterMatchMode="contains" panelStyle="350px">
+								<f:selectItems
+									value="#{manejadorColeccionesBiologicas.listaColeccionesItems}" />
+								<p:ajax
+									listener="#{manejadorColeccionesBiologicas.cargarColeccion}"
+									update="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte" ajax="false"
+								target="_popUpWindow"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{manejadorColeccionesBiologicas.reporteColeccion}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row id="prowEstado">
+						<p:column>
+							<h:outputText value="Estado de la colección en la Universidad:" />
+						</p:column>
+						<p:column colspan="2" style="vertical-align: middle;">
+							<p:selectOneMenu style="width:280px;" id="idEstado"
+								value="#{manejadorColeccionesBiologicas.coleccion.estado}"
+								panelStyle="150px">
+								<f:selectItems
+									value="#{manejadorColeccionesBiologicas.listaEstados}" />
+							</p:selectOneMenu>
+						</p:column>
+
+					</p:row>
+					<p:row>
+						<p:column style="width:130px;">
+							<h:outputText value="Comentarios:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea cols="70"
+								value="#{manejadorColeccionesBiologicas.comentariosGenerales}"
+								maxlength="4000" counter="counterComentarios"
+								counterTemplate="{0} caracteres restantes." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterComentarios" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3" style="text-align:center;">
+							<p:commandButton style="margin-left:10px;"
+								action="#{manejadorColeccionesBiologicas.enviarCorreoComentarios}"
+								value="Actualizar y enviar correo con comentarios" ajax="false">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:panel>
+								<t:div style="color:#464646; text-align:justify;">
+						Si desea actualizar información de la colección pero <strong
+										style="color: #FF0000;">NO ENVIAR CORREO </strong>
+						utilice en botón  'Actualizar' situado al final de la página. Recuerde hacer clic en 'Actualizar' para guardar cualquier cambio adicional realizado a la colección como adjuntar archivos o actualizar información de autoridades.
+							</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorColeccionesBiologicas.esColeccionBiologica}">
+						<p:column colspan="3">
+							<br />
+							<p:separator />
+							<br />
+							<center>
+								<h:outputText value=" INFORMACIÓN ADICIONAL COLECCIÓN BIOLÓGICA REGISTRADA" style='font-weight: bold;' />
+							</center>
+							<br />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorColeccionesBiologicas.esColeccionBiologica}">
+						<p:column colspan="3">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="gestion-rnc" style="width:100%">
+								<p:row>
+									<p:column>
+										<h:outputText value="Fecha de último registro RNC:" />
+									</p:column>
+									<p:column>
+										<p:calendar id="fechareg"
+											value="#{manejadorColeccionesBiologicas.coleccion.fechaUltimoRegistroHumboldt}"
+											readonlyInput="true" navigator="true" locale="es" disabled="true" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Fecha de compromiso de actualización RNC:" />
+									</p:column>
+									<p:column>
+										<p:calendar id="fecharcom"
+											value="#{manejadorColeccionesBiologicas.coleccion.fechaCompromisoActualizacion}"
+											readonlyInput="true" navigator="true" locale="es" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Observaciones:" />
+									</p:column>
+									<p:column>
+										<p:inputTextarea cols="70"
+											value="#{manejadorColeccionesBiologicas.coleccion.observaciones}"
+											maxlength="4000" counter="counterObservaciones"
+											counterTemplate="{0} caracteres restantes." />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+									</p:column>
+									<p:column>
+										<h:outputText id="counterObservaciones" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Link portal de la colección:" />
+									</p:column>
+									<p:column>
+										<p:inputText style="width:100%;"
+											value="#{manejadorColeccionesBiologicas.coleccion.linkPortalColeccion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2">
+									<br/>
+										<p:panel>
+											<t:div style="color:#464646; text-align:justify;"> 
+													Si requiere adjuntar archivos a la coleccion puede hacerlo en la sección de documentos de esta ventana, u
+						Recuerde hacer clic en <strong style="color: #FF0000;">'Actualizar'</strong> en la parte de abajo para confirmar el guardado de cualquier cambio/actualización realizado a la colección.</t:div>
+										</p:panel>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<br />
+							<p:separator />
+							<br />
+							<center>
+								<h:outputText value=" DOCUMENTOS" style='font-weight: bold;' />
+							</center>
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:dataTable var="archivoResumen" id="tablaArchivoadicionales"
+								emptyMessage="No ha adjuntado ningún archivo"
+								value="#{manejadorColeccionesBiologicas.listaArchivos}"
+								style="width: 650px;">
+								<p:column headerText="Fecha" style="width:5%">
+									<h:outputText value=" #{archivoResumen.fecha}" />
+								</p:column>
+								<p:column headerText="Nombre del archivo" style="width:80%">
+									<h:outputText value="(Archivo cargado por la VRI)"
+										style="font-weight:bold;"
+										rendered="#{archivoResumen.tipo == 'HU'}" />
+									<h:outputText value=" #{archivoResumen.nombre}" />
+								</p:column>
+								<p:column headerText="Descargar" style="text-align:center;">
+									<p:commandButton icon="ui-icon-arrowstop-1-s"
+										action="#{manejadorColeccionesBiologicas.verArchivo}"
+										ajax="false">
+										<f:setPropertyActionListener value="#{archivoResumen}"
+											target="#{manejadorColeccionesBiologicas.archivoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:fileUpload
+								fileUploadListener="#{manejadorColeccionesBiologicas.guardarArchivo}"
+								mode="advanced" auto="true" update="tablaArchivoadicionales"
+								multiple="true" sizeLimit="3000000" label="Seleccionar archivo"
+								style="margin: auto;" />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+
+							<p:tabView>
+
+								<!-- 	autoridades -->
+
+								<p:tab title="Autoridad Competente" titleStyle="font-size:12px">
+
+									<p:growl id="growl" showDetail="true" />
+
+									<br />
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+										id="autoridad" style="width:100%">
+										<p:row>
+											<p:column colspan="2">
+												<p:panel>
+													<t:div style="color:#464646; text-align:justify;">
+						
+						Para vincular un primer estado por una entidad debe realizarlo vinculando la entidad y los datos. 
+						Luego, para modificar el estado ante esa entidad debe dar clic en editar, 
+						cambiar los datos y luego dar clic en el icono de verificación para actualizar la información. 
+						Recuerde hacer clic en <strong style="color: #FF0000;">'Actualizar'</strong> para confirmar el guardado de cualquier cambio realizado a la colección.</t:div>
+												</p:panel>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Autoridad competente:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu style="width:320px;" id="idAutoridad"
+													value="#{manejadorColeccionesBiologicas.autoridadCompetente}"
+													panelStyle="320px">
+													<f:selectItems
+														value="#{manejadorColeccionesBiologicas.listaAutoridades}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Número de registro:" />
+											</p:column>
+											<p:column>
+												<p:inputText id="nroregistro" style="width:350px;"
+													value="#{manejadorColeccionesBiologicas.numeroRegistro}" />
+												<p:watermark for="nroregistro" value="*" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Fecha última actualización:" />
+											</p:column>
+											<p:column>
+												<p:calendar id="fechActAut"
+													value="#{manejadorColeccionesBiologicas.fechaUltActualizacionAutoridad}"
+													readonlyInput="true" navigator="true" locale="es" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Estado en la autoridad competente:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu style="width:280px;" id="idEstadoAut"
+													value="#{manejadorColeccionesBiologicas.estadoAutoridad}"
+													panelStyle="150px">
+													<f:selectItems
+														value="#{manejadorColeccionesBiologicas.listaEstadosAutoridad}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row style="text-align:center;">
+											<p:column colspan="2" style="text-align:center;">
+												<p:commandButton value="Agregar" update="@form"
+													id="agregarAutoridad"
+													actionListener="#{manejadorColeccionesBiologicas.agregarInfoAutoridad}"
+													process="@form" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2">
+												<p:messages id="messagesError" showDetail="true"
+													closable="true" />
+											</p:column>
+										</p:row>
+										<p:row id="autoridad-competente" style="width:100%">
+											<p:column colspan="2" style="width:100%">
+												<center>
+													<p:dataTable var="autoridad" id="tabla-autoridades"
+														style="width:100%" editable="true"
+														value="#{manejadorColeccionesBiologicas.coleccion.listaAutoridades}">
+														<p:column headerText="Autoridad" style="width:30%;">
+															<h:outputText value="#{autoridad.autoridad.descripcion}" />
+														</p:column>
+														<p:column headerText="Número de registro"
+															style="width:20%;">
+															<p:cellEditor>
+																<f:facet name="output">
+																	<h:outputText value="#{autoridad.numeroRegistro}" />
+																</f:facet>
+																<f:facet name="input">
+																	<p:inputTextarea rows="3" maxlength="2000"
+																		value="#{autoridad.numeroRegistro}" style="width:100%" />
+																</f:facet>
+															</p:cellEditor>
+														</p:column>
+														<p:column headerText="Fecha de última actualización"
+															style="width:20%;">
+															<p:cellEditor>
+																<f:facet name="output">
+																	<h:outputText value="#{autoridad.fechaActualizacion}" />
+																</f:facet>
+																<f:facet name="input">
+																	<p:calendar id="fechActAutedit"
+																		value="#{autoridad.fechaActualizacion}"
+																		readonlyInput="true" navigator="true" locale="es" />
+																</f:facet>
+															</p:cellEditor>
+														</p:column>
+														<p:column headerText="Estado" style="width:20%;">
+
+															<p:cellEditor>
+																<f:facet name="output">
+																	<p:selectOneMenu style="width:120px;"
+																		value="#{autoridad.estado.identificador.tipo}"
+																		panelStyle="80px" disabled="true">
+																		<f:selectItems
+																			value="#{manejadorColeccionesBiologicas.listaEstadosAutoridad}" />
+																	</p:selectOneMenu>
+																</f:facet>
+																<f:facet name="input">
+																	<p:selectOneMenu style="width:1R20px;"
+																		value="#{autoridad.estado.identificador.tipo}"
+																		panelStyle="80px">
+																		<f:selectItems
+																			value="#{manejadorColeccionesBiologicas.listaEstadosAutoridad}" />
+																	</p:selectOneMenu>
+																</f:facet>
+															</p:cellEditor>
+														</p:column>
+														<p:column style="width:5%; text-align: center;">
+															<f:facet name="header">
+																<h:outputText value="Editar" />
+															</f:facet>
+															<p:rowEditor />
+														</p:column>
+														<p:column style="width:5%;">
+															<p:commandButton
+																action="#{manejadorColeccionesBiologicas.eliminarAutoridad}"
+																icon="ui-icon-closethick" update="tabla-autoridades"
+																onclick="if(!confirm('Esta seguro de borrar el registro?'))return false">
+
+																<f:setPropertyActionListener value="#{autoridad}"
+																	target="#{manejadorColeccionesBiologicas.autoridadSeleccionada}" />
+															</p:commandButton>
+														</p:column>
+													</p:dataTable>
+												</center>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+
+								</p:tab>
+								<p:tab title="Gestiones" titleStyle="font-size:12px">
+
+									<p:growl id="growl" showDetail="true" />
+
+									<br />
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+										id="gestiones" style="width:100%">
+										<p:row id="gestiones-col" style="width:100%">
+											<p:column colspan="2" style="width:100%">
+												<center>
+													<p:dataTable var="gestion" id="tabla-gestiones"
+														style="width:100%" editable="true"
+														value="#{manejadorColeccionesBiologicas.listaGestionesColeccion}"
+														paginator="true" paginatorPosition="bottom"
+														paginatorAlwaysVisible="false"
+														paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+														rowsPerPageTemplate="5,10,15" rows="10">
+														<p:column style="width:10%;">
+															<f:facet name="header">
+																<h:outputText value="Id" />
+															</f:facet>
+															<h:outputText value="#{gestion.id}" />
+														</p:column>
+														<p:column headerText="Fecha" style="width:20%;">
+															<h:outputText value="#{gestion.fechaRegistro}" />
+														</p:column>
+														<p:column headerText="Estado" style="width:20%;">
+															<h:outputText value="#{gestion.estado.descripcion}" />
+														</p:column>
+														<p:column headerText="Tipo de gestión" style="width:40%;">
+															<h:outputText value="#{gestion.tipo.descripcion}" />
+														</p:column>
+														<p:column style="width:5%; text-align:center;">
+															<f:facet name="header">
+																<h:outputText value="Revisar" />
+															</f:facet>
+															<p:commandButton
+																action="#{manejadorColeccionesBiologicas.revisarGestion}"
+																icon="ui-icon-contact" update="@form"
+																onstart="dialogEspere.show()"
+																oncomplete="dialogEspere.hide();dlgInfGestion.show();">
+																<f:setPropertyActionListener value="#{gestion}"
+																	target="#{manejadorColeccionesBiologicas.gestionSeleccionada}" />
+															</p:commandButton>
+														</p:column>
+													</p:dataTable>
+												</center>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:tab>
+								<p:tab title="Historial" titleStyle="font-size:12px">
+
+									<p:growl id="growl" showDetail="true" />
+
+									<br />
+
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+										id="historico" style="width:100%">
+										<p:row id="gestiones-col" style="width:100%">
+											<p:column colspan="2" style="width:100%">
+												<center>
+													<p:dataTable var="historico" id="tabla-historico"
+														style="width:100%"
+														value="#{manejadorColeccionesBiologicas.historico}"
+														emptyMessage="No se ha encontrado histórico de esta Colección."
+														paginator="true" paginatorPosition="bottom"
+														paginatorAlwaysVisible="false"
+														paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+														rowsPerPageTemplate="5,10,15" rows="10">
+														<p:column style="width:20%;">
+															<f:facet name="header">
+																<h:outputText value="Fecha" />
+															</f:facet>
+															<h:outputText value="#{historico.fecha}">
+																<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+															</h:outputText>
+														</p:column>
+														<p:column headerText="Modificación" style="width:40%;">
+															<h:outputText value="#{historico.nombreFormulario}" />
+														</p:column>
+														<p:column headerText="Responsable" style="width:40%;">
+															<h:outputText
+																value="#{historico.responsable.nombreCompletoMinusculas}" />
+														</p:column>
+
+													</p:dataTable>
+												</center>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+
+								</p:tab>
+							</p:tabView>
+
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="3" style="text-align:center;">
+							<p:commandButton style="margin-left:10px;"
+								action="#{manejadorColeccionesBiologicas.actualizar}"
+								value="Actualizar" ajax="false" target="blank">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+
+			<p:dialog header="Información Gestión" widgetVar="dlgInfGestion"
+				modal="true" resizable="false" width="650" id="dialogInfGestion">
+				<p:scrollPanel style="width:100%;height:500px;max-height:600px"
+					rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada != null}"
+					styleClass="estilo-panelgrid-sinbordes" mode="native">
+					<p:panelGrid style="width: 100%;" id="pnlEditGestion"
+						scrollable="true" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada != null}">
+						<p:row>
+							<p:column colspan="2">
+								<p:messages id="msgs3" autoUpdate="true" closable="true" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Código:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.id}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Tipo:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.descripcion}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Justificación:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="70" style="color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.justificacion}"
+									readonly="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'RC' || manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'AC'}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Autoridad:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important; "
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.autoridad.descripcion}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'RC' || manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'AC'}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Estado ante la autoridad competente:" />
+							</p:column>
+							<p:column id="estado-autoridad">
+								<p:selectOneMenu
+									value="#{manejadorColeccionesBiologicas.nuevoEstadoAutoridad}"
+									rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'AC'}"
+									disabled="#{manejadorColeccionesBiologicas.estadoGestionActual != 'E' and manejadorColeccionesBiologicas.estadoGestionActual != 'P'}"
+									effect="fade">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="P"
+										itemLabel="En proceso de actualización" />
+									<f:selectItem itemValue="A" itemLabel="Actualizada" />
+									<f:selectItem itemValue="D" itemLabel="Devuelta para ajustes" />
+								</p:selectOneMenu>
+								<p:selectOneMenu
+									value="#{manejadorColeccionesBiologicas.nuevoEstadoAutoridad}"
+									rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'RC'}"
+									disabled="#{manejadorColeccionesBiologicas.estadoGestionActual != 'E' and manejadorColeccionesBiologicas.estadoGestionActual != 'P'}"
+									effect="fade">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="P" itemLabel="En proceso de registro" />
+									<f:selectItem itemValue="R" itemLabel="Registrada" />
+									<f:selectItem itemValue="D" itemLabel="Devuelta para ajustes" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'RC' || manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'AC'}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Comentarios ante la autoridad competente:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="70"
+									value="#{manejadorColeccionesBiologicas.comentariosAutoridad}"
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual == 'E' or manejadorColeccionesBiologicas.estadoGestionActual == 'P'}" />
+								<p:inputTextarea cols="70" style="color: #000000 !important; "
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.comentariosAutoridad}"
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual != 'E' and manejadorColeccionesBiologicas.estadoGestionActual != 'P'}"
+									readonly="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'CD'}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Director Anterior:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important; "
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.directorAnterior.nombreCompleto}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'CD'}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Director Nuevo:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important; "
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.directorNuevo.nombreCompleto}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'PB'}">
+							<p:column colspan="2">
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Acepto la publicación de la información en el portal de colecciones." />
+								<p:inputText style="width:50px; color: #000000 !important; "
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.aceptaPublicacion}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.personaRegistra != null}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Persona que registra:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.personaRegistra.nombreCompleto}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.fechaRegistro != null}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Fecha registro:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.fechaRegistro}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.tipo.identificador.tipo == 'RCUN'}">
+							<p:column colspan="2">
+								<p:dataTable var="requisito"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.listaRequisitos}"
+									emptyMessage="No se han asignado requisitos">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Cumple" style="font-size: 12px;" />
+										</f:facet>
+										<t:div style="width: 100%; text-align: center;">
+											<p:selectBooleanCheckbox value="#{requisito.cumplido}">
+											</p:selectBooleanCheckbox>
+										</t:div>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Requisito" style="font-size: 12px;" />
+										</f:facet>
+										<table style="width: 400px;">
+											<tr>
+												<td style="border: 1px solid #FFFFFF;"><h:outputText
+														value="#{requisito.requisito.descripcion}" /></td>
+											</tr>
+										</table>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" id="rowTblArchivos">
+								<br />
+								<p:fileUpload
+									fileUploadListener="#{manejadorColeccionesBiologicas.adjuntarArchivoGestion}"
+									mode="advanced" auto="true" update="pnlEditGestion"
+									process="pnlEditGestion" multiple="true" sizeLimit="3072000"
+									label="Seleccionar archivo" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()"
+									invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual == 'E' or manejadorColeccionesBiologicas.estadoGestionActual == 'P'}" />
+								<p:dataTable
+									value="#{manejadorColeccionesBiologicas.listaArchivosGestion}"
+									var="archivo" headerText="Documentos Adjuntos"
+									emptyMessage="No hay archivos asociados" id="tabla-archivo"
+									paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" rows="5"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									style="width:100%;">
+									<p:column headerText="Id" style="width: 10%;">
+										<h:outputText value="#{archivo.id}"
+											style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+									</p:column>
+									<p:column style="width: 40%;" headerText="Documento Adjunto">
+										<h:outputText value="#{archivo.nombre}" />
+									</p:column>
+									<p:column headerText="Acciones"
+										style="width:10%; text-align:center;">
+										<p:commandButton id="descargar"
+											action="#{manejadorColeccionesBiologicas.descargarArchivoGestion}"
+											icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+											ajax="false">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorColeccionesBiologicas.archivoGestion}" />
+										</p:commandButton>
+									</p:column>
+									<p:column style="width:3%; text-align:center;" headerText="(-)"
+										rendered="#{manejadorColeccionesBiologicas.estadoGestionActual == 'E' or manejadorColeccionesBiologicas.estadoGestionActual == 'P'}">
+										<p:commandButton id="selectButton" update="tabla-archivo"
+											icon="ui-icon-trash"
+											action="#{manejadorColeccionesBiologicas.eliminarArchivoGestion}"
+											title="Eliminar archivo">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{manejadorColeccionesBiologicas.archivoGestion}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Estado solicitud:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="estado-gestion"
+									value="#{manejadorColeccionesBiologicas.nuevoEstadoGestion}"
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual == 'E' or manejadorColeccionesBiologicas.estadoGestionActual == 'P'}"
+									effect="fade">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="P" itemLabel="En Proceso" />
+									<f:selectItem itemValue="A" itemLabel="Aprobar" />
+									<f:selectItem itemValue="D"
+										itemLabel="Devolver para correciones" />
+									<f:selectItem itemValue="R" itemLabel="Rechazar" />
+								</p:selectOneMenu>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.estado.descripcion}"
+									disabled="true"
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual != 'E' and manejadorColeccionesBiologicas.estadoGestionActual != 'P'}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Observación revision:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="70"
+									value="#{manejadorColeccionesBiologicas.observacionCambioEstado}"
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual == 'E' or manejadorColeccionesBiologicas.estadoGestionActual == 'P'}" />
+								<p:inputTextarea cols="70" style="color: #000000 !important; "
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.comentariosRevision}"
+									rendered="#{manejadorColeccionesBiologicas.estadoGestionActual != 'E' and manejadorColeccionesBiologicas.estadoGestionActual != 'P'}"
+									readonly="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.personaRevisa != null}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Persona que revisa:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.personaRevisa.nombreCompleto}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.gestionSeleccionada.fechaRevision != null}">
+							<p:column>
+								<h:outputText style="font-size:18px; color: #646464;"
+									value="Fecha revisión:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:450px; color: #000000 !important;"
+									value="#{manejadorColeccionesBiologicas.gestionSeleccionada.fechaRevision}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorColeccionesBiologicas.estadoGestionActual == 'E' or manejadorColeccionesBiologicas.estadoGestionActual == 'P'}">
+							<p:column colspan="2" style="text-align:center;">
+								<p:messages id="msgs2" autoUpdate="true" closable="true" />
+								<br />
+								<p:commandButton
+									action="#{manejadorColeccionesBiologicas.guardarParcialmenteGestion}"
+									value="Guardar Gestión"
+									update="pnlEditGestion,coleccionesBiologicas:idEstado"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

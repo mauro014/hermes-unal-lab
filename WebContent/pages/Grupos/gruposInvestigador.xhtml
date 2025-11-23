@@ -1,0 +1,319 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Grupos de Investigación<br />
+			</t:div>
+			En esta sección puede agregar un nuevo grupo o actualizar el (los) grupo(s) en los cuales actúa 
+			como lider o estudiante líder.<br />
+			Por favor tener en cuenta el <a
+				href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=23"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a> para registro o actualización de información del grupo de investigación.
+			<br />
+			<br />
+			<strong>INFORMACIÓN IMPORTANTE:</strong>
+			<ul>
+				<li>Por favor tener en cuenta las "Pautas mínimas para los
+					grupos de investigación y creación artística de la Universidad
+					Nacional de Colombia" publicadas en el siguiente enlace de
+					información <a
+					href="https://investigacion.unal.edu.co/apoyo-a-la-investigacion/grupos/pautas-minimas/"
+					target="_blank">
+						https://investigacion.unal.edu.co/apoyo-a-la-investigacion/grupos/pautas-minimas/</a>
+				</li>
+				<li>Los grupos registrados quedaran pendientes del aval de
+					Consejo de Facultad, Instituto o Centro (o la instancia que haga
+					sus veces en la sede de La Paz o en las sedes de presencia
+					nacional) a la que pertenece el líder del grupo y el cual será
+					tramitado a través de la coordinación de Investigación de facultad
+					o sede o quien haga sus veces.</li>
+			</ul>
+			<br />
+			Si usted se encuentra registrado en la plataforma Scienti, por favor comuníquese con la coordinación de Investigación de facultad, instituto o sede o quien haga sus veces, solicitando actualizar el estado del grupo frente a la plataforma Scienti.<br />
+			<br />
+			Lo invitamos a diligenciar la 
+			<a
+				href="https://docs.google.com/forms/d/e/1FAIpQLSdVtNHo3fKcgcj1bHg3ppRaPdkHIk2OGxTaEaK_PX2bBo1hcA/viewform"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">
+				encuesta de satisfacción del proceso de gestión de investigación y
+				creación artística </a>
+			<br />
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+
+		<h:form id="form">
+			<div class="estilo-propio">
+				<p:dataTable var="grupo"
+					value="#{manejadorGruposInvestigador.listaGrupos}"
+					emptyMessage="No tiene grupos de investigacion asociados.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value="#{grupo.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre del grupo" />
+						</f:facet>
+						<t:div style="width: 150px;">
+							<h:outputText value="#{grupo.nombreGrupo}" /> - 
+							<h:outputText value="Lider" style="font-weight: bold;"
+								rendered="#{grupo.invGrupoPrincipal}" />
+							<h:outputText value="Estudiante Lider" style="font-weight: bold;"
+								rendered="#{grupo.invEstudianteLider}" />
+							<h:outputText value="Coinvestigador" style="font-weight: bold;"
+								rendered="#{!grupo.invGrupoPrincipal and !grupo.invEstudianteLider}" />
+						</t:div>
+					</p:column>
+					<p:column style="text-align: center; width: 80px;" id="acciones">
+						<f:facet name="header">
+							<h:outputText value="Opciones" style="font-size: 12px;" />
+						</f:facet>
+						<p:commandButton
+							rendered="#{((grupo.invEstudianteLider or grupo.invAsistenteLider) and (grupo.ingresando or grupo.activo or grupo.correcciones)) or (grupo.invGrupoPrincipal and (grupo.ingresando or grupo.activo or grupo.correcciones))}"
+							action="#{manejadorGruposInvestigador.editarGrupo}"
+							icon="ui-icon-pencil" ajax="false" title="Editar">
+							<f:setPropertyActionListener value="#{grupo}"
+								target="#{manejadorGruposInvestigador.grupoSeleccionado}" />
+						</p:commandButton>
+						<p:commandButton
+							rendered="#{!grupo.invGrupoPrincipal and !grupo.invEstudianteLider and !grupo.invAsistenteLider}"
+							action="#{manejadorGruposInvestigador.consultarGrupo}"
+							icon="ui-icon-search" ajax="false" title="Consultar">
+							<f:setPropertyActionListener value="#{grupo}"
+								target="#{manejadorGruposInvestigador.grupoSeleccionado}" />
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorGruposInvestigador.imprimirReporteFormatoGrupo}"
+							icon="ui-icon-print" ajax="false" title="Ver reporte">
+							<f:setPropertyActionListener value="#{grupo}"
+								target="#{manejadorGruposInvestigador.grupoSeleccionado}" />
+						</p:commandButton>
+						<p:commandButton title="Solicitud Cambio Estado"
+							rendered="#{grupo.invGrupoPrincipal and (grupo.activo or grupo.inactivo)}"
+							action="#{manejadorGruposInvestigador.crearNuevaSolicitudCambioEstado}"
+							update="@form" onstart="dialogEspere.show()"
+							icon="ui-icon-wrench"
+							oncomplete="dialogEspere.hide(),cambioEstado.show()">
+							<f:param name="idGrupo" value="#{grupo.id}" />
+							<f:setPropertyActionListener value="#{grupo}"
+								target="#{manejadorGruposInvestigador.grupoSeleccionado}" />
+						</p:commandButton>
+						<p:commandButton title="Histórico de edición"
+							action="#{manejadorGruposInvestigador.cargarHistoricoFormulario}"
+							update="@form" onstart="dialogEspere.show()" icon="ui-icon-clock"
+							oncomplete="dialogEspere.hide(),dialogHistoricoFormulario.show()">
+							<f:setPropertyActionListener value="#{grupo}"
+								target="#{manejadorGruposInvestigador.grupoSeleccionado}" />
+						</p:commandButton>
+						<p:commandButton
+							rendered="#{grupo.invGrupoPrincipal and grupo.ingresando}"
+							action="#{manejadorGruposInvestigador.eliminarGrupo}"
+							icon="ui-icon-trash" ajax="false" title="Eliminar">
+							<f:setPropertyActionListener value="#{grupo}"
+								target="#{manejadorGruposInvestigador.grupoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Estado" style="font-size: 12px;" />
+							<br />
+							<h:outputText value="UN" style="font-size: 12px;" />
+						</f:facet>
+						<t:div>
+							<h:outputText value="Registrado" rendered="#{grupo.esPropuesto}" />
+						</t:div>
+						<h:outputText value="Propuesto y en Solicitud de Aval"
+							rendered="#{grupo.solicitudAval and !grupo.esDevuelto}" />
+						<h:outputText value="Inactivo" rendered="#{grupo.inactivo}" />
+						<h:outputText value="Ingresando" rendered="#{grupo.ingresando}" />
+						<h:outputText value="Devuelto para correciones"
+							rendered="#{grupo.esDevuelto}" />
+						<h:outputText value="Activo"
+							rendered="#{!(grupo.solicitudAval || grupo.correcciones || grupo.esPropuesto || grupo.inactivo || grupo.ingresando || grupo.esDevuelto )}" />
+					</p:column>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Estado" style="font-size: 12px;" />
+							<br />
+							<h:outputText value="Scienti" style="font-size: 12px;" />
+						</f:facet>
+						<t:div style="width: 80px;">
+							<h:outputText value="#{grupo.estadoColciencias}" />
+						</t:div>
+					</p:column>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Tipo de " style="font-size: 12px;" />
+							<br />
+							<h:outputText value="conformación" style="font-size: 12px;" />
+						</f:facet>
+						<t:div style="width: 100px;">
+							<h:outputText value="Facultad, centro o instituto"
+								rendered="#{!grupo.interinstitucion and !grupo.esInterfacultades and !grupo.esIntersedes}" />
+							<br />
+							<h:outputText value="Interfacultad"
+								rendered="#{grupo.esInterfacultades}" />
+							<br />
+							<h:outputText value="Intersede" rendered="#{grupo.esIntersedes}" />
+							<br />
+							<h:outputText value="Interinstitucional"
+								rendered="#{grupo.interinstitucion}" />
+						</t:div>
+					</p:column>
+					<p:column style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Aval de Consejo " style="font-size: 12px;" />
+							<br />
+							<h:outputText value="FIC o Sede" style="font-size: 12px;" />
+						</f:facet>
+						<t:div style="width: 80px;">
+							<h:outputText value="NO" rendered="#{grupo.archivoAval == null}" />
+							<h:commandLink value="Ver documento" target="_popUpWindow3"
+								rendered="#{grupo.archivoAval != null}"
+								action="#{manejadorGruposInvestigador.descargarAval}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</t:div>
+					</p:column>
+				</p:dataTable>
+			</div>
+			<p:dialog header="Solicitud cambio de estado Grupo" id="cambioEstado"
+				widgetVar="cambioEstado" modal="true" resizable="false" width="550">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:660px; overflow: auto;"
+					id="SolicitudCambioEstado">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="cambioPanelGrid" style="width: 100%;">
+						<p:row id="mensajes">
+							<p:column colspan="2">
+								<p:messages id="msgs" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Id grupo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorGruposInvestigador.grupoSeleccionado.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Estado a solicitar:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorGruposInvestigador.estadoSolicitado}"
+									effect="fade">
+									<f:selectItem itemValue="" itemLabel="Seleccione una opción" />
+									<f:selectItem itemValue="N" itemLabel="Inactivo"
+										itemDisabled="#{manejadorGruposInvestigador.grupoSeleccionado.inactivo}" />
+									<f:selectItem itemValue="D" itemLabel="Disuelto"
+										itemDisabled="#{manejadorGruposInvestigador.grupoSeleccionado.inactivo}" />
+									<f:selectItem itemValue="A" itemLabel="Activo"
+										itemDisabled="#{manejadorGruposInvestigador.grupoSeleccionado.activo}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Justificación:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="50" rows="5" autoResize="false"
+									label="Justificación cambio de estado"
+									value="#{manejadorGruposInvestigador.justificacionCambioEstado}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:outputPanel id="outputPanel">
+									<div style="width: 100%; text-align: center;">
+										<p:commandButton value="Enviar solicitud"
+											update="SolicitudCambioEstado"
+											action="#{manejadorGruposInvestigador.guardarSolicitudCambioEstado}"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:param name="idGrupo"
+												value="#{manejadorGruposInvestigador.grupoSeleccionado.id}" />
+
+										</p:commandButton>
+										<p:commandButton value="Cerrar" update="@form"
+											onclick="cambioEstado.hide()">
+										</p:commandButton>
+									</div>
+								</p:outputPanel>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Histórico edición información del grupo"
+				widgetVar="dialogHistoricoFormulario" modal="true" resizable="false"
+				width="700">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="Grupo: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorGruposInvestigador.grupoSeleccionado.id}" /> - 
+							<h:outputText
+								value="#{manejadorGruposInvestigador.grupoSeleccionado.nombreGrupo}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="historicosFormularioGrupo" var="historico"
+					value="#{manejadorGruposInvestigador.historicosFormularioGrupo}"
+					emptyMessage="No hay un histórico de edición para este grupo"
+					paginator="true" rows="9" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Formulario" />
+						</f:facet>
+						<h:outputText value="#{historico.nombreFormulario}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{historico.responsable.nombreCompleto}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+				</p:dialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

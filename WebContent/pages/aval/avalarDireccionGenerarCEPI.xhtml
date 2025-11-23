@@ -1,0 +1,563 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión aval</t:div>
+
+			<br />
+			<p:panel id="panelAvalInfo">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelAval"
+					style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Código aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorSolicitarAvalCEPI.aval.aviId}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalCEPI.aval.nombreTipo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Unidad Académica Básica: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalCEPI.aval.dependencia.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Facultad: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalCEPI.aval.dependencia.facultad.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalCEPI.aval.dependencia.facultad.sede.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalCEPI.nombreInvestigador}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Consultar información aval: " />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+							<h:commandLink value="Ver reporte específico"
+								action="#{manejadorSolicitarAvalCEPI.imprimirAval}"
+								target="_popUpWindow1"
+								onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="Consultar información de proyecto relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte de proyecto"
+								target="_popUpWindow2"
+								action="#{manejadorSolicitarAvalCEPI.imprimirProyecto}"
+								onclick="javascript: void window.open('', '_popUpWindow2', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+				<br />
+
+				<p:dataTable var="documento" id="tablaArchivoDoc"
+					value="#{manejadorSolicitarAvalCEPI.listaArchivos}"
+					emptyMessage="No hay archivos adjuntos." cellpadding="1"
+					cellspacing="8" align="center" border="1" style="width:100%">
+					<f:facet name="header">Archivos Adjuntos</f:facet>
+
+					<p:column headerText="Id" style="width:2%">
+
+						<h:outputText value=" #{documento.id}" />
+					</p:column>
+
+					<p:column headerText="Archivo" style="width:95%">
+
+						<h:outputText value=" #{documento.nombre}" />
+					</p:column>
+
+					<p:column headerText="Descargar" style="width:3%">
+						<p:commandButton id="descargar"
+							action="#{manejadorSolicitarAvalCEPI.descargarArchivo}"
+							icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{manejadorSolicitarAvalCEPI.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<br />
+			<p:fieldset id="panelAvalRevision"
+				legend="Aval de Comité de Primera Instancia CEPI"
+				rendered="#{!manejadorSolicitarAvalCEPI.aval.tieneRecurso}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPrincipal" style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Aval CEPI:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="somCategoriaGrupos"
+								value="#{manejadorSolicitarAvalCEPI.selItem}" style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSolicitarAvalCEPI.categoriaItemsCE}" />
+								<p:ajax update="panelPrincipal" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalCEPI.selItem eq '4'}">
+						<p:column colspan="2">
+							<h:outputText style="color: #FF0000; font-weigt: bold"
+								value="La devolución del aval se remite al docente para su revisión y analizar si requiere adjuntar documento o modificar información." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Observaciones: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="70" rows="5" style="width:100%"
+								autoResize="false" id="dev1"
+								value="#{manejadorSolicitarAvalCEPI.aval.textoCEPI}"
+								maxlength="3800">
+								<f:validateLength minimum="0" maximum="3800" for="dev1"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterDev1" value="Tamaño máximo 3800 caracteres" />
+							<br />
+							<h:outputText style="font-size: 12px;"
+								value="NOTA: Recomendamos no usar caracteres especiales como '$', puede haber problemas con el texto en caso de envío de e-mail."/>
+						</p:column>
+					</p:row>
+					<p:row id="commentsProyecto" rendered="#{manejadorSolicitarAvalCEPI.selItem == '4'}">
+						<p:column colspan="2" styleClass="confirmaEdicion" style="text-align:justify;">
+									<h:outputText>Al seleccionar la opción<strong> DEVOLVER PARA CORRECCIONES</strong> se remitirá el aval al docente para su trámite.</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalCEPI.selItem == '2'}">
+						<p:column>
+							<h:outputText value="Adjuntar Aval CEPI: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalCEPI.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalCEPI.selItem == '2'}">
+						<p:column>
+							<h:outputText value="Archivo Aval CEPI:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{manejadorSolicitarAvalCEPI.aval.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:separator id="customSeparator2" />
+				<br />
+				<center>
+					<p:commandButton id="infoDocs" icon="ui-icon-info" />
+						<p:tooltip for="infoDocs" styleClass="tooltip-mesage" showDelay="999">
+							<t:div style="text-align: left; float:left;">
+						       	En caso de ser necesario, por favor adjunte los documentos <br />
+						       	relacionados con la revisión del aval.
+							</t:div>
+						</p:tooltip>
+						<h:outputText value=" DOCUMENTOS DE SOPORTE DE REVISIÓN (Opcional)" style='font-weight: bold;' />
+						<br /> <br />
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							id="panelArchivoSoporte" style="text-align:left; width:100%;">
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalCEPI.guardarArchivoCoor}"
+								id="archivo1" mode="advanced" update="tablaArchivo" auto="true"
+								multiple="true" sizeLimit="3070000" label="Seleccionar archivo" />
+						</p:panelGrid>
+	
+						<br />
+						
+						<p:dataTable var="archivoResumen"
+							value="#{manejadorSolicitarAvalCEPI.aval.archivosCoorList}"
+							id="tablaArchivo" emptyMessage="No tiene documentos vinculados."
+							style="width:100%">
+							<f:facet name="header">Documentos Vinculados</f:facet>
+							<p:column style="width:95%;" headerText="Archivo">
+								<h:outputText value="#{archivoResumen.nombre}" />
+							</p:column>
+	
+							<p:column style="width:5%;" headerText="Eliminar">
+								<p:commandButton
+									onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+									action="#{manejadorSolicitarAvalCEPI.eliminarArchivoCoor}"
+									value="Eliminar" update="tablaArchivo">
+									<f:setPropertyActionListener value="#{archivoResumen}"
+										target="#{manejadorSolicitarAvalCEPI.arCoor}" />
+								</p:commandButton>
+							</p:column>
+							<p:column style="text-align: center; width: 3%;">
+								<f:facet name="header">
+									<h:outputText value="Descargar" />
+								</f:facet>
+								<p:commandButton id="descargar"
+									action="#{manejadorSolicitarAvalCEPI.descargarArchivo}"
+									icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+									ajax="false">
+									<f:setPropertyActionListener value="#{archivoResumen}"
+										target="#{manejadorSolicitarAvalCEPI.documentoSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+						
+						<br />
+						
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							id="panelGuardar">
+							<p:commandButton
+								action="#{manejadorSolicitarAvalCEPI.guardarRevision}"
+								value="Guardar revisión aval" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton action="#{manejadorSolicitarAvalCEPI.anterior}"
+								value="Regresar" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:panelGrid>
+				</center>
+			</p:fieldset>
+			<br />
+			<!-- RevisionRecurso -->
+			<p:fieldset id="panelAvalRevisionRecurso"
+				legend="Aval de Comité de Primera Instancia CEPI - Revisión recurso"
+				rendered="#{manejadorSolicitarAvalCEPI.aval.tieneRecurso}">
+				<br />
+				<p:panel>
+					<p:panelGrid id="panelTipoRecurso" styleClass="estilo-panelgrid-sinbordes" style="text-align:left;width:100%;">
+						<p:row>
+							<p:column style="width:20%">
+								<h:outputText value="Tipo de recurso:" style='font-weight: bold;'/>
+							</p:column>
+							<p:column style="width:40%">
+								<h:outputText value="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico != null ? manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.nombre : 'ERROR TIPO RECURSO'}" />
+							</p:column>
+							<p:column style="width:20%">
+								<h:outputText value="Fecha recurso:" style='font-weight: bold;'/>
+							</p:column>
+							<p:column style="width:20%">
+								<h:outputText value="#{manejadorSolicitarAvalCEPI.aval.fechaRecurso}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="1">
+								<h:outputText value="Justificación:" style='font-weight: bold;'/>
+							</p:column>
+							<p:column colspan="3">
+								<h:outputText value="#{manejadorSolicitarAvalCEPI.aval.textoRecurso}"/>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel>
+					<h:outputText value="El docente interpuso un recurso de tipo REPOSICIÓN, en el cual el CEPI revisa nuevamente el aval 
+										y decide si aprobarlo o no aprobarlo. Por favor, seleccione si aprueba o no aprueba el aval, 
+										puede modificar las observaciones y archivos adjuntos de la revisión original." 
+								  rendered="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7685}"/>
+					<h:outputText value="El docente interpuso un recurso de tipo REPOSICIÓN CON APELACIÓN, en el cual el CEPI revisa nuevamente el aval 
+										y decide si aprobarlo o no aprobarlo. Si decide no aprobarlo, entonces el aval se enviará al CESI (Comité de Segunda Instancia) - 
+										#{manejadorSolicitarAvalCEPI.aval.cepi != null? manejadorSolicitarAvalCEPI.aval.cepi.cesi.nombre : 'ERROR NOMBRE CESI'}. 
+										Por favor, seleccione si aprueba o no aprueba el aval, puede modificar las observaciones y archivos adjuntos."
+								  rendered="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7686}"/>
+					<h:outputText value="El docente interpuso un recurso de tipo APELACIÓN, en el cual el CEPI revisa nuevamente el aval 
+										y decide si el recurso es procedente o no. Si decide que si es procedente, entonces el aval se enviará al CESI (Comité de Segunda Instancia) - 
+										#{manejadorSolicitarAvalCEPI.aval.cepi != null? manejadorSolicitarAvalCEPI.aval.cepi.cesi.nombre : 'ERROR NOMBRE CESI'}. 
+										Si no es procedente, el docente tendrá la opción de interponer una queja."
+								  rendered="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7687}"/>
+				</p:panel>
+				<br />
+				<p:panelGrid id="panelPrincipalRecurso" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+					rendered="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7685 or 
+								manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7686}">
+					<p:row>
+						<p:column>
+							<h:outputText value="Aval CEPI:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu value="#{manejadorSolicitarAvalCEPI.selItem}" style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{manejadorSolicitarAvalCEPI.categoriaItemsCE}" />
+								<p:ajax update="panelPrincipalRecurso" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Observaciones: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="70" rows="5" style="width:100%"
+								autoResize="false" id="dev1Recurso"
+								value="#{manejadorSolicitarAvalCEPI.aval.textoCEPI}"
+								maxlength="3800">
+								<f:validateLength minimum="0" maximum="3800" for="dev1Recurso"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterDev1Recurso" value="Tamaño máximo 3800 caracteres" />
+							<br />
+							<h:outputText style="font-size: 12px;"
+								value="NOTA: Recomendamos no usar caracteres especiales como '$', puede haber problemas con el texto en caso de envío de e-mail."/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalCEPI.selItem == '2'}">
+						<p:column>
+							<h:outputText value="Adjuntar Aval CEPI: " />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalCEPI.guardarArchivo}"
+								id="archivo2Recurso" mode="advanced" auto="true"
+								update="archivo_adjuntoRecurso" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalCEPI.selItem == '2'}">
+						<p:column>
+							<h:outputText value="Archivo Aval CEPI:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjuntoRecurso" value=" #{manejadorSolicitarAvalCEPI.aval.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid id="panelPrincipalRecursoApelacion" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+					rendered="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7687}">
+					<p:row>
+						<p:column>
+							<h:outputText value="¿Es procedente?:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu value="#{manejadorSolicitarAvalCEPI.selItem}" style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{manejadorSolicitarAvalCEPI.categoriaItemsCE}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%"
+					rendered="#{manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7685 or 
+								manejadorSolicitarAvalCEPI.aval.tipoRecursoAvalEtico.id == 7686}">
+					<p:row>
+						<p:column style="text-align:center;">
+							<p:commandButton id="infoDocsRecurso" icon="ui-icon-info" >
+								<p:tooltip for="infoDocsRecurso" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	En caso de ser necesario, por favor adjunte los documentos <br /> relacionados con la revisión del aval.
+									</t:div>
+								</p:tooltip>
+							</p:commandButton>
+							<h:outputText value="DOCUMENTOS DE SOPORTE DE REVISIÓN (Opcional)" style='font-weight: bold;' />
+							<br />
+							<br />
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalCEPI.guardarArchivoCoor}"
+								id="archivo1Recurso" mode="advanced" update="tablaArchivoRecurso" auto="true"
+								multiple="true" sizeLimit="3070000" label="Seleccionar archivo"
+								style="text-align:left;"/>
+							<br />
+							<p:dataTable var="archivoResumen"
+								value="#{manejadorSolicitarAvalCEPI.aval.archivosCoorList}"
+								id="tablaArchivoRecurso" emptyMessage="No tiene documentos vinculados." style="width:100%;">
+								<f:facet name="header">Documentos Vinculados</f:facet>
+								<p:column style="width:95%;text-align:left;" headerText="Archivo">
+									<h:outputText value="#{archivoResumen.nombre}" />
+								</p:column>
+		
+								<p:column style="width:5%;" headerText="Eliminar">
+									<p:commandButton
+										onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+										action="#{manejadorSolicitarAvalCEPI.eliminarArchivoCoor}"
+										value="Eliminar" update="tablaArchivoRecurso">
+										<f:setPropertyActionListener value="#{archivoResumen}"
+											target="#{manejadorSolicitarAvalCEPI.arCoor}" />
+									</p:commandButton>
+								</p:column>
+								<p:column style="text-align: center; width: 3%;">
+									<f:facet name="header">
+										<h:outputText value="Descargar" />
+									</f:facet>
+									<p:commandButton id="descargar"
+										action="#{manejadorSolicitarAvalCEPI.descargarArchivo}"
+										icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+										ajax="false">
+										<f:setPropertyActionListener value="#{archivoResumen}"
+											target="#{manejadorSolicitarAvalCEPI.documentoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%">
+					<p:row>
+						<p:column style="text-align:center;">
+							<p:commandButton
+								action="#{manejadorSolicitarAvalCEPI.guardarRevisionRecurso}"
+								value="Guardar revisión aval" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:spacer width="10" />
+							<p:commandButton action="#{manejadorSolicitarAvalCEPI.anterior}"
+								value="Regresar" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>		
+<!-- 				<center> -->
+<!-- 					<p:commandButton id="infoDocsRecurso" icon="ui-icon-info" > -->
+<!-- 						<p:tooltip for="infoDocsRecurso" styleClass="tooltip-mesage" showDelay="999"> -->
+<!-- 							<t:div style="text-align: left; float:left;"> -->
+<!-- 						       	En caso de ser necesario, por favor adjunte los documentos <br /> relacionados con la revisión del aval. -->
+<!-- 							</t:div> -->
+<!-- 						</p:tooltip> -->
+<!-- 					</p:commandButton> -->
+					
+<!-- 					<h:outputText value="DOCUMENTOS DE SOPORTE DE REVISIÓN (Opcional)" style='font-weight: bold;' /> -->
+<!-- 					<br /> <br /> -->
+<!-- 					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" style="text-align:left; width:100%;"> -->
+<!-- 						<p:fileUpload -->
+<!-- 							fileUploadListener="#{manejadorSolicitarAvalCEPI.guardarArchivoCoor}" -->
+<!-- 							id="archivo1Recurso" mode="advanced" update="tablaArchivoRecurso" auto="true" -->
+<!-- 							multiple="true" sizeLimit="3070000" label="Seleccionar archivo" /> -->
+<!-- 					</p:panelGrid> -->
+<!-- 					<br /> -->
+<!-- 					<p:dataTable var="archivoResumen" -->
+<!-- 						value="#{manejadorSolicitarAvalCEPI.aval.archivosCoorList}" -->
+<!-- 						id="tablaArchivoRecurso" emptyMessage="No tiene documentos vinculados." style="width:100%"> -->
+<!-- 						<f:facet name="header">Documentos Vinculados</f:facet> -->
+<!-- 						<p:column style="width:95%;" headerText="Archivo"> -->
+<!-- 							<h:outputText value="#{archivoResumen.nombre}" /> -->
+<!-- 						</p:column> -->
+
+<!-- 						<p:column style="width:5%;" headerText="Eliminar"> -->
+<!-- 							<p:commandButton -->
+<!-- 								onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false" -->
+<!-- 								action="#{manejadorSolicitarAvalCEPI.eliminarArchivoCoor}" -->
+<!-- 								value="Eliminar" update="tablaArchivoRecurso"> -->
+<!-- 								<f:setPropertyActionListener value="#{archivoResumen}" -->
+<!-- 									target="#{manejadorSolicitarAvalCEPI.arCoor}" /> -->
+<!-- 							</p:commandButton> -->
+<!-- 						</p:column> -->
+<!-- 						<p:column style="text-align: center; width: 3%;"> -->
+<!-- 							<f:facet name="header"> -->
+<!-- 								<h:outputText value="Descargar" /> -->
+<!-- 							</f:facet> -->
+<!-- 							<p:commandButton id="descargar" -->
+<!-- 								action="#{manejadorSolicitarAvalCEPI.descargarArchivo}" -->
+<!-- 								icon="ui-icon-circle-arrow-s" title="Descargar archivo" -->
+<!-- 								ajax="false"> -->
+<!-- 								<f:setPropertyActionListener value="#{archivoResumen}" -->
+<!-- 									target="#{manejadorSolicitarAvalCEPI.documentoSeleccionado}" /> -->
+<!-- 							</p:commandButton> -->
+<!-- 						</p:column> -->
+<!-- 					</p:dataTable> -->
+						
+<!-- 					<br /> -->
+					
+<!-- 					<p:panelGrid id="panelGuardarRecurso" columns="2" styleClass="estilo-panelgrid-sinbordes"> -->
+<!-- 						<p:commandButton -->
+<!-- 							action="#{manejadorSolicitarAvalCEPI.guardarRevisionRecurso}" -->
+<!-- 							value="Guardar revisión aval" onstart="dialogEspere.show()" -->
+<!-- 							oncomplete="dialogEspere.hide()"> -->
+<!-- 						</p:commandButton> -->
+<!-- 						<p:commandButton action="#{manejadorSolicitarAvalCEPI.anterior}" -->
+<!-- 							value="Regresar" onstart="dialogEspere.show()" -->
+<!-- 							oncomplete="dialogEspere.hide()"> -->
+<!-- 						</p:commandButton> -->
+<!-- 					</p:panelGrid> -->
+<!-- 				</center> -->
+			</p:fieldset>
+			<p:messages id="msgs" autoUpdate="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" /> Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

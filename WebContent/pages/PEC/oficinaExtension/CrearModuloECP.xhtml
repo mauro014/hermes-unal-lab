@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">CREACIÓN MODULO</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<p:panel id="defModulo" header="Definición del Módulo">
+				<h:panelGrid id="pG_informativo" columns="1">
+					<h:outputText
+						value="Los módulos cerrados son aquellos que se derivan de un proceso de negociación con una entidad contratante, los cursos abiertos corresponden a la oferta de educación continua y permanente de la Universidad"
+						style="text-align: justify" />
+				</h:panelGrid>
+				<br />
+				<h:panelGrid id="pGModalidad" columns="2">
+					<h:outputText value="Modalidad:" />
+					<p:selectOneMenu id="modalidad"
+						value="#{ManejadorCrearModuloECP.modalidadECP}">
+						<f:selectItem itemLabel="Cerrado" itemValue="C" />
+						<f:selectItem itemLabel="Abierto" itemValue="A" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Nombre:" />
+					<p:inputTextarea id="ITA_nombre"
+						value="#{ManejadorCrearModuloECP.nombre}" rows="5" cols="60"
+						autoResize="false" maxlength="90" counter="counter"
+						counterTemplate="{0} caracteres restantes" required="true" />
+
+					<h:outputText />
+					<h:outputText id="counter" />
+
+					<h:outputText value="Objetivo General:" />
+					<p:inputTextarea id="ITA_objetivoGeneral"
+						value="#{ManejadorCrearModuloECP.objGeneral}" rows="5" cols="60"
+						autoResize="false" maxlength="220" counter="counter2"
+						counterTemplate="{0} caracteres restantes" required="true" />
+
+					<h:outputText />
+					<h:outputText id="counter2" />
+				</h:panelGrid>
+
+				<h:panelGrid id="pG_evento" columns="2" >
+					<h:outputText value="Clase de Evento: " />
+					<p:selectOneMenu id="SOM_claseEvento"
+						value="#{ManejadorCrearModuloECP.claseEventoECP}">
+						<f:selectItems id="SOM_claseEvento_lista"
+							value="#{ManejadorCrearModuloECP.claseEventoECPItem}" />
+						<p:ajax update="@parent"
+							listener="#{ManejadorCrearModuloECP.cargarSubEvento}"
+							event="change" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Evento de Extensión:" id="tpEvento" rendered="#{ManejadorCrearModuloECP.claseEventoECP == 'SUB_EVENTO'}"/>
+					<p:selectOneMenu id="SOM_subEvento"
+						value="#{ManejadorCrearModuloECP.subEventoECP}"
+						rendered="#{ManejadorCrearModuloECP.claseEventoECP == 'SUB_EVENTO'}">
+						<f:selectItems value="#{ManejadorCrearModuloECP.subEventoECPItem}" />
+						<p:ajax update="@parent"/>
+					</p:selectOneMenu>
+					
+					<h:outputText id="OT_otroEvento" value="Otro evento de extensión:" rendered="#{ManejadorCrearModuloECP.subEventoECP == 'OT'}"/>
+					<p:inputText id="IT_otroEvento"
+						value="#{ManejadorCrearModuloECP.otroEvento}"
+						size="70"
+						rendered="#{ManejadorCrearModuloECP.subEventoECP == 'OT'}"/>
+				</h:panelGrid>												
+								
+			</p:panel>
+			
+			<br/>
+			<p:messages id="msgs"/>
+			<br/>
+			<h:panelGrid columns="2" align="center" id="pG_botones">
+				<p:commandButton value="Volver"
+					action="#{ManejadorCrearModuloECP.atras}"
+					immediate="true"/>
+				
+				<p:commandButton id="CB_guardar" value="Crear Módulo" action="#{ManejadorCrearModuloECP.guardar}"
+					disabled="#{ManejadorCrearModuloECP.guardarBloqueado}"
+					update="@form"/>
+			</h:panelGrid>			
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,650 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Consultar movilidades registradas</t:div>
+			<p:panel id="panelConsultaMovilidades">
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto;">
+					<p:outputLabel for="idMovilidad" value="Id de la movilidad:" />
+					<p:inputText id="idMovilidad" style="width: 100px;"
+						value="#{manejadorBuscarReporteMovilidad.sCodigoMovilidad}"
+						size="7">
+						<f:validateDoubleRange minimum="0" maximum="100000" />
+						<f:validateLength maximum="5" />
+					</p:inputText>
+					<p:commandButton update="@form"
+						action="#{manejadorBuscarReporteMovilidad.buscarReporteMovilidad}"
+						value="Buscar" icon="ui-icon-search" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()" />
+				</p:panelGrid>
+				<p:messages id="msgs" />
+			</p:panel>
+			<br />
+			<p:panel id="panelImprimirMovilidades"
+				header="Informacion movilidad encontrada"
+				rendered="#{manejadorBuscarReporteMovilidad.imprimirReporteMovilidades}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Código:" style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorBuscarReporteMovilidad.sCodigoMovilidad}" />
+					<h:outputText value="Modalidad:" style="font-weight: bold;" />
+					<h:outputText value="Apoyo a docentes en eventos en el extranjero"
+						rendered="#{manejadorBuscarReporteMovilidad.habMovDE}" />
+					<h:outputText value="Apoyo para la visita de extranjeros"
+						rendered="#{manejadorBuscarReporteMovilidad.habilitarMovVE}" />
+					<h:outputText
+						value="Apoyo a estudiantes en eventos en el extranjero"
+						rendered="#{manejadorBuscarReporteMovilidad.habMovEP}" />
+					<h:outputText
+						value="Apoyo a docentes para residencias artisticas en el extranjero"
+						rendered="#{manejadorBuscarReporteMovilidad.habMovDA}" />
+					<h:outputText value="Apoyo a visitantes extranjeros Artes"
+						rendered="#{manejadorBuscarReporteMovilidad.habMovVA}" />
+					<h:outputText
+						value="Apoyo a estudiantes para residencias artisticas en el extranjero"
+						rendered="#{manejadorBuscarReporteMovilidad.habMovEA}" />
+					<h:outputText value="" />
+					<h:commandLink value="Imprimir reporte" target="_blank"
+						action="#{manejadorBuscarReporteMovilidad.imprimirReportesMovilidades}"
+						ajax="false"
+						style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;" />
+					<h:outputText value="Estado Movilidad:" style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorBuscarReporteMovilidad.sEstadoMovilidad}" />
+					<h:outputText value="Estado informe seguimiento:"
+						rendered="#{!empty manejadorBuscarReporteMovilidad.estadoSeguimiento}"
+						style="font-weight: bold;" />
+					<h:outputText value="Ingresando"
+						rendered="#{!empty manejadorBuscarReporteMovilidad.estadoSeguimiento  and 
+									manejadorBuscarReporteMovilidad.estadoSeguimiento == 'P'}" />
+					<h:outputText value="Registrado"
+						rendered="#{!empty manejadorBuscarReporteMovilidad.estadoSeguimiento  and 
+									manejadorBuscarReporteMovilidad.estadoSeguimiento == 'F'}" />
+					<h:outputText value=""
+						rendered="#{!empty manejadorBuscarReporteMovilidad.estadoRevisionSeguimiento}" />
+					<h:outputText value="Revisado"
+						rendered="#{manejadorBuscarReporteMovilidad.estadoRevisionSeguimiento == 'L'}" />
+					<h:outputText value="Devuelto para correcciones"
+						rendered="#{manejadorBuscarReporteMovilidad.estadoRevisionSeguimiento == 'D'}" />
+					<h:outputText value=""
+						rendered="#{manejadorBuscarReporteMovilidad.estadoSeguimiento == 'F' || manejadorBuscarReporteMovilidad.sEstadoMovilidad == 'Cancelada'}" />
+					<h:commandLink value="Consultar informe de seguimiento"
+						rendered="#{manejadorBuscarReporteMovilidad.estadoSeguimiento == 'F' || manejadorBuscarReporteMovilidad.sEstadoMovilidad == 'Cancelada'}"
+						action="#{manejadorBuscarReporteMovilidad.consultarSeguimientoMovilidad}"
+						ajax="false"
+						style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;" />
+					<h:outputText value=""
+						rendered="#{manejadorBuscarReporteMovilidad.estadoRevisionSeguimiento == 'D'}" />
+					<p:commandButton value="Consultar Motivos de Devolución"
+						rendered="#{manejadorBuscarReporteMovilidad.estadoRevisionSeguimiento == 'D'}"
+						action="#{manejadorBuscarReporteMovilidad.consultarDevolucion}"
+						oncomplete="dialogComentarios.show();" update="@form" />
+				</p:panelGrid>
+				
+<!-- 				listaArchivosMovilidadDE -->
+				<p:dataTable var="archivoResumen"
+					emptyMessage="No se han adjuntado documentos"
+					value="#{manejadorBuscarReporteMovilidad.listaArchivosMovilidadDE}"
+					rendered="#{manejadorBuscarReporteMovilidad.habMovDE}"
+					style="margin-top: 10px;width: 100%"
+					styleClass="pequennio">
+					<f:facet name="header">
+						<h:outputText value="Archivos adjuntos" />
+					</f:facet>					
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="max-width:400px; ">
+							<h:outputText value="#{archivoResumen.nombre}"
+								styleClass="pequennio" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 40%;">
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.tipoArchivo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.persona.nombreCompletoMinusculas}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 10%;">
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.fecha}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 5%;">
+						<f:facet name="header">
+							<h:outputText value="D" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+							action="#{manejadorBuscarReporteMovilidad.descargarArchivoMovDE}"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{manejadorBuscarReporteMovilidad.documentoSeleccionadoDE}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="width:5%">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="@form"
+								action="#{manejadorBuscarReporteMovilidad.eliminarArchivoObligatorioDE}"
+								onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoResumen.nombre}?.'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorBuscarReporteMovilidad.documentoSeleccionadoDE}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+<!-- 				listaArchivosMovilidadEP -->
+				<p:dataTable var="archivoResumen"
+					value="#{manejadorBuscarReporteMovilidad.listaArchivosMovilidadEP}"
+					style="margin-top: 10px;width: 100%"
+					styleClass="pequennio"
+					rendered="#{manejadorBuscarReporteMovilidad.habMovEP}">
+					<f:facet name="header">
+						<h:outputText value="Archivos adjuntos" />
+					</f:facet>
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="max-width:400px; ">
+							<h:outputText value="#{archivoResumen.nombre}"
+								styleClass="pequennio" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 40%;">
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.tipoArchivo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.persona.nombreCompletoMinusculas}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 10%;">
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.fecha}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 5%;">
+						<f:facet name="header">
+							<h:outputText value="D" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+							action="#{manejadorBuscarReporteMovilidad.descargarArchivoMovEP}"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{manejadorBuscarReporteMovilidad.documentoSeleccionadoEP}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="width:5%">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="@form"
+								action="#{manejadorBuscarReporteMovilidad.eliminarArchivoObligatorioEP}"
+								onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoResumen.nombre}?.'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorBuscarReporteMovilidad.documentoSeleccionadoEP}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+<!-- 				listaArchivosMovilidadVE -->
+				<p:dataTable var="archivoResumen"
+					value="#{manejadorBuscarReporteMovilidad.listaArchivosMovilidadVE}"
+					rendered="#{manejadorBuscarReporteMovilidad.habilitarMovVE}"
+					style="margin-top: 10px;width: 100%"
+					styleClass="pequennio"
+					empty="No existen archivos asociados">
+					<f:facet name="header">
+						<h:outputText value="Archivos adjuntos" />
+					</f:facet>					
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="max-width:400px; ">
+							<h:outputText value="#{archivoResumen.nombre}"
+								styleClass="pequennio" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 40%;">
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.tipoArchivo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.persona.nombreCompletoMinusculas}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 10%;">
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.fecha}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 5%;">
+						<f:facet name="header">
+							<h:outputText value="D" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+							action="#{manejadorBuscarReporteMovilidad.descargarArchivoMovVE}"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{manejadorBuscarReporteMovilidad.documentoSeleccionadoVE}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="width:5%">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="@form"
+								action="#{manejadorBuscarReporteMovilidad.eliminarArchivoObligatorioVE}"
+								onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoResumen.nombre}?.'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorBuscarReporteMovilidad.documentoSeleccionadoVE}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+<!-- 				listaArchivosMovilidadDA -->
+				<p:dataTable var="archivoResumen"
+					emptyMessage="No se han adjuntado documentos"
+					value="#{manejadorBuscarReporteMovilidad.listaArchivosMovilidadDA}"
+					rendered="#{manejadorBuscarReporteMovilidad.habMovDA or manejadroBuscarReporteMovilidad.habMovVA}"
+					style="margin-top: 10px;width: 100%"
+					styleClass="pequennio">
+					<f:facet name="header">
+						<h:outputText value="Archivos adjuntos" />
+					</f:facet>					
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="max-width:400px; ">
+							<h:outputText value="#{archivoResumen.nombre}"
+								styleClass="pequennio" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 40%;">
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.tipoArchivo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.persona.nombreCompletoMinusculas}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 10%;">
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.fecha}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 5%;">
+						<f:facet name="header">
+							<h:outputText value="D" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+							action="#{manejadorBuscarReporteMovilidad.descargarArchivoMovilidadArt}"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{manejadorBuscarReporteMovilidad.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="width:5%">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="@form"
+								action="#{manejadorBuscarReporteMovilidad.eliminarArchivoObligatorioArt}"
+								onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoResumen.nombre}?.'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorBuscarReporteMovilidad.documentoSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+
+<!-- 				listaArchivosMovilidadEA -->
+				<p:dataTable var="archivoResumen"
+					emptyMessage="No se han adjuntado documentos"
+					value="#{manejadorBuscarReporteMovilidad.listaArchivosMovilidadEA}"
+					rendered="#{manejadorBuscarReporteMovilidad.habMovEA}"
+					style="margin-top: 10px;width: 100%"
+					styleClass="pequennio">
+					<f:facet name="header">
+						<h:outputText value="Archivos adjuntos" />
+					</f:facet>					
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="max-width:400px; ">
+							<h:outputText value="#{archivoResumen.nombre}"
+								styleClass="pequennio" />
+						</t:div>
+					</p:column>
+					<p:column style="width: 40%;">
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.tipoArchivo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 20%;">
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.persona.nombreCompletoMinusculas}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width: 10%;">
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen.fecha}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 5%;">
+						<f:facet name="header">
+							<h:outputText value="D" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-arrowthickstop-1-s"
+							action="#{manejadorBuscarReporteMovilidad.descargarArchivoMovilidadArt}"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{manejadorBuscarReporteMovilidad.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="width:5%">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="@form"
+								action="#{manejadorBuscarReporteMovilidad.eliminarArchivoObligatorioArt}"
+								onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoResumen.nombre}?.'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorBuscarReporteMovilidad.documentoSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				
+				<p:dataTable var="historico" id="historicoModalidadDataTable"
+					value="#{manejadorBuscarReporteMovilidad.historicoMovilidad}"
+					rendered="#{!empty manejadorBuscarReporteMovilidad.historicoMovilidad}"
+					style="margin-top: 10px;" paginatorPosition="bottom"
+					paginatorAlwaysVisible="false"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15">
+					<f:facet name="header">
+						Histórico esta movilidad
+					</f:facet>
+					<p:column style="width:10%;">
+						<f:facet name="header">
+							Fecha
+						</f:facet>
+						<h:outputText value="#{historico.fecha}" styleClass="pequennio">
+							<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+					<p:column style="width:10%; text-align: center;">
+						<f:facet name="header">
+							Estado
+						</f:facet>
+						<h:outputText value="#{historico.estado}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width:20%;">
+						<f:facet name="header">
+							Responsable
+						</f:facet>
+						<h:outputText value="#{historico.responsable.nombreCompletoMinusculas}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width:60%;">
+						<f:facet name="header">
+							Justificacion
+						</f:facet>
+						<h:outputText value="#{historico.justificacion}" styleClass="pequennio"/>		
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel header="Personas habilitadas para trámite de la movilidad"
+				id="personasRevisionPanel"
+				style="margin-top: 10px; margin-bottom: 10px;"
+				rendered="#{manejadorBuscarReporteMovilidad.imprimirReporteMovilidades and !manejadorBuscarReporteMovilidad.habMovVA}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left;">
+					<p:row>
+						<p:column style="vertical-align: text-top; width:370px;">
+							<p:dataTable var="perFacultad"
+								value="#{manejadorBuscarReporteMovilidad.listaFacultad}"
+								emptyMessage="Sin personas asignadas">
+								<f:facet name="header">
+								        Facultad
+								    </f:facet>
+								<p:column style="text-align: left; width:600px;">
+									<h:outputText value="#{perFacultad.nombreCompletoMinusculas}" />
+									<h:outputText value=" #{perFacultad.id.documento}"
+										style="color:white; font-size:9px;" />
+								</p:column>
+								<p:column style="text-align: left; width: 170px;">
+									<h:outputText value="Ext. #{perFacultad.telExtension}" />
+								</p:column>
+							</p:dataTable>
+						</p:column>
+						<p:column style="vertical-align: text-top;">
+							<p:dataTable var="perDireccion"
+								value="#{manejadorBuscarReporteMovilidad.listaDireccion}"
+								emptyMessage="Sin personas asignadas">
+								<f:facet name="header">
+								        Dirección de Investigación
+								    </f:facet>
+								<p:column style="text-align: left; width:600px;">
+									<h:outputText value="#{perDireccion.nombreCompletoMinusculas}" />
+									<h:outputText value=" #{perDireccion.id.documento}"
+										style="color:white; font-size:9px;" />
+								</p:column>
+								<p:column style="text-align: left; width: 170px;">
+									<h:outputText value="Ext. #{perDireccion.telExtension}" />
+								</p:column>
+							</p:dataTable>
+							<br />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+
+			<!--Archivos VE-->
+			<p:panel header="Adjuntar archivos movilidad"
+				rendered="#{manejadorBuscarReporteMovilidad.habilitarMovVE and !manejadorAutenticacion.esConsulta}">
+				<div
+					style="width: 100%; text-align: center; padding-bottom: 10px; margin: 5px; margin-top: 15px;"></div>
+				<h:panelGrid columns="3" align="center">
+					<h:outputLabel value="Tipo de Archivo:" for="tipoArchivoVE" />
+					<p:selectOneMenu
+						value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadVESel}"
+						id="tipoArchivoVE" styleClass="mediano" style="width: 400px;"
+						panelStyle="width: 400px;">
+						<f:selectItems
+							value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadVEItem}" />
+						<p:ajax update="@this" />
+					</p:selectOneMenu>
+					<h:outputText />
+					<h:outputText value="Archivo: " />
+
+					<p:fileUpload
+						fileUploadListener="#{manejadorBuscarReporteMovilidad.guardarArchivoMovVE}"
+						id="fileUploadVE" mode="advanced" update="@form" process="@form"
+						auto="true" multiple="true" sizeLimit="3000000"
+						label="Seleccionar archivo para agregar" />
+					<h:commandLink value="" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel header="Adjuntar archivos movilidad"
+				rendered="#{manejadorBuscarReporteMovilidad.habMovDE  and !manejadorAutenticacion.esConsulta}">
+				<div
+					style="width: 100%; text-align: center; padding-bottom: 10px; margin: 5px; margin-top: 15px;"></div>
+				<h:panelGrid columns="3" align="center">
+					<h:outputLabel value="Tipo de Archivo:" for="tipoArchivoDE" />
+					<p:selectOneMenu
+						value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadDESel}"
+						id="tipoArchivoDE" style="width: 400px;"
+						panelStyle="width: 400px;">
+						<f:selectItems
+							value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadDEItem}" />
+						<p:ajax update="@this" />
+					</p:selectOneMenu>
+					<h:outputText />
+					<h:outputText value="Archivo: " />
+					<p:fileUpload
+						fileUploadListener="#{manejadorBuscarReporteMovilidad.guardarArchivoMovDE}"
+						id="fileUploadDE" mode="advanced" update="@form" process="@form"
+						auto="true" multiple="true" sizeLimit="3000000"
+						label="Seleccionar archivo para agregar" />
+					<h:commandLink value="" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel header="Adjuntar archivos movilidad"
+				rendered="#{manejadorBuscarReporteMovilidad.habMovEP  and !manejadorAutenticacion.esConsulta}">
+				<div
+					style="width: 100%; text-align: center; padding-bottom: 10px; margin: 5px; margin-top: 15px;"></div>
+				<h:panelGrid columns="3" align="center">
+					<h:outputLabel value="Tipo de Archivo:" for="tipoArchivoEP" />
+					<p:selectOneMenu
+						value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadEPSel}"
+						id="tipoArchivoEP" style="width: 400px;"
+						panelStyle="width: 400px;">
+						<f:selectItems value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadEPItem}" />
+						<p:ajax update="@this" />
+					</p:selectOneMenu>
+					<h:outputText />
+					<h:outputText value="Archivo: " />
+					<p:fileUpload
+						fileUploadListener="#{manejadorBuscarReporteMovilidad.guardarArchivoMovEP}"
+						id="fileUploadEP" mode="advanced" update="@form" process="@form"
+						auto="true" multiple="true" sizeLimit="3000000"
+						label="Seleccionar archivo para agregar" />
+					<h:commandLink value="" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel header="Adjuntar archivos movilidad"
+				rendered="#{(manejadorBuscarReporteMovilidad.habMovDA) and !manejadorAutenticacion.esConsulta}">
+				<div
+					style="width: 100%; text-align: center; padding-bottom: 10px; margin: 5px; margin-top: 15px;"></div>
+				<h:panelGrid columns="3" align="center">
+					<h:outputLabel value="Tipo de Archivo:" for="tipoArchivoDA" />
+					<p:selectOneMenu
+						value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadDASel}"
+						id="tipoArchivoDA" style="width: 400px;"
+						panelStyle="width: 400px;">
+						<f:selectItems
+							value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadDAItem}" />
+						<p:ajax update="@this" />
+					</p:selectOneMenu>
+					<h:outputText />
+					<h:outputText value="Archivo: " />
+					<p:fileUpload
+						fileUploadListener="#{manejadorBuscarReporteMovilidad.guardarArchivoMovDA}"
+						id="fileUploadDA" mode="advanced" update="@form" process="@form"
+						auto="true" multiple="true" sizeLimit="3000000"
+						label="Seleccionar archivo para agregar" />
+					<h:commandLink value="" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel header="Adjuntar archivos movilidad"
+				rendered="#{manejadorBuscarReporteMovilidad.habMovEA}">
+				<div
+					style="width: 100%; text-align: center; padding-bottom: 10px; margin: 5px; margin-top: 15px;"></div>
+				<h:panelGrid columns="3" align="center">
+					<h:outputLabel value="Tipo de Archivo:" for="tipoArchivoEA" />
+					<p:selectOneMenu
+						value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadEASel}"
+						id="tipoArchivoEA" style="width: 400px;"
+						panelStyle="width: 400px;">
+						<f:selectItems
+							value="#{manejadorBuscarReporteMovilidad.tipoArchivoMovilidadEAItem}" />
+						<p:ajax update="@this" />
+					</p:selectOneMenu>
+					<h:outputText />
+					<h:outputText value="Archivo: " />
+					<p:fileUpload
+						fileUploadListener="#{manejadorBuscarReporteMovilidad.guardarArchivoMovEA}"
+						id="fileUploadEA" mode="advanced" update="@form" process="@form"
+						auto="true" multiple="true" sizeLimit="3000000"
+						label="Seleccionar archivo para agregar" />
+					<h:commandLink value="" />
+				</h:panelGrid>
+			</p:panel>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere
+			</p:dialog>
+			<p:dialog
+				header="Motivos Devolución Informe de Seguimiento - Movilidad No. #{manejadorBuscarReporteMovilidad.idSeg}"
+				widgetVar="dialogComentarios" modal="true" resizable="false"
+				width="600">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText
+						value="Motivos por los cuales se devuelve el informe de seguimiento:"
+						style="font-weight: bold;" />
+					<h:outputLabel
+						value="#{manejadorBuscarReporteMovilidad.observacionesSeg}" />
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

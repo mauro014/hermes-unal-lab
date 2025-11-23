@@ -1,0 +1,353 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form styleClass="estilo-panelgrid-sinbordes">
+
+			<!-- dgbenitezc 20130813-->
+
+			<t:div styleClass="contenido-titulo-general-myriad">Evaluación de Proveedores</t:div>
+
+			<p:dataTable var="evaluacion"
+				value="#{manejadorEvaluacionProveedores.listaEvaluaciones}"
+				rows="15" paginator="true" paginatorPosition="bottom"
+				paginatorAlwaysVisible="true" pageLinks="5"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} evaluaciones, Pagina: {currentPage}/{totalPages})"
+				emptyMessage="No se ha encontrado ninguna evaluación.">
+				<f:facet name="header">
+						Evaluaciones Diligenciadas
+					</f:facet>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="id" />
+					</f:facet>
+					<h:outputText value="#{evaluacion.id}" />
+				</p:column>
+				<p:column sortBy="#{evaluacion.fechaRegistro}">
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+					</f:facet>
+					<h:outputText value="#{evaluacion.fechaRegistro}">
+						<f:convertDateTime pattern="yyyy/MM/dd" />
+					</h:outputText>
+				</p:column>
+				<p:column sortBy="#{evaluacion.empresa.nombre}"
+					filterBy="#{evaluacion.empresa.nombre}" filterStyle="width:180px;"
+					filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Proveedor" />
+					</f:facet>
+					<h:outputText value="#{evaluacion.empresa.nombre}" />
+				</p:column>
+				<p:column
+					rendered="#{manejadorEvaluacionProveedores.evaluacionGuardada}">
+					<f:facet name="header">
+						<h:outputText value="Evaluador" styleClass="pequennio" />
+					</f:facet>
+					<h:outputText value="#{evaluacion.nombreEvaluador}"
+						styleClass="pequennio" />
+				</p:column>
+				<p:column
+					rendered="#{manejadorEvaluacionProveedores.evaluacionGuardada}">
+					<f:facet name="header">
+						<h:outputText value="Reporte" styleClass="pequennio" />
+					</f:facet>
+					<center>
+						<p:commandLink action="#{manejadorEvaluacionProveedores.reporte}"
+							target="_blank"
+							ajax="false">
+							<f:setPropertyActionListener value="#{evaluacion}"
+								target="#{manejadorEvaluacionProveedores.evaluacionSeleccionada}" />
+							<p:commandButton icon="ui-icon-clipboard"
+								title="Ver reporte evaluación #{evaluacion.id}">
+							</p:commandButton>
+						</p:commandLink>
+					</center>
+				</p:column>
+			</p:dataTable>
+
+			<p:spacer height="20" />
+
+			<center>
+				<p:commandButton icon="ui-icon-plusthick"
+					action="#{manejadorEvaluacionProveedores.nuevaEncuesta}"
+					update="@form"
+					onclick="if(!confirm('Está seguro de diligenciar una nueva encuesta?.'))return false"
+					rendered="#{manejadorEvaluacionProveedores.evaluacionGuardada}"
+					value="Nueva Encuesta" />
+			</center>
+
+			<p:panel
+				rendered="#{not manejadorEvaluacionProveedores.evaluacionGuardada}">
+
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Sede" styleClass="negrilla" for="somSedes" />
+					<p:selectOneMenu required="true" style="width:200px;"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.sede.id}"
+						id="somSedes">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.sedeSelectItem}" />
+						<p:ajax update="somSedes,somFacultades, somDepartamentos"
+							listener="#{manejadorEvaluacionProveedores.cambiarSede}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Facultad" styleClass="negrilla"
+						for="somFacultades" />
+					<p:selectOneMenu style="width:450px;" required="true"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.facultad.id}"
+						id="somFacultades">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.facultadSelectItem}" />
+						<p:ajax update="somSedes,somFacultades, somDepartamentos"
+							listener="#{manejadorEvaluacionProveedores.cambiarFacultad}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Departamento" styleClass="negrilla" />
+					<p:selectOneMenu style="width:450px;"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.departamento.id}"
+						id="somDepartamentos">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.departamentoSelectItem}" />
+						<p:ajax update="somSedes,somFacultades, somDepartamentos"
+							listener="#{manejadorEvaluacionProveedores.cambiarDepartamento}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Cargo" styleClass="negrilla" for="Cargo" />
+					<p:inputText id="Cargo" maxlength="100" size="50" required="true"
+						requiredMessage="Cargo: campo obligatorio."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.cargo}">
+					</p:inputText>
+
+					<h:outputText />
+					<p:spacer height="20" />
+
+					<t:div style="width:160px;">
+						<h:outputText value="Mecanismo Adquisición" styleClass="negrilla" />
+					</t:div>
+					<p:selectOneMenu style="width:450px;" converter="ConvertidorTipos"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.mecanismoAdquisicion}"
+						immediate="true" id="somMA">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.mecanismoAdquisicionSelectItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Tipo de Adquisición" styleClass="negrilla" />
+					<p:selectOneMenu style="width:200px;" converter="ConvertidorTipos"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.tipoAdquisicion}"
+						immediate="true" id="somTA">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoAdquisicionSelectItem}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Número" styleClass="negrilla"
+						for="numeroOrden" />
+					<p:inputText id="numeroOrden" maxlength="4" size="10"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.numeroOrden}">
+						<f:validateLongRange minimum="0" maximum="9999" />
+					</p:inputText>
+
+					<p:outputLabel value="Año" styleClass="negrilla" for="annioOrden" />
+					<p:inputText id="annioOrden" maxlength="4" size="10"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.annioOrden}">
+						<f:validateLongRange minimum="2010"
+							maximum="#{manejadorEvaluacionProveedores.annioActual}" />
+					</p:inputText>
+
+					<p:outputLabel value="Objeto" styleClass="negrilla"
+						for="objetoContrato" />
+					<p:inputText id="objetoContrato" maxlength="200" size="55"
+						required="true" requiredMessage="Objeto: campo obligatorio."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.objetoContrato}">
+					</p:inputText>
+
+					<p:outputLabel value="Nombre Proveedor" for="acEmpresas"
+						styleClass="negrilla" />
+					<p:autoComplete id="acEmpresas" required="true"
+						requiredMessage="Proveedor: Debe buscar y seleccionar el nombre de la empresa a evaluar."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.empresa.nombre}"
+						completeMethod="#{manejadorEvaluacionProveedores.servicioGeneral.listaNombresEmpresasContiene}"
+						size="55" scrollHeight="200" minQueryLength="3"
+						forceSelection="true" panelStyle="width:200px">
+						<p:ajax event="itemSelect"
+							listener="#{manejadorEvaluacionProveedores.handleSelectEmpresa}" />
+					</p:autoComplete>
+
+					<p:outputLabel value="Otros productos/servicios"
+						styleClass="negrilla" for="otrosProductos" />
+					<p:inputTextarea id="otrosProductos"
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.otrosProductos}"
+						rows="2" cols="55" autoResize="false" maxlength="1000"
+						counter="counterOtrosProductos"
+						counterTemplate="{0} caracteres restantes"
+						title="Otros productos o servicios ofrecidos por el proveedor." />
+					<h:outputText />
+					<h:outputText id="counterOtrosProductos" styleClass="pequennio" />
+
+					<h:outputText />
+					<p:spacer height="20" />
+
+					<h:outputText />
+					<h:outputText
+						value="Por favor, evalúe los siguientes criterios de 1 a 5, siendo 5 la calificación más alta.  Recuerde que puede hacer los comentarios que considere necesarios (máximo 1.000 caracteres en cada caso)."
+						styleClass="negrilla" />
+
+					<p:outputLabel value="1. Calidad" styleClass="negrilla"
+						for="sorCalidad" />
+					<h:outputText
+						value="El proveedor presta el servicio, entrega y/o instala el producto cumpliendo los requisitos acordados:" />
+					<h:outputText />
+					<p:selectOneRadio required="true"
+						requiredMessage="Calidad: Debe seleccionar una opción."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.calidad}"
+						id="sorCalidad">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoCalidadSelectItem}" />
+					</p:selectOneRadio>
+					<h:outputText value="Comentario" styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comentarioCalidad}"
+						rows="2" cols="55" autoResize="false" maxlength="1000" />
+					<h:outputText />
+					<p:spacer height="20" />
+
+					<p:outputLabel value="2. Oportunidad" styleClass="negrilla"
+						for="sorOportunidad" />
+					<h:outputText
+						value="Entrega el servicio o producto de acuerdo a los plazos establecidos:" />
+					<h:outputText />
+					<p:selectOneRadio required="true"
+						requiredMessage="Oportunidad: Debe seleccionar una opción."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.oportunidad}"
+						id="sorOportunidad">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoOportunidadSelectItem}" />
+					</p:selectOneRadio>
+					<h:outputText value="Comentario" styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comentarioOportunidad}"
+						rows="2" cols="55" autoResize="false" maxlength="1000" />
+					<h:outputText />
+					<p:spacer height="20" />
+
+
+					<p:outputLabel value="3. Documentos" styleClass="negrilla"
+						for="sorDocumentos" />
+					<h:outputText
+						value="Entrega los documentos del servicio o producto en los plazos pactados:" />
+					<h:outputText />
+					<p:selectOneRadio required="true"
+						requiredMessage="Documentos: Debe seleccionar una opción."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.documentos}"
+						id="sorDocumentos">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoDocumentosSelectItem}" />
+					</p:selectOneRadio>
+					<h:outputText value="Comentario" styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comentarioDocumentos}"
+						rows="2" cols="55" autoResize="false" maxlength="1000" />
+					<h:outputText />
+					<p:spacer height="20" />
+
+					<p:outputLabel value="4. Comportamiento Contractual"
+						styleClass="negrilla" for="sorComportamiento" />
+					<h:outputText
+						value="Se adapta a los procedimientos y requerimientos de la UN, tanto en el periodo precontractual como en la finalización del proceso contractual que involucra la firma de las actas de liquidación:" />
+					<h:outputText />
+					<p:selectOneRadio required="true"
+						requiredMessage="Comportamiento Contractual: Debe seleccionar una opción."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comportamiento}"
+						id="sorComportamiento">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoComportamientoSelectItem}" />
+					</p:selectOneRadio>
+					<h:outputText value="Comentario" styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comentarioComportamiento}"
+						rows="2" cols="55" autoResize="false" maxlength="1000" />
+					<h:outputText />
+					<p:spacer height="20" />
+
+					<p:outputLabel value="5. Asesoría" styleClass="negrilla"
+						for="sorAsesoria" />
+					<h:outputText
+						value="Demuestra efectividad ante las solicitudes e inquietudes presentadas; capacita al cliente para el manejo del producto adquirido:" />
+					<h:outputText />
+					<p:selectOneRadio required="true"
+						requiredMessage="Asesoría: Debe seleccionar una opción."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.asesoria}"
+						id="sorAsesoria">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoAsesoriaSelectItem}" />
+					</p:selectOneRadio>
+					<h:outputText value="Comentario" styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comentarioAsesoria}"
+						rows="2" cols="55" autoResize="false" maxlength="1000" />
+					<h:outputText />
+					<p:spacer height="20" />
+
+					<p:outputLabel value="6. Recomendación a Terceros"
+						styleClass="negrilla" for="sorRecomendacion" />
+					<h:outputText
+						value="¿Recomendaría a terceros la compra de productos y/o servicios a este Proveedor?" />
+					<h:outputText />
+					<p:selectOneRadio required="true"
+						requiredMessage="Recomendación a Terceros: Debe seleccionar una opción."
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.recomendacion}"
+						id="sorRecomendacion">
+						<f:selectItems
+							value="#{manejadorEvaluacionProveedores.tipoRecomendacionSelectItem}" />
+					</p:selectOneRadio>
+					<h:outputText value="Comentario" styleClass="negrilla" />
+					<p:inputTextarea
+						value="#{manejadorEvaluacionProveedores.evaluacionProveedor.comentarioRecomendacion}"
+						rows="2" cols="55" autoResize="false" maxlength="1000" />
+
+				</p:panelGrid>
+
+				<center>
+					<p:panelGrid columns="2">
+						<p:commandButton value="Guardar" icon="ui-icon-disk"
+							action="#{manejadorEvaluacionProveedores.guardar}" update="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							onclick="if(!confirm('Está seguro de guardar? Si la evaluación está completamente diligenciada, no podrá hacer modificaciones posteriormente.'))return false" />
+						<p:commandButton value="Cancelar" icon="ui-icon-closethick"
+							action="#{manejadorEvaluacionProveedores.cancelar}" ajax="false"
+							update="@form" immediate="true"
+							onclick="if(!confirm('Está seguro de cancelar? Toda la información diligenciada se perderá.'))return false" />
+					</p:panelGrid>
+				</center>
+
+			</p:panel>
+
+			<p:messages id="messages" autoUpdate="true" closable="true" />
+
+			<p:spacer height="20" />
+
+			<center>
+				<p:commandButton icon="ui-icon-home"
+					action="#{manejadorEvaluacionProveedores.salir}"
+					onclick="if(!confirm('Está seguro de ir a la página de Inicio? Cualquier cambio realizado se perderá.'))return false"
+					value="Inicio" />
+			</center>
+
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<SCRIPT LANGUAGE="JavaScript">
+   var pop = null; 
+   function abrePop(){
+      pop = window.open("../../Personas/InvestigadorExterno.xhtml","","uno,height=600,width=750,scrollbars=yes");
+	 }
+  </SCRIPT>
+
+			<h:panelGroup
+				rendered="#{!manejadorInvestigadores.investigadorExiste}">
+
+				<script language="javascript">if(confirm('No se encuentra esta persona. Desea registrarla como participante externo?')){abrePop();} </script>
+
+			</h:panelGroup>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Participantes</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+			
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorInvestigadores.inicioTitulo}"
+						style="font-weight: bold" />
+				</t:div>
+			
+			</h:panelGrid>
+			<br />
+			<p:panel header="Búsqueda de Participantes" id="idBuscarIntegrantes">
+
+				<p:messages id="msgs" showDetail="true" autoUpdate="true"
+					closable="true" />
+
+				<h:panelGrid columns="2" align="center" cellpadding="5"
+					id="pgFormInves" cellspacing="5">
+					<h:outputText value="Tipo de documento" />
+					<p:selectOneMenu id="tipoDocInvestigadorSelect"
+						value="#{manejadorInvestigadores.investigadorProyectoNuevo.investigador.id.tipoDocumento}">
+						<f:selectItems
+							value="#{manejadorInvestigadores.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="No. documento: " />
+					<p:inputText id="numDocumento"
+						value="#{manejadorInvestigadores.investigadorProyectoNuevo.investigador.id.documento}" />
+
+					<h:outputText value="Nota:"
+						style="color:#FF3939;  text-align:left;"
+						rendered="#{manejadorInvestigadores.mostrarMensajePrincipal and !manejadorDatosBasicos.esExtensionSolidaria}" />
+					<h:outputText
+						value="Al seleccionar un estudiante como estudiante líder, el podrá continuar con la edición del proyecto después de guardar los integrantes del proyecto."
+						rendered="#{manejadorInvestigadores.mostrarMensajePrincipal and !manejadorDatosBasicos.esExtensionSolidaria}" />
+
+					<h:outputText value="Tipo de participante:" />
+					<p:selectOneMenu id="tipoInvMain"
+						value="#{manejadorInvestigadores.investigadorProyectoNuevo.tipo.id}">
+						<f:selectItems
+							value="#{manejadorInvestigadores.listaTipoInvestigadorIngresar}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Facultad del estudiante"
+						rendered="#{(manejadorInvestigadores.investigadorProyectoNuevo.tipo=='A')?true:false}" />
+					<p:selectOneMenu value="#{manejadorInvestigadores.facultad}"
+						rendered="#{(manejadorInvestigadores.investigadorProyectoNuevo.tipo=='A')?true:false}">
+						<f:selectItems value="#{manejadorInvestigadores.facultadItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Horas semanales de dedicación:" />
+					<p:inputText id="horasSemanales"
+						value="#{manejadorInvestigadores.investigadorProyectoNuevo.dedicacionHorasSemana}">
+						<f:validateLongRange maximum="44" minimum="0" />
+					</p:inputText>
+
+					<h:outputText value="Función:" />
+					<p:inputTextarea id="funcionInvestigador"
+						value="#{manejadorInvestigadores.investigadorProyectoNuevo.funcion}"
+						rows="10" cols="50" autoResize="false" />
+
+				</h:panelGrid>
+				<br />
+				<center>
+
+					<p:commandButton value="Adicionar investigador"
+						id="botonAdicionarInvestigador" update="listaIntegrantes"
+						action="#{manejadorInvestigadores.adicionarInvestigador}"
+						onclick="confirmation.show()" styleClass="ui-priority-primary" />
+				</center>
+			</p:panel>
+			<br />
+			<br />
+			<p:panel header="Integrantes" id="idIntegrantes">
+				<p:dataTable var="i" style="width:650px"
+					value="#{manejadorInvestigadores.listaInvestigadoresVista}"
+					id="listaIntegrantes">
+
+					<p:column style="width:30%">
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigadorProyecto.investigador.nombre1} #{i.investigadorProyecto.investigador.nombre2} #{i.investigadorProyecto.investigador.apellido1} #{i.investigadorProyecto.investigador.apellido2}" />
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Rol" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigadorProyecto.tipo.id == 'A' ? 'Estudiante':(i.investigadorProyecto.tipo.id == 'AL' ? 'Estudiante Líder':( i.investigadorProyecto.tipo.id == 'P' ? 'Director':'Coinvestigador'))}" rendered="#{!manejadorDatosBasicos.esExtensionSolidaria}"/>
+						<h:outputText
+							value="#{i.investigadorProyecto.tipo.id == 'ESPR' ? 'Estudiante pregrado':(i.investigadorProyecto.tipo.id == 'ESPO' ? 'Estudiante posgrado':( i.investigadorProyecto.tipo.id == 'EGES' ? 'Egresado':(i.investigadorProyecto.tipo.id == 'CES' ? 'Codirector':( i.investigadorProyecto.tipo.id == 'PRES' ? 'Profesor':( i.investigadorProyecto.tipo.id == 'PEES' ? 'Pensionado':( i.investigadorProyecto.tipo.id == 'EXES' ? 'Externo':'Director'))))))}" rendered="#{manejadorDatosBasicos.esExtensionSolidaria}"/>
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Dedicación semanal" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigadorProyecto.dedicacionHorasSemana}" />
+					</p:column>
+
+					<p:column style="width:30%">
+						<f:facet name="header">
+							<h:outputText value="Función" />
+						</f:facet>
+						<h:outputText value="#{i.investigadorProyecto.funcion}" />
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Editar" />
+						</f:facet>
+						<center>
+							<p:commandButton id="botonEditar" title="Editar"
+								update=":form:panelGridDetalles" icon="ui-icon-pencil"
+								onclick="dlg.show()" rendered="true"
+								action="#{manejadorInvestigadores.editarInvestigadorVista}">
+								<f:setPropertyActionListener value="#{i}"
+									target="#{manejadorInvestigadores.ipv}" />
+
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<center>
+							<p:commandButton id="botonEliminarIntegrantes"
+								update="listaIntegrantes" icon="ui-icon-trash"
+								action="#{manejadorInvestigadores.eliminarInvestigador}"
+								title="Eliminar"
+								rendered="#{i.investigadorProyecto.tipo.id=='P'? false:true}">
+								<f:setPropertyActionListener value="#{i}"
+									target="#{manejadorInvestigadores.ipv}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				<br />
+
+				<p:dialog id="dialogActualizarInvestigadores" widgetVar="dlg"
+					modal="true"
+					header="Actualización de los Participantes en el Proyecto">
+
+					<p:messages id="msgsAct" showDetail="true" autoUpdate="true"
+						closable="true" />
+
+					<h:panelGrid id="panelGridDetalles" columns="2" align="center">
+						<h:outputText value="Nombre:" />
+						<h:outputText
+							value="#{manejadorInvestigadores.nombresInvestigador}" />
+
+						<h:outputText value="Documento:" />
+						<h:outputText
+							value="#{manejadorInvestigadores.numDocumentoInvestigador}" />
+
+						<h:outputText value="Tipo de Investigador:" />
+						<p:selectOneMenu id="SelectTipoInvestigador_act"
+							value="#{manejadorInvestigadores.tipoRolInvestigador}">
+							<f:selectItems
+								value="#{manejadorInvestigadores.listaTipoInvestigadorEditar}" />
+
+						</p:selectOneMenu>
+
+						<h:outputText value="Horas de dedicación semanal:" />
+						<p:inputText id="horas_Semanales_act"
+							value="#{manejadorInvestigadores.horasDedicacionInvestigador}">
+							<f:validateLongRange maximum="44" minimum="0" />
+						</p:inputText>
+
+						<h:outputText value="Función:" />
+						<p:inputTextarea
+							value="#{manejadorInvestigadores.funcionInvestigador}"
+							id="funcionAct" rows="6" cols="50" autoResize="false" />
+
+					</h:panelGrid>
+					<br />
+					<h:panelGroup>
+						<center>
+
+							<p:commandButton id="submitButton" value="Actualizar" oncomplete="dlg.hide()"
+								update=":form:listaIntegrantes"
+								action="#{manejadorInvestigadores.actualizarInvestigadorVista}" />
+
+						</center>
+					</h:panelGroup>
+
+
+				</p:dialog>
+			</p:panel>
+			<br />
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Atrás" id="botonAtras"
+							action="#{manejadorInvestigadores.atras}"
+							styleClass="ui-priority-primary" />
+
+						<p:commandButton value="Guardar y continuar después"
+							id="botonGuardarSalir"
+							action="#{manejadorInvestigadores.salirGuardar}"
+							styleClass="ui-priority-primary"
+							update="@form" />
+
+						<p:commandButton value="Guardar y avanzar"
+							id="botonGuardarSiguiente"
+							action="#{manejadorInvestigadores.siguiente}"
+							styleClass="ui-priority-primary" 
+							update="@form"/>
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

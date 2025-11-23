@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Asociar coordinadores</t:div>
+			<p:dataTable id="tabla_padre" var="coordinador"
+				emptyMessage="No existen coordinadores asociados"
+				value="#{manejadorCoordinadorAsesor.listaCoordinadoresAsesor}">	
+				<f:facet name="header"> Coordinadores Asociados </f:facet>
+				<p:column headerText="Nombre">
+					<h:outputText value="#{coordinador.nombre1} #{coordinador.apellido1}" />
+				</p:column>
+
+				<p:column headerText="Dependencia">
+					<h:outputText value="#{coordinador.coorNombreDependencia}" />
+				</p:column>
+				
+				<p:column headerText="Eliminar">
+						<p:commandButton value="Eliminar" 
+							onclick="if(!confirm('Eliminar coordinador #{coordinador.nombre1} #{coordinador.apellido1}?'))return false"
+							action="#{manejadorCoordinadorAsesor.eliminar}" update="tabla_padre" >
+						
+						 	<f:setPropertyActionListener value="#{coordinador}" target="#{manejadorCoordinadorAsesor.persona}" />  
+         					</p:commandButton> 
+				</p:column>
+			</p:dataTable>
+			
+			<p:panel style="margin-top: 20px; text-align: center;" header="Asociar nuevo coordinador">
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;">	
+					<h:outputText value="Número documento:"/>		
+					<p:inputText id="numCom" size="20" value="#{manejadorCoordinadorAsesor.docCoordinador}"/>
+					<p:commandButton value=" Buscar " id="buscar"  actionListener="#{manejadorCoordinadorAsesor.buscarCoordinador}" update="@form">
+						<p:ajax update="coordNombre"/>
+					</p:commandButton>
+					<p:commandButton value=" Limpiar Búsqueda " id="limpiar"  actionListener="#{manejadorCoordinadorAsesor.limpiarBuscarCoordinador}" update="@form">
+						<p:ajax update="coordNombre"/>
+					</p:commandButton>   
+				</p:panelGrid>
+				<div style="text-align: center;">
+					<br />
+					<h:outputText id="coordNombre" value="#{manejadorCoordinadorAsesor.errores[1]}" style="font-weight: bold;"/>
+					<br />
+					<br />
+				</div>
+				<t:div  rendered="#{manejadorCoordinadorAsesor.mostrarOpciones}">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="margin: auto; "  rendered="#{manejadorCoordinadorAsesor.mostrarOpciones}">
+						<t:div style="width: 100px;"><h:outputText value="¿Nivel nacional? " /></t:div>
+				        <p:selectBooleanCheckbox value="#{manejadorCoordinadorAsesor.nivelNacional}">  
+				            <p:ajax update="@form" />  
+				        </p:selectBooleanCheckbox>
+					</p:panelGrid>
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" rendered="#{manejadorCoordinadorAsesor.mostrarSedes}" style="text-align: left; margin: auto; ">
+						<h:outputText id="otSedeGrupos" value="Sede" />
+						<p:selectOneMenu value="#{manejadorCoordinadorAsesor.idSede}"
+								immediate="true"
+								id="somSedeGrupos" styleClass="textarea">
+								<f:selectItems id="siSedeGrupos"
+									value="#{manejadorCoordinadorAsesor.sedesItem}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<br />
+					<p:commandButton value="Agregar coordinador" id="agregar"  actionListener="#{manejadorCoordinadorAsesor.guardar}" update="@form" ajax="false"  />
+					<br />
+					<br />
+				</t:div>
+				<h:outputText value="#{manejadorCoordinadorAsesor.mensajeTransaccion}" style="font-weight: bold;"/>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

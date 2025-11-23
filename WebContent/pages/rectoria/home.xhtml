@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Aval Institucional Rectoría</t:div>
+			<br />
+			<p:dataTable var="aval" value="#{manejadorRectoriaHome.listaAval}"
+				emptyMessage="No tiene avales para revisión." paginator="true"
+				rows="15" paginatorPosition="top"
+				filteredValue="#{manejadorRectoriaHome.filteredAvales}">
+				<f:facet name="header">Avales pendientes por revisión</f:facet>
+				<p:column style="text-align: center;" headerText="Código"
+					filterBy="#{aval.aviId}" filterStyle="width: 35px;">
+					<h:outputText value="#{aval.aviId}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="Tipo">
+					<h:outputText value="#{aval.nombreTipo}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="Fecha Solicitud">
+					<h:outputText value="#{aval.fechaUltimoEnvio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column style="text-align: center;"
+					headerText="Fecha Aprobación DRE">
+					<h:outputText value="#{aval.fechaAvalDRE}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column style="text-align: center;" headerText="Solicitado por"
+					filterMatchMode="contains" filterBy="#{aval.nombreInvestigador}">
+					<h:outputText value="#{aval.nombreInvestigador}" />
+				</p:column>
+				<p:column style="text-align: center;" headerText="Avalar">
+					<p:commandButton icon="ui-icon-search" action="#{manejadorRectoriaHome.editarAval}">
+						<f:param name="idAval" value="#{aval.aviId}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{manejadorRectoriaHome.tamañoLista} avales</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

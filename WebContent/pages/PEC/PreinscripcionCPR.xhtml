@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+	<ui:define name="title">FORMULARIO DE PREINSCRIPCIÓN</ui:define>
+
+	<ui:define name="content">
+
+		<img
+			src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+			style="padding-bottom: 10px;" />
+
+		<h:form id="form" enctype="multipart/form-data">
+
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-informacion-pagina-buscador">
+					<h:outputText
+						value="CIENCIA PARA LAS REGIONES - Formulación de Proyectos Regionales en Ciencia, Tecnología e Innovación" />
+				</t:div>
+				<t:div styleClass="contenedor-informacion">
+
+					<h:panelGrid columns="1" style="width: 100%; align: center;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/her-ext-ecp/proyectos-regionales-ciencia/banner_Diplomado_2.png"
+							style="padding-bottom: 5px;" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" style="width: 100%">
+
+						<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+
+						<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+							closable="true" showSummary="true" showDetail="true" />
+
+					</h:panelGrid>
+
+					<!-- 1. PANEL INFORMACION DOCUMENTO DE IDENTIFICACION -->
+					<p:panel header="Documento de identificación" id="panel1">
+
+						<h:panelGrid columns="3" align="center" cellspacing="5">
+
+							<h:outputText value="Tipo de Documento" for="tipo_doc" />
+							<p:selectOneMenu value="#{ManejadorPreinscripcionCPR.tipo_doc}"
+								effect="fade" id="tipo_doc">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Número de Documento" />
+							<p:inputText id="documento"
+								value="#{ManejadorPreinscripcionCPR.documento}" maxlength="25"
+								required="true" requiredMessage="Campo obligatorio"
+								validateMessage="Sólo puede tener números"
+								readonly="#{ManejadorPreinscripcionCPR.habilita_doc}"
+								converter="#{Number}">
+								<f:validateLongRange minimum="0" maximum="999999999999" />
+								<p:tooltip for="documento" showEvent="focus" hideEvent="blur"
+									showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="Ingrese su número de documento para realizar la preinscripcion. 
+	                									 Si ya hizo este procedimiento previamente, puede actualizar los datos." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:inputText>
+							<p:message for="documento" />
+
+							<h:outputText value="" />
+							<h:outputText value="" />
+							<h:outputText value="" />
+
+						</h:panelGrid>
+
+						<br />
+
+						<h:panelGrid columns="2" align="center">
+
+							<p:commandButton value="Continuar" id="continuar"
+								action="#{ManejadorPreinscripcionCPR.buscarPreinscripcion}"
+								icon="ui-icon-triangle-1-e" styleClass="ui-priority-primary"
+								update="@form" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+							<p:commandButton id="volver" value="Salir"
+								styleClass="ui-priority-primary"
+								action="#{ManejadorPreinscripcionCPR.volver}" immediate="true" />
+
+						</h:panelGrid>
+
+					</p:panel>
+					<br />
+					<p:panel header="Información general" id="panel2"
+						rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+
+						<h:panelGrid columns="3" id="panelInfoInicial" cellspacing="8">
+
+							<h:outputText value="Primer nombre" for="primer_nombre" />
+							<p:inputText id="primer_nombre"
+								value="#{ManejadorPreinscripcionCPR.primer_nombre}"
+								maxlength="80" required="true"
+								requiredMessage="El nombre es un campo obligatorio"
+								readonly="#{ManejadorPreinscripcionCPR.ins_act == 'A'}"
+								size="30" />
+							<p:message for="primer_nombre" styleClass="texto" />
+
+							<h:outputText value="Segundo nombre" for="segundo_nombre" />
+							<p:inputText id="segundo_nombre"
+								value="#{ManejadorPreinscripcionCPR.segundo_nombre}"
+								maxlength="80"
+								readonly="#{ManejadorPreinscripcionCPR.ins_act == 'A'}"
+								size="30" />
+							<p:message for="segundo_nombre" styleClass="texto" />
+
+							<h:outputText value="Primer Apellido" for="primer_apellido" />
+							<p:inputText id="primer_apellido"
+								value="#{ManejadorPreinscripcionCPR.primer_apellido}"
+								maxlength="50" required="true"
+								requiredMessage="El primer apellido es un campo obligatorio"
+								readonly="#{ManejadorPreinscripcionCPR.ins_act == 'A'}"
+								size="30" />
+							<p:message for="primer_apellido" />
+
+							<h:outputText value="Segundo Apellido" for="segundo_apellido" />
+							<p:inputText id="segundo_apellido"
+								value="#{ManejadorPreinscripcionCPR.segundo_apellido}"
+								maxlength="50" required="true"
+								requiredMessage="El segundo apellido es un campo obligaorio"
+								readonly="#{ManejadorPreinscripcionCPR.ins_act == 'A'}"
+								size="30" />
+							<p:message for="segundo_apellido" />
+
+							<h:outputText value="Correo Electrónico" for="correo_electronico" />
+							<p:inputText id="correo_electronico"
+								value="#{ManejadorPreinscripcionCPR.correo_electronico}"
+								maxlength="80" required="true"
+								requiredMessage="El correo es un campo obligatorio"
+								validatorMessage="Correo inválido" size="30">
+								<f:validateRegex
+									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+							</p:inputText>
+							<p:message for="correo_electronico" />
+
+							<h:outputText value="Teléfono fijo" for="tel_fijo" />
+							<p:inputText id="tel_fijo"
+								value="#{ManejadorPreinscripcionCPR.tel_fijo}" maxlength="20">
+								<f:validateLength minimum="7" />
+							</p:inputText>
+							<p:message for="tel_fijo" />
+
+							<h:outputText value="Teléfono móvil" for="tel_movil" />
+							<p:inputText id="tel_movil"
+								value="#{ManejadorPreinscripcionCPR.tel_movil}" maxlength="20"
+								required="true"
+								requiredMessage="El teléfono móvil es un campo obligatorio"
+								validateMessage="El teléfono móvil sólo puede tener números">
+								<f:validateLength minimum="10" />
+							</p:inputText>
+							<p:message for="tel_movil" />
+
+							<h:outputText value="Dirección" for="direccion" />
+							<p:inputText id="direccion"
+								value="#{ManejadorPreinscripcionCPR.direccion}" maxlength="80"
+								size="30" />
+							<p:message for="direccion" />
+
+							<h:outputText value="Ciudad de domicilio:" id="ciudText" />
+							<p:selectOneMenu value="#{ManejadorPreinscripcionCPR.ciudad}"
+								effect="fade" id="ciudad" filter="true">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.ciudadItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Tipo Vinculación UN" for="tipo_vinculacion" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionCPR.tipo_vinculacion}"
+								effect="fade" id="tipo_vinculacion" style="width: 255px">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.tipoVinculacionItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+							
+							<h:outputText value="Sede y fecha inicio:" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionCPR.sedeFechaSeleccionada}"
+								effect="fade" id="sedeFecha" style="width: 255px">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.sedeFechaItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+						</h:panelGrid>
+					</p:panel>
+
+					<br />
+
+					<p:panel header="Información Académica" id="panel3"
+						rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+
+						<h:panelGrid id="panelInfoAcademica" columns="3" cellspacing="8">
+
+							<h:outputText value="Formación Académica"
+								id="formacionAcademicaText" for="formacionAcademica" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionCPR.formacion_academica}"
+								effect="fade" id="formacionAcademica" style="width: 300px">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.formacionAcademicaItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Profesión/Carrera" for="profesion" />
+							<p:inputText id="profesion"
+								value="#{ManejadorPreinscripcionCPR.profesion}" maxlength="80"
+								size="45" />
+							<p:message for="profesion" />
+						</h:panelGrid>
+
+					</p:panel>
+
+					<br />
+
+					<p:panel header="Información Laboral" id="panel4"
+						rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+
+						<h:panelGrid id="panelInfoLaboral" columns="3" cellspacing="8">
+
+							<h:outputText value="Empresa" for="empresa" />
+							<p:inputText id="empresa"
+								value="#{ManejadorPreinscripcionCPR.empresa}" maxlength="100"
+								size="50" />
+							<p:message for="empresa" />
+
+							<h:outputText value="Cargo/Funciones principales" for="cargo" />
+							<p:inputText id="cargo"
+								value="#{ManejadorPreinscripcionCPR.cargo}" maxlength="100"
+								size="50" />
+							<p:message for="cargo" />
+
+							<h:outputText value="Ciudad de la empresa:" id="ciudEmpText" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionCPR.direccion_empresa}"
+								effect="fade" id="ciudadEmpr" filter="true">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.ciudadItemList}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+						</h:panelGrid>
+					</p:panel>
+
+					<br />
+
+					<p:panel header="Información Adicional" id="panel5"
+						rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+
+						<h:panelGrid columns="2" cellspacing="8">
+
+							<h:outputText value="Otros intereses en próximos cursos"
+								for="otros_intereses" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionCPR.otros_intereses}"
+								effect="fade" id="otros_intereses" style="width:380px">
+								<f:selectItem itemLabel="NINGUNO" itemValue="N" />
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.otrosInteresesItemList}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Medio por el cual se enteró" />
+							<p:selectOneMenu id="medio"
+								value="#{ManejadorPreinscripcionCPR.medio_publicidad}">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.medioPublicidadItemList}" />
+							</p:selectOneMenu>
+
+
+						</h:panelGrid>
+
+					</p:panel>
+
+					<br />
+
+					<p:panel header="Archivos adjuntos" id="panel6"
+						rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+
+						<h:panelGrid columns="1" cellspacing="8">
+
+							<h:outputText value="Tipo de archivo a adjuntar" />
+							<p:selectOneMenu id="tipoArchivos"
+								value="#{ManejadorPreinscripcionCPR.tipoArchivoAdjuntar}">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionCPR.listaArchivosObligatorios}" />
+								<p:ajax
+									listener="#{ManejadorPreinscripcionCPR.cambiarTipoArchivo}" />
+							</p:selectOneMenu>
+
+
+						</h:panelGrid>
+
+						<center>
+							<p:fileUpload style="width:50%"
+								fileUploadListener="#{ManejadorPreinscripcionCPR.subirArchivosTipo}"
+								mode="advanced" auto="true" update="tablaArchivo"
+								label="Seleccionar archivo" />
+
+							<br />
+							<p:dataTable style="width:70%"
+								value="#{ManejadorPreinscripcionCPR.listaArchivos}"
+								var="archivo" emptyMessage="No hay archivos asociados"
+								id="tablaArchivo">
+
+								<p:column headerText="Documentos adjuntos" style="width:50%">
+									<h:outputText value="#{archivo.nombreArchivo}" />
+								</p:column>
+
+								<p:column headerText="Tipo de archivo" style="width:50%">
+									<h:outputText value="#{archivo.tipoArchivo}" />
+								</p:column>
+
+								<p:column style="width:10%">
+									<center>
+										<p:commandButton id="selectButton" update="tablaArchivo"
+											icon="ui-icon-trash"
+											action="#{ManejadorPreinscripcionCPR.eliminarArchivo}"
+											title="Eliminar Archivo">
+											<f:setPropertyActionListener value="#{archivo}"
+												target="#{ManejadorPreinscripcionCPR.archivoPre}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+
+							</p:dataTable>
+						</center>
+
+
+					</p:panel>
+
+					<br />
+
+					<p:panel rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+
+						<h:panelGrid column="1" style="width: 100%; text-align: justify">
+							<h:outputText
+								value="La Universidad Nacional de Colombia Identificada con el NIT 899.999.063-3, 
+												 domiciliada en la Carrera 45 N° 26-85 de la ciudad de Bogotá, cumpliendo con el 
+												 Artículo 10 del Decreto 1377 de 2013, el cual reglamenta la Ley 1581 de 2012 
+												 para la protección de datos personales, le informa que previamente se ha recolectado 
+												 información personal de la cual es  usted titular, a través de éste medio. 
+												 De acuerdo con lo anterior y en desarrollo de su derecho constitucional de conocer, 
+												 actualizar y rectificar sus datos personales. Respetuosamente solicitamos su consentimiento 
+												 para continuar tratando sus datos personales de manera leal, lícita, segura y confiable para las 
+												 finalidades que se enuncian a continuación, autorizando a través de ésta página: 
+												 (i) Envío de correspondencia, comunicados, invitaciones, promociones, con el fin de mantener comunicación (ii) 
+												 Envío de certificados y similares, (iii) Proveer servicios, (iv) y demás actividades inherentes al desarrollo 
+												 de nuestro objeto social."
+								style="text-align: justify" />
+						</h:panelGrid>
+						<h:panelGrid columns="1" style="width: 100%; text-align: center">
+							<p:selectBooleanButton id="aceptaTerminos"
+								value="#{ManejadorPreinscripcionCPR.aceptaTerminos}"
+								onLabel="Si" offLabel="No" onIcon="ui-icon-check"
+								offIcon="ui-icon-close" update="@form">
+								<p:ajax event="change" update="form:panelGuardar" />
+							</p:selectBooleanButton>
+						</h:panelGrid>
+					</p:panel>
+
+					<br />
+
+					<h:panelGrid id="panelGuardar" columns="3" align="center"
+						rendered="#{ManejadorPreinscripcionCPR.ins_act != 'N'}">
+						<p:commandButton value="Guardar" id="guardar"
+							actionListener="#{ManejadorPreinscripcionCPR.guardarPreinscripcion}"
+							icon="ui-icon-check" styleClass="ui-priority-primary"
+							update="@form"
+							disabled="#{ManejadorPreinscripcionCPR.habilita_guardar}"
+							rendered="#{ManejadorPreinscripcionCPR.aceptaTerminos}" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"/>
+					</h:panelGrid>
+
+					<br />
+
+				</t:div>
+				<t:div styleClass="final-contenedor-informacion" />
+			</t:div>
+
+		</h:form>
+
+		<t:div styleClass="contenido-menu">
+			<t:div styleClass="menu-superior">
+				<t:div styleClass="cabezote-derecho-menu">
+					<h:outputText value="Acerca del curso" />
+				</t:div>
+				<t:div styleClass="menu">
+
+					<ul>
+						<h:panelGrid rendered="false">
+						
+							<li><h:form>
+									<h:outputLink
+										value="#{facesContext.externalContext.requestContextPath}/pages/PEC/CursoInnovacion.xhtml"
+										onclick="submit()">
+										<h:outputText value="Información del curso" />
+									</h:outputLink>
+								</h:form></li>
+						</h:panelGrid>
+						
+						<li>
+							<h:form>
+								<p:commandLink action="#{ManejadorPreinscripcionCPR.nuevaPreinscripcion}" ajax="false" >			
+									<h:outputText value="Nueva Preinscripción" />
+								</p:commandLink>
+							</h:form>	
+						</li>
+						
+						<li>
+							<h:form>
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/principal/Principal.xhtml"
+									onclick="submit()">
+									<h:outputText value="Salir" />
+								</h:outputLink>
+							</h:form>
+						</li>
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+		
+		<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+		<p:dialog id="dialog" widgetVar="dlg" showEffect="fade"
+			hideEffect="fade" modal="true" width="500">
+
+			<p:outputPanel id="detail" style="text-align:center;" layout="block">
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Volver" />
+					<p:commandButton value="Nueva inscripcion" />
+				</h:panelGrid>
+
+			</p:outputPanel>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

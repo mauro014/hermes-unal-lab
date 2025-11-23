@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Aceptación compromisos del acta de inicio</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Id:" style="font-weight: bold;" />
+					<t:div style="width: 550px;">
+						<h:outputText
+							value="#{manejadorAceptacionInvestigador.proyectoCoordinador.idProyecto}" />
+					</t:div>
+					<h:outputText value="Nombre del proyecto:"
+						style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorAceptacionInvestigador.proyectoCoordinador.nombreProyecto}" />
+					<h:outputText value="Carta Inicio:"  style='font-weight:bold;'/>
+					<h:commandLink value="Descargar" target="_blank"
+						action="#{manejadorAceptacionInvestigador.descargarCartaInicio}"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" />
+				</p:panelGrid>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto;">
+					<h:outputText
+						value="Acepto lo dispuesto en el acta de incio del proyecto" />
+					<p:selectOneButton 
+						value="#{manejadorAceptacionInvestigador.aceptacionVista}"
+						title="Acepto lo dispuesto en el acta de inicio del proyecto">  
+							<f:selectItem itemLabel="Si" itemValue="true" />  
+							<f:selectItem itemLabel="No" itemValue="false" />
+							<p:ajax update="@form" process="@form" />
+					</p:selectOneButton>
+				</p:panelGrid>
+				<h:panelGrid columns="2" align="center" cellpadding="5"
+					rendered="#{!manejadorAceptacionInvestigador.aceptacion}"
+					cellspacing="5">
+					<h:outputText value="Motivo de no aceptación: " />
+					<p:inputTextarea
+						value="#{manejadorAceptacionInvestigador.descripcionNoAprobacion}"
+						cols="70" rows="3"
+						requiredMessage="Debe ingresar las razones por las cuales no es aprobado el proyecto" />
+				</h:panelGrid>
+				<p:messages id="msgs" />
+				<h:panelGrid columns="3" align="center" cellpadding="5"
+					cellspacing="5">
+					<p:commandButton action="proyectoInvestigadorAceptacion"
+						immediate="false" value="Atrás" />
+					<p:commandButton
+						rendered="#{manejadorAceptacionInvestigador.aceptacion}"
+						action="#{manejadorAceptacionInvestigador.guardarCompromisos}"
+						value="Aceptar compromisos " update="@form" ajax="false" />
+					<p:commandButton
+						rendered="#{!manejadorAceptacionInvestigador.aceptacion}"
+						action="#{manejadorAceptacionInvestigador.noAceptacionCarta}"
+						value="No aceptar compromisos" update="@form" />
+				</h:panelGrid>
+				<br />
+				<h:outputText
+					rendered="#{!empty manejadorAceptacionInvestigador.mensajeAprobacion}"
+					value="#{manejadorAceptacionInvestigador.mensajeAprobacion}"
+					id="msgsAprobacion" style="color: #FF8000;" />
+				<br />
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,1527 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+		if (window.addEventListener) {
+			  window.addEventListener('pageshow', function(event) {
+			    if (event.persisted) {
+			      // Eliminar caché de la página
+			      window.location.reload(); 
+			    }
+			  }, false);
+			}
+		</script>
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Equipos</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />
+		</h:form>
+
+		<h:form id="LaboratoriosEquipos">
+
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosEquipos.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosEquipos.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;
+									        ">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="15" />
+
+			<p:panel
+				header="#{ManejadorLaboratoriosEquipos.laboratorioActual.nombre} - #{ManejadorLaboratoriosEquipos.laboratorioActual.id}"
+				id="panelLaboratoriosEquipos">
+
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{!ManejadorLaboratoriosEquipos.soloLectura}">
+					<p:outputLabel value="Placa o identificador:" for="udPlacaBien"
+						styleClass="negrilla" />
+					<p:inputText id="udPlacaBien"
+						title="Digite aquí la Placa de un equipo nuevo, para buscarlo y asociarlo al Laboratorio."
+						value="#{ManejadorLaboratoriosEquipos.placaEquipo}" size="20"
+						maxlength="20">
+					</p:inputText>
+					<p:commandButton value="Buscar nuevo equipo"
+						update="LaboratoriosEquipos" icon="ui-icon-search"
+						action="#{ManejadorLaboratoriosEquipos.buscarEquipo}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				</p:panelGrid>
+
+				<p:panel rendered="#{ManejadorLaboratoriosEquipos.mostrarEquipos}">
+					<h:outputText
+						value="Este equipo no se encuentra asociado a ningún laboratorio, a continuación, se muestra la información disponible sobre el equipo buscado en el sistema de inventarios, 
+							   por favor valide la información antes de asociar el equipo. Recuerde que después de registrada hoja de vida, el equipo no podrá ser desvinculado del laboratorio. 
+							   Así mismo, puede modificar todos los campos disponibles, especialmente los de la parte inferior (especializado, mayor a 10 años, estado, en uso). 
+							   Cuando esté de acuerdo con todos los datos, debe hacer clic en el botón Agregar."
+						styleClass="naranja"
+						rendered="#{ManejadorLaboratoriosEquipos.mostrarEquipos and ManejadorLaboratoriosEquipos.detalle.existeEnBienes}" />
+					<br />
+					<p:panelGrid id="equipoEncontrado" columns="2"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{ManejadorLaboratoriosEquipos.mostrarEquipos}">
+						<h:outputText value="Placa" styleClass="negrilla" rendered="#{ManejadorLaboratoriosEquipos.detalle.existeEnBienes}"/>
+						<h:outputText value="Identificador" styleClass="negrilla" rendered="#{!ManejadorLaboratoriosEquipos.detalle.existeEnBienes}"/>
+						<h:outputText value="#{ManejadorLaboratoriosEquipos.detalle.placa}" />
+	
+						<h:outputText value="Equipo" styleClass="negrilla" />
+						<p:inputText maxlength="256" size="50"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.equipo}">
+						</p:inputText>
+	
+						<h:outputText value="Marca" styleClass="negrilla" />
+						<p:inputText maxlength="100" size="50"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.marca}">
+						</p:inputText>
+	
+						<h:outputText value="Modelo" styleClass="negrilla" />
+						<p:inputText maxlength="100" size="50"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.modelo}">
+						</p:inputText>
+	
+						<h:outputText value="Serial" styleClass="negrilla" />
+						<p:inputText maxlength="20" size="50"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.serial}">
+						</p:inputText>
+	
+	
+						<h:outputText value="Estado" styleClass="negrilla" />
+						<p:selectOneMenu
+							disabled="#{!ManejadorLaboratoriosEquipos.soloLectura}"
+							id="cambia1"
+							value="#{ManejadorLaboratoriosEquipos.detalle.estadoFisico}">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosEquipos.estadoFisicoItem}" />
+						</p:selectOneMenu>
+	
+						<h:outputText value="Descripción (Sistema de Bienes y Servicios)"
+							styleClass="negrilla" />
+						<h:outputText
+							value="#{ManejadorLaboratoriosEquipos.bien.descripcion}" />
+	
+					</p:panelGrid>
+	
+					<p:panelGrid id="equipoEncontradoDos" columns="4"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{ManejadorLaboratoriosEquipos.mostrarEquipos}">
+	
+						<t:div style="width:140px;">
+							<h:outputText value="Fecha Adquisición" styleClass="negrilla" />
+						</t:div>
+	
+						<t:div style="width:160px;">
+							<h:outputText
+								value="#{ManejadorLaboratoriosEquipos.bien.fechaAdquisicion}" />
+						</t:div>
+	
+						<t:div style="width:140px;">
+							<h:outputText value="Fecha Servicio" styleClass="negrilla" />
+						</t:div>
+	
+						<h:outputText
+							value="#{ManejadorLaboratoriosEquipos.bien.fechaServicio}" />
+	
+						<h:outputText value="Especializado" styleClass="negrilla" />
+						<p:selectBooleanCheckbox id="cambia3"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.especializado}">
+						</p:selectBooleanCheckbox>
+	
+						<h:outputText value="Equipo mayor a 10 años" styleClass="negrilla" />
+						<p:selectBooleanCheckbox id="cambia2"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.mayorDiezAnnios}"
+							disabled="true">
+						</p:selectBooleanCheckbox>
+	
+						<h:outputText value="Estado según Censo" styleClass="negrilla" />
+						<p:selectOneMenu
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							id="cambia8"
+							value="#{ManejadorLaboratoriosEquipos.detalle.estadoFisicoCenso}">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosEquipos.estadoFisicoCensoItem}" />
+						</p:selectOneMenu>
+	
+						<h:outputText value="En uso" styleClass="negrilla" />
+						<p:selectBooleanCheckbox id="cambia4"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.enUso}">
+						</p:selectBooleanCheckbox>
+	
+						<h:outputText value="Mantenimiento" styleClass="negrilla" rendered="false"/>
+						<p:selectOneMenu rendered="false"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							id="cambia9"
+							value="#{ManejadorLaboratoriosEquipos.detalle.mantenimiento}">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosEquipos.mantenimientoItem}" />
+						</p:selectOneMenu>
+	
+						<h:outputText value="Calibración" styleClass="negrilla" rendered="false"/>
+						<p:selectOneMenu rendered="false"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							id="cambia10"
+							value="#{ManejadorLaboratoriosEquipos.detalle.calibracion}">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosEquipos.calibracionItem}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					
+					<p:panelGrid id="equipoEncontradoCuatro" columns="2"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{ManejadorLaboratoriosEquipos.mostrarEquipos and !ManejadorLaboratoriosEquipos.detalle.existeEnBienes}">
+					
+						<h:outputText value="¿Por qué no está en sistema de inventarios?" styleClass="negrilla" />
+						<p:selectOneMenu
+							id="noInvSelect"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.razonNoQuipu}"
+							style="width:350px;">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosEquipos.razonNoEstaQuipuItem}"  />
+							<p:ajax update=":LaboratoriosEquipos:equipoEncontradoCuatro"
+										listener="#{ManejadorLaboratoriosEquipos.cambiarRazonNoQuipu}" />
+						</p:selectOneMenu>
+						
+						<h:outputText id="otroCualLabel" value="Otro ¿Cuál?" styleClass="negrilla" 
+										rendered="#{ManejadorLaboratoriosEquipos.mostrarRazonNoEstaQuipu}" />
+						<p:inputText maxlength="200" size="50"
+							id="otroCual"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.detalle.razonNoQuipuOtros}"
+							rendered="#{ManejadorLaboratoriosEquipos.mostrarRazonNoEstaQuipu}">
+						</p:inputText>
+						<br />
+					</p:panelGrid>	
+					
+					<center>
+						<p:commandButton value="Agregar" icon="ui-icon-plusthick"
+							onclick="if(!confirm('Está seguro de agregar el equipo?'))return false"
+							update="@form"
+							action="#{ManejadorLaboratoriosEquipos.agregarEquipo}" 
+							rendered="#{ManejadorLaboratoriosEquipos.mostrarEquipos}"/>
+					</center>
+						
+				</p:panel>
+			
+				<p:dataTable id="equiposEncontrados" var="equipo"
+					value="#{ManejadorLaboratoriosEquipos.listaEquipos}"
+					rendered="#{false and ManejadorLaboratoriosEquipos.listaEquipos != null}"
+					rows="5" paginator="true" paginatorPosition="bottom" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} equipos, Pagina: {currentPage}/{totalPages})"
+					paginatorAlwaysVisible="true"
+					filteredValue="#{ManejadorLaboratoriosEquipos.listaEquiposFiltrados}"
+					emptyMessage="No se encuentran equipos asociados con esa Placa.">
+
+					<p:column sortBy="#{equipo.placa}" filterBy="#{equipo.placa}"
+						filterStyle="width:200px;" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Buscar por placa:" />
+						</f:facet>
+
+						<div class="panel-interno-tabla">
+							<p:panelGrid columns="6" styleClass="estilo-panelgrid-sinbordes">
+								<t:div style="width:80px;">
+									<h:outputText value="Placa" styleClass="pequennio-negrilla" />
+								</t:div>
+
+								<t:div style="width:105px;">
+									<h:outputText value=" #{equipo.placa}" styleClass="pequennio" />
+								</t:div>
+
+								<t:div style="width:50px;">
+									<h:outputText value="Equipo" styleClass="pequennio-negrilla" />
+								</t:div>
+
+								<t:div style="width:150px;">
+									<h:outputText value=" #{equipo.equipo}" styleClass="pequennio" />
+								</t:div>
+
+								<t:div style="width:70px;">
+									<h:outputText value="Marca" styleClass="pequennio-negrilla" />
+								</t:div>
+
+								<t:div style="width:95px;">
+									<h:outputText value=" #{equipo.marca}" styleClass="pequennio" />
+								</t:div>
+
+								<h:outputText value="Modelo" styleClass="pequennio-negrilla" />
+
+								<h:outputText value=" #{equipo.modelo}" styleClass="pequennio" />
+
+								<h:outputText value="Serial" styleClass="pequennio-negrilla" />
+
+								<h:outputText value=" #{equipo.serial}" styleClass="pequennio" />
+
+								<h:outputText value="Estado" styleClass="pequennio-negrilla" />
+
+								<h:outputText value=" #{equipo.nombreEstadoFisico}"
+									styleClass="pequennio" />
+
+								<h:outputText value="Especializado"
+									styleClass="pequennio-negrilla" />
+								<t:div
+									title="Active si el equipo es especializado o robusto; esto hará que aparezca en la búsqueda en Hermes.">
+									<p:selectBooleanCheckbox
+										disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+										value="#{equipo.especializado}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+
+								<h:outputText value=">10años" styleClass="pequennio-negrilla" />
+								<t:div title="Active si la edad del equipo es mayor a 10 años.">
+									<p:selectBooleanCheckbox id="cambia6"
+										disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+										value="#{equipo.mayorDiezAnnios}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+
+								<h:outputText value="En Uso" styleClass="pequennio-negrilla" />
+								<t:div title="Active si el equipo está siendo usado.">
+									<p:selectBooleanCheckbox
+										disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+										value="#{equipo.enUso}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+
+								<h:outputText value="Estado según Censo"
+									styleClass="pequennio-negrilla" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+									value="#{equipo.estadoFisicoCenso}">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosEquipos.estadoFisicoCensoItemTabla}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Mantto" styleClass="pequennio-negrilla" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+									value="#{equipo.mantenimiento}">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosEquipos.mantenimientoItemTabla}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Calibración"
+									styleClass="pequennio-negrilla" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+									value="#{equipo.calibracion}">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosEquipos.calibracionItemTabla}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Dado de baja"
+									styleClass="pequennio-negrilla" />
+								<t:div title="Active si el equipo ha sido dado de baja.">
+									<p:selectBooleanCheckbox id="booleanDadoDeBaja"
+										disabled="#{ManejadorLaboratoriosEquipos.soloLectura}"
+										value="#{equipo.dadoDeBaja}">
+									</p:selectBooleanCheckbox>
+								</t:div>
+							</p:panelGrid>
+						</div>
+					</p:column>
+
+					<p:column rendered="#{!ManejadorLaboratoriosEquipos.soloLectura}">
+						<p:commandButton icon="ui-icon-trash" update="LaboratoriosEquipos"
+							ajax="false"
+							action="#{ManejadorLaboratoriosEquipos.eliminarEquipo}"
+							onclick="if(!confirm('Está seguro de eliminar el equipo?'))return false">
+							<f:setPropertyActionListener value="#{equipo}"
+								target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<br/>
+				<p:panel style="width:100%" styleClass="mypanel">
+					<h:outputText styleClass="pequennio"
+						value="A continuación, la lista de los Equipos asociados al Laboratorio.  Puede buscar, 
+							escribiendo parte de la Placa y/o del nombre del Equipo en el campo respectivo de cada columna. 
+							También puede consultar o editar la información básica o la hoja de vida de cada Equipo: 
+							Recuerde que la edición de la hoja de vida implica diligenciar información técnica y sobre las 
+							actividades de mantenimiento y calibración." />
+					<br/><br/>
+					<h:outputText style="font-size:12px"
+						value="Recuerde que para crear la hoja de vida del equipo debe haber registrado primero la información básica."
+						rendered="#{not empty ManejadorLaboratoriosEquipos.listaEquipos}" />
+				</p:panel>
+				<br/>
+				<t:div style="width: 100%; text-align: right; margin-bottom: 5px;">
+					<h:outputText value="Hist. (Histórico de cambios); Crit. (Formulario de criticidad)" style="font-size: 13px;font-weight: bold" />
+				</t:div>
+				<p:dataTable var="equipo" id="dtEquiposEncontradosNew"
+					value="#{ManejadorLaboratoriosEquipos.listaEquipos}" rows="5"
+					paginator="true" paginatorPosition="bottom" pageLinks="5"
+					paginatorAlwaysVisible="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} equipo(s), Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No existen equipos que cumplan con el criterio de búsqueda."
+					rendered="#{not empty ManejadorLaboratoriosEquipos.listaEquipos}"
+					draggableColumns="true"
+					filteredValue="#{ManejadorLaboratoriosEquipos.listaEquiposFiltrados}">
+
+					<p:column style="width:10%" filterBy="#{equipo.placa}" filterStyle="width:50px;" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Placa o Id" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText value="#{equipo.placa}" styleClass="pequennio-08"/>
+					</p:column>
+
+					<p:column style="width:35%" filterBy="#{equipo.equipo}"
+						filterStyle="width:130px;" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Equipo" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText value="#{equipo.equipo}" styleClass="pequennio-08" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Marca" styleClass="pequennio" />
+							<br />
+							<h:outputText value="Modelo" styleClass="pequennio" />
+							<br />
+							<h:outputText value="Serial" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText value="#{equipo.marca}" styleClass="pequennio-08" />
+						<br />
+						<h:outputText value="#{equipo.modelo}" styleClass="pequennio-08" />
+						<br />
+						<h:outputText value="#{equipo.serial}" styleClass="pequennio-08" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Información" styleClass="pequennio" />
+							<br />
+							<h:outputText value="básica" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-search"
+								action="#{ManejadorLaboratoriosEquipos.consultarInformacionBasica}"
+								ajax="false" update="@form"
+								title="Consultar información básica equipo #{equipo.placa}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+							<p:commandButton icon="ui-icon-pencil"
+								rendered="#{not ManejadorLaboratoriosEquipos.soloLectura}"
+								action="#{ManejadorLaboratoriosEquipos.editarInformacionBasica}"
+								ajax="false" update="@form"
+								title="Editar información básica equipo #{equipo.placa}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								onclick="if(!confirm('Está seguro de editar la información basica del equipo?'))return false">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+						</center>
+
+					</p:column>
+
+					<p:column style="width:15%">
+						<f:facet name="header">
+							<h:outputText value="Hoja de Vida" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-plusthick"
+								rendered="#{not ManejadorLaboratoriosEquipos.soloLectura and not equipo.tieneHojaDeVida}"
+								action="#{ManejadorLaboratoriosEquipos.editarEquipo}"
+								update="@form" ajax="false"
+								title="Recuerde que para crear la hoja de vida del equipo debe haber registrado primero la información básica"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								onclick="if(!confirm('Está seguro de crear la Hoja de Vida para el equipo?'))return false"
+								disabled="#{equipo.id == null}">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+
+							<p:commandButton icon="ui-icon-search"
+								rendered="#{equipo.tieneHojaDeVida}"
+								action="#{ManejadorLaboratoriosEquipos.consultarEquipo}"
+								update="@form" ajax="false"
+								title="Consultar Hoja de Vida equipo #{equipo.placa}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+
+							<p:commandButton icon="ui-icon-pencil"
+								rendered="#{not ManejadorLaboratoriosEquipos.soloLectura and equipo.tieneHojaDeVida}"
+								action="#{ManejadorLaboratoriosEquipos.editarEquipo}"
+								update="@form" ajax="false"
+								title="Editar Hoja de Vida equipo #{equipo.placa}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+							
+							<p:commandButton icon="ui-icon-print"
+								rendered="#{equipo.tieneHojaDeVida}"
+								action="#{ManejadorLaboratoriosEquipos.reporteEquipo}"
+								update="@form" ajax="false"
+								target="_blank"
+								title="PDF ficha tecnica #{equipo.placa}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Crit." styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-alert"
+								rendered="#{not ManejadorLaboratoriosEquipos.soloLectura}"
+								action="#{ManejadorLaboratoriosEquipos.criticidadEquipos}"
+								ajax="false" update="@form"
+								title="Ir al formulario de criticidad del equipo #{equipo.placa} | Valor actual: #{equipo.critEquiposValorRiesgo}"
+								style="background:#{equipo.colorValorRiesgo};">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Hist." styleClass="pequennio" />
+						</f:facet>
+						<center>
+
+							<h:commandLink
+								action="#{ManejadorLaboratoriosEquipos.consultarHistoricoEstadoEquipo}"
+								value="Ver"
+								style="text-decoration:none; 
+									color: #16A8E2; 
+									font-weight: bold;
+									font-size:11px;"
+								ajax="false" 
+								target="_blank"
+								title="Historial cambio de estado equipo #{equipo.placa} - #{equipo.equipo}">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</h:commandLink>
+							
+						</center>
+					</p:column>
+					
+					<p:column
+						rendered="#{not ManejadorLaboratoriosEquipos.soloLectura}">
+						<f:facet name="header">
+							<h:outputText value="(-)" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash"
+								update="LaboratoriosEquipos" ajax="false"
+								rendered="#{not equipo.tieneHojaDeVida}"
+								action="#{ManejadorLaboratoriosEquipos.eliminarEquipo}"
+								title="Eliminar equipo #{equipo.placa}"
+								onclick="if(!confirm('Está seguro de eliminar el equipo?'))return false">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+							
+							<p:commandButton icon="ui-icon-circle-arrow-e"
+								rendered="#{equipo.tieneHojaDeVida and ManejadorLaboratoriosEquipos.esCoordinadorLabActual}"
+								action="#{ManejadorLaboratoriosEquipos.eliminarEquipoAvalHojaDeVida}"
+								disabled="#{equipo.solicitudEliminarActiva != null}"
+								ajax="false" update="@form"
+								title="Enviar solicitud para desasociar equipo. Este botón se deshabilita si ya existe una solicitud activa"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+							
+							<p:commandButton icon="ui-icon-check"
+								rendered="#{ManejadorLaboratoriosEquipos.esLaboratoriosSede and equipo.tieneHojaDeVida and equipo.solicitudEliminarActiva != null}"
+								action="#{ManejadorLaboratoriosEquipos.revisarSolicitud}"
+								ajax="false" update="@form"
+								title="Revisar solicitud para desasociar o trasladar equipo. Puede aprobar o rechazar la solicitud"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{equipo}"
+									target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+				</p:dataTable>
+					
+				<p:dialog header="Solicitar aval para eliminar equipo de laboratorio con hoja de vida" id="equipoEliminarHojaDeVida"
+					widgetVar="equipoEliminarHojaDeVida" modal="true" resizable="false"
+					width="600" height="400">
+					
+					<p:panel id="panelAvalEliminarEquipo">
+							
+						<p:panelGrid id="panel1" styleClass="estilo-panelgrid-sinbordes"  cellpadding="5"
+							cellspacing="5" style="width:100%;">
+							<!-- Nombre(*): -->
+							<p:row>
+								<p:column style="width:5%;">
+									<p:commandButton id="infoJustificacion" icon="ui-icon-info" />
+		
+									<p:tooltip for="infoJustificacion" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">
+										 	Ingrese la justificación de su solicitud para que sea revisada por la dirección de laboratorios de sede
+										</t:div>
+									</p:tooltip>
+		
+								</p:column>
+								<p:column style="width:15%;">
+									<h:outputText value="Justificación(*):" styleClass="labels_proyecto"/>
+								</p:column>
+								<p:column style="width:70%;">
+									
+								</p:column>
+							</p:row>
+
+							
+						</p:panelGrid>
+							
+					</p:panel>
+					
+				</p:dialog>
+				
+				<p:dialog header="Lista de equipos dados de baja" id="listaEquiposDadosDeBaja"
+					widgetVar="listaEquiposDadosDeBaja" modal="true" resizable="false"
+					width="800" height="500">
+					<center>
+					
+						<p:dataTable var="equipo" id="equiposDB"
+							value="#{ManejadorLaboratoriosEquipos.listaEquiposDadosDeBaja}" rows="5"
+							paginator="true" paginatorPosition="bottom" pageLinks="5"
+							paginatorAlwaysVisible="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} equipo(s), Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No hay equipos dados de baja para el laboratorio"
+							draggableColumns="true"
+							filteredValue="#{ManejadorLaboratoriosEquipos.listaEquiposFiltrados}">
+		
+							<p:column style="width:5%" filterBy="#{equipo.placa}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Placa" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{equipo.placa}" styleClass="pequennio" />
+							</p:column>
+		
+							<p:column style="width:20%" filterBy="#{equipo.equipo}"
+								filterStyle="width:130px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Equipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{equipo.equipo}" styleClass="pequennio" />
+							</p:column>
+		
+							<p:column style="width:20%">
+								<f:facet name="header">
+									<h:outputText value="Marca/Modelo/Serial" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{equipo.marca}" styleClass="pequennio" />
+								<br />
+								<h:outputText value="#{equipo.modelo}" styleClass="pequennio" />
+								<br />
+								<h:outputText value="#{equipo.serial}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Fecha" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{equipo.fechaDadoBaja}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Motivo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{equipo.motivoDadoBaja}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%; text-align:center"
+								rendered="#{ManejadorLaboratoriosEquipos.puedeVerHVEquiposDadosBaja}">
+								<f:facet name="header">
+									<h:outputText value="Hoja de vida" styleClass="pequennio" />
+								</f:facet>
+<!-- 								<p:commandButton icon="ui-icon-search" -->
+<!-- 									action="#{ManejadorLaboratoriosEquipos.consultarEquipo}" -->
+<!-- 									update="@form" ajax="false" -->
+<!-- 									title="Consultar Hoja de Vida equipo #{equipo.placa}" -->
+<!-- 									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" -->
+<!-- 									target="_blank"> -->
+<!-- 									<f:setPropertyActionListener value="#{equipo}" -->
+<!-- 										target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" /> -->
+<!-- 								</p:commandButton> -->
+								<h:commandLink
+									action="#{ManejadorLaboratoriosEquipos.consultarEquipo}"
+									value="Ver"
+									style="text-decoration:none; 
+									color: #16A8E2; 
+									font-weight: bold;"
+									ajax="false" target="_blank"
+									title="Hoja de vida equipo #{equipo.placa} - #{equipo.equipo}">
+									<f:setPropertyActionListener value="#{equipo}"
+										target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+								</h:commandLink>
+							</p:column>
+							
+							<p:column style="width:5%">
+								<f:facet name="header">
+									<h:outputText value="Historial" styleClass="pequennio" />
+								</f:facet>
+								<center>
+									<h:commandLink
+										action="#{ManejadorLaboratoriosEquipos.consultarHistoricoEstadoEquipo}"
+										value="Ver"
+										style="text-decoration:none; 
+										color: #16A8E2; 
+										font-weight: bold;"
+										ajax="false" target="_blank"
+										title="Historial cambio de estado equipo #{equipo.placa} - #{equipo.equipo}">
+										<f:setPropertyActionListener value="#{equipo}"
+											target="#{ManejadorLaboratoriosEquipos.detalleSeleccionado}" />
+									</h:commandLink>
+								</center>
+							</p:column>
+						</p:dataTable>	
+
+					</center>
+				</p:dialog>
+				
+				<p:dialog header="Lista actividades de todos los equipos del laboratorio" id="listaActividadesLab"
+					widgetVar="listaActividadesLab" modal="true" resizable="true"
+					width="1000" height="600">
+					<center>
+					
+						<div style="text-align: left;">
+							<p:commandButton value="Exportar a Excel" ajax="false" icon="ui-icon-circle-arrow-s">
+								<p:dataExporter type="xls" target="listaActividades"
+									fileName="Reporte_Actividades_Registradas_Laboratorio"
+									postProcessor="#{ManejadorLaboratoriosEquipos.postProcessXLS}" />
+							</p:commandButton>
+						</div>	
+					
+						<p:dataTable var="actividad" id="listaActividades"
+							value="#{ManejadorLaboratoriosEquipos.listaActividades}" rows="20"
+							paginator="true" paginatorPosition="bottom" pageLinks="5"
+							paginatorAlwaysVisible="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} actividad(es), Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No hay actividades registradas"
+							draggableColumns="true"
+							filteredValue="#{ManejadorLaboratoriosEquipos.listaActividadesFiltradas}">
+		
+							<p:column style="width:5%;white-space:normal;" filterBy="#{actividad.equipo.placa}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Placa" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.equipo.placa}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:20%;white-space:normal;" filterBy="#{actividad.equipo.equipo}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Equipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.equipo.equipo}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:15%">
+								<f:facet name="header">
+									<h:outputText value="Marca-Modelo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.equipo.marca} - " styleClass="pequennio" />
+								<h:outputText value="#{actividad.equipo.modelo}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Serial" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.equipo.serial}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%" filterBy="#{actividad.tipoActividad.nombre}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Tipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.tipoActividad.nombre}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%" filterBy="#{actividad.nombreEstadoActividad}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Estado" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.nombreEstadoActividad}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%" sortBy="#{actividad.fechaActividad}">
+								<f:facet name="header">
+									<h:outputText value="Fecha actividad" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.fechaActividad}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%" sortBy="#{actividad.fechaEjecucion}">
+								<f:facet name="header">
+									<h:outputText value="Fecha ejecución" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.fechaEjecucion}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%" sortBy="#{actividad.fechaEjecucion}">
+								<f:facet name="header">
+									<h:outputText value="Costo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.costoActividad}"
+									styleClass="pequennio">
+									<f:convertNumber currencySymbol="$" groupingUsed="true"
+										maxFractionDigits="0" type="currency" />
+								</h:outputText>
+							</p:column>
+							
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Frecuencia" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{empty actividad.frecuencia ? '' : actividad.frecuencia.nombre}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Modalidad" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{empty actividad.modalidad ? '' : actividad.modalidad.nombre}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%" sortBy="#{actividad.calibEmpresa}">
+								<f:facet name="header">
+									<h:outputText value="Nombre empresa" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.calibEmpresa}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%" sortBy="#{actividad.calibEmpresaAcreditada}">
+								<f:facet name="header">
+									<h:outputText value="Empresa acreditada" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.calibEmpresaAcreditada ? 'Si' : 'No'}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%" sortBy="#{actividad.calibCodInforme}">
+								<f:facet name="header">
+									<h:outputText value="Código informe" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.calibCodInforme}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%" sortBy="#{actividad.calibAdecuadoUso}">
+								<f:facet name="header">
+									<h:outputText value="Confirmacion metrológica" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.calibAdecuadoUso ? 'Si' : 'No'}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:15%">
+								<f:facet name="header">
+									<h:outputText value="Acciones" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{actividad.calibAdecuadoUsoNoDesc}" styleClass="pequennio" />
+							</p:column>
+							
+						</p:dataTable>	
+
+					</center>
+				</p:dialog>
+				
+				<p:dialog header="Lista solicitudes asociadas al laboratorio para desvincular equipos" id="listaSolicitudesLab"
+					widgetVar="listaSolicitudesLab" modal="true" resizable="true"
+					width="1000" height="600">
+					<center>
+					
+						<div style="text-align: right;">
+							<p:commandButton value="Exportar a Excel" ajax="false" icon="ui-icon-circle-arrow-s" rendered="false">
+								<p:dataExporter type="xls" target="listaSolicitudes"
+									fileName="Reporte_Solicitudes_Registradas_Laboratorio_Desvincular_Equipos"
+									postProcessor="#{ManejadorLaboratoriosEquipos.postProcessXLS}" />
+							</p:commandButton>
+						</div>	
+					
+						<p:dataTable var="solicitud" id="listaSolicitudes"
+							value="#{ManejadorLaboratoriosEquipos.listaSolicitudes}" rows="20"
+							paginator="true" paginatorPosition="bottom" pageLinks="5"
+							paginatorAlwaysVisible="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} actividad(es), Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No hay solicitudes registradas"
+							draggableColumns="true"
+							filteredValue="#{ManejadorLaboratoriosEquipos.listaSolicitudesFiltradas}">
+		
+							<p:column style="width:5%;white-space:normal;" filterBy="#{solicitud.id}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Id" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.id}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;" filterBy="#{solicitud.tipo.nombre}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Tipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.tipo.nombre}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;" filterBy="#{solicitud.motivo.nombre}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Motivo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText rendered="#{solicitud.motivo.id != 7727}" 
+								value="#{solicitud.motivo.nombre}" styleClass="pequennio"/>
+								<h:outputText rendered="#{solicitud.motivo.id == 7727}" 
+								value="Otro: #{solicitud.motivo_otro}" styleClass="pequennio"/>
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;" filterBy="#{solicitud.estado.nombre}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Estado" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.estado.nombre}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%;white-space:normal;" filterBy="#{solicitud.equipo.placa}"
+								filterStyle="width:50px;" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Equipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.equipo.placa} - #{solicitud.equipo.equipo}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Solicita" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.persona.nombreCompleto}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:30%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Descripción" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.descripcion}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Fecha solicitud" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.fechaRegistro}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Fecha último cambio estado" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.fechaUltimoCambioEstado}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Fecha respuesta" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.fechaRegistro}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:10%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Revisó" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.personaRevision.nombreCompleto}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:20%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="Observaciones respuesta" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{solicitud.observaciones}" styleClass="pequennio" />
+							</p:column>
+							
+							<p:column style="width:5%;white-space:normal;">
+								<f:facet name="header">
+									<h:outputText value="" styleClass="pequennio" />
+								</f:facet>
+								<p:commandButton icon="ui-icon-search"
+									action="#{ManejadorLaboratoriosEquipos.consultarSolicitud}"
+									ajax="false" update="@form"
+									title="Consultar solicitud y archivos asociados"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									<f:setPropertyActionListener value="#{solicitud}"
+										target="#{ManejadorLaboratoriosEquipos.solicitudSeleccionada}" />
+								</p:commandButton>
+							</p:column>
+							
+						</p:dataTable>	
+
+					</center>
+				</p:dialog>
+				
+				<p:spacer height="10" />
+				
+				<p:panel style="width: 100%; text-align: center;">
+					<table style="margin: auto;">
+						<tr>
+							<td><p:commandLink id="ajax" onstart="listaEquiposDadosDeBaja.show()"
+									style="text-decoration:none; 
+										        color: #16A8E2;
+										        font-weight: bold;
+										        text-align: center;">
+									<h:outputText value="Equipos dados de baja" />
+								</p:commandLink>
+							</td>
+							<td> <h:outputText value="|"/> </td>
+							<td><p:commandLink id="ajax" onstart="listaActividadesLab.show()"
+									style="text-decoration:none; 
+										        color: #16A8E2;
+										        font-weight: bold;
+										        text-align: center;">
+									<h:outputText value="Planes de mantenimiento de equipos" />
+								</p:commandLink>
+							</td>
+							<td> <h:outputText value="|"/> </td>
+							<td><p:commandLink id="ajax" onstart="listaSolicitudesLab.show()"
+												style="text-decoration:none; 
+										        color: #16A8E2;
+										        font-weight: bold;
+										        text-align: center;">
+									<h:outputText value="Solicitudes desvincular equipos" />
+								</p:commandLink>
+							</td>
+						</tr>
+					</table>
+				</p:panel>
+				
+				<p:spacer height="10" />
+				
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelPropiedad" style="width:100%">
+					
+					<p:row>
+						<p:column style="width:4%;">
+							<p:commandButton id="infoTipo" icon="ui-icon-info" />
+							
+							<p:tooltip for="infoTipo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Ingrese el número total de equipos significativos para el laboratorio y cuantos requieren mantenimiento y calibración, 
+								       	independiente si ya registro sus hojas de vida en el Sistema HERMES
+									</t:div>
+							</p:tooltip>
+								
+						</p:column>
+						<p:column style="width:15%;">
+						
+							<h:outputText value="Total equipos laboratorio:" styleClass="labels_proyecto" />
+							
+						</p:column>
+						<p:column style="width:15%;text-align: left">
+						
+							<p:inputText id="totalEquipos"
+								validatorMessage="El número total de equipos debe ser un número entero no negativo"
+								value="#{ManejadorLaboratoriosEquipos.laboratorioActual.totalEquipos}"
+								readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+								maxlength="4"
+								size="8">
+								<f:validateLongRange minimum="0" />
+							</p:inputText>
+							
+						</p:column>
+						<p:column style="width:15%;">
+						
+							<h:outputText value="Equipos que requieren mantenimiento:" styleClass="labels_proyecto" />
+							
+						</p:column>
+						<p:column style="width:15%;">
+						
+							<p:inputText id="totalEquiposMantto"
+									validatorMessage="El número total de equipos que requieren mantenimiento debe ser un número entero no negativo"
+									value="#{ManejadorLaboratoriosEquipos.laboratorioActual.totalEquiposMantto}"
+									readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+									maxlength="4"
+									size="8">
+									<f:validateLongRange minimum="0" />
+							</p:inputText>
+							
+						</p:column>
+						<p:column style="width:15%;">
+						
+							<h:outputText value="Equipos que requieren calibración:" styleClass="labels_proyecto" />
+							
+						</p:column>
+						<p:column style="width:15%;">
+						
+							<p:inputText id="totalEquiposCalib"
+									validatorMessage="El número total de equipos que requieren calibración debe ser un número entero no negativo"
+									value="#{ManejadorLaboratoriosEquipos.laboratorioActual.totalEquiposCalib}"
+									readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+									maxlength="4"
+									size="8">
+									<f:validateLongRange minimum="0" />
+							</p:inputText>
+							
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Plan de manteniemiento general del laboratorio</t:div>
+				<p:spacer height="20" />
+
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" style="width: 100%">
+				
+					<h:outputText style="font-size:13px" value="En esta sección debe adjuntar el plan de mantenimiento general asociado al laboratorio, 
+					el cual es distinto a la programación de los planes de mantenimiento asociados en la hoja de vida de cada equipo." />
+					
+					<p:spacer height="20" rendered="#{not ManejadorLaboratoriosEquipos.soloLectura}"/>
+					
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+						id="pgDocumentosGestionTablaArchivos" style="width: 100%">
+						
+						<p:fileUpload label="Agregar" update=":LaboratoriosEquipos:dtArchivos"
+							fileUploadListener="#{ManejadorLaboratoriosEquipos.subirArchivo}"
+							auto="true" mode="advanced" showButtons="false"
+							sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB"
+							invalidFileMessage="El archivo debe ser de formato PDF." 
+							rendered="#{not ManejadorLaboratoriosEquipos.soloLectura}"/>
+						
+						<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+							value="#{ManejadorLaboratoriosEquipos.listaArchivos}"
+							rows="6" paginator="true" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" pageLinks="5"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No existen archivos registrados."
+							style="width: 100%">
+							<f:facet name="header">
+							Archivos registrados
+							</f:facet>
+							<p:column>
+								<f:facet name="header" style="width:25%">
+									<h:outputText value="Fecha" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+									styleClass="pequennio">
+									<f:convertDateTime pattern="yyyy-MM-dd" />
+								</h:outputText>
+							</p:column>
+							<p:column style="width:65%">
+								<f:facet name="header">
+									<h:outputText value="Nombre" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+									styleClass="pequennio" />
+							</p:column>
+							<p:column rendered="false">
+								<f:facet name="header">
+									<h:outputText value="Tipo" styleClass="pequennio" />
+								</f:facet>
+								<h:outputText value="#{archivoLaboratorio.tipoArchivo.nombre}"
+									styleClass="pequennio" />
+							</p:column>
+							<p:column style="width:5%">
+								<f:facet name="header">
+									<h:outputText value="D" styleClass="pequennio" />
+								</f:facet>
+								<center>
+									<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+										action="#{ManejadorLaboratoriosEquipos.descargarArchivo}">
+										<f:setPropertyActionListener value="#{archivoLaboratorio}"
+											target="#{ManejadorLaboratoriosEquipos.archivoLaboratorioSeleccionado}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+							<p:column
+								rendered="#{not ManejadorLaboratoriosEquipos.soloLectura}"
+								style="width:5%">
+								<f:facet name="header">
+									<h:outputText value="(-)" styleClass="pequennio" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-trash" update=":LaboratoriosEquipos:dtArchivos"
+										action="#{ManejadorLaboratoriosEquipos.eliminarArchivo}"
+										onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+										<f:setPropertyActionListener value="#{archivoLaboratorio}"
+											target="#{ManejadorLaboratoriosEquipos.archivoLaboratorioSeleccionado}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+					</p:dataTable>
+						
+					</p:panelGrid>
+					
+				</p:panelGrid>
+				
+				<p:spacer height="20" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Criticidad y gestión de riesgo del equipo</t:div>
+				<p:spacer height="20" />
+				<br />
+				
+					<h:outputText style="font-size:13px" value="Esta herramienta le permitirá identificar los equipos que requieren atención prioritaria según 
+						su criticidad para las operaciones del laboratorio, útil para la planeación de las actividades de mantenimiento y 
+						confirmación metrológica, permitiendo un uso eficiente de los recursos asignados a estas tareas y minimizando los 
+						periodos de inactividad en procesos fundamentales del laboratorio." />
+					<br />
+					<br />
+					<h:outputText style="font-size:13px" value="El documento " />
+					<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=334" target="_blank" style="color: #16A8E2; font-weight: bold;">Instrucciones para utilizar la herramienta de priorización de equipos de Laboratorio</a>
+					<h:outputText style="font-size:13px" value=" proporciona una guía detallada sobre la metodología y el uso efectivo de esta herramienta. Para poder diligenciar adecuadamente 
+						la información que se solicita a continuación, es importante consultar el documento mencionado. Para esto debe diligenciar 
+						el formulario con los ítems de impacto y calificación del riesgo para cada equipo, como herramienta para priorizar la gestión 
+						de equipos de laboratorio y definir planes de mantenimiento y calibración. Esto se encuentra al lado de cada equipo para su diligenciamiento." />
+						
+					<br />
+					<br />
+					<h:outputText style="font-size:13px" value="Debe diligenciar en la siguiente sección los porcentajes de ponderación de las categorías, 
+						las cuales deben sumar el 100% para la probabilidad e impacto del laboratorio, de tal manera que permita calcular el impacto y la 
+						probabilidad de riesgo de un equipo." />
+					<br />
+					<br />
+					<h:outputText style="font-size:13px; text-decoration: underline; color: #0073e6;"
+						 value="Nota: Al cambiar los porcentajes y dar clic en cualquiera de los botones inferiores de guardar o al entrar al formulario de 
+						criticidad de cualquier equipo, el sistema automaticamente re calculara todos los valores de criticidad para TODOS los equipos del laboratorio." />
+					<br />
+					<br />
+					<h:outputText value="Ponderación de factores de impacto" styleClass="negrilla" />
+					<br />
+					<br />
+					<h:outputText style="font-size:13px" value="Ponderación de los 7 factores utilizados para evaluar las consecuencias negativas para la 	
+						universidad si el equipo falla u opera de forma inapropiada y/o insegura." />
+					<br />
+					<br />
+					<p:panelGrid style="width:75%;text-align:left">
+						<p:row>
+						    <p:column style="width:75%;">
+						        <h:outputText value="Operaciones del laboratorio" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column style="width:25%;">
+						        <p:inputText id="critEquiposImpactoOperaLab" size="6"
+						            validatorMessage="Operaciones del laboratorio debe ser un número entre 5 y 25."
+						            converterMessage="Operaciones del laboratorio debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoOperaLab}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Seguridad para los usuarios del equipo" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposImpactoSegUsuarios" size="6"
+						            validatorMessage="Seguridad para los usuarios del equipo debe ser un número entre 5 y 25."
+						            converterMessage="Seguridad para los usuarios del equipo debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoSegUsuarios}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Daños a la Infraestructura física" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposImpactoDaniosInfra" size="6"
+						            validatorMessage="Daños a la Infraestructura física debe ser un número entre 5 y 25."
+						            converterMessage="Daños a la Infraestructura física debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoDaniosInfra}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Daños al Medioambiente" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposImpactoDaniosAmbient" size="6"
+						            validatorMessage="Daños al Medioambiente debe ser un número entre 5 y 25."
+						            converterMessage="Daños al Medioambiente debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoDaniosAmbient}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Imagen de la Universidad" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposImpactoImagenUN" size="6"
+						            validatorMessage="Imagen de la Universidad debe ser un número entre 5 y 25."
+						            converterMessage="Imagen de la Universidad debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoImagenUN}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Quejas y/o Sanciones Económicos" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposImpactoQuejas" size="6"
+						            validatorMessage="Quejas y/o Sanciones Económicos debe ser un número entre 5 y 25."
+						            converterMessage="Quejas y/o Sanciones Económicos debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoQuejas}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Impactos Económicos" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-25 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposImpactoEconomicos" size="6"
+						            validatorMessage="Impactos Económicos debe ser un número entre 5 y 25."
+						            converterMessage="Impactos Económicos debe ser un número entre 5 y 25."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposImpactoEconomicos}">
+						            <f:validateDoubleRange minimum="5" maximum="25" />
+						            <p:ajax update="critEquiposImpactoOperaLab, critEquiposImpactoSegUsuarios, critEquiposImpactoDaniosInfra, critEquiposImpactoDaniosAmbient, critEquiposImpactoImagenUN, critEquiposImpactoQuejas, critEquiposImpactoEconomicos"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposImpactos}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<h:outputText value="Ponderación de factores de probabilidad" styleClass="negrilla" />
+					<br />
+					<br />
+					<h:outputText style="font-size:13px" value="Ponderación de los 4 factores utilizados para evaluar la probabilidad  que el equipo tenga 
+						que retirarse de uso y etiquetarse como 'fuera de servicio' debido a que presentó una falla que impide su funcionamiento adecuado." />
+					<br />
+					<br />
+					<p:panelGrid style="width:75%;text-align:left">
+						<p:row>
+						    <p:column style="width:75%;">
+						        <h:outputText value="Reportes de fallas / mal funcionamiento del equipo" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 15-50 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column style="width:25%;">
+						        <p:inputText id="critEquiposProbRepFalla" size="6"
+						            validatorMessage="Reportes de fallas / mal funcionamiento del equipo debe ser un número entre 15 y 50."
+						            converterMessage="Reportes de fallas / mal funcionamiento del equipo debe ser un número entre 15 y 50."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposProbRepFalla}">
+						            <f:validateDoubleRange minimum="15" maximum="50" />
+						            <p:ajax update="critEquiposProbRepFalla, critEquiposProbTiempoTrabajo, critEquiposProbCondAmbient, critEquiposProbMetrologia"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposProbabilidades}" />
+						            
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Tiempo de trabajo del equipo y sobreesfuerzos" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-35 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposProbTiempoTrabajo" size="6"
+						            validatorMessage="Tiempo de trabajo del equipo y sobreesfuerzos debe ser un número entre 5 y 35."
+						            converterMessage="Tiempo de trabajo del equipo y sobreesfuerzos debe ser un número entre 5 y 35."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposProbTiempoTrabajo}">
+						            <f:validateDoubleRange minimum="5" maximum="35" />
+						            <p:ajax update="critEquiposProbRepFalla, critEquiposProbTiempoTrabajo, critEquiposProbCondAmbient, critEquiposProbMetrologia"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposProbabilidades}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Condiciones ambientales donde se encuentra ubicado el equipo" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-35 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposProbCondAmbient" size="6"
+						            validatorMessage="Condiciones ambientales debe ser un número entre 5 y 35."
+						            converterMessage="Condiciones ambientales debe ser un número entre 5 y 35."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposProbCondAmbient}">
+						            <f:validateDoubleRange minimum="5" maximum="35" />
+						            <p:ajax update="critEquiposProbRepFalla, critEquiposProbTiempoTrabajo, critEquiposProbCondAmbient, critEquiposProbMetrologia"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposProbabilidades}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+						
+						<p:row>
+						    <p:column>
+						        <h:outputText value="Mantenimiento y confirmación metrológica del equipo" styleClass="negrilla" />
+						        <br />
+						        <h:outputText value="(entre 5-50 %)" styleClass="azul-pequennio" />
+						    </p:column>
+						    <p:column>
+						        <p:inputText id="critEquiposProbMetrologia" size="6"
+						            validatorMessage="Mantenimiento y confirmación metrológica del equipo debe ser un número entre 5 y 50."
+						            converterMessage="Mantenimiento y confirmación metrológica del equipo debe ser un número entre 5 y 50."
+						            readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+						            value="#{ManejadorLaboratoriosEquipos.laboratorioActual.critEquiposProbMetrologia}">
+						            <f:validateDoubleRange minimum="5" maximum="50" />
+						            <p:ajax update="critEquiposProbRepFalla, critEquiposProbTiempoTrabajo, critEquiposProbCondAmbient, critEquiposProbMetrologia"
+    									listener="#{ManejadorLaboratoriosEquipos.validarPorcentajesCritEquiposProbabilidades}" />
+						        </p:inputText>
+						    </p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<p:messages id="messages" autoUpdate="true" closable="true" redisplay="false" />
+					<br />
+					<p:separator rendered="#{ManejadorLaboratoriosEquipos.listaEquipos != null}" />
+					
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="width:100%">
+						<h:outputText value="Observaciones:" styleClass="negrilla" />
+						<p:inputTextarea rows="3" cols="70" counter="counterObservaciones"
+							autoResize="false" maxlength="1000"
+							counterTemplate="{0} caracteres restantes"
+							readonly="#{ManejadorLaboratoriosEquipos.soloLectura}"
+							value="#{ManejadorLaboratoriosEquipos.equiposObservaciones}" />
+						<h:outputText />
+						<h:outputText id="counterObservaciones" styleClass="pequennio" />
+					</p:panelGrid>
+				<br />
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" rendered="#{!ManejadorLaboratoriosEquipos.soloLectura}">
+						<p:commandButton
+							action="#{ManejadorLaboratoriosInformacionGeneral.volverSolicitud}"
+							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+							value="Volver a la solicitud" 
+							immediate="true" 
+							rendered="#{ManejadorLaboratoriosEquipos.esSolicitudLab}"/>
+						
+						<p:commandButton action="#{ManejadorLaboratoriosEquipos.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" 
+							rendered="#{!ManejadorLaboratoriosEquipos.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosEquipos.salirGuardar}"
+							onclick="if(!confirm('Si cambio los porcentajes de criticidad el sistema re calculara los valores para cada equipo del laboratorio'))return false"
+							value="Guardar y continuar después" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" 
+							rendered="#{!ManejadorLaboratoriosEquipos.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosEquipos.siguiente}"
+							onclick="if(!confirm('Si cambio los porcentajes de criticidad el sistema re calculara los valores para cada equipo del laboratorio'))return false"
+							value="Guardar y avanzar" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"/>
+					</p:panelGrid>
+				</center>
+
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+				</p:dialog>
+
+			</p:panel>
+			
+			<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+							header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosEquipos.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Inconvenientes presentados</t:div>
+
+		<h:form id="content">
+
+			<p:messages id="msgs" />
+
+			<br> </br>
+
+			<p:dataTable var="requerimientoRegistrado"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{ManejadorConsultarInconvenienteAdm.inconvenienteListaCompleta}"
+				paginator="true" paginatorposition="bottom" rows="20">
+
+				<f:facet name="header">  
+	            	Inconvenientes presentados
+	        	</f:facet>
+
+				<p:column headerText="Número" style="text-align: center;"
+					sortBy="#{requerimientoRegistrado.id}"
+					filterBy="#{requerimientoRegistrado.id}" filterStyle="width: 50px;">
+					<h:outputText value="#{requerimientoRegistrado.id}" />
+				</p:column>
+
+				<p:column headerText="Dependencia"
+					sortBy="#{requerimientoRegistrado.idDependencia.nombre}">
+					<h:outputText
+						value="#{requerimientoRegistrado.idDependencia.nombre}" />
+				</p:column>
+
+				<p:column headerText="Módulo"
+					sortBy="#{requerimientoRegistrado.moduloVista}">
+					<h:outputText value="#{requerimientoRegistrado.moduloVista}" />
+				</p:column>
+
+				<p:column sortBy="#{requerimientoRegistrado.fechaSolicitud}">
+					<f:facet name="header">Fecha<br />de<br />Reporte</f:facet>
+					<h:outputText value="#{requerimientoRegistrado.fechaSolicitud}" />
+				</p:column>
+
+				<p:column headerText="Acciones" style="text-align: center;"
+					rendered="#{!ManejadorConsultarInconvenienteAdm.esConsultaRequerimientos}">
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.editarInconvenienteCoord}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.consultarInconvenienteCoord}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.cargarHistorico}"
+						title="Histórico" icon="ui-icon-clock"
+						oncomplete="dialogHistorico.show();" update="@form">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<h:outputText
+						value="Se encontraron #{ManejadorConsultarInconvenienteAdm.numeroInconvenientes} inconvenientes" />
+				</f:facet>
+
+			</p:dataTable>
+
+			<br> </br>
+			<br> </br>
+			<p:dialog
+				header="Histórico Inconveniente - ID: #{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado.id}"
+				widgetVar="dialogHistorico" modal="true" resizable="false"
+				width="600">
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="histRequerimiento" var="historico"
+					value="#{ManejadorConsultarInconvenienteAdm.historicoRequerimiento}"
+					emptyMessage="No hay un histórico para este inconveniente."
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaCambio}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios al Usuario" />
+						</f:facet>
+						<h:outputText value="#{historico.comentariosUsuario}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

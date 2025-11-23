@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Mejoras e Inconvenientes solucionados</t:div>
+
+		<h:form id="content">
+
+			<p:messages id="msgs" />
+
+			<br> </br>
+
+			<p:dataTable var="requerimientoRegistrado"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{ManejadorConsultarRequerimiento.listaSolucionados}"
+				paginator="true" paginatorposition="bottom" rows="20">
+
+				<f:facet name="header">  
+	            	Mejoras e Inconvenientes solucionados
+	        		</f:facet>
+
+
+				<p:column headerText="Número" style="text-align: center;">
+					<h:outputText value="#{requerimientoRegistrado.id}"
+						style="font-size: 11px;" />
+				</p:column>
+
+				<p:column headerText="Prioridad"
+					sortBy="#{requerimientoRegistrado.prioridad}"
+					filterBy="#{requerimientoRegistrado.prioridad}"
+					filterOptions="#{ManejadorConsultarRequerimiento.prioridadItem}"
+					filterMatchMode="exact"
+					style="text-align: center;font-size: 12px;width: 20px;">
+					<center>
+						<h:outputText value="#{requerimientoRegistrado.prioridad}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Módulo"
+					sortBy="#{requerimientoRegistrado.moduloVista}">
+					<h:outputText value="#{requerimientoRegistrado.moduloVista}"
+						style="font-size: 11px;" />
+				</p:column>
+
+				<p:column headerText="Dependencia"
+					sortBy="#{requerimientoRegistrado.idDependencia.nombre}">
+					<h:outputText
+						value="#{requerimientoRegistrado.idDependencia.nombre}"
+						style="font-size: 11px;" />
+				</p:column>
+
+				<p:column headerText="Estado"
+					filterBy="#{requerimientoRegistrado.estSelRequerimiento}"
+					filterMatchMode="contains" rendered="false">
+					<h:outputText
+						value="#{requerimientoRegistrado.estSelRequerimiento}"
+						style="font-size: 12px;" rendered="false" />
+				</p:column>
+
+				<p:column sortBy="#{requerimientoRegistrado.fechaEntrega}">
+					<f:facet name="header">Fecha<br />de<br />Solución</f:facet>
+					<h:outputText value="#{requerimientoRegistrado.fechaEntrega}"
+						style="font-size: 12px;" />
+				</p:column>
+
+
+				<p:column headerText="Acciones" style="text-align: center;">
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimiento.editarRequerimientoSolucionadoAsignado}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimiento.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimiento.consultarRequerimientoSolucionadoAsignado}"
+						icon="ui-icon-search" title="Consultar">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimiento.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimiento.cargarHistorico}"
+						title="Histórico" icon="ui-icon-clock"
+						oncomplete="dialogHistorico.show();" update="@form">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimiento.requerimientoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<h:outputText
+						value="Se encontraron #{ManejadorConsultarRequerimiento.numeroSolucionados} mejoras atendidas" />
+				</f:facet>
+
+			</p:dataTable>
+
+			<br> </br>
+			<br> </br>
+			<p:dialog
+				header="Histórico Solicitud - ID: #{ManejadorConsultarRequerimiento.requerimientoSeleccionado.id}"
+				widgetVar="dialogHistorico" modal="true" resizable="false"
+				width="600">
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="histRequerimiento" var="historico"
+					value="#{ManejadorConsultarRequerimiento.historicoRequerimiento}"
+					emptyMessage="No hay un histórico para esta solicitud."
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaCambio}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios al Usuario" />
+						</f:facet>
+						<h:outputText value="#{historico.comentariosUsuario}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

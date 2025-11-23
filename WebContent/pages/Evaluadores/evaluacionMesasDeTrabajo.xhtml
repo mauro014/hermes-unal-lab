@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.modalidad.restriccion.id != 'CONV_ALI_NAL_2018'}">Mesa de evaluación</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.modalidad.restriccion.id == 'CONV_ALI_NAL_2018'}">Comité de selección</t:div>
+			<p:panel id="panelEvaluaciones">
+				Ingrese por favor los datos de evaluación del proyecto.<br />
+				Para que la evaluación quede registrada todos los datos deben ser ingresados.<br />
+				<br />
+				Por favor coloque en las observaciones los criterios que definió el comité de selección como argumento de la decisión que soporte la calificación.<br />
+				<br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Título del proyecto: "
+						style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.nombre}" />
+					<h:outputText value="Código: " style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.id}" />
+					<h:outputText value="Tipo Evaluación: " style="font-weight: bold;" />
+					<p:selectOneRadio id="OR_TipoEvaluacion"
+						value="#{manejadorEvaluacionMesas.tipoEvaluacion}"
+						disabled="#{manejadorEvaluacionMesas.esConsulta}">
+						<f:selectItem itemLabel="Evaluación Criterios"
+							itemValue="evaluacionCriterios" />
+						<f:selectItem itemLabel="Evaluación General"
+							itemValue="evaluacionGeneral" />
+						<p:ajax update="OP_evaluacionGeneral,OP_evaluacionCriterios"
+							listener="#{manejadorEvaluacionMesas.cambiarTipoEvaluacion}" />
+					</p:selectOneRadio>
+				</p:panelGrid>
+			</p:panel>
+			<p:messages />
+			<p:outputPanel id="OP_evaluacionGeneral">
+				<p:panel
+					rendered="#{!empty manejadorEvaluacionMesas.evaluacionProyecto.documentoEvaluador 
+					and manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionGeneral'}"
+					style="margin-top: 20px; text-align: center;">
+					<h:commandLink
+						action="#{manejadorEvaluacionMesas.descargarDocumentoEvaluacion}"
+						value="Ver documento anexo de evaluación cargado"
+						style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;"
+						target="_blank">
+					</h:commandLink>
+				</p:panel>
+				<p:panel header="Cargar archivo anexo de evaluación"
+					rendered="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.modalidad.documentoEvaluacion == 'Y' or 
+				   			manejadorEvaluacionMesas.evaluacionProyecto.proyecto.modalidad.documentoEvaluacion == 'A'
+				   			and manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionGeneral'}"
+					style="margin-top: 20px;">
+
+					<p:messages showDetail="true" />
+					<p:fileUpload value="#{manejadorEvaluacionMesas.archivoSubir}"
+						mode="simple" />
+					<p:commandButton value="Cargar archivo" ajax="false"
+						actionListener="#{manejadorEvaluacionMesas.guardarArchivo}" />
+					<h:panelGroup
+						rendered="#{not empty manejadorEvaluacionMesas.evaluacionProyecto.documentoEvaluador}">
+						<h:outputText
+							value="Archivo cargado: #{manejadorEvaluacionMesas.evaluacionProyecto.documentoEvaluador}" />
+						<p:commandButton value="Eliminar archivo"
+							action="#{manejadorEvaluacionMesas.eliminarArchivo}"
+							update="@form" icon="pi pi-trash" styleClass="ui-button-danger"
+							onclick="return confirm('¿Está seguro que desea eliminar el archivo?');" />
+					</h:panelGroup>
+
+				</p:panel>
+
+
+				<p:panel style="margin-top: 20px;" id="panelEvaGeneral"
+					rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionGeneral'}">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;" id="pGEvaGeneral">
+						<h:outputText value="Calificación:" />
+						<p:inputText id="calificacion"
+							value="#{manejadorEvaluacionMesas.calificacion}"
+							readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+
+						<h:outputText value="" />
+						<h:outputText
+							value="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.modalidad.informacionAdicionalMesa}"
+							escape="false" />
+						<h:outputText
+							value="Criterios establecidos de evaluación y observaciones:" />
+						<p:inputTextarea id="observacion"
+							value="#{manejadorEvaluacionMesas.evaluacionProyecto.observaciones}"
+							rows="8" cols="70" maxlength="4000"
+							readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+					</p:panelGrid>
+				</p:panel>
+				<p:panel style="margin-top: 20px; text-align: center;"
+					rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionGeneral'}">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Recomendación:" />
+						<p:selectOneRadio id="concepto" layout="lineDirection"
+							disabled="#{manejadorEvaluacionMesas.esConsulta}"
+							value="#{manejadorEvaluacionMesas.idEstadoSeleccionado}">
+							<f:selectItems
+								value="#{manejadorEvaluacionMesas.listaEstadosProyectoItem}" />
+						</p:selectOneRadio>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel style="margin-top: 20px;"
+					rendered="#{manejadorEvaluacionMesas.presentacionDatos 
+						and manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionGeneral'}"
+					id="panelEvaGenConsulta">
+					<h:outputText value="#{manejadorEvaluacionMesas.eventualidad}" />
+					<h:outputText value="La evaluación del proyecto: " />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.evaluacionProyecto.proyecto.nombre}"
+						style="font-weight: bold;" />
+					<h:outputText
+						value="se guardó satisfactoriamente con los siguientes datos:" />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;">
+						<h:outputText value="Calificación:" />
+						<h:outputText
+							value="#{manejadorEvaluacionMesas.evaluacionProyecto.calificacionFinal}" />
+						<h:outputText value="Observaciones:" />
+						<h:outputText
+							value="#{manejadorEvaluacionMesas.evaluacionProyecto.observaciones}" />
+						<h:outputText value="Recomendación:" />
+						<h:outputText
+							value="#{manejadorEvaluacionMesas.nombreEstadoSeleccionado}" />
+					</p:panelGrid>
+				</p:panel>
+				<br />
+				<div style="width: 100%; text-align: center;">
+					<p:commandButton
+						action="#{manejadorEvaluacionMesas.guardarDatosEvGeneral}"
+						value="Guardar" update="@form"
+						rendered="#{!manejadorEvaluacionMesas.esConsulta
+							and manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionGeneral'}" />
+				</div>
+				<div style="width: 100%; text-align: center; padding-top: 20px;">
+					<p:commandButton action="proyectosConvocatoria" value="Regresar"
+						ajax="false" rendered="false" />
+				</div>
+			</p:outputPanel>
+
+			<p:outputPanel id="OP_evaluacionCriterios">
+				<p:panel id="panelEvaCriterios"
+					rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios'}">
+					<p:dataTable value="#{manejadorEvaluacionMesas.listaCC}"
+						var="calificacion" styleClass="panel-interno-tabla"
+						rendered="#{proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente == 'N' 
+							or proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente == 'A'
+							or empty proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Criterios evaluación:" />
+							</f:facet>
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+								style="border-collapse: separate;">
+								<t:div>
+									<h:outputText value="#{calificacion.criterio.nombre}"
+										style="font-weight: bold;" />
+									<br />
+									<h:outputText value="#{calificacion.criterio.descripcion}" />
+									<br />
+									<br />
+									<!-- 
+									<t:div rendered="#{calificacion.preguntaCualitativa}">
+									 -->
+									<t:div rendered="#{calificacion.preguntaCualitativa}">
+										<h:outputText value="Cualitativa" style="font-weight: bold;" />
+										<br />
+										<p:inputTextarea value="#{calificacion.cualitativa}"
+											style="width: 510px;" rows="3"
+											readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+									</t:div>
+									<t:div
+										rendered="#{calificacion.preguntaCuantitativaCualitativa}">
+										<h:outputText value="Cualitativa:" style="font-weight: bold;" />
+										<br />
+										<p:inputTextarea value="#{calificacion.cualitativa}"
+											style="width: 510px;" rows="3"
+											readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+										<br />
+										<br />
+										<h:outputText
+											value="Cuantitativa (Máximo #{calificacion.criterioModalidadTipoPreguntaMaximo}):"
+											style="font-weight: bold;" />
+										<br />
+										<p:inputText id="calificacionCuantitativa2"
+											value="#{calificacion.cuantitativa}" style="width: 160px;"
+											readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+									</t:div>
+									<t:div rendered="#{calificacion.preguntaCuantitativa}">
+										<h:outputText
+											value="Cuantitativa (Máximo #{calificacion.criterioModalidadTipoPreguntaMaximo}):"
+											style="font-weight: bold;" />
+										<br />
+										<p:inputText id="calificacionCuantitativa1"
+											value="#{calificacion.cuantitativa}" style="width: 160px;"
+											readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+									</t:div>
+									<t:div rendered="#{calificacion.preguntaSeleccionUnica}">
+										<h:outputText value="Selección única:"
+											style="font-weight: bold;" />
+										<br />
+										<p:selectOneMenu value="#{calificacion.cuantitativa}"
+											style="width: 600px;" panelStyle="width: 600px;"
+											disabled="#{manejadorEvaluacionMesas.esConsulta}">
+											<f:selectItems value="#{calificacion.listaOpciones}" />
+										</p:selectOneMenu>
+									</t:div>
+								</t:div>
+							</p:panelGrid>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+				<p:panel id="panelObservaciones" header="Observaciones adicionales:"
+					rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios'}">
+					<p:inputTextarea
+						value="#{manejadorEvaluacionMesas.evaluacionProyecto.observaciones}"
+						style="width: 620px;" rows="10" autoResize="false"
+						readonly="#{manejadorEvaluacionMesas.esConsulta}" />
+					<h:outputText value="#{mensajesAyudaEvaluacion.ayudaObservaciones}" />
+				</p:panel>
+				<br />
+				<p:panel header="Recomendación final:" style="text-align: center;"
+					id="panelPromedio"
+					rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios'
+						and !manejadorEvaluacionMesas.esConsulta}">
+					<h:outputText value="Calificación del proyecto: " />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.promedioCalificacion}">
+						<f:convertNumber pattern="#0.00" />
+					</h:outputText>
+					<h:outputText value=" sobre "
+						rendered="#{manejadorEvaluacionMesas.maximaCalificacion > 0}" />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.maximaCalificacion}"
+						rendered="#{manejadorEvaluacionMesas.maximaCalificacion > 0}">
+						<f:convertNumber pattern="#0.00" />
+					</h:outputText>
+					<h:outputText value=" " />
+					<p:commandButton id="CB_calcularPromedioCal"
+						action="#{manejadorEvaluacionMesas.calcularPromedioCalificaciones}"
+						value="Calcular promedio" process="@form" update="panelPromedio" />
+
+					<t:div style="margin: auto; width: 200px; text-align: left;">
+						<p:selectOneRadio layout="pageDirection"
+							value="#{manejadorEvaluacionMesas.evaluacionProyecto.concepto.id}">
+							<f:selectItems
+								value="#{manejadorEvaluacionMesas.recomendaciones}" />
+						</p:selectOneRadio>
+					</t:div>
+					<br />
+					<t:div style="text-align: center;">
+						<p:messages id="msgs"
+							rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios'}" />
+						<p:commandButton
+							action="#{manejadorEvaluacionMesas.guardarYContinuar}"
+							value="Guardar parcialmente" update="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios' and manejadorEvaluacionMesas.evaluacionProyecto.estado != 'S'}" />
+						<p:commandButton
+							action="#{manejadorEvaluacionMesas.guardarEvaluaciones}"
+							value="Guardar y finalizar edicion" ajax="false"
+							rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios' and manejadorEvaluacionMesas.evaluacionProyecto.estado != 'S'}" />
+						<p:commandButton action="#{manejadorEvaluacionMesas.atras}"
+							value="Atrás" rendered="false" />
+					</t:div>
+					<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true" header="Acción en proceso">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+									Por favor espere
+					</p:dialog>
+					<br />
+				</p:panel>
+				<p:panel header="Recomendación final:" style="text-align: center;"
+					id="panelPromedio"
+					rendered="#{manejadorEvaluacionMesas.tipoEvaluacion =='evaluacionCriterios'
+						and manejadorEvaluacionMesas.esConsulta}">
+					<h:outputText value="Calificación del proyecto: " />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.promedioCalificacion}">
+						<f:convertNumber pattern="#0.00" />
+					</h:outputText>
+					<h:outputText value=" sobre "
+						rendered="#{manejadorEvaluacionMesas.maximaCalificacion > 0}" />
+					<h:outputText
+						value="#{manejadorEvaluacionMesas.maximaCalificacion}"
+						rendered="#{manejadorEvaluacionMesas.maximaCalificacion > 0}">
+						<f:convertNumber pattern="#0.00" />
+					</h:outputText>
+					<h:outputText value=" " />
+					<t:div style="margin: auto; width: 200px; text-align: left;">
+						<p:selectOneRadio layout="pageDirection"
+							value="#{manejadorEvaluacionMesas.evaluacionProyecto.concepto.id}"
+							disabled="true">
+							<f:selectItems
+								value="#{manejadorEvaluacionMesas.recomendaciones}" />
+						</p:selectOneRadio>
+					</t:div>
+				</p:panel>
+				<br />
+			</p:outputPanel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

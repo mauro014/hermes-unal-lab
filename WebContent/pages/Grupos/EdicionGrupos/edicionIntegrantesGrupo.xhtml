@@ -1,0 +1,1618 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Integrantes del grupo de investigación</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" action="editarGrupo"
+						icon="ui-icon-right" />
+					<p:menuitem value="Integrantes" action="irEdicionIntegrantes"
+						icon="ui-icon-right"
+						disabled="#{!manejadorMenuFormularioGrupos.opcionIntegrantes}" />
+					<p:menuitem value="Áreas y lineas de investigación"
+						action="lineasGrupo" icon="ui-icon-right"
+						disabled="#{!manejadorMenuFormularioGrupos.opcionLineas}" />
+					<p:menuitem value="Información específica"
+						action="irVisionPrioridadesPerspectiva" icon="ui-icon-right"
+						disabled="#{!manejadorMenuFormularioGrupos.opcionEspecifica}" />
+				</p:menubar>
+			</h:form>
+			<h:form>
+				<p:panel id="panelInformacionLaboratorio">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							style="width: 440px;">
+							<t:div style="width: 100px;">
+								<h:outputText value="Id: " />
+							</t:div>
+							<t:div style="width: 350px;">
+								<h:outputText value="#{manejadorEdicionGrupo.grupoActual.id}"
+									style=' font-weight: bold;' />
+							</t:div>
+							<t:div style="width: 100px;">
+								<h:outputText value="Nombre grupo: " />
+							</t:div>
+							<h:outputText value="#{manejadorEdicionGrupo.grupoActual.nombre}"
+								style=' font-weight: bold;' />
+						</p:panelGrid>
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							style="width: 170px;">
+							<p:commandButton style="width: 100%"
+								action="#{manejadorIntegrantesGrupo.verAgregarIntegrante}"
+								icon="ui-icon-plusthick" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" value="Agregar integrante"
+								rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+								update="@form" />
+							<p:commandButton style="width: 100%" value="Cambiar lider"
+								action="#{manejadorIntegrantesGrupo.verCambioLider}"
+								rendered="#{!manejadorMenuFormularioGrupos.esConsulta and manejadorIntegrantesGrupo.lider}"
+								update="@form" onstart="dialogEspere.show()"
+								icon="ui-icon-pencil" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton style="width: 100%"
+								action="#{manejadorIntegrantesGrupo.cargarHistorico}"
+								value="Histórico Integrantes" icon="ui-icon-clock"
+								oncomplete="dialogHistorico.show();" update="@form">
+							</p:commandButton>
+						</p:panelGrid>
+					</p:panelGrid>
+				</p:panel>
+				<p:messages id="msgs" />
+				<p:panel
+					header="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante?'Agregar nuevo integrante':'Cambiar lider'}"
+					rendered="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante or manejadorIntegrantesGrupo.mostrarCambioLider}"
+					id="panel-ingreso-integrantes" style="margin-top: 20px;">
+					<div class="panelgrid-interno-sinbordes">
+						<t:div
+							rendered="#{!manejadorIntegrantesGrupo.mostrarAgregarIntegrante}"
+							style="color: #FF0000; text-align: center; margin-top: 20px; margin-bottom: 20px; width: 100%;">
+							Nota: Si usted realiza el cambio del líder del grupo, no podra realizar cambios luego de guardar.
+				        </t:div>
+						<h:panelGrid columns="2" style="margin: auto;"
+							rendered="#{!manejadorIntegrantesGrupo.mostrarAgregarIntegrante and !manejadorIntegrantesGrupo.nuevoLiderNuevo}">
+							<h:outputText
+								value="Por favor seleccione al nuevo lider del grupo:" />
+							<p:selectOneMenu
+								value="#{manejadorIntegrantesGrupo.nuevoLiderGrupo}">
+								<f:selectItem itemValue="" itemLabel="Seleccione" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.posiblesLideresGrupo}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<t:div style="width: 100%; text-align: center; margin-top: 10px;"
+							rendered="#{!manejadorIntegrantesGrupo.mostrarAgregarIntegrante and !manejadorIntegrantesGrupo.nuevoLiderNuevo}">
+							<p:commandButton onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()"
+								action="#{manejadorIntegrantesGrupo.cambiarLider}"
+								value="Cambiar lider" update="@form" />
+						</t:div>
+						<h:panelGrid columns="1"
+							rendered="#{!manejadorIntegrantesGrupo.mostrarAgregarIntegrante and !empty manejadorIntegrantesGrupo.posiblesLideresGrupo}"
+							style="text-align: center; margin: auto;">
+							<h:panelGrid columns="2" style="margin: auto;">
+								<h:outputText
+									value="El nuevo lider del grupo no esta en la lista de selección: " />
+								<p:selectBooleanCheckbox
+									value="#{manejadorIntegrantesGrupo.nuevoLiderNuevo}">
+									<p:ajax update="panel-ingreso-integrantes"
+										process="panel-ingreso-integrantes" />
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin: auto; text-align: left;"
+								rendered="#{manejadorIntegrantesGrupo.nuevoLiderNuevo}"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText
+									value="Por favor ingrese los datos del nuevo lider del grupo de investigación. Le recordamos que el nuevo lider debe ser un docente activo." />
+							</h:panelGrid>
+						</h:panelGrid>
+						<p:panelGrid columns="2" styleClass="panelPrincipalGrupos">
+							<h:outputText value="Tipo de asociación a la universidad (*):"
+								rendered="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante}" />
+							<p:selectOneMenu
+								rendered="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante}"
+								value="#{manejadorIntegrantesGrupo.tipoAsociacion}">
+								<f:selectItem itemValue="" itemLabel="-" />
+								<f:selectItem itemValue="I" itemLabel="Interno" />
+								<f:selectItem itemValue="E" itemLabel="Externo" />
+								<p:ajax update="panel-ingreso-integrantes"
+									process="panel-ingreso-integrantes"
+									listener="#{manejadorIntegrantesGrupo.cambiarTipoAsociacion}" />
+							</p:selectOneMenu>
+							<h:outputText value="Tipo de integrante del grupo (*):"
+								rendered="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante}" />
+							<p:selectOneMenu
+								rendered="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante}"
+								value="#{manejadorIntegrantesGrupo.investigadorGrupoActual.tipo}"
+								id="select-tipo-integrante">
+								<f:selectItems value="#{manejadorIntegrantesGrupo.tipoItem}" />
+								<p:ajax update="panel-ingreso-integrantes"
+									process="panel-ingreso-integrantes"
+									listener="#{manejadorIntegrantesGrupo.validarTipoIntegrante}" />
+							</p:selectOneMenu>
+							<h:outputText
+								value="NOTA: Al asignar el rol de estudiante líder grupo, él puede editar la información del grupo. Sin embargo, esta debe ser validada por el líder del grupo."
+								style="color: #FF0000; text-align: center; margin-top: 20px; margin-bottom: 20px; width: 100%;"
+								rendered="#{manejadorIntegrantesGrupo.addEstLider}" />
+							<h:outputText value=""
+								rendered="#{manejadorIntegrantesGrupo.addEstLider}" />
+							<h:outputText value="Tipo de documento (*):"
+								rendered="#{!(manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false) and (manejadorIntegrantesGrupo.mostrarAgregarIntegrante or manejadorIntegrantesGrupo.nuevoLiderNuevo)}" />
+							<p:selectOneMenu
+								value="#{manejadorIntegrantesGrupo.tipoDocumentoInv.id}"
+								rendered="#{!(manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false) and (manejadorIntegrantesGrupo.mostrarAgregarIntegrante or manejadorIntegrantesGrupo.nuevoLiderNuevo)}">
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="Número de documento (*):"
+								rendered="#{!(manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false) and (manejadorIntegrantesGrupo.mostrarAgregarIntegrante or manejadorIntegrantesGrupo.nuevoLiderNuevo)}" />
+							<p:inputText id="numdocumento" maxlength="25"
+								value="#{manejadorIntegrantesGrupo.documento}"
+								rendered="#{!(manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false) and (manejadorIntegrantesGrupo.mostrarAgregarIntegrante or manejadorIntegrantesGrupo.nuevoLiderNuevo)}" />
+							<h:outputText value="Tipo de Documento (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:selectOneMenu
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.id.tipoDocumento}"
+								disabled="true"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="Número de Documento (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="documentoInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.id.documento}"
+								disabled="true"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<h:outputText value="Primer Nombre (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="primerNombreInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.nombre1}"
+								maxlength="20"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<h:outputText value="Segundo Nombre:"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="segundoNombreInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.nombre2}"
+								maxlength="20"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<h:outputText value="Primer Apellido (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="primerApellidoInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.apellido1}"
+								maxlength="20"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<h:outputText value="Segundo Apellido:"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="segundoApellidoInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.apellido2}"
+								maxlength="20"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<h:outputText
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								value="Sexo Biológico (*):" />
+							<p:selectOneMenu
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								id="seleccionarGenero"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.genero}">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems value="#{manejadorIntegrantesGrupo.generoItem}" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								value="Máximo Nivel de Estudios (*):" />
+							<p:selectOneMenu
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								id="seleccionarTipoFormacion"
+								value="#{manejadorIntegrantesGrupo.tipoFormacion}">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.maxNivelEstudioItem}" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								value="Estado Civil (*):" />
+							<p:selectOneMenu
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								id="seleccionarEstadoCivil"
+								value="#{manejadorIntegrantesGrupo.estadoCivil}">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.estadoCivilItem}" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								value="Fecha Nacimiento (*):" />
+							<p:calendar id="fechaNacimiento" pages="1" locale="es"
+								readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.fechaNacimiento}"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+							</p:calendar>
+							<h:outputText value="País de Nacimiento (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:selectOneMenu value="#{manejadorIntegrantesGrupo.paisSel}"
+								id="selectPais" filter="true" filterMatchMode="contains"
+								style="width: 100%" effect="fade"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.selectItemPaises}" />
+								<p:ajax update="@form" process="@form"
+									listener="#{manejadorIntegrantesGrupo.revisarPais}" />
+							</p:selectOneMenu>
+							<h:outputText value="Departamento:"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?(manejadorIntegrantesGrupo.investigadorActualExterno and manejadorIntegrantesGrupo.paisSel=='CO'):false}" />
+							<p:selectOneMenu
+								value="#{manejadorIntegrantesGrupo.departamentoActual}"
+								effect="fade" id="depto" filter="true" style="width:200px"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?(manejadorIntegrantesGrupo.investigadorActualExterno and manejadorIntegrantesGrupo.paisSel=='CO'):false}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.departamentoItem}" />
+								<p:ajax update="depto,ciuSel" process="depto,ciuSel"
+									listener="#{manejadorIntegrantesGrupo.cambiarDepartamento}" />
+							</p:selectOneMenu>
+							<h:outputText value="Ciudad de Nacimiento (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:selectOneMenu
+								value="#{manejadorIntegrantesGrupo.ciudadActual}" effect="fade"
+								id="ciuSel" filter="true"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems value="#{manejadorIntegrantesGrupo.ciudadItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="E-mail (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="emailInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.email}"
+								maxlength="50"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<h:outputText value="Teléfono (*):"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<p:inputText id="telefonoInvestigador"
+								value="#{manejadorIntegrantesGrupo.investigadorExterno.telefono}"
+								maxlength="15"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							<t:div
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<p:commandButton id="infoInst" icon="ui-icon-info" />
+								<p:tooltip for="infoInst" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Si la institución que va asociar no aparece en la lista,<br />
+								       	por favor comunicarse con el Sistema de Información HERMES - Componente de Investigación<br />
+								       	(ext. 11111 o hermes@unal.edu.co). 
+									</t:div>
+								</p:tooltip>
+								<h:outputText value="Institución (*):"
+									rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							</t:div>
+							<p:selectOneMenu id="cboInst" style="width:400px;"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}"
+								value="#{manejadorIntegrantesGrupo.institucionEvaluador}"
+								panelStyle="width: 400px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.listaInstitucionesItem}" />
+							</p:selectOneMenu>
+							<t:div
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<p:commandButton id="infoOCDE" icon="ui-icon-info" />
+								<p:tooltip for="infoOCDE" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Por favor asocie el área OCDE asociada con el área de trabajo del participante. 
+									</t:div>
+								</p:tooltip>
+								<h:outputText value="Área OCDE (*):"
+									rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							</t:div>
+							<t:div
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{manejadorIntegrantesGrupo.areaCienciaInv}"
+									id="areaCienciaInv">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{manejadorIntegrantesGrupo.areaCienciaItems}" />
+									<p:ajax listener="#{manejadorIntegrantesGrupo.cambiarAreaInv}"
+										update="subareaCienciaInv" />
+								</p:selectOneMenu>
+								<h:outputLink value="#{manejadorFichaMinimaHome.linkLineas}"
+									target="_blank">
+									<h:graphicImage id="imageeeInv" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="imageeeInv"
+									value="Descargar pdf con la clasificación de las áreas."
+									showEffect="fade" hideEffect="fade" />
+							</t:div>
+							<t:div
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<p:commandButton id="infoOCDE2" icon="ui-icon-info" />
+								<p:tooltip for="infoOCDE2" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Por favor asocie el sub-área OCDE asociada con el área de trabajo del participante. 
+									</t:div>
+								</p:tooltip>
+								<h:outputText value="Sub-Área OCDE (*):"
+									rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}" />
+							</t:div>
+							<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+								value="#{manejadorIntegrantesGrupo.subAreaCienciaInv}"
+								id="subareaCienciaInv"
+								rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+								<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+									itemValue="" />
+								<f:selectItems
+									value="#{manejadorIntegrantesGrupo.subAreaCienciaItems}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panelGrid columns="1" styleClass="panelPrincipalGrupos">
+							<h:outputText
+								value="El integrante no se encuentra en la base de datos, será adicionado como externo usando los anteriores datos"
+								rendered="#{manejadorIntegrantesGrupo.investigadorActualExterno}" />
+						</p:panelGrid>
+					</div>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" rendered="#{manejadorIntegrantesGrupo.tipoAsociacion=='E'?manejadorIntegrantesGrupo.investigadorActualExterno:false}">
+						<p:row>
+							<p:column>
+								<p:panel style="width:100%" styleClass="mypanel">
+									<br />
+									<h:panelGrid columns="1"
+										styleClass="estilo-panelgrid-sinbordes">
+										<t:div style="color:#464646; text-align:justify;">
+									Para registro de información, le recomendamos tener en cuenta la Cláusula de Autorización 
+									de Tratamiento de Datos Personales de la Universidad Nacional de Colombia. En este caso la 
+									información de los datos de externos, se utilizan para información del proceso de 
+									investigación y para entregar indicadores a las instituciones que así lo requieran.
+									<br />
+											<br />
+									La Universidad Nacional de Colombia, como responsable del tratamiento de información de datos personales, 
+									informa que los datos suministrados serán tratados de acuerdo con la ley 1581 de 2012, y a nuestra 
+									Política de Datos Personales, bajo las finalidades correspondientes al uso de los datos personales de 
+									terceros y podrá informar a los titulares de la información que pueden ejercer sus derechos como 
+									titulares mediante el canal <strong style="color: #0000FF;"><a
+												href="mailto:protecdatos_na@unal.edu.co">protecdatos_na@unal.edu.co</a></strong>. 
+									<br />
+											<br />
+									DE ACUERDO A LA LEY 1581 DE 2012 DE PROTECCIÓN DE DATOS PERSONALES, HA LEÍDO, ENTENDIDO Y ACEPTA, 
+									LOS TÉRMINOS DESCRITOS EN LA <strong style="color: #0000FF;"><a
+												href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=97992"
+												target="_blank"> POLÍTICA DE TRATAMIENTO DE DATOS
+													PERSONALES </a></strong>.
+											<br />
+											<br />
+									Recuerde tener en cuenta la <a
+												href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=37170"
+												target="_blank">Resolución 329 de 2009 de la Rectoría</a> "Por la cual se 
+									reglamenta la remuneración de evaluadores externos en el marco de promociones docentes, 
+									proyectos de investigación, de publicaciones y de la productividad académica".
+
+										</t:div>
+									</h:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+						</p:panelGrid>
+					<div style="width: 100%; text-align: center;">
+						<br />
+						<p:commandButton onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"
+							rendered="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante or manejadorIntegrantesGrupo.nuevoLiderNuevo}"
+							action="#{manejadorIntegrantesGrupo.adicionarIntegrante}"
+							value="#{manejadorIntegrantesGrupo.mostrarAgregarIntegrante?'Agregar integrante':'Agregar nuevo lider'}"
+							update="@form" />
+					</div>
+				</p:panel>
+				<br />
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesLider}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Lider" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="width:18%; font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column style="width:82%">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?'Dependencia FIC: ':'Institución: '}" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?investigadorGrupo.investigador.dependencia.nombre:investigadorGrupo.investigador.institucion.nombre}"/>
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: " />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="NOTA: " />
+									</p:column>
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="Tener en cuenta las responsabilidades del líder del grupo mencionadas en las Pautas mínimas para los grupos de investigación y creación artística de la Universidad Nacional de Colombia. " />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesCod}"
+					rendered="#{manejadorIntegrantesGrupo.visibleCod}"
+					id="tablaDocentee" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Co-líderes" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="width:18%; font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column style="width:82%">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombre1} #{investigadorGrupo.investigador.nombre2} #{investigadorGrupo.investigador.apellido1} #{investigadorGrupo.investigador.apellido2}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?'Dependencia FIC: ':'Institución: '}" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?investigadorGrupo.investigador.dependencia.nombre:investigadorGrupo.investigador.institucion.nombre}"/>
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: " />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteCodirector}"
+							value="Eliminar" ajax="false">
+
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteCodirectorSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesDocente}"
+					rendered="#{manejadorIntegrantesGrupo.visibleDocente}"
+					id="tablaDocente" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Docentes" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: "/>
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?'Dependencia FIC: ':'Institución: '}" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?investigadorGrupo.investigador.dependencia.nombre:investigadorGrupo.investigador.institucion.nombre}"/>
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: " />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteDocente}"
+							value="Eliminar"
+							rendered="#{investigadorGrupo.tipo=='L'?false:true}" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteDocenteSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesEstLider}"
+					rendered="#{manejadorIntegrantesGrupo.visibleEstLider}"
+					id="tablaPregrado" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estudiantes Líderes" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{investigadorGrupo.nombrePlanEstudiante !=null and investigadorGrupo.nombrePlanEstudiante !=''}">
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="Plan de estudios o Programa Curricular: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.nombrePlanEstudiante}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: "  />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteEstLider}"
+							value="Eliminar" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteEstLiderSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesEstudianteDoctorado}"
+					rendered="#{manejadorIntegrantesGrupo.visibleEstudianteDoctorado}"
+					id="tablaDoctorado" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estudiantes de doctorado" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{investigadorGrupo.nombrePlanEstudiante !=null and investigadorGrupo.nombrePlanEstudiante !=''}">
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="Plan de estudios o Programa Curricular: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.nombrePlanEstudiante}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: "  />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteEstudianteDoctorado}"
+							value="Eliminar"
+							rendered="#{investigadorGrupo.tipo=='L'?false:true}" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteEstudianteDoctoradoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesEstudianteMaestria}"
+					rendered="#{manejadorIntegrantesGrupo.visibleEstudianteMaestria}"
+					id="tablaMaestria" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estudiantes de Maestría" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{investigadorGrupo.nombrePlanEstudiante !=null and investigadorGrupo.nombrePlanEstudiante !=''}">
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="Plan de estudios o Programa Curricular: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.nombrePlanEstudiante}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: "  />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteEstudianteMaestria}"
+							value="Eliminar"
+							rendered="#{investigadorGrupo.tipo=='L'?false:true}" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteEstudianteMaestriaSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesEstudiantePregrado}"
+					rendered="#{manejadorIntegrantesGrupo.visibleEstudiantePregrado}"
+					id="tablaPregrado" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estudiantes de Pregrado" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{investigadorGrupo.nombrePlanEstudiante !=null and investigadorGrupo.nombrePlanEstudiante !=''}">
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="Plan de estudios o Programa Curricular: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.nombrePlanEstudiante}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: "  />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteEstudiantePregrado}"
+							value="Eliminar" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteEstudiantePregradoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesEstudiantesVisitantes}"
+					rendered="#{manejadorIntegrantesGrupo.visibleEstudianteVisitante}"
+					id="tablaPregrado" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estudiantes Visitantes" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{investigadorGrupo.nombrePlanEstudiante !=null and investigadorGrupo.nombrePlanEstudiante !=''}">
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="Plan de estudios o Programa Curricular: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.nombrePlanEstudiante}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+									<h:outputText
+										value="#{investigadorGrupo.investigador.dependencia!=null?'Dependencia: ':'Institución: '}"/>
+									</p:column>
+									<p:column>
+										<h:outputText
+									value="#{investigadorGrupo.investigador.dependencia!=null?investigadorGrupo.investigador.dependencia.facultad.nombre:investigadorGrupo.investigador.institucion.nombre}"
+									 />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.dependencia!=null}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: "  />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteEstudianteVisitante}"
+							value="Eliminar" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteEstudianteVisitanteSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesAdministrativos}"
+					rendered="#{manejadorIntegrantesGrupo.visibleAdministrativos}"
+					id="tablaAdmin" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Administrativos" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="width:18%; font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column style="width:82%">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Dependencia FIC: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: " />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteAdministrativo}"
+							value="Eliminar" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteAdministrativoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaEgresados}"
+					rendered="#{manejadorIntegrantesGrupo.visibleEgresado}"
+					id="tablaExterno" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Egresados" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?'Dependencia FIC: ':'Institución: '}" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.interno=='S'?investigadorGrupo.investigador.dependencia.nombre:investigadorGrupo.investigador.institucion.nombre}"/>
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Facultad: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.facultad.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{investigadorGrupo.investigador.interno=='S'}">
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Sede: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.dependencia.sede.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: " />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteExterno}"
+							value="Eliminar"
+							rendered="#{investigadorGrupo.tipo=='L'?false:true}" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteExternoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="investigadorGrupo"
+					value="#{manejadorIntegrantesGrupo.listaIntegrantesExterno}"
+					rendered="#{manejadorIntegrantesGrupo.visibleExterno}"
+					id="tablaExterno" style="padding-top: 20px;">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Otros Investigadores" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.nombreCompletoMinusculas}"/>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Rol: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreTipo}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Vinculación con la Universidad: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{investigadorGrupo.nombreVinculacion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{investigadorGrupo.investigador.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+									<h:outputText style="font-weight:bold;"
+										value="Institución: "/>
+									</p:column>
+									<p:column>
+										<h:outputText
+									value="#{investigadorGrupo.nombreInstitucion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+									<h:outputText style="font-weight:bold;"
+										value="Área OCDE: "/>
+									</p:column>
+									<p:column>
+										<h:outputText
+									value="#{investigadorGrupo.nombreAreaOcde}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+									<h:outputText style="font-weight:bold;"
+										value="Sub-Área OCDE: "/>
+									</p:column>
+									<p:column>
+										<h:outputText
+									value="#{investigadorGrupo.nombreSubAreaOcde}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="font-weight:bold;">
+										<h:outputText value="Función: " />
+									</p:column>
+									<p:column>
+										<p:inputTextarea styleClass="textAreaGrupo"
+											value="#{investigadorGrupo.funcion}" rows="3" cols="65"
+											readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorIntegrantesGrupo.eliminarIntegranteExterno}"
+							value="Eliminar"
+							rendered="#{investigadorGrupo.tipo=='L'?false:true}" ajax="false">
+							<f:setPropertyActionListener value="#{investigadorGrupo}"
+								target="#{manejadorIntegrantesGrupo.integranteExternoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<div style="width: 100%; text-align: center;">
+					<br />
+					<p:commandButton
+						action="#{manejadorIntegrantesGrupo.irDatosBasicosGrupo}"
+						value="Anterior" ajax="false"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton
+						action="#{manejadorIntegrantesGrupo.guardarEdicionGrupo}"
+						value="Guardar y continuar después" update="@form" process="@form"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton
+						action="#{manejadorIntegrantesGrupo.guardarAvanzar}"
+						value="Guardar y avanzar" ajax="false" process="@form"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton action="#{manejadorIntegrantesGrupo.siguiente}"
+						value="Siguiente" ajax="false"
+						rendered="#{manejadorMenuFormularioGrupos.esConsulta
+						 and manejadorMenuFormularioGrupos.opcionLineas}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				</div>
+				<p:dialog
+					header="Histórico Integrantes de Grupo - ID: #{manejadorEdicionGrupo.grupoActual.id}"
+					widgetVar="dialogHistorico" modal="true" resizable="false"
+					width="800">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histIntegrante" var="historico"
+						value="#{manejadorIntegrantesGrupo.historicoIntegrantes}"
+						emptyMessage="No hay un histórico para este grupo"
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Documento de Identidad" />
+							</f:facet>
+							<h:outputText value="#{historico.documento}:" />
+							<br />
+							<h:outputText value="#{historico.integrante.id.documento}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.integrante.nombreCompleto}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo de Integrante" />
+							</f:facet>
+							<h:outputText
+								rendered="#{historico.tipoVinculacionGrupo != 'N/A'}"
+								value="#{historico.tipoVinculacionGrupo} - #{historico.tipo}" />
+							<h:outputText
+								rendered="#{historico.tipoVinculacionGrupo == 'N/A'}"
+								value="N/A" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Datos Adicionales" />
+							</f:facet>
+							<h:outputText
+								rendered="#{historico.tipoVinculacionGrupo == 'Externo' or historico.tipoVinculacionGrupo == 'N/A'}"
+								value="N/A" />
+							<h:outputText rendered="#{!empty historico.dependencia}"
+								style="font-weight: bold;" value="Facultad: " />
+							<h:outputText rendered="#{!empty historico.dependencia}"
+								value="#{historico.dependencia.nombre}" />
+							<ui:fragment rendered="#{!empty historico.dependencia}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.sede}"
+								style="font-weight: bold;" value="Sede: " />
+							<h:outputText rendered="#{!empty historico.sede}"
+								value="#{historico.sede.nombre}" />
+							<ui:fragment rendered="#{!empty historico.sede}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+								style="font-weight: bold;" value="Tipo de Vinculación a la UN: " />
+							<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+								value="#{historico.tipoVinculacion.nombre}" />
+							<ui:fragment rendered="#{!empty historico.tipoVinculacion}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+								style="font-weight: bold;" value="Dedicación: " />
+							<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+								value="#{historico.tipoDedicacion.nombre}" />
+							<ui:fragment rendered="#{!empty historico.tipoDedicacion}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.tipoFormacion}"
+								style="font-weight: bold;" value="Máximo nivel de estudios: " />
+							<h:outputText rendered="#{!empty historico.tipoFormacion}"
+								value="#{historico.tipoFormacion.nombre}" />
+							<ui:fragment rendered="#{!empty historico.tipoFormacion}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.planEstudios}"
+								style="font-weight: bold;" value="Programa Académico: " />
+							<h:outputText rendered="#{!empty historico.planEstudios}"
+								value="#{historico.planEstudios.nombre}" />
+							<ui:fragment rendered="#{!empty historico.planEstudios}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.semestreActual}"
+								style="font-weight: bold;" value="Semestre: " />
+							<h:outputText rendered="#{!empty historico.semestreActual}"
+								value="#{historico.semestreActual}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Ingreso" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaIngreso}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRetiro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+				</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

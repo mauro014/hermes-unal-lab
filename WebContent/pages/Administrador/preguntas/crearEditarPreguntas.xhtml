@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Crear / editar pregunta frecuente </t:div>
+			<t:div style="padding:15px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelConvocatoria" style="width:100%;">
+					<p:row>
+						<p:column style="width:18%;">
+							<h:outputText value="Clasificación:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="clasificacion"
+								value="#{manejadorCrearEditarPreguntas.pregunta.clasificacion.id}"
+								style="width:100%;" panelStyle="width: 500px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarPreguntas.listaClasificacionesActivasItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Etiqueta:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorCrearEditarPreguntas.pregunta.etiqueta}"
+								id="etiqueta" style="width:100%;" maxlength="500"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Pregunta:" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea style="width:100%;" rows="2" maxlength="1500"
+								value="#{manejadorCrearEditarPreguntas.pregunta.descripcion}"
+								id="textoPregunta" counter="counterPregunta"
+								counterTemplate="{0} caracteres restantes.">
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+						</p:column>
+						<p:column>
+							<h:outputText id="counterPregunta" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Respuesta:" />
+						</p:column>
+						<p:column>
+							<p:editor id="editor" widgetVar="editorWidget" value="#{manejadorCrearEditarPreguntas.pregunta.respuesta}" style="width:100%;"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Estado:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:120px;"
+								value="#{manejadorCrearEditarPreguntas.pregunta.estado}"
+								panelStyle="width: 120px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorCrearEditarPreguntas.estadoItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<br />
+							<p:commandButton
+								action="#{manejadorCrearEditarPreguntas.guardar}"
+								value="Guardar" icon="ui-icon-disk" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			<p:messages id="msgs" autoUpdate="true" showDetail="true"
+				closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

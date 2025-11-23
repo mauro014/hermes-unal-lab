@@ -1,0 +1,35 @@
+package co.edu.unal.hermes.vista.aval;
+
+import java.util.List;
+
+import co.edu.unal.hermes.modelo.Aval;
+import co.edu.unal.hermes.vista.ManejadorBase;
+
+public class ManejadorConsultaAvalVice extends ManejadorBase {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private List<Aval> listaAval;
+
+    public ManejadorConsultaAvalVice() {
+        listaAval = servicioGeneral.consultaAvalesVice();
+    }
+
+    public int getTamañoLista() {
+        if (listaAval != null) {
+            return listaAval.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public List<Aval> getListaAval() {
+        return listaAval;
+    }
+
+    public void setListaAval(List<Aval> listaAvales) {
+        this.listaAval = listaAvales;
+    }
+}

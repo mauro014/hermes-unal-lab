@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitudes Laboratorio</t:div>
+
+			<p:panel header="Solicitudes registradas">
+				<p:dataTable var="solicitud"
+					value="#{manejadorSolicitudLaboratorio.listaSolicitudes}"
+					emptyMessage="No existen solicitudes registradas."
+					id="dtSolicitudes" rows="10" paginator="true"
+					paginatorPosition="bottom" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} Solicitudes Pagina: {currentPage}/{totalPages})">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="id" />
+						</f:facet>
+						<h:outputText value="#{solicitud.id}" styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{solicitud.fecha}" styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{solicitud.tipoSolicitud.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Laboratorio" />
+						</f:facet>
+						<h:outputText value="#{solicitud.laboratorio.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText value="#{solicitud.estadoSolicitud.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Consultar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-zoomin"
+								action="#{manejadorSolicitudLaboratorio.consultarSolicitud}"
+								title="Consultar solicitud">
+								<f:setPropertyActionListener value="#{solicitud}"
+									target="#{manejadorSolicitudLaboratorio.solicitudSeleccionada}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Editar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-pencil" rendered="false"
+								action="#{manejadorSolicitudLaboratorio.editarLaboratorioCreacion}"
+								title="Editar solicitud">
+								<f:setPropertyActionListener value="#{solicitud}"
+									target="#{manejadorSolicitudLaboratorio.solicitudSeleccionada}" />
+							</p:commandButton>
+
+							<p:commandButton icon="ui-icon-pencil"
+								rendered="#{solicitud.estadoSolicitud.id eq 'ISL'}"
+								action="#{manejadorSolicitudLaboratorio.editarSolicitud}"
+								title="Editar solicitud">
+								<f:setPropertyActionListener value="#{solicitud}"
+									target="#{manejadorSolicitudLaboratorio.solicitudSeleccionada}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+
+				<p:spacer height="20" />
+				<center>
+					<p:commandButton
+						action="#{manejadorSolicitudLaboratorio.crearSolicitud}"
+						onclick="if(!confirm('Está seguro de hacer una nueva Solicitud de Laboratorio?.'))return false"
+						value="Nueva Solicitud" icon="ui-icon-circle-plus" />
+				</center>
+
+			</p:panel>
+
+			<p:messages id="messages" autoUpdate="true" closable="true"
+				redisplay="false" />
+
+			<p:spacer height="20" />
+			<center>
+				<p:commandButton action="#{manejadorSolicitudLaboratorio.salir}"
+					onclick="if(!confirm('Está seguro de salir?'))return false"
+					value="Inicio" icon="ui-icon-home" />
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

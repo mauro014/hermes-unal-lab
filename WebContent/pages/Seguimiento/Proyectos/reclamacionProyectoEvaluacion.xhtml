@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Aclaraciones y/o reclamaciones evaluación</t:div>
+			<p:panel style="margin-top: 10px; margin-bottom: 10px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left; width: 100%;" cellpadding="10">
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Código del proyecto: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorProyectosReclamacionEvaluacion.proyectoActual.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Nombre del proyecto: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorProyectosReclamacionEvaluacion.proyectoActual.nombre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width: 150px;">
+							<h:outputText value="Estado de la aclaración y/o reclamación: "
+								style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorProyectosReclamacionEvaluacion.estadoReclamacion}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:outputPanel
+				rendered="#{manejadorProyectosReclamacionEvaluacion.mostrarPanelReclamaciones}">
+				<p:panel header="Aclaración y/o reclamación realizada por el profesor">
+					<h:panelGrid id="pgRec" columns="3">
+						<h:outputText value="Descripción de la aclaración y/o reclamación: " />
+						<p:inputTextarea id="itDesRec"
+							readonly="#{manejadorProyectosReclamacionEvaluacion.esConsultaReclamacion}"
+							value="#{manejadorProyectosReclamacionEvaluacion.proyectoActual.reclamacionEvaluacion}"
+							rows="5" cols="60" autoResize="false" required="true"
+							requiredMessage="Por favor ingrese la descripción de la reclamación" />
+						<p:message for="itDesRec" />
+					</h:panelGrid>
+				</p:panel>
+				<center>
+					<h:panelGrid columns="1"
+						rendered="#{!manejadorProyectosReclamacionEvaluacion.esConsultaReclamacion}">
+						<p:commandButton value="Enviar aclaración y/o reclamación" id="botonGuardar"
+							actionListener="#{manejadorProyectosReclamacionEvaluacion.enviarReclamacion}"
+							onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"
+							update="@form" />
+					</h:panelGrid>
+				</center>
+			</p:outputPanel>
+			<p:outputPanel
+				rendered="#{manejadorProyectosReclamacionEvaluacion.mostrarRespuestaReclamacion}" style="margin-top: 10px;">
+				<p:panel header="Respuesta del coordinador">
+					<h:panelGrid id="pgRec" columns="2">
+						<h:outputText value="Estado de la aclaración y/o reclamación " />
+						<h:outputText
+							value="#{manejadorProyectosReclamacionEvaluacion.estadoReclamacion}" />
+
+						<h:outputText value="Comentarios del coordinador: " />
+						<p:inputTextarea id="comRec" readonly="true"
+							value="#{manejadorProyectosReclamacionEvaluacion.proyectoActual.respuestaReclamacionEvaluacion}"
+							rows="5" cols="60" autoResize="false" />
+					</h:panelGrid>
+				</p:panel>
+			</p:outputPanel>
+			<center>
+				<h:panelGrid columns="1" style="margin-top: 10px;">
+					<p:commandButton value="Regresar a la lista de proyectos"
+						action="#{manejadorProyectosReclamacionEvaluacion.atras}"
+						id="botonRegresarProyectos" styleClass="ui-priority-primary" />
+				</h:panelGrid>
+			</center>
+			<p:messages id="msgs" showDetail="true" autoUpdate="true"
+				closable="true" />
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+	   		 modal="true">
+	   		 <p:graphicImage value="/images/ajaxloading.gif" />
+	   					 Por favor espere...
+	   	 </p:dialog>
+	</ui:define>
+</ui:composition>
+

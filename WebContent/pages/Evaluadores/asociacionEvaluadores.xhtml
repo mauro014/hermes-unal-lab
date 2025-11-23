@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+ 		  
+<!-- 
+  <script language="javascript">
+    function pulldownChanged(){
+        document.getElementById("_idJsp4:content:botonGuardadConceptoMesaSeleccion").click();
+    }
+	</script>
+	         		   -->
+		  <h:panelGrid columns="1"
+		               cellpadding="10"
+   	                   cellspacing="10">
+		  
+		   <h:panelGroup>
+		      <h:panelGrid columns="2"
+		               cellpadding="5"
+   	                   cellspacing="5">
+   	            <h:outputText value="Título del Proyecto   : "/>
+	            <h:outputText value="#{manejadorAsociacionEvaluadores.proyectoActual.nombre}"/>       
+   	          </h:panelGrid>          
+		   </h:panelGroup>
+			   
+		   <h:panelGroup id="panelEvaluadores">
+		     
+		<!--    <center>		  
+		      <div title="Evaluadores del proyecto" style="text-align:right; ">
+		       <center>
+		        Evaluadores del proyecto
+		       </center>
+		      </div>
+		      <br /></center>
+		    -->
+		</h:panelGroup>
+		<h:panelGroup>
+
+	    <t:dataTable id="tablaProyectoE"
+	    				 var  ="proyectoEvaluador"
+   		                  value="#{manejadorAsociacionEvaluadores.listaProyectoEvaluador}"
+		                  cellpadding="1"
+   	                      cellspacing="15"
+   	                      align="center"
+   	                      border="1"   	                         	                      
+   	                      preserveDataModel="false"
+							binding="#{manejadorAsociacionEvaluadores.tablaProyectoEvaluador}"
+   	                      >
+   	                    		   			     		     	   
+		     <h:column>	
+		     		    
+		        <h:commandLink  action="#{manejadorAsociacionEvaluadores.asociarEvaluador}">  
+   	                <h:outputText value="#{proyectoEvaluador.evaluador.nombre1} #{proyectoEvaluador.evaluador.nombre2} #{proyectoEvaluador.evaluador.apellido1} #{proyectoEvaluador.evaluador.apellido2}"/>   	            	
+   	            </h:commandLink>
+
+		     </h:column>
+		     <h:column>
+		     	<h:commandButton action="#{manejadorAsociacionEvaluadores.reporte}" value="reporte" />
+		     </h:column>
+		     <h:column>
+		     	<h:commandButton action="#{manejadorAsociacionEvaluadores.asociarEvaluador}" value="Evaluar" image="../../imgplantilla/pngtitulos/cen_consultar_eval.png"/>
+		     </h:column>	
+
+		     <h:column>
+		     	<h:commandButton action="#{manejadorAsociacionEvaluadores.asociarEvaluadorEvaluar}" value="Evaluar" image="../../imgplantilla/pngtitulos/cen_evaluar.png"/>
+		     </h:column>	
+		     <h:column>
+				<f:facet name="header">
+                    <h:outputText value="Fecha Evaluacion"/>
+                </f:facet>
+		     	<h:outputText value="#{proyectoEvaluador.fecha}" />
+		     </h:column>
+		      <h:column>
+		      
+		       <f:facet name="header">
+                    <h:outputText value="Calificacion Final"/>
+                </f:facet>
+		     	<h:outputText value="#{proyectoEvaluador.calificacionFinal}" />
+		     </h:column>
+		     
+		     <h:column >
+		      
+		       <f:facet name="header">
+                    <h:outputText value="Activo"/>
+                </f:facet>
+		     	 <h:selectBooleanCheckbox value="#{proyectoEvaluador.elegible}"
+		     	  						immediate="true"
+			   							valueChangeListener="#{manejadorAsociacionEvaluadores.cambiarEstado}"
+			   							onchange="this.form.submit()"
+			   							onclick="submit();"
+			   							/>
+			 
+		     </h:column>
+		    </t:dataTable>
+		   </h:panelGroup>
+		   
+		   <h:panelGroup id="panelResumen">
+		    <center>		  
+		      <div title="Resumen de las calificaciones del proyecto" style="text-align:right; ">
+		       <center>
+		        Resumen de las calificaciones del proyecto
+		       </center>
+		      </div>
+		      <br /></center>
+		    
+		    <t:dataTable id="tablaCriterios"
+		    				 var  ="criterio"
+		                  value="#{manejadorAsociacionEvaluadores.listaCriterios}"
+		                  cellpadding="1"
+   	                      cellspacing="15"
+   	                      align="center"
+   	                      border="1"   	                      
+   	                      preserveDataModel="false">   	                         	    
+   	         <h:column>
+   	            <f:facet name="header">
+                    <h:outputText value="Criterio"/>
+                </f:facet>
+                <h:outputText value="#{criterio.nombre}" />
+   	         </h:column>
+   	         
+   	         <t:columns value="#{manejadorAsociacionEvaluadores.columnasEvaluadores}" var="column">
+                <f:facet name="header">
+                    <h:panelGroup>
+                        <h:outputText value="#{column} " />
+                    </h:panelGroup>
+                </f:facet>
+                <h:outputText value="#{manejadorAsociacionEvaluadores.columnValue}"/>
+            </t:columns>
+   	         
+   	        </t:dataTable>
+		 
+		   <center><br />
+            
+  	          </center><br />
+			  
+		   </h:panelGroup>
+   
+              	   <h:panelGroup>
+		    <s:fieldset legend="Concepto del comité de selección">
+		      <h:panelGrid columns="3" align="center" cellpadding="6" cellspacing="3">                     
+<!--layout="pageDirection" binding="#{manejadorAsociacionEvaluadores.menuConceptoMesaSeleccion}"  manejadorAsociacionEvaluadores.evaluacionMesaSeleccion.tipoFinanciacion.id"-->
+              <h:selectOneMenu onchange="submit()"              					
+                                value="#{manejadorAsociacionEvaluadores.estadoProyecto}">                                
+				<f:selectItems value="#{manejadorAsociacionEvaluadores.recomendaciones}"/>
+		      </h:selectOneMenu>
+		      <h:outputText/>
+		      <h:outputText/>	
+		          <h:commandButton id="botonGuardadConceptoMesaSeleccion"  action="#{manejadorAsociacionEvaluadores.guardarConceptoMesaSeleccion}"
+			   		value="Guardar Concepto"/>      	      
+              </h:panelGrid>
+
+		    </s:fieldset>
+		   </h:panelGroup>
+		  </h:panelGrid>
+		  <br />
+		  		  		  		  
+</h:form>
+</ui:define>
+</ui:composition>

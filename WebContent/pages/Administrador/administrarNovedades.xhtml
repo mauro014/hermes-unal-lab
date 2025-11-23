@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Novedades</t:div>
+
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelNovedades">
+					<t:div style="width: 100px;">
+						<h:outputText value="Clasificación:" />
+					</t:div>
+					<t:div>
+						<p:selectOneMenu style="width:540px;"
+							value="#{manejadorAdministrarNovedad.clasificacion}"
+							panelStyle="width: 520px;" filter="true"
+							filterMatchMode="contains">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{manejadorAdministrarNovedad.listaClasificacionesActivasItem}" />
+						</p:selectOneMenu>
+					</t:div>
+				</p:panelGrid>
+				<div
+					style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+					<p:commandButton value="Consultar novedades"
+						icon="ui-icon-search" update="@form" ajax="false"
+						actionListener="#{manejadorAdministrarNovedad.consultarNovedades}" />
+				</div>
+			</p:panel>
+			<p:messages id="msgs" autoUpdate="true" showDetail="true"
+				closable="true" />
+			<br />
+			<p:dataTable var="novedad"
+				value="#{manejadorAdministrarNovedad.listaNovedades}"
+				emptyMessage="No se encontraron novedades"
+				paginator="true" rows="20" paginatorPosition="bottom"
+				filteredValue="#{manejadorAdministrarNovedad.filteredNovedades}">
+				<f:facet name="header">Novedades</f:facet>
+				<p:column style="text-align: center; width: 5%;">
+					<f:facet name="header">
+						<h:outputText value="Visible?" />
+					</f:facet>
+					<p:graphicImage value="/images/check.png"
+						rendered="#{novedad.estado == 'A'}" style="width: 25px;" />
+					<p:graphicImage value="/images/cancel.png"
+						rendered="#{novedad.estado != 'A'}" style="width: 20px;" />
+				</p:column>
+				<p:column style="width: 60%;"
+					filterBy="#{novedad.etiqueta}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<h:outputText value="#{novedad.nombre}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+					</f:facet>
+					<h:outputText value="#{novedad.fechaNovedad}" />
+				</p:column>
+				<p:column style="text-align: center; width: 10%;" headerText="-">
+					<p:commandButton
+						action="#{manejadorAdministrarNovedad.editarNovedad}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{novedad}"
+							target="#{manejadorAdministrarNovedad.novedadSeleccionada}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontradas #{manejadorAdministrarNovedad.tamanoLista} novedades</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

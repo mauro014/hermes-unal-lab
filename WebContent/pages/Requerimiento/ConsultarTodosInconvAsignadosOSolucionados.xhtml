@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Inconvenientes asignados o atendidos</t:div>
+
+		<h:form id="content">
+
+			<p:messages id="msgs" />
+
+			<br> </br>
+
+			<p:dataTable var="inconvenienteAsignadoOsolucionado"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{ManejadorConsultarInconvenienteAdm.listaTodosAsignadosOSolucionados}"
+				paginator="true" paginatorposition="bottom" rows="20">
+
+				<f:facet name="header">  
+	            	Inconvenientes asignados o atendidos
+	        		</f:facet>
+
+
+				<p:column headerText="Número" style="text-align: center;"
+					sortBy="#{inconvenienteAsignadoOsolucionado.id}"
+					filterBy="#{inconvenienteAsignadoOsolucionado.id}"
+					filterStyle="width: 50px;">
+					<h:outputText value="#{inconvenienteAsignadoOsolucionado.id}" />
+				</p:column>
+
+				<p:column headerText="Prioridad" rendered="false"
+					sortBy="#{inconvenienteAsignadoOsolucionado.prioridad}"
+					filterBy="#{inconvenienteAsignadoOsolucionado.prioridad}"
+					filterOptions="#{ManejadorConsultarInconvenienteAdm.prioridadItem}"
+					filterMatchMode="contains" style="width:10 text-align: center;">
+					<center>
+						<h:outputText
+							value="#{inconvenienteAsignadoOsolucionado.prioridad}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Módulo"
+					sortBy="#{inconvenienteAsignadoOsolucionado.moduloVista}"
+					filterBy="#{inconvenienteAsignadoOsolucionado.moduloVista}"
+					filterOptions="#{ManejadorConsultarInconvenienteAdm.moduloItem}"
+					filterMatchMode="contains" style="text-align: center;">
+					<h:outputText
+						value="#{inconvenienteAsignadoOsolucionado.moduloVista}" />
+				</p:column>
+
+				<p:column headerText="Ingeniero"
+					sortBy="#{inconvenienteAsignadoOsolucionado.ingenieroVista}"
+					filterBy="#{inconvenienteAsignadoOsolucionado.ingenieroVista}"
+					filterOptions="#{ManejadorConsultarInconvenienteAdm.ingsItems}"
+					filterMatchMode="contains" style="text-align: center;">
+					<center>
+						<h:outputText
+							value="#{inconvenienteAsignadoOsolucionado.ingenieroVista}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Estado"
+					sortBy="#{inconvenienteAsignadoOsolucionado.estSelRequerimiento}"
+					filterBy="#{inconvenienteAsignadoOsolucionado.estSelRequerimiento}"
+					filterOptions="#{ManejadorConsultarInconvenienteAdm.estadosRequerimientos}"
+					filterMatchMode="contains" style="text-align: center;">
+					<center>
+						<h:outputText
+							value="#{inconvenienteAsignadoOsolucionado.estSelRequerimiento}" />
+					</center>
+				</p:column>
+
+				<p:column sortBy="#{inconvenienteAsignadoOsolucionado.fechaEntrega}">
+					<f:facet name="header">Fecha<br />de<br />Solución</f:facet>
+					<h:outputText
+						value="#{inconvenienteAsignadoOsolucionado.fechaEntrega}" />
+				</p:column>
+
+				<p:column headerText="Acciones" style="text-align: center;"
+					rendered="#{!ManejadorConsultarInconvenienteAdm.esConsultaRequerimientos}">
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.editarInconvenienteCoord}"
+						icon="ui-icon-pencil"
+						rendered="#{inconvenienteAsignadoOsolucionado.estSelRequerimiento ne 'Solucionado'}"
+						ajax="false">
+						<f:setPropertyActionListener
+							value="#{inconvenienteAsignadoOsolucionado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.consultarInconvenienteCoord}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:setPropertyActionListener
+							value="#{inconvenienteAsignadoOsolucionado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.cargarHistorico}"
+						title="Histórico" icon="ui-icon-clock"
+						oncomplete="dialogHistorico.show();" update="@form">
+						<f:setPropertyActionListener
+							value="#{inconvenienteAsignadoOsolucionado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<h:outputText
+						value="Se encontraron #{ManejadorConsultarInconvenienteAdm.numeroSolucionados} solicitudes asignadas o atendidas" />
+				</f:facet>
+			</p:dataTable>
+
+			<br> </br>
+			<br> </br>
+			<p:dialog
+				header="Histórico Inconveniente - ID: #{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado.id}"
+				widgetVar="dialogHistorico" modal="true" resizable="false"
+				width="600">
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="histRequerimiento" var="historico"
+					value="#{ManejadorConsultarInconvenienteAdm.historicoRequerimiento}"
+					emptyMessage="No hay un histórico para este inconveniente."
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaCambio}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios al Usuario" />
+						</f:facet>
+						<h:outputText value="#{historico.comentariosUsuario}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

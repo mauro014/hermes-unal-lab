@@ -1,0 +1,516 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+	<ui:define name="title">FORMULARIO DE INSCRIPCIÓN - RECONOCIMIENTO AL ESPÍRITU INNOVADOR UN 2017</ui:define>
+
+	<ui:define name="content">
+
+		<img
+			src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+			style="padding-bottom: 10px;" />
+
+		<h:form>
+
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-informacion-pagina-buscador">
+					<h:outputText value="RECONOCIMIENTO AL ESPÍRITU INNOVADOR UN 2017" />
+				</t:div>
+				<t:div styleClass="contenedor-informacion">
+
+					<h:panelGrid columns="1" style="width: 100%">
+
+						<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+
+						<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+							closable="true" showSummary="true" showDetail="true" />
+
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="1" style="width: 100%; align: center;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/her-ext-ecp/2017-11-07_hermes_convocatorias_espiritu-innovador-2017.png"
+							style="padding-bottom: 5px;" height="181" width="678"/>
+					</h:panelGrid>
+
+					<br />
+
+					<p:panel id="panelEnlace"
+						header="Términos de referencia">
+						<br />
+						<t:div styleClass="informacion-subtexto">
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/2017-conv-reconocimiento-espiritu-innovador.pdf"
+								target="_blank">
+								<h:outputText value="[+] Términos de referencia" />
+							</h:outputLink>
+						</t:div>
+					</p:panel>
+					<br />
+
+					<!-- 1. PANEL INFORMACION DOCUMENTO DE IDENTIFICACION -->
+					<p:panel header="Documento de identificación" id="panel1">
+
+						<h:panelGrid columns="3" align="center" cellspacing="5">
+
+							<h:outputText value="Tipo de Documento" for="tipo_doc" />
+							<p:selectOneMenu value="#{ManejadorConcursoInnovacion.tipo_doc}"
+								effect="fade" id="tipo_doc">
+								<f:selectItems
+									value="#{ManejadorConcursoInnovacion.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Número de Documento" />
+							<p:inputText id="documento"
+								value="#{ManejadorConcursoInnovacion.documento}" maxlength="25"
+								required="true" requiredMessage="Campo obligatorio"
+								validateMessage="Solo puede tener números"
+								readonly="#{ManejadorConcursoInnovacion.habilita_doc}"
+								converter="#{Number}">
+								<f:validateLongRange minimum="0" maximum="999999999999" />
+								<p:tooltip for="documento" showEvent="focus" hideEvent="blur"
+									showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="Ingrese su número de documento para realizar la preinscripción. 
+	                									 Si ya hizo este procedimiento, puede actualizar los datos." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:inputText>
+							<p:message for="documento" />
+
+							<h:outputText value="" />
+							<h:outputText value="" />
+							<h:outputText value="" />
+
+						</h:panelGrid>
+
+						<br />
+
+						<h:panelGrid columns="2" align="center">
+
+							<p:commandButton value="Continuar" id="continuar"
+								action="#{ManejadorConcursoInnovacion.buscarPreinscripcion}"
+								icon="ui-icon-triangle-1-e" styleClass="ui-priority-primary"
+								update="@form" onstart="dlg.show()" oncomplete="dlg.hide()" />
+
+							<p:commandButton id="volver" value="Salir"
+								styleClass="ui-priority-primary"
+								action="#{ManejadorConcursoInnovacion.volver}" immediate="true" />
+
+						</h:panelGrid>
+
+					</p:panel>
+					<br />
+
+					<p:panel id="panelWizard" columns="1"
+						rendered="#{ManejadorConcursoInnovacion.ins_act != 'N'}">
+						<!-- 2. PANEL INFORMACION GENERAL -->
+
+						<p:panel header="Información del postulante" id="panel2"
+							rendered="#{ManejadorConcursoInnovacion.ins_act != 'N'}">
+
+							<h:panelGrid columns="3" id="panelInfoInicial" cellspacing="8">
+
+								<h:outputText value="Primer nombre" for="primer_nombre" />
+								<p:inputText id="primer_nombre"
+									value="#{ManejadorConcursoInnovacion.primer_nombre}"
+									maxlength="80" required="true"
+									requiredMessage="El nombre es un campo obligatorio"
+									readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+									size="30" />
+								<p:message for="primer_nombre" styleClass="texto" />
+
+								<h:outputText value="Segundo nombre" for="segundo_nombre" />
+								<p:inputText id="segundo_nombre"
+									value="#{ManejadorConcursoInnovacion.segundo_nombre}"
+									maxlength="80"
+									readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+									size="30" />
+								<p:message for="segundo_nombre" styleClass="texto" />
+
+								<h:outputText value="Primer apellido" for="primer_apellido" />
+								<p:inputText id="primer_apellido"
+									value="#{ManejadorConcursoInnovacion.primer_apellido}"
+									maxlength="50" required="true"
+									requiredMessage="El primer apellido es un campo obligatorio"
+									readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+									size="30" />
+								<p:message for="primer_apellido" />
+
+								<h:outputText value="Segundo apellido" for="segundo_apellido" />
+								<p:inputText id="segundo_apellido"
+									value="#{ManejadorConcursoInnovacion.segundo_apellido}"
+									maxlength="50" required="true"
+									requiredMessage="El segundo apellido es un campo obligaorio"
+									readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+									size="30" />
+								<p:message for="segundo_apellido" />
+
+								<h:outputText value="Correo electrónico"
+									for="correo_electronico" />
+								<p:inputText id="correo_electronico"
+									value="#{ManejadorConcursoInnovacion.correo_electronico}"
+									maxlength="80" required="true"
+									requiredMessage="El correo es un campo obligatorio"
+									validatorMessage="Correo inválido" size="30">
+									<f:validateRegex
+										pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+								</p:inputText>
+								<p:message for="correo_electronico" />
+
+								<h:outputText value="Teléfono de contacto" for="tel_movil" />
+								<p:inputText id="tel_movil"
+									value="#{ManejadorConcursoInnovacion.tel_fijo}" maxlength="20"
+									required="true"
+									requiredMessage="El teléfono de contacto es un campo obligatorio"
+									validateMessage="El teléfono de contacto solo puede tener números">
+									<f:validateLength minimum="7" />
+								</p:inputText>
+								<p:message for="tel_movil" />
+
+
+
+
+								<h:outputText value="Postulación propia" for="tel_movil" />
+								<p:selectOneRadio id="opcionesPostulacion"
+									value="#{ManejadorConcursoInnovacion.opcionesPostulacion}"
+									required="true" requiredMessage="Postulación propia">
+									<f:selectItem itemLabel="Si" itemValue="Si" />
+									<f:selectItem itemLabel="No" itemValue="No" />
+									<p:ajax event="change"
+										update="informacionParticipante, pgBusPar, OP_Fac_Rol"
+										listener="#{ManejadorConcursoInnovacion.eventoPostulacionPropia}" />
+								</p:selectOneRadio>
+								<p:message for="opcionesPostulacion" />
+
+							</h:panelGrid>
+
+							<p:outputPanel id="OP_Fac_Rol">
+
+								<h:panelGrid columns="3" id="panelInfoPostFac" cellspacing="8"
+									rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}">
+									<h:outputText value="Facultad"
+										rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}" />
+									<h:outputText
+										value="#{ManejadorConcursoInnovacion.facultadPostulante}"
+										rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}" />
+									<h:outputText value=""
+										rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}" />
+
+									<h:outputText value="Rol"
+										rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}" />
+
+									<p:selectOneMenu
+										value="#{ManejadorConcursoInnovacion.rolPostulante}"
+										rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}">
+										<f:selectItem itemLabel="Seleccione uno" itemValue="" />
+										<f:selectItems
+											value="#{ManejadorConcursoInnovacion.listaRolParticipante}" />
+									</p:selectOneMenu>
+									<h:outputText value=""
+										rendered="#{ManejadorConcursoInnovacion.esPostulacionPropia}" />
+								</h:panelGrid>
+
+							</p:outputPanel>
+
+
+						</p:panel>
+
+						<br />
+
+						<p:panel id="informacionParticipante"
+							header="Información del participante">
+
+							<h:panelGrid id="pgBusPar" columns="3" align="center"
+								cellspacing="5"
+								rendered="#{!ManejadorConcursoInnovacion.esPostulacionPropia}">
+
+								<h:outputText value="Tipo de Documento" for="tipo_doc_par" />
+								<p:selectOneMenu
+									value="#{ManejadorConcursoInnovacion.tipo_doc_par}"
+									effect="fade" id="tipo_doc_par">
+									<f:selectItems
+										value="#{ManejadorConcursoInnovacion.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+								<h:outputText value="" />
+
+								<h:outputText value="Número de documento" />
+								<p:inputText id="documento_par"
+									value="#{ManejadorConcursoInnovacion.documento_par}"
+									maxlength="25" required="true"
+									requiredMessage="Campo obligatorio"
+									validateMessage="Solo puede tener números"
+									converter="#{Number}">
+									<f:validateLongRange minimum="0" maximum="999999999999" />
+								</p:inputText>
+								<p:message for="documento_par" />
+
+								<h:outputText value="" />
+								<h:outputText value="" />
+								<h:outputText value="" />
+
+							</h:panelGrid>
+
+							<h:panelGrid id="btBuscPar" columns="1" align="center"
+								rendered="#{!ManejadorConcursoInnovacion.esPostulacionPropia}">
+
+								<p:commandButton value="Buscar participante" id="buscarPar"
+									action="#{ManejadorConcursoInnovacion.buscarParticipante}"
+									update="OP_Fac_Par, panelInfoParticipante, @form"
+									icon="ui-icon-triangle-1-e" styleClass="ui-priority-primary" />
+
+							</h:panelGrid>
+
+
+							<br />
+
+
+							<p:outputPanel id="OP_Fac_Par">
+								<h:panelGrid columns="3" id="panelInfoParticipante"
+									cellspacing="8"
+									rendered="#{!ManejadorConcursoInnovacion.esPostulacionPropia}">
+
+									<h:outputText value="Primer nombre" for="primer_nombre_par" />
+									<p:inputText id="primer_nombre_par"
+										value="#{ManejadorConcursoInnovacion.primer_nombre_par}"
+										maxlength="80"
+										requiredMessage="El nombre es un campo obligatorio"
+										readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+										size="30" />
+									<p:message for="primer_nombre_par" styleClass="texto" />
+
+									<h:outputText value="Segundo nombre" for="segundo_nombre_par" />
+									<p:inputText id="segundo_nombre_par"
+										value="#{ManejadorConcursoInnovacion.segundo_nombre_par}"
+										maxlength="80"
+										readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+										size="30" />
+									<p:message for="segundo_nombre_par" styleClass="texto" />
+
+									<h:outputText value="Primer apellido" for="primer_apellido_par" />
+									<p:inputText id="primer_apellido_par"
+										value="#{ManejadorConcursoInnovacion.primer_apellido_par}"
+										maxlength="50"
+										requiredMessage="El primer apellido es un campo obligatorio"
+										readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+										size="30" />
+									<p:message for="primer_apellido_par" />
+
+									<h:outputText value="Segundo apellido"
+										for="segundo_apellido_par" />
+									<p:inputText id="segundo_apellido_par"
+										value="#{ManejadorConcursoInnovacion.segundo_apellido_par}"
+										maxlength="50"
+										requiredMessage="El segundo apellido es un campo obligaorio"
+										readonly="#{ManejadorConcursoInnovacion.ins_act == 'A'}"
+										size="30" />
+									<p:message for="segundo_apellido_par" />
+
+									<h:outputText value="Correo electrónico"
+										for="correo_electronico_par" />
+									<p:inputText id="correo_electronico_par"
+										value="#{ManejadorConcursoInnovacion.correo_electronico_par}"
+										maxlength="80"
+										requiredMessage="El correo es un campo obligatorio"
+										validatorMessage="Correo inválido" size="30">
+										<f:validateRegex
+											pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+									</p:inputText>
+									<p:message for="correo_electronico_par" />
+
+									<h:outputText value="Teléfono de contacto" for="tel_movil_par" />
+									<p:inputText id="tel_movil_par"
+										value="#{ManejadorConcursoInnovacion.tel_movil_par}"
+										maxlength="20"
+										validateMessage="El teléfono de contacto solo puede tener números">
+										<f:validateLength minimum="7" />
+									</p:inputText>
+									<p:message for="tel_movil_par" />
+
+									<h:outputText value="Facultad" />
+									<h:outputText
+										value="#{ManejadorConcursoInnovacion.facultadParticipante}" />
+									<h:outputText value="" />
+
+									<h:outputText value="Rol" />
+									<p:selectOneMenu
+										value="#{ManejadorConcursoInnovacion.rolParticipante}">
+										<f:selectItem itemLabel="Seleccione uno" itemValue="" />
+										<f:selectItems
+											value="#{ManejadorConcursoInnovacion.listaRolParticipante}" />
+									</p:selectOneMenu>
+									<h:outputText value="" />
+
+								</h:panelGrid>
+
+							</p:outputPanel>
+
+							<h:panelGrid columns="1" id="panelInfoParticipante"
+								cellspacing="8">
+								<h:outputText
+									value="1. ¿Qué actividades innovadoras ha realizado? (máximo 3.000 caracteres). "></h:outputText>
+								<p:inputTextarea rows="10" cols="70" autoResize="false"
+									counter="counterMerito" id="merito"
+									counterTemplate="{0} caracteres restantes." maxlength="3000"
+									value="#{ManejadorConcursoInnovacion.meritoParticipante}" />
+								<h:outputText id="counterMerito" />
+
+								<h:outputText
+									value="2. ¿Cuál ha sido la motivación para emprender dichas actividades? (máximo 3.000 caracteres). "></h:outputText>
+								<p:inputTextarea rows="10" cols="70" autoResize="false"
+									counter="counterIdea" id="idea"
+									counterTemplate="{0} caracteres restantes." maxlength="3000"
+									value="#{ManejadorConcursoInnovacion.ideaParticipante}" />
+								<h:outputText id="counterIdea" />
+
+								<h:outputText
+									value="3. De las actividades innovadoras mencionadas en el numeral 1, describa en detalle la que ha tenido mayor impacto (máximo 3.000 caracteres). "></h:outputText>
+								<p:inputTextarea rows="10" cols="70" autoResize="false"
+									counter="counterDescripcion" id="descripcion"
+									counterTemplate="{0} caracteres restantes." maxlength="3000"
+									value="#{ManejadorConcursoInnovacion.descripcionIdea}" />
+								<h:outputText id="counterDescripcion" />
+
+
+							</h:panelGrid>
+
+
+						</p:panel>
+
+						<br />
+
+						<p:panel id="archivosSoporte" header="Anexar documentación">
+							<p align="justify">
+							<ul>
+								<li>Historial del desempeño innovador a través de artículos
+									(<em>papers</em>), publicaciones, reconocimientos, noticias,
+									etc. (opcional)
+								</li>
+								<li>Hoja de vida del participante</li>
+							</ul>
+							</p>
+
+
+
+
+
+							<center>
+								<p:fileUpload style="width:50%"
+									fileUploadListener="#{ManejadorConcursoInnovacion.subirArchivos}"
+									mode="advanced" auto="true" update="tablaArchivo"
+									label="Seleccionar archivo" />
+
+								<br />
+								<p:dataTable style="width:70%"
+									value="#{ManejadorConcursoInnovacion.listaArchivos}"
+									var="archivo" emptyMessage="No hay archivos asociados"
+									id="tablaArchivo">
+
+									<p:column headerText="Documentos adjuntos" style="width:50%">
+										<h:outputText value="#{archivo.nombreArchivo}" />
+									</p:column>
+
+									<p:column style="width:10%">
+										<center>
+											<p:commandButton id="selectButton" update="tablaArchivo"
+												icon="ui-icon-trash"
+												action="#{ManejadorConcursoInnovacion.eliminarArchivo}"
+												title="Eliminar Archivo">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{ManejadorConcursoInnovacion.archivoPre}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+
+
+								</p:dataTable>
+							</center>
+						</p:panel>
+
+						<br />
+						<p:panel id="aceptarTerminos" header="Aceptación de Términos">
+							<p align="justify">
+								<b>Acepto los términos y condiciones establecidos para el
+									Reconocimiento.</b>
+							</p>
+
+							<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+								align="center">
+
+								<p:selectOneRadio id="opcionesTerminos"
+									value="#{ManejadorConcursoInnovacion.opcionesTerminos}">
+									<f:selectItem itemLabel="Si" itemValue="Si" />
+									<f:selectItem itemLabel="No" itemValue="No" />
+									<p:ajax event="change" update="panelGuardar"
+										listener="#{ManejadorConcursoInnovacion.aceptarTerminos}" />
+								</p:selectOneRadio>
+
+							</h:panelGrid>
+
+							<br />
+							<h:panelGrid id="panelGuardar" columns="3" align="center">
+								<p:commandButton value="Guardar" id="guardar"
+									rendered="#{ManejadorConcursoInnovacion.mostrarBotonGuardar}"
+									onstart="dlg.show()" oncomplete="dlg.hide()"
+									actionListener="#{ManejadorConcursoInnovacion.guardarMatriculaCPR}"
+									icon="ui-icon-check" styleClass="ui-priority-primary"
+									update="@form"
+									disabled="#{ManejadorConcursoInnovacion.habilita_guardar}" />
+
+							</h:panelGrid>
+
+
+						</p:panel>
+
+
+
+					</p:panel>
+
+
+
+					<p:dialog widgetVar="dlg" resizable="false" closable="false"
+						modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor, espere...
+					</p:dialog>
+
+				</t:div>
+				<t:div styleClass="final-contenedor-informacion" />
+			</t:div>
+
+		</h:form>
+
+		<t:div styleClass="contenido-menu">
+			<t:div styleClass="menu-superior">
+				<t:div styleClass="cabezote-derecho-menu">
+					<h:outputText value="Acerca del curso" />
+				</t:div>
+				<t:div styleClass="menu">
+
+					<ul>
+
+						<li><h:form>
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/principal/Principal.xhtml"
+									onclick="submit()">
+									<h:outputText value="Salir" />
+								</h:outputLink>
+							</h:form></li>
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+
+
+	</ui:define>
+</ui:composition>

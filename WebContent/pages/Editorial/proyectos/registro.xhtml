@@ -1,0 +1,1599 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Nuevo Proyecto Editorial</t:div>
+				<p:tabView style="width:100%;" id="tblMain">
+					<p:tab title="Solicitante">
+						<p:panelGrid style="width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column colspan="2">
+									<p:messages id="msgsForm1" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width:30%; text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Tipo de usuario (autor o editor del libro):" />
+								</p:column>
+								<p:column style="width:70%;">
+									<p:selectOneMenu style="width:100%;" panelStyle="width: 150px;"
+										value="#{ManejadorEditorialProyectosRegistro.tipoUsuario}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.tipoUsuarioItem}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.cargarInformacionSolicitante}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" style="text-align: center;">
+									<h:outputText escape="false"
+										style="font-weight: bold; color: #FF3300;"
+										value="Si en la lista no se encuentra el tipo de usuario que requiere agregar por favor enviar correo a &lt;a href='hermes@unal.edu.co'&gt;hermes@unal.edu.co&lt;/a&gt; con el dato del tipo de usuario para revisar y agregar a la lista." />
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{not empty ManejadorEditorialProyectosRegistro.tipoUsuario}">
+								<p:column colspan="2">
+									<p:fieldset
+										legend="Información del autor/responsable de la obra">
+										<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+											id="pnlAutor" style="width:100%;">
+											<p:row>
+												<p:column style="width:30%; text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Tipo de Documento:" />
+												</p:column>
+												<p:column style="width:70%;">
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.id.tipoDocumento}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.tipoDocumentoItem}" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.cargarInformacionSolicitante}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Número de Documento:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="25"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.id.documento}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.cargarInformacionSolicitante}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Expedido en (país):" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;" filter="true" filterMatchMode="contains"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.ciudadExpedicion.departamento.region.pais.id}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.paisesItem}" />
+														<p:ajax update="pnlAutor" process="pnlAutor"
+															listener="#{ManejadorEditorialProyectosRegistro.revisarPais}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row
+												rendered="#{ManejadorEditorialProyectosRegistro.solicitante.ciudadExpedicion.departamento.region.pais.id eq 'CO'}">
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Departamento de Expedición:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;" id="selDepartamentoExpedicion"
+														filter="true" filterMatchMode="contains"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.ciudadExpedicion.departamento.id}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.departamentosItem}" />
+														<p:ajax update="selCiudadExpedicion"
+															process="selCiudadExpedicion"
+															listener="#{ManejadorEditorialProyectosRegistro.cambiarDepartamento}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Ciudad de Expedición:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;" id="selCiudadExpedicion"
+														filter="true" filterMatchMode="contains"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.ciudadExpedicion.id}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.ciudadesItem}" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Primer Nombre:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="30"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.nombre1}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Segundo Nombre:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="20"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.nombre2}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Primer Apellido:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="30"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.apellido1}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Segundo Apellido:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="20"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.apellido2}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Fecha Nacimiento:" />
+												</p:column>
+												<p:column>
+													<p:calendar locale="es" pattern="dd/MM/yyyy"
+														navigator="true" styleClass="dateTimeField"
+														maxdate="#{ManejadorEditorialProyectosRegistro.today}"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.fechaNacimiento}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:calendar>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Teléfono:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="50"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.telefono}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;" value="* E-mail:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="200"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.email}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Dirección:" />
+												</p:column>
+												<p:column>
+													<p:inputText style="width: 100%;" maxlength="150"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.direccion}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<p:ajax event="blur" update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Departamento Domicilio:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;" id="selDepartamentoDomicilio"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.ciudadDomicilio.departamento.id}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.departamentosItem2}" />
+														<p:ajax update="selCiudadDomicilio"
+															process="selCiudadDomicilio"
+															listener="#{ManejadorEditorialProyectosRegistro.cambiarDepartamento2}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Ciudad Domicilio:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;" id="selCiudadDomicilio"
+														value="#{ManejadorEditorialProyectosRegistro.solicitante.ciudadDomicilio.id}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.ciudadesItem2}" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;" value="Sede:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;"
+														value="#{ManejadorEditorialProyectosRegistro.sedeSolicitante}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.sedesItem}" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.cambiarSede}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Facultad:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;"
+														value="#{ManejadorEditorialProyectosRegistro.facultadSolicitante}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.usuarioExterno || not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.facultadesItem}" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="* Rol Editorial:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;"
+														value="#{ManejadorEditorialProyectosRegistro.rolEditorial}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.rolEditorialItem}" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario1Automatico}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row
+												rendered="#{ManejadorEditorialProyectosRegistro.bloquearFormulario2 &amp;&amp; ManejadorEditorialProyectosRegistro.edicion}">
+												<p:column colspan="2" style="text-align: center;">
+													<p:commandButton icon="ui-icon-check"
+														action="#{ManejadorEditorialProyectosRegistro.validarFormulario1Manual}"
+														value="Guardar" update="@form" process="@form" />
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:messages id="msgsForm1" closable="true" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Información General"
+						rendered="#{not ManejadorEditorialProyectosRegistro.bloquearFormulario2}">
+						<p:panelGrid style="width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column colspan="2">
+									<p:messages id="msgsForm2" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 50%; text-align:right;">
+									<h:outputText style="font-weight: bold;" value="ID Proyecto:" />
+								</p:column>
+								<p:column style="width: 50%;">
+									<h:outputText
+										value="#{ManejadorEditorialProyectosRegistro.registro.id}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Título del Proyecto:" />
+								</p:column>
+								<p:column>
+									<p:inputText style="width: 100%;" maxlength="2000"
+										value="#{ManejadorEditorialProyectosRegistro.registro.nombre}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<p:ajax event="blur" update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;" value="Subtítulo:" />
+								</p:column>
+								<p:column>
+									<p:inputText style="width: 100%;" maxlength="1100"
+										value="#{ManejadorEditorialProyectosRegistro.registro.subTituloObraCompletaISBN}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<p:ajax event="blur" update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputLink
+										value="#{ManejadorEditorialProyectosRegistro.linkClasificacionDEWEY}"
+										target="_blank">
+										<h:graphicImage id="imageCD" alt="jsf-sun"
+											url="/images/iconpdf.png" />
+									</h:outputLink>
+									<p:tooltip for="imageCD"
+										value="Descargar pdf con la clasificación decimal DEWEY"
+										showEffect="fade" hideEffect="fade" />
+									<h:outputText style="font-weight: bold;"
+										value="* Tema del Proyecto DEWEY:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="width:100%;" panelStyle="width: 400px;"
+										value="#{ManejadorEditorialProyectosRegistro.registro.materiaISBN}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										filter="true" filterMatchMode="contains">
+										<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaTemaProyecto}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right; vertical-align: top;">
+									<h:outputText style="font-weight: bold;"
+										value="* Clasificación THEMA:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.clasificacionThemaISBNNivel1}"
+										id="claThemaN1" style="width:100%" filter="true"
+										filterMatchMode="contains" effect="fade"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0" itemLabel="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaClasificacionTHEMA_N1}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.cambiarClaThemaN1}" />
+									</p:selectOneMenu>
+
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.clasificacionThemaISBNNivel2}"
+										id="claThemaN2" style="width:100%" filter="true"
+										filterMatchMode="contains" effect="fade"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0" itemLabel="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaClasificacionTHEMA_N2}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.cambiarClaThemaN2}" />
+									</p:selectOneMenu>
+
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.clasificacionThemaISBNNivel3}"
+										id="claThemaN3" style="width:100%" filter="true"
+										filterMatchMode="contains" effect="fade"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0" itemLabel="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaClasificacionTHEMA_N3}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.cambiarClaThemaN3}" />
+									</p:selectOneMenu>
+
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.clasificacionThemaISBNNivel4}"
+										id="claThemaN4" style="width:100%" filter="true"
+										filterMatchMode="contains" effect="fade"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0" itemLabel="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaClasificacionTHEMA_N4}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.cambiarClaThemaN4}" />
+									</p:selectOneMenu>
+
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.clasificacionThemaISBNNivel5}"
+										id="claThemaN5" style="width:100%" filter="true"
+										filterMatchMode="contains" effect="fade"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0" itemLabel="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaClasificacionTHEMA_N5}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.cambiarClaThemaN5}" />
+									</p:selectOneMenu>
+
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.clasificacionThemaISBNNivel6}"
+										id="claThemaN6" style="width:100%" filter="true"
+										filterMatchMode="contains" effect="fade"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0" itemLabel="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaClasificacionTHEMA_N6}" />
+									</p:selectOneMenu>
+
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Extensión (Número de caracteres incluidos espacios):" />
+								</p:column>
+								<p:column>
+									<p:inputText style="width: 100%;"
+										value="#{ManejadorEditorialProyectosRegistro.registro.numPaginasISBN}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										converter="javax.faces.Long"
+										converterMessage="La extensión solo debe tener números.">
+										<p:ajax event="blur" update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Abstract (Resumen):" />
+								</p:column>
+								<p:column>
+									<p:inputTextarea style="width: 100%;" rows="3"
+										counter="outResumen" maxlength="1200"
+										value="#{ManejadorEditorialProyectosRegistro.registro.resumen}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										counterTemplate="{0} caracteres restantes." autoResize="false">
+										<p:ajax event="blur" update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:inputTextarea>
+									<h:outputText id="outResumen" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Del proyecto editorial registrado. ¿Solicitará Sello Editorial de la Universidad Nacional de Colombia?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.tieneSelloDigitalISBN}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="SI" />
+										<f:selectItem itemLabel="No" itemValue="NO" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.registro.tieneSelloDigitalISBN eq 'SI'}">
+								<p:column colspan="2" style="text-align: center;">
+									<h:outputText escape="false" style="color: #FF3300;"
+										value="&lt;b&gt;Nota:&lt;/b&gt; Esto corresponde a su interés de solicitarlo y no garantiza que tendrá sello editorial. En caso de que su respuesta sea sí, recuerde que el Comité del correspondiente centro editorial o la dependencia que haga sus veces solicitará a la Editorial de la Universidad Nacional de Colombia, el aval uso del Sello Editorial de la Universidad Nacional de Colombia y para esto debe cumplir una serie de requisitos establecidos para tener el sello editorial." />
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Tipo de producto académico para el proyecto Editorial:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.tipoPublicacion}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem
+											itemLabel="Resultado de investigación (MinCiencias)"
+											itemValue="Inv" />
+										<f:selectItem itemLabel="Resultado Divulgación"
+											itemValue="Div" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" style="text-align: center;">
+									<h:outputText escape="false"
+										style="font-weight: bold; color: #FF3300;"
+										value="Para que la publicación sea reconocida como producto resultado de investigación por MinCiencias, ésta debe ser evaluada en modalidad doble ciego por pares externos a la Universidad, estos pueden ser, o no, integrantes de la lista cerrada de MinCiencias." />
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿Va a postular el proyecto editorial al Comité de Puntaje de la Universidad Nacional de Colombia?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.comitePuntaje}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.comitePuntaje}">
+								<p:column colspan="2" style="text-align: center;">
+									<h:outputText escape="false"
+										style="font-weight: bold; color: #FF3300;"
+										value="El comité de Puntaje solo tendrá en cuenta aquellas publicaciones que han sido evaluadas por pares Externos de la Lista cerrada de MinCiencias." />
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿El proyecto editorial cuenta con índices analíticos?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.indicesAnaliticos}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿El proyecto editorial que está postulando contiene texto en lengua distinto al español?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.otroIdioma}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.otroIdioma}">
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿En qué lengua?:" />
+								</p:column>
+								<p:column>
+									<p:inputText style="width: 100%;" maxlength="100"
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.textoOtroIdioma}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<p:ajax event="blur" update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿En el proyecto editorial cuenta con material gráfico a Blanco/Negro?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.materialGraficoBN}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿En el proyecto editorial cuenta con material gráfico a color?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.materialGraficoColor}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿El proyecto editorial cuenta con material gráfico ajeno?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.materialGraficoAjeno}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.materialGraficoAjeno}">
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* ¿Cuenta con las licencias de reproducción?:" />
+								</p:column>
+								<p:column>
+									<p:selectOneRadio
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.licenciaReproduccion}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemLabel="Si" itemValue="true" />
+										<f:selectItem itemLabel="No" itemValue="false" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.guardarProyectoFormulario2}" />
+									</p:selectOneRadio>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<br />
+									<br />
+									<p:fieldset legend="* Palabras Clave">
+										<p:panelGrid align="center" style="width: 100%;">
+											<p:row
+												rendered="#{not ManejadorEditorialProyectosRegistro.palabrasClaveCompletas &amp;&amp; ManejadorEditorialProyectosRegistro.edicion}">
+												<p:column style="width: 30%; text-align: right;">
+													<h:outputText value="Término a agregar:" />
+												</p:column>
+												<p:column style="width: 50%;">
+													<p:autoComplete id="palabraClaveS"
+														value="#{ManejadorEditorialProyectosRegistro.palabraClave.palabra}"
+														size="60" maxResults="10" inputStyle="width: 100%;"
+														completeMethod="#{ManejadorEditorialProyectosRegistro.obtenerPalabraClavesSugeridas}"
+														minQueryLength="2" style="width: 100%;">
+														<f:validateLength maximum="100" />
+													</p:autoComplete>
+												</p:column>
+												<p:column style="width: 20%; text-align: center;">
+													<p:commandButton icon="ui-icon-plus"
+														action="#{ManejadorEditorialProyectosRegistro.insertarPalabraClave}"
+														update="@form" process="@form" value="Agregar"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column colspan="3">
+													<p:dataTable style="width:100%;" var="palabraClave"
+														value="#{ManejadorEditorialProyectosRegistro.registro.listaPalabras}"
+														emptyMessage="No se han vinculado palabras clave al proyecto.">
+														<p:column style="width: 90%;">
+															<f:facet name="header">
+																<h:outputText value="Palabra Clave" />
+															</f:facet>
+															<h:outputText value="#{palabraClave.palabra}" />
+														</p:column>
+														<p:column style="width: 10%;"
+															rendered="#{ManejadorEditorialProyectosRegistro.edicion}">
+															<f:facet name="header">
+																<h:outputText value="Acciones" />
+															</f:facet>
+															<t:div style="text-align: center;">
+																<p:commandButton icon="ui-icon-trash"
+																	action="#{ManejadorEditorialProyectosRegistro.eliminarPalabraClave}"
+																	title="Eliminar palabra clave" update="@form"
+																	process="@form">
+																	<f:setPropertyActionListener value="#{palabraClave}"
+																		target="#{ManejadorEditorialProyectosRegistro.palabraClaveTabla}" />
+																</p:commandButton>
+															</t:div>
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<br />
+									<br />
+									<p:fieldset legend="* Tabla de Contenido">
+										<p:panelGrid align="center" style="width: 100%;">
+											<p:row>
+												<p:column style="text-align: center;">
+													<h:outputText escape="false"
+														style="font-weight: bold; color: #FF3300;"
+														value="Por favor adjunte la tabla de contenido como un documento independiente de la propuesta, es decir, separado del resto del contenido del manuscrito." />
+												</p:column>
+											</p:row>
+											<p:row
+												rendered="#{empty ManejadorEditorialProyectosRegistro.archivosTablaContenido &amp;&amp; ManejadorEditorialProyectosRegistro.edicion}">
+												<p:column>
+													<p:fileUpload style="width:100%;" auto="true"
+														mode="advanced" showButtons="false" sizeLimit="5242880"
+														invalidSizeMessage="El tamaño máximo por archivo es de 5MB."
+														update="@parent,tablaArchivos" process="@parent"
+														label="Adjuntar Tabla de Contenido"
+														value="#{ManejadorEditorialProyectosRegistro.tablaContenido}"
+														fileUploadListener="#{ManejadorEditorialProyectosRegistro.agregarArchivo}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<p:dataTable style="width:100%;" var="archivo" id="tablaArchivos"
+														value="#{ManejadorEditorialProyectosRegistro.archivosTablaContenido}"
+														emptyMessage="No se han vinculado tabla de contenido al proyecto.">
+														<p:column style="width: 80%;">
+															<f:facet name="header">
+																<h:outputText value="Nombre Archivo" />
+															</f:facet>
+															<h:outputText value="#{archivo.nombre}" />
+														</p:column>
+														<p:column style="width: 20%;">
+															<f:facet name="header">
+																<h:outputText value="Acciones" />
+															</f:facet>
+															<t:div style="text-align: center;">
+
+																<p:commandButton
+																	action="#{ManejadorEditorialProyectosRegistro.descargarArchivo}"
+																	icon="ui-icon-arrowthickstop-1-s"
+																	title="Descargar archivo" ajax="false">
+																	<f:setPropertyActionListener value="#{archivo.id}"
+																		target="#{ManejadorEditorialProyectosRegistro.idArchivoEliminar}" />
+																</p:commandButton>
+																<p:commandButton icon="ui-icon-trash"
+																	rendered="#{ManejadorEditorialProyectosRegistro.edicion}"
+																	action="#{ManejadorEditorialProyectosRegistro.eliminarArchivo}"
+																	title="Eliminar Tabla de Contenido" update="@form"
+																	process="@form">
+																	<f:setPropertyActionListener value="#{archivo}"
+																		target="#{ManejadorEditorialProyectosRegistro.archivoEliminar}" />
+																</p:commandButton>
+															</t:div>
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Público objetivo:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.audiencia}"
+										id="audiencia" style="width:415px" filter="true"
+										filterMatchMode="contains"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+										<f:selectItem itemValue="0"
+											itemLabel="Seleccione una opción ..." />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.listaAudienciaISBN}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right; vertical-align: top;">
+									<h:outputText style="font-weight: bold;"
+										value="* Breve descripción:" />
+								</p:column>
+								<p:column>
+									<p:inputTextarea style="width: 100%;" rows="3"
+										counter="outPublicoObjetivo" maxlength="300"
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.breveDescripcionAudiencia}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										counterTemplate="{0} caracteres restantes." autoResize="false">
+									</p:inputTextarea>
+									<h:outputText id="outPublicoObjetivo" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:fieldset legend="Títulos afines de otros sellos editoriales">
+										<p:panelGrid align="center" style="width: 100%;">
+											<p:row
+												rendered="#{not ManejadorEditorialProyectosRegistro.titulosCompletos &amp;&amp; ManejadorEditorialProyectosRegistro.edicion}">
+												<p:column style="width: 20%; text-align: right;">
+													<h:outputText value="Título a agregar:" />
+												</p:column>
+												<p:column style="width: 65%;">
+													<p:inputText style="width: 100%;"
+														value="#{ManejadorEditorialProyectosRegistro.tituloActual.titulo}" />
+												</p:column>
+												<p:column style="width: 15%; text-align: center;">
+													<p:commandButton icon="ui-icon-plus"
+														action="#{ManejadorEditorialProyectosRegistro.insertarTitulo}"
+														update="@form" process="@form" value="Agregar" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column colspan="3">
+													<p:dataTable style="width:100%;" var="titulo"
+														value="#{ManejadorEditorialProyectosRegistro.registro.listaTitulosEditorial}"
+														emptyMessage="No se han vinculado títulos afines al proyecto.">
+														<p:column style="width: 90%;">
+															<f:facet name="header">
+																<h:outputText value="Título" />
+															</f:facet>
+															<h:outputText value="#{titulo.titulo}" />
+														</p:column>
+														<p:column style="width: 10%;"
+															rendered="#{ManejadorEditorialProyectosRegistro.edicion}">
+															<f:facet name="header">
+																<h:outputText value="Acciones" />
+															</f:facet>
+															<t:div style="text-align: center;">
+																<p:commandButton icon="ui-icon-trash"
+																	action="#{ManejadorEditorialProyectosRegistro.eliminarTitulo}"
+																	title="Eliminar Titulo" update="@form" process="@form">
+																	<f:setPropertyActionListener value="#{titulo}"
+																		target="#{ManejadorEditorialProyectosRegistro.tituloEliminar}" />
+																</p:commandButton>
+															</t:div>
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.bloquearFormulario3 &amp;&amp; ManejadorEditorialProyectosRegistro.edicion}">
+								<p:column colspan="2" style="text-align: center;">
+									<p:commandButton icon="ui-icon-check"
+										action="#{ManejadorEditorialProyectosRegistro.validarFormulario2Manual}"
+										value="Validar Información" update="@form" process="@form" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:messages id="msgsForm2" closable="true" />
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Información de Proyecto"
+						rendered="#{not ManejadorEditorialProyectosRegistro.bloquearFormulario3}">
+						<p:panelGrid style="width: 100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column colspan="2">
+									<p:messages id="msgsForm3" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 50%; text-align:right;">
+									<h:outputText style="font-weight: bold;"
+										value="* Origen del proyecto editorial:" />
+								</p:column>
+								<p:column style="width: 50%;">
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.origenProyecto}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										style="width:100%;" panelStyle="width: 400px;">
+										<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.origenProyectoItem}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{ManejadorEditorialProyectosRegistro.validarFormulario3Automatico}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.origenProyecto eq '8'}">
+								<p:column style="text-align:right;">
+									<h:outputText style="font-weight: bold;" value="* ¿Cuál?:" />
+								</p:column>
+								<p:column>
+									<p:inputText
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.otroOrigenProyecto}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										style="width: 100%;" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:fieldset legend="Proyecto Asociado">
+										<p:panelGrid align="center" style="width: 100%;">
+											<p:row>
+												<p:column colspan="2" style="text-align:center;">
+													<h:outputText escape="false" style="font-weight: bold;"
+														value="Si la obra es producto de un proyecto de investigación o de extensión, por favor asocie el proyecto." />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column style="width:50%; text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Proyecto a asociar:" />
+												</p:column>
+												<p:column style="width:50%;">
+													<p:selectOneMenu
+														value="#{ManejadorEditorialProyectosRegistro.registro.proyectoAsociado}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+														panelStyle="width:400px;" style="width:400px">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.proyectosAsociadostem}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right;">
+									<p:commandButton id="infCaracter" icon="ui-icon-info" />
+									<p:tooltip for="infCaracter" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">
+											<h:outputText escape="false"
+												value="Si en la lista no se encuentra el carácter que requiere agregar&lt;br /&gt;por favor enviar correo a hermes@unal.edu.co&lt;br /&gt;con el dato para revisar y agregar a la lista" />
+										</t:div>
+									</p:tooltip>
+									<h:outputText style="font-weight: bold;"
+										value="* Carácter del proyecto editorial:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu
+										value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.caracterProyecto}"
+										disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+										style="width:100%;" panelStyle="width: 150px;">
+										<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+										<f:selectItems
+											value="#{ManejadorEditorialProyectosRegistro.caracterProyectoItem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:fieldset legend="Proyecto Asociado">
+										<f:facet name="legend">
+											<p:commandButton id="infMaterial" icon="ui-icon-info" />
+											<p:tooltip for="infMaterial" styleClass="tooltip-mesage"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">
+													<h:outputText escape="false"
+														value="Si en la lista no se encuentra el tipo de material gráfico que requiere agregar&lt;br /&gt;por favor enviar correo a hermes@unal.edu.co&lt;br /&gt;con el dato para revisar y agregar a la lista" />
+												</t:div>
+											</p:tooltip>
+											<h:outputText style="font-weight: bold;"
+												value="* Material Gráfico" />
+										</f:facet>
+										<p:panelGrid align="center" style="width: 100%;"
+											id="panelCantidadMaterialBibliografico">
+											<p:row>
+												<p:column>
+													<p:dataTable style="width:100%;" var="cantidadMaterial"
+														value="#{ManejadorEditorialProyectosRegistro.listaCantidadMaterialBibliografico}">
+														<p:column style="width: 25%;">
+															<f:facet name="header">
+																<h:outputText value="Tipo" />
+															</f:facet>
+															<h:outputText
+																value="#{cantidadMaterial.tipoMaterialGrafico.nombre}" />
+														</p:column>
+														<p:column style="width: 25%;">
+															<f:facet name="header">
+																<h:outputText
+																	value="Cantidad de material&lt;br /&gt;gráfico propio"
+																	escape="false" />
+															</f:facet>
+															<p:inputText value="#{cantidadMaterial.cantidadPropio}"
+																disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+																<p:ajax event="blur" update="@form" process="@form" />
+															</p:inputText>
+														</p:column>
+														<p:column style="width: 25%;">
+															<f:facet name="header">
+																<h:outputText
+																	value="Cantidad de material&lt;br /&gt;gráfico ajeno&lt;br /&gt;CON licencia de uso"
+																	escape="false" />
+															</f:facet>
+															<p:inputText value="#{cantidadMaterial.cantidadAjeno}"
+																disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+																<p:ajax event="blur" update="@form" process="@form" />
+															</p:inputText>
+														</p:column>
+														<p:column style="width: 25%;">
+															<f:facet name="header">
+																<h:outputText value="Total" />
+															</f:facet>
+															<h:outputText value="#{cantidadMaterial.total}" />
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:fieldset legend="Grupos de Investigación">
+										<p:panelGrid align="center" style="width: 100%;">
+											<p:row>
+												<p:column style="width: 50%;">
+													<h:outputText style="font-weight: bold;"
+														value="¿La propuesta involucra la vinculación de grupos de investigación?:" />
+												</p:column>
+												<p:column style="width: 50%;">
+													<p:selectOneRadio
+														value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.involucraGrupos}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Aplica" itemValue="true" />
+														<f:selectItem itemLabel="No Aplica" itemValue="false" />
+														<p:ajax update="@form" process="@form"
+															listener="#{ManejadorEditorialProyectosRegistro.validarFormulario3Automatico}" />
+													</p:selectOneRadio>
+												</p:column>
+											</p:row>
+											<p:row
+												rendered="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.involucraGrupos}">
+												<p:column style="text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Grupo de investigación:" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu style="width:100%;"
+														panelStyle="width: 150px;"
+														value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.idGrupo}"
+														disabled="#{not ManejadorEditorialProyectosRegistro.edicion}">
+														<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+														<f:selectItems
+															value="#{ManejadorEditorialProyectosRegistro.listaGrupos}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<br />
+									<br />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:fieldset legend="Obra de varios autores"
+										id="idPanelNumeroAutores">
+										<p:panelGrid align="center" style="width: 100%;">
+											<p:row>
+												<p:column style="width: 50%; text-align:right;">
+													<h:outputText style="font-weight: bold;"
+														value="Número de autores:" />
+												</p:column>
+												<p:column style="width: 50%;">
+													<p:inputText style="width: 100%;" disabled="true"
+														value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.numeroAutores}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column colspan="2">
+													<h:outputText escape="false"
+														style="font-weight: bold; color: #FF3300;"
+														value="Si su obra es de varios autores adicione el número de casillas que requiera para registrar los datos de cada autor, ya que hay libros que cuentan con varios autores." />
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:fieldset>
+									<p:panel header="Registro de Autor" id="idPanelRegistroAutor">
+										<h:panelGrid columns="2" align="center" cellpadding="5"
+											id="pgFormInvesProyEdit" cellspacing="5"
+											rendered="#{ManejadorEditorialProyectosRegistro.edicion}">
+											<h:outputText value="*Tipo de participaón" />
+											<p:selectOneMenu id="tipoInvMain" style="width: 150px;"
+												value="#{ManejadorEditorialProyectosRegistro.tipoInvestigador}">
+												<f:selectItems
+													value="#{ManejadorEditorialProyectosRegistro.autores}" />
+												<p:ajax
+													listener="#{ManejadorEditorialProyectosRegistro.cambiarVinculacion}"
+													update="pgFormInvesExtISBN, OP_pruebaISBN" />
+											</p:selectOneMenu>
+
+											<h:outputText value="*Tipo de documento" />
+											<p:selectOneMenu id="tipoDocInvestigadorSelectISBN"
+												style="width: 150px;"
+												value="#{ManejadorEditorialProyectosRegistro.tipoDocumentoInvestigador}">
+												<f:selectItem itemLabel="Seleccione Uno..." itemValue="" />
+												<f:selectItems
+													value="#{ManejadorEditorialProyectosRegistro.tipoDocumentoItem}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="*No. documento: " />
+											<p:inputText id="numDocumentoISBN"
+												value="#{ManejadorEditorialProyectosRegistro.documentoCoinv}" />
+
+											<h:outputText value="*País de procedencia" id="paisTextISBN" />
+											<p:selectOneMenu
+												value="#{ManejadorEditorialProyectosRegistro.pais}"
+												style="width: 150px;" effect="fade" id="paisISBN"
+												filter="true" filterMatchMode="contains">
+												<f:selectItems
+													value="#{ManejadorEditorialProyectosRegistro.paisItem}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="*Rol" />
+											<p:selectOneMenu id="rolAutorISBN" style="width: 150px;"
+												value="#{ManejadorEditorialProyectosRegistro.rolAutorISBN}">
+												<f:selectItems
+													value="#{ManejadorEditorialProyectosRegistro.listaRolAutorISBN}" />
+											</p:selectOneMenu>
+
+											<h:outputText value="*Fecha de nacimiento: "
+												styleClass="legend2" />
+											<p:calendar id="fechaNacimiento" pages="2" navigator="true"
+												yearRange="c-100:c+0"
+												value="#{ManejadorEditorialProyectosRegistro.fechaNacimiento}" />
+
+										</h:panelGrid>
+										<p:outputPanel id="OP_pruebaISBN"
+											rendered="#{ManejadorEditorialProyectosRegistro.edicion}">
+											<h:panelGrid id="pgFormInvesExtISBN"
+												rendered="#{ManejadorEditorialProyectosRegistro.esOtraVinculacion}"
+												columns="2" cellspacing="5" align="center" cellpadding="5">
+
+												<h:outputText value="*Primer Nombre: " />
+												<p:inputText id="primerNombreInvestigadorISBN"
+													value="#{ManejadorEditorialProyectosRegistro.investigadorExterno.nombre1}"
+													size="50" requiredMessage="El Primer Nombre es obligatorio">
+													<f:validateLength maximum="20" />
+												</p:inputText>
+
+												<h:outputText value="Segundo Nombre: " />
+												<p:inputText id="segundoNombreInvISBN"
+													value="#{ManejadorEditorialProyectosRegistro.investigadorExterno.nombre2}"
+													size="50">
+													<f:validateLength maximum="20" />
+												</p:inputText>
+
+												<h:outputText value="*Primer Apellido:" />
+												<p:inputText id="primerApellidoInvestigadorISBN"
+													value="#{ManejadorEditorialProyectosRegistro.investigadorExterno.apellido1}"
+													size="50"
+													requiredMessage="El Primer Apellido es obligatorio">
+													<f:validateLength maximum="20" />
+												</p:inputText>
+
+												<h:outputText value="Segundo Apellido; " />
+												<p:inputText id="segundoApellidoInvISBN"
+													value="#{ManejadorEditorialProyectosRegistro.investigadorExterno.apellido2}"
+													size="50">
+													<f:validateLength maximum="20" />
+												</p:inputText>
+
+												<h:outputText value="Género: " />
+												<p:selectOneMenu
+													value="#{ManejadorEditorialProyectosRegistro.investigadorExterno.genero}"
+													id="idGeneroISBN" style="width:40px">
+													<f:selectItems
+														value="#{ManejadorEditorialProyectosRegistro.generoItem}" />
+												</p:selectOneMenu>
+
+												<h:outputText value="*Institución: " />
+												<p:selectOneMenu id="insitucionNombreISBN" filter="true"
+									
+													value="#{ManejadorEditorialProyectosRegistro.insitucionNombre}"
+													style="width:350px" panelStyle="width:350px"
+													filterMatchMode="contains">
+													<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+													<f:selectItems
+														value="#{ManejadorEditorialProyectosRegistro.fuentesExternasItem}" />
+												</p:selectOneMenu>
+
+											</h:panelGrid>
+										</p:outputPanel>
+
+										<br />
+										<center>
+											<p:commandButton value="Adicionar autor"
+												rendered="#{ManejadorEditorialProyectosRegistro.edicion}"
+												id="botonAdicionarInvestigador"
+												action="#{ManejadorEditorialProyectosRegistro.agregarParticipante}"
+												process="@form"
+												update="listaParticipantesISBN, pgFormInvesExtISBN, OP_pruebaISBN, idPanelNumeroAutores, @form"
+												styleClass="ui-priority-primary" />
+										</center>
+										<br />
+										<br />
+										<p:dataTable var="i" style="width:100%"
+											value="#{ManejadorEditorialProyectosRegistro.listaParticipantes}"
+											id="listaParticipantesISBN"
+											emptyMessage="No se encuentran autores asociados">
+
+											<p:column style="width:30%">
+												<f:facet name="header">
+													<h:outputText value="Nombre" />
+												</f:facet>
+												<h:outputText
+													value="#{i.investigador.nombreCompletoMinusculas}" />
+											</p:column>
+
+											<p:column style="width:20%">
+												<f:facet name="header">
+													<h:outputText value="Rol" />
+												</f:facet>
+												<h:outputText
+													value="#{i.tipo.id == 'P' ? i.funcion : i.tipo.nombre}" />
+											</p:column>
+
+											<p:column style="width:10%">
+												<f:facet name="header">
+													<h:outputText value="País" />
+												</f:facet>
+												<h:outputText value="#{i.investigador.paisOrigen}" />
+											</p:column>
+
+											<p:column style="width:20%">
+												<f:facet name="header">
+													<h:outputText value="Fecha Nacimiento" />
+												</f:facet>
+												<h:outputText value="#{i.investigador.fechaNacimiento}" />
+											</p:column>
+											
+											<p:column style="width:15%">
+												<f:facet name="header">
+													<h:outputText value="Dependencia / Institución (si aplica)" />
+												</f:facet>
+												<h:outputText value="#{i.investigador.dependencia.nombre}" rendered="#{i.investigador.dependencia.nombre != null}"/>
+												<h:outputText value="#{i.institucionInvestigador.nombre}" rendered="#{i.institucionInvestigador.nombre != null}"/>
+											</p:column>
+
+											<p:column style="width:5%"
+												rendered="#{ManejadorEditorialProyectosRegistro.edicion}">
+												<f:facet name="header">
+													<h:outputText value="(-)" />
+												</f:facet>
+												<center>
+													<p:commandButton id="botonEliminarIntegrantes"
+														update="listaParticipantesISBN" icon="ui-icon-trash"
+														action="#{ManejadorEditorialProyectosRegistro.eliminarParticipante}"
+														title="Eliminar">
+														<f:setPropertyActionListener value="#{i}"
+															target="#{ManejadorEditorialProyectosRegistro.participante}" />
+													</p:commandButton>
+												</center>
+											</p:column>
+										</p:dataTable>
+										<br />
+									</p:panel>
+								</p:column>
+							</p:row>
+							<p:row
+								rendered="#{ManejadorEditorialProyectosRegistro.bloquearFormulario4 &amp;&amp; ManejadorEditorialProyectosRegistro.edicion}">
+								<p:column colspan="2" style="text-align: center;">
+									<p:commandButton icon="ui-icon-check"
+										action="#{ManejadorEditorialProyectosRegistro.validarFormulario3Manual}"
+										value="Validar Información" update="@form" process="@form" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:messages id="msgsForm3" closable="true" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Adjuntar Archivos y Enviar"
+						rendered="#{not ManejadorEditorialProyectosRegistro.bloquearFormulario4}">
+
+						<p:fieldset legend="Archivos Adjuntos" id="ArchivosAdjuntosFinales">
+						<div>
+						<h:outputText escape="false" style="color: #FF3300;"
+								value="#{ManejadorEditorialProyectosRegistro.convocatoriaActual.mensajeArchivosAdjuntos}" />
+						</div>
+							<br />
+							<br />
+							<h:panelGrid id="subirArchivos" columns="2" border="0"
+								rendered="#{ManejadorEditorialProyectosRegistro.edicion}"
+								cellspacing="5" align="center">
+
+								<h:outputText value="Tipo de Archivo:" />
+								<p:selectOneMenu
+									value="#{ManejadorEditorialProyectosRegistro.idArchivoAdjunto}"
+									panelStyle="width:400px;" style="width:400px">
+									<f:selectItems
+										value="#{ManejadorEditorialProyectosRegistro.tipoArchivoItem}" />
+
+									<p:ajax process="@form" />
+								</p:selectOneMenu>
+
+
+								<h:outputText value="" />
+								<p:fileUpload style="width:100%;" auto="true" mode="advanced"
+									showButtons="false" sizeLimit="5242880"
+									invalidSizeMessage="El tamaño máximo por archivo es de 5MB."
+									update="ArchivosAdjuntosFinales,tabla-archivos" process="ArchivosAdjuntosFinales,tabla-archivos" label="Adjuntar Archivo"
+									value="#{ManejadorEditorialProyectosRegistro.archivo}"
+									fileUploadListener="#{ManejadorEditorialProyectosRegistro.agregarArchivoAdjunto}" />
+
+								<h:outputText />
+
+							</h:panelGrid>
+							<br />
+							<br />
+							<p:dataTable style="width:100%;" var="archivo" id="tabla-archivos"
+								value="#{ManejadorEditorialProyectosRegistro.archivosAdjuntos}"
+								emptyMessage="No se han vinculado ningun archivo adjunto.">
+								<p:column style="width: 40%;">
+									<f:facet name="header">
+										<h:outputText value="Nombre Archivo" />
+									</f:facet>
+									<h:outputText value="#{archivo.nombre}" />
+								</p:column>
+								<p:column style="width: 40%;">
+									<f:facet name="header">
+										<h:outputText value="Tipo Archivo" />
+									</f:facet>
+									<h:outputText value="#{archivo.tipoArchivo.nombre}" />
+								</p:column>
+								<p:column style="width: 20%;">
+									<f:facet name="header">
+										<h:outputText value="Acciones" />
+									</f:facet>
+									<t:div style="text-align: center;">
+
+										<p:commandButton
+											action="#{ManejadorEditorialProyectosRegistro.descargarArchivo}"
+											icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+											ajax="false">
+											<f:setPropertyActionListener value="#{archivo.id}"
+												target="#{ManejadorEditorialProyectosRegistro.idArchivoEliminar}" />
+										</p:commandButton>
+										<p:commandButton icon="ui-icon-trash"
+											action="#{ManejadorEditorialProyectosRegistro.eliminarArchivoAdjunto}"
+											rendered="#{ManejadorEditorialProyectosRegistro.edicion}"
+											title="Eliminar Tabla de Contenido" update="@form"
+											process="@form">
+											<f:setPropertyActionListener value="#{archivo.id}"
+												target="#{ManejadorEditorialProyectosRegistro.idArchivoEliminar}" />
+										</p:commandButton>
+									</t:div>
+								</p:column>
+							</p:dataTable>
+						</p:fieldset>
+						<br />
+						<br />
+						<t:div>
+							<center>
+								<p:panel header="ACEPTACIÓN DE TERMINOS" style="width:100%"
+									styleClass="mypanel">
+									<br />
+									<t:div>
+										<p style="text-align: left;">
+											<b>Nota 1.</b> Conozco y acepto las condiciones de registro,
+											evaluación (proceso coordinado por el Comité editorial de la
+											Facultad a la que pertenezco), aprobación o no, adecuación
+											editorial, distribución, comercialización y publicación en el
+											repositorio institucional a las cuales someto mi obra.
+										</p>
+										<br />
+										<p style="text-align: left;">
+											<b>Nota 2.</b> El registro del proyecto editorial no es un
+											contrato de edición, ni otro semejante. Tampoco tiene por
+											objeto transferir el derecho patrimonial de la obra.
+											Simplemente, aparte de presentar el proyecto editorial, es la
+											autorización que le brinda el autor o titular del derecho
+											patrimonial de autor al mencionado Centro Editorial, o
+											dependencia que haga sus veces, para iniciar las gestiones
+											necesarias para la evaluación académica y/o postulación del proyecto
+											editorial.
+										</p>
+										<br />
+										<p style="text-align: left;">A su vez el autor, editor,
+											compilador hace constar que la información relacionada, y en
+											general todo el material utilizado en el proyecto editorial
+											mencionado, es de propiedad del autor(es) o cuenta con las
+											autorizaciones escritas para ser incluida en el libro. [Para
+											el caso de obra inédita:] Se hace constar que el contenido
+											del proyecto editorial es inédito y no se ha suscrito
+											contrato de edición con ninguna otra empresa o casa
+											editorial.</p>
+										<br />
+
+										<p style="text-align: left;">
+											<b>Nota 3.</b> Antes de enviar su proyecto editorial, asegúrese de cumplir los requerimientos establecidos 
+											en el Manual para el autor (U.MN.03.002.001) disponible en el siguiente link 
+											(http://editorial.unal.edu.co/fileadmin/recursos/editorial/2022/Calidad2022/Manual_para_el_autor.pdf), 
+											la Guía para la presentación de un proyecto editorial (U.GU.03.002.001), y de cumplir los requisitos 
+											establecidos en los términos de referencia de la presente convocatoria. Suministro de datos de autores: 
+											esta información es fundamental para gestionar solicitud del ISBN y ficha catalográfica del proyecto editorial 
+											(de ser seleccionado).
+										</p>
+										<br/>
+										<p style="text-align: left;">
+											<b>Nota 4.</b> La Universidad Nacional de Colombia, identificada con NIT 899.999.063, 
+											como responsable del tratamiento de información de datos personales, informa a todos 
+											los titulares que estos serán tratados de acuerdo con la ley 1581 de 2012 y sus normas 
+											concordantes. Los datos de carácter personal recolectados se encuentran bajo medidas 
+											que garantizan la seguridad, confidencialidad e integridad, y su tratamiento se realiza 
+											bajo nuestra Política de Datos Personales, la cual podrá consultar en el siguiente enlace 
+											en el documento Política de Tratamiento de Datos Personales: 
+											http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=97992
+										</p>
+									</t:div>
+									<br />
+									<p:panelGrid>
+										<p:row>
+											<p:column>
+												<h:outputText value="¿Acepta los términos? " />
+											</p:column>
+											<p:column>
+												<p:selectBooleanCheckbox
+													disabled="#{not ManejadorEditorialProyectosRegistro.edicion}"
+													value="#{ManejadorEditorialProyectosRegistro.registro.fichaEditorial.aceptaTerminos}">
+												</p:selectBooleanCheckbox>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+								<br /> <br />
+								<t:div rendered="#{ManejadorEditorialProyectosRegistro.edicion}">
+									<center>
+
+										<p:commandButton
+											action="#{ManejadorEditorialProyectosRegistro.enviarSolicitud}"
+											value="Guardar y enviar" update="@form"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" />
+									</center>
+									<br />
+								</t:div>
+								<p:messages id="msgsForm4" closable="true" />
+							</center>
+							<br />
+						</t:div>
+
+					</p:tab>
+				</p:tabView>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

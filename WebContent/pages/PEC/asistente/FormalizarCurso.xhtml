@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml"> 
+
+<ui:define name="title">FORMALIZAR CURSOS DE EDUCACIÓN CONTINUA Y PERMANENTE</ui:define>
+
+<ui:define name="content">
+
+<h:form id="form" enctype="multipart/form-data">
+	
+  <t:div styleClass="contenido-titulo-general-myriad">FORMALIZAR CURSOS ECP</t:div>
+
+  <p:growl id="growl" showDetail="true" sticky="true" />
+		
+<!-- 		<t:div styleClass="informacion-texto"> -->
+		<br />
+		
+		<p:panel rendered="false">
+			<t:div styleClass="informacion-subtitulo" rendered="#{ManejadorFormalizarCursosAsistenteECP.preins_ecp_objeto.estado == 'FE'}">
+				<h:outputText value="No es posible realizar el proceso de formalización dado que este ya fue hecho previamente"/>
+			</t:div>
+		</p:panel>
+		
+		<p:panel>
+				
+			<t:div styleClass="informacion-subtitulo">
+				<h:outputText value="#{ManejadorFormalizarCursosAsistenteECP.cursoSeleccionado.nombre}"/>
+			</t:div>
+			<br />
+			<br/>
+			
+			<h:panelGrid columns="3" style="width: 500px" align="center">
+				
+				<h:outputText value="Persona contacto" for="persona_contacto" />
+				<p:inputText id="persona_contacto"
+							 value="#{ManejadorFormalizarCursosAsistenteECP.preins_ecp_objeto.persona_contacto}" 
+							 maxlength="80"
+							 size="40" required = "true" requiredMessage="El campo Persona contacto es obligatorio"/>
+				<p:message for="persona_contacto" />
+				
+				<h:outputText value="Teléfono contacto" for="tel_contacto" />
+				<p:inputText id="tel_contacto"
+					value="#{ManejadorFormalizarCursosAsistenteECP.preins_ecp_objeto.tel_contacto}" 
+					maxlength="20"
+					size="40" required = "true" requiredMessage="El campo Teléfono contacto es obligatorio">
+					<f:validateLength minimum="7" />
+				</p:inputText>
+				<p:message for="tel_contacto" />
+				
+				<h:outputText value="Grupo Sanguíneo" for="grupo_sanguineo" />
+				<p:selectOneMenu
+					value="#{ManejadorFormalizarCursosAsistenteECP.preins_ecp_objeto.grupo_sanguineo}"
+					effect="fade" id="grupo_sanguineo">
+					<f:selectItems
+						value="#{ManejadorFormalizarCursosAsistenteECP.grupoSanguineoOpciones}" />
+				</p:selectOneMenu>
+				<p:message for="grupo_sanguineo" />
+				
+				<h:outputText value="RH" for="rh" />
+				<p:selectOneMenu value="#{ManejadorFormalizarCursosAsistenteECP.preins_ecp_objeto.rh}"
+					effect="fade" id="rh">
+					<f:selectItems value="#{ManejadorFormalizarCursosAsistenteECP.rhOpciones}" />
+				</p:selectOneMenu>
+				<p:message for="rh" />
+				
+				<h:outputText value="EPS" for="eps" />
+				<p:inputText id="eps" 
+							 value="#{ManejadorFormalizarCursosAsistenteECP.preins_ecp_objeto.eps}" 
+							 size="40" required = "true" requiredMessage="El campo EPS contacto es obligatorio"/>		 
+				<p:message for="eps" />	
+			
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" style="width: 500px" align="center">
+				<br/>
+			    <t:div styleClass="contenido-titulo-general-myriad-2" style="width:500px;align:center">Soportes</t:div>
+			    <br />
+			</h:panelGrid>
+		    
+<!-- 		    				ARCHIVOS SOPORTES             -->
+
+			<h:panelGrid columns="1" style="width: 500px" align="center">
+			
+			<p:messages id="msgPdf" showDetail="true" autoUpdate="true" closable="false" />
+			
+			<p:tooltip for="uploadSoportes" showEffect="fade"
+											hideEffect="fade">
+											<h:panelGrid columns="1"
+												style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+												<h:outputText
+													value="Recuerde adjuntar documentos unicamente en formato PDF." />
+											</h:panelGrid>
+										</p:tooltip>
+						 
+				<p:fileUpload style="width:100%"
+					fileUploadListener="#{ManejadorFormalizarCursosAsistenteECP.subirArchivosSoportes}"
+					mode="advanced" auto="true" allowTypes="/(\.|\/)(pdf)$/"
+					update="tablaArchivosSoporte" label="Seleccionar archivo"
+					id="uploadSoportes"
+					/>
+
+				<p:dataTable style="width:100%"
+					value="#{ManejadorFormalizarCursosAsistenteECP.listaArchivosSoportes}"
+					var="archivo" emptyMessage="No hay archivos asociados"
+					id="tablaArchivosSoporte">
+
+					<p:column headerText="Documentos adjuntos" style="width:50%">
+						<h:outputText value="#{archivo.nombreArchivo}" />
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="(-)" />
+						</f:facet>
+						<center>
+							<p:commandButton id="selectButton" update="tablaArchivosSoporte"
+								icon="ui-icon-trash"
+								action="#{ManejadorFormalizarCursosAsistenteECP.eliminarArchivoSoportes}"
+								title="Eliminar Archivo">
+								<f:setPropertyActionListener value="#{archivo}"
+									target="#{ManejadorFormalizarCursosAsistenteECP.archivoPreSoportes}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<p:column style="width:10%">		            
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+								              
+						<center>
+							<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+								action="#{ManejadorFormalizarCursosAsistenteECP.descargarArchivoSoportes}" 
+								rendered="#{archivo.idArchivo != null}">
+								<f:setPropertyActionListener value="#{archivo}"
+									target="#{ManejadorFormalizarCursosAsistenteECP.archivoPreSoportes}" />
+							</p:commandButton>
+						</center>
+							
+				     </p:column>
+
+				</p:dataTable>
+		    
+		    </h:panelGrid>
+		
+		</p:panel>
+		<br />
+		<p:panel header="Información del pago" rendered="#{ManejadorFormalizarCursosAsistenteECP.cursoSeleccionado.costoPersona} != 0">
+				 
+		   <br />
+				 
+		   <h:panelGrid columns="2" style="width: 80%;" align="center" border="0">
+
+				<h:outputText value="Tipo:"/>
+
+				<p:selectOneRadio id="tipo" value="#{ManejadorFormalizarCursosAsistenteECP.tipoFormalizacion}">
+					<f:selectItems value="#{ManejadorFormalizarCursosAsistenteECP.listaTiposFormalizacion}" />
+					<p:ajax event="change" update="@form"/>
+				</p:selectOneRadio>
+			
+		   </h:panelGrid>
+		   
+		   <br/>
+		   <p:separator style="width:80%;height:5px" />
+		   <br/>	
+				 
+<!-- 			CONSIGNACION BANCARIA -->
+				 		 
+			<h:panelGrid columns="1" 
+						 rendered="#{ManejadorFormalizarCursosAsistenteECP.tipoFormalizacion == 'CB'}"
+						 style="width: 80%;" align="center">
+					
+					<h:outputText value="Adjuntar archivo de la consignación bancaria"/>
+					<br />
+					<p:fileUpload style="width:100%"
+						fileUploadListener="#{ManejadorFormalizarCursosAsistenteECP.subirArchivos}"
+						mode="advanced" auto="true"
+						update="tablaArchivo" label="Seleccionar archivo"
+						id="uploadArchivos"
+						/>
+
+					<p:dataTable style="width:100%"
+						value="#{ManejadorFormalizarCursosAsistenteECP.listaArchivos}"
+						var="archivo" emptyMessage="No hay archivos asociados"
+						id="tablaArchivo">
+
+						<p:column headerText="Documentos adjuntos" style="width:50%">
+							<h:outputText value="#{archivo.nombreArchivo}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="(-)" />
+							</f:facet>
+							<center>
+								<p:commandButton id="selectButton" update="tablaArchivo"
+									icon="ui-icon-trash"
+									action="#{ManejadorFormalizarCursosAsistenteECP.eliminarArchivo}"
+									title="Eliminar Archivo">
+									<f:setPropertyActionListener value="#{archivo}"
+										target="#{ManejadorFormalizarCursosAsistenteECP.archivoPre}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+						
+						<p:column style="width:10%">		            
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+								              
+						<center>
+							<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+								action="#{ManejadorFormalizarCursosAsistenteECP.descargarArchivo}"
+								rendered="#{archivo.idArchivo != null}">
+								<f:setPropertyActionListener value="#{archivo}"
+									target="#{ManejadorFormalizarCursosAsistenteECP.archivoPre}" />
+							</p:commandButton>
+						</center>
+							
+				     </p:column>
+
+					</p:dataTable>
+					
+			</h:panelGrid>
+			
+<!-- 			PAGO EN LÍNEA -->
+			
+			<h:panelGrid columns="2"
+						 style="width: 80%;" align="center" 
+						 rendered="#{ManejadorFormalizarCursosAsistenteECP.tipoFormalizacion == 'PL'}">
+				<h:outputText value="Pago en Línea"/>
+			</h:panelGrid>
+			
+		</p:panel>
+		
+		<br />
+		
+		<p:panel id="condicionesCertificacion"
+			header="Condiciones de Certificación" rendered="false">
+			<p align="justify">
+				<b>Requisitos para aprobación:</b> Los requisitos para aprobar
+				el diplomado son:
+			</p>
+			<ul>
+				<li>Asistir como mínimo al 80% de las sesiones presenciales
+					del diplomado.</li>
+				<li>Preparar los trabajos y talleres durante el desarrollo
+					del diplomado.</li>
+				<li>Diseñar y formular un proyecto de ciencia, tecnología e
+					innovación.</li>
+				<li>El proyecto tendrá una evaluación y será requisito
+					indispensable para obtener el diploma. Estos proyectos se
+					podrán formular en grupos de trabajo en los cuales haya interés
+					de alianza o trabajo conjunto.</li>
+			</ul>
+			<p align="justify">
+				<b>Compromiso:</b> Con la finalidad de aprovechar al máximo este
+				Diplomado, el cual es financiado por Colciencias y por lo tanto
+				no tendrá costo para los participantes, se estipula una cláusula
+				de compromiso mediante la cual se debe cancelar el costo del
+				Diplomado en caso de retiro sin justa causa por parte de la
+				entidad que postula al participante. El costo a cancelar en este
+				caso es de $2.262.123.
+			</p>
+
+			<p align="justify">
+				<b>Modificación de las Fechas de Inicio y/o horario:</b> La
+				Universidad Nacional de Colombia se reserva el derecho a
+				modificar la fecha y horario programado para el inicio de un
+				evento.
+			</p>
+
+			<p align="justify">
+				<b>Normas Disciplinarias:</b> Las personas matriculadas en el
+				programa están obligadas a cumplir con el régimen disciplinario
+				contemplado en el Reglamento Estudiantil y demás reglamentos que
+				le sean pertinentes.
+			</p>
+		</p:panel>
+						
+		<br />
+
+		<p:panel id="AutorizacionAvisoPrivacidad"
+			header="Autorización y Aviso de Privacidad">
+			<p align="justify">La Universidad Nacional de Colombia, en
+				cumplimiento del artículo 10 del Decreto 1377 de 2013 y la Ley
+				1581 de 2012 le informa que es responsable del tratamiento de
+				datos personales, los cuales han sido obtenidos directamente de
+				las personas y entidades que han tenido cualquier tipo de
+				relación con la Universidad.</p>
+
+			<p align="justify">De acuerdo a lo anterior, solicitamos la
+				autorización de los titulares de los datos personales para
+				continuar con el tratamiento de los mismos, comprometiéndonos a
+				hacer buen uso de su información y basándonos en una política de
+				privacidad y tratamiento de información personal de manera
+				lícita, segura y confiable.</p>
+
+			<p align="justify">
+				Si desea que retiremos sus datos, le solicitamos que nos lo
+				manifieste de manera directa y por escrito, dentro de los 30
+				días hábiles siguientes a la firma de este formulario, al correo
+				electrónico <b>hermes@unal.edu.co </b> Omitir este
+				comunicado dentro del tiempo señalado, habilitará
+				automáticamente a la Universidad Nacional de Colombia a
+				continuar con la administración de la información, según lo
+				establecido en el artículo 10 del Decreto 1377 de 2013.
+			</p>
+			
+			<p align="justify">
+				Clausula 1: La Universidad Nacional de Colombia se reserva el derecho de cancelar el evento o curso, cuando el cupo mínimo no se complete, o por causas de fuerza mayor o caso fortuito.
+			</p>
+			
+			<p align="justify">
+				Clausula 2: Antes de iniciado el curso y por razones de fuerza mayor o caso fortuito, debidamente justificado por el alumno, podrá solicitarse la cancelación del curso y su correspondiente devolución del dinero.
+			</p>
+			
+			<p align="justify">
+				Clausula 3: Una vez empezado el curso, no habrá devoluciones, salvo que se trate de una cancelación del curso por parte de la Universidad, por razones de fuerza mayor o caso fortuito. Tratándose de aplazamiento del curso por parte de la Universidad por razones de orden público, fuerza mayor o caso fortuito y en caso de que por este aplazamiento al estudiante le resulte imposible continuar con el curso, se estudiará que porcentaje del mismo se ha ejecutado y en ese sentido se contemplará la posibilidad de devolver un porcentaje del valor del curso que corresponda a lo no ejecutado hasta el momento del aplazamiento.
+			</p>
+			
+			<p align="justify">
+				Clausula 4: El certificado de asistencia a las actividades de educación continua y permanente, en cualquiera de las submodalidades, se otorga únicamente a quienes cumplan con mínimo el ochenta por ciento (80%) de
+asistencia a los mismos. Los certificados de aprobación se entregan únicamente a quienes, además de cumplir con el mínimo de asistencia establecida obtengan calificación igual o superior a tres punto cero (3.0)
+en las evaluaciones que se realicen para el efecto. 
+			</p>
+			
+			<p align="justify">
+				Clausula 5: La Universidad Nacional se reserva el derecho de modificar los horarios y fechas de inicio de los cursos, diplomados y/o eventos, según la disponibilidad de recursos o las situaciones de carácter coyuntural
+que se presenten.
+			</p>
+
+		</p:panel>
+		
+		<br />
+		
+		<p:panel id="aceptarTerminos">
+
+			<h:panelGrid columns="2" style="width: 60%; text-align: center" align="center">
+				
+				<h:outputText value="Acepto términos y condiciones" style="font-weight:bold"/>
+				<p:selectOneRadio id="opcionesTerminos"
+					value="#{ManejadorFormalizarCursosAsistenteECP.opcionesTerminos}" required="true" requiredMessage="Debe aceptar los términos para guardar la información registrada">
+					<f:selectItem itemLabel="Si" itemValue="Si" />
+					<f:selectItem itemLabel="No" itemValue="No" />
+					<p:ajax event="change" update="form:panelGuardar" />
+				</p:selectOneRadio>
+				
+			</h:panelGrid>
+			
+			<br />
+			<h:panelGrid columns="1" align="center" id="panelGuardar">
+				<p:commandButton id="botonGuardar" value="FORMALIZAR" 
+							 icon="ui-icon-check" update="@form"
+							 action="#{ManejadorFormalizarCursosAsistenteECP.guardar}" 
+							 disabled="#{ManejadorFormalizarCursosAsistenteECP.opcionesTerminos != 'Si'}"
+							/>
+			</h:panelGrid>
+
+		</p:panel>
+			
+<!-- 		</t:div>	 -->
+	
+</h:form>
+	
+</ui:define>
+	
+</ui:composition>
+	
+	
+		

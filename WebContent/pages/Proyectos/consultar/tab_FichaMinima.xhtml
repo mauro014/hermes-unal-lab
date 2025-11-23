@@ -1,0 +1,1390 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">INFORMACIÓN GENERAL</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+
+
+			<t:div styleClass="contenido-titulo-general-myriad">Información General</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+			<h:panelGrid id="mostrarSiConvocatoriaFichaMinima"
+				rendered="#{!manejadorFichaMinimaProyectos.mostrarSiConvocatoriaEventos}"
+				style="width:100%">
+
+				<p:panel id="panelInformacionAcademica"
+					header="I. INFORMACIÓN ACADÉMICO - ADMINISTRATIVA DEL PROYECTO"
+					toggleable="true" toggleSpeed="500" closeSpeed="500">
+
+					<p:accordionPanel id="panelUnoInfAcad" multiple="false"
+						activeIndex="">
+						<p:tab title="Información general del proyecto" id="infoGeneral"
+							rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+							<br />
+
+							<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+								id="panelGridAspectoGeneral" rendered="false">
+
+								<h:outputText value="Tipo de actividad:" />
+								<p:selectOneMenu
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.tipoActividad}"
+									id="categoria">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.categoriaItems}" />
+									<p:ajax listener="#{manejadorFichaMinimaProyectos.cambiarTipo}"
+										update="@form" />
+								</p:selectOneMenu>
+								<p:message for="categoria" display="icon" />
+
+								<h:outputText value="Rol de la Universidad Nacional:" />
+								<p:selectOneMenu
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.rolUniversidad}"
+									id="modalidadSolicitud">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.rolUniversidadItems}" />
+								</p:selectOneMenu>
+								<p:message for="modalidadSolicitud" display="icon" />
+
+								<h:outputText value="Mecanismo:" />
+								<p:selectOneMenu
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.mecanismoParticipacion}"
+									id="mecanismoSolicitud">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.mecanismoSolicitudItems}" />
+								</p:selectOneMenu>
+								<p:message for="mecanismoSolicitud" display="icon" />
+
+							</h:panelGrid>
+
+							<br />
+
+							<center>
+								<h:outputText value="Descripción general del proyecto"
+									style='font-weight: bold;' />
+							</center>
+							<br />
+
+							<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+								id="panelGridDescrGeneral">
+
+								<h:outputText value="Título del proyecto:" />
+								<p:inputTextarea
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.nombre}"
+									id="titulo"
+									validatorMessage="Título debe estar entre 1 - 3000 caracteres"
+									rows="3" cols="60">
+									<f:validateLength minimum="1" maximum="3000" for="titulo"></f:validateLength>
+								</p:inputTextarea>
+								<p:message for="titulo" display="icon" />
+
+								<h:outputText value="Resumen (Máx. 4000 caracteres):" />
+								<p:inputTextarea
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.resumen}"
+									id="resumen"
+									validatorMessage="Resumen debe estar entre 1 - 4000 caracteres"
+									rows="5" cols="60">
+									<f:validateLength minimum="1" maximum="4000" for="resumen"></f:validateLength>
+								</p:inputTextarea>
+								<p:message for="resumen" display="icon" />
+
+								<h:outputText
+									value="Objeto/Objetivo principal (Máx. 4000 caracteres):" />
+								<p:inputTextarea
+									validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.objetivoGeneral}"
+									rows="3" id="objeto" cols="60">
+									<f:validateLength minimum="1" maximum="4000" for="objeto"></f:validateLength>
+								</p:inputTextarea>
+								<p:message for="objeto" display="icon" />
+
+								<h:outputText value="Programa académico:"
+									rendered="#{manejadorFichaMinimaProyectos.convocatoriaActual.programaAcademico == 'Y'}" />
+								<p:selectOneMenu id="programaAcademico"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.programaAcademico}"
+									style="width: 480px;"
+									rendered="#{manejadorFichaMinimaProyectos.convocatoriaActual.programaAcademico == 'Y'}"
+									panelStyle="width: 480px;">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.programas}" />
+								</p:selectOneMenu>
+
+
+
+							</h:panelGrid>
+
+							<br />
+							<p:separator></p:separator>
+							<br />
+							<center>
+								<h:outputText value="Objetivos específicos"
+									style='font-weight: bold;' />
+							</center>
+							<br />
+							<p:dataTable id="objetivoEspTable"
+								value="#{manejadorFichaMinimaProyectos.listaObjetivos}"
+								var="obj"
+								emptyMessage="No se encuentran objetivos específicos registrados"
+								editable="true">
+
+								<p:column style="width:80%">
+									<f:facet name="header">
+										<h:outputText value="Objetivo Específico" />
+									</f:facet>
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{obj.nombre}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{obj.nombre}" style="width:100%" />
+										</f:facet>
+									</p:cellEditor>
+
+								</p:column>
+							</p:dataTable>
+							<br />
+							<br />
+							<p:separator></p:separator>
+							<br />
+							<center>
+								<h:outputText value="Resultados" style='font-weight: bold;' />
+							</center>
+							<br />
+							<p:dataTable id="resultadoTable"
+								value="#{manejadorFichaMinimaProyectos.listaResultados}"
+								var="res" emptyMessage="No se encuentran resultados registrados"
+								editable="true">
+
+								<p:column style="width:80%">
+									<f:facet name="header">
+										<h:outputText value="Resultado" />
+									</f:facet>
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{res.descripcion}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{res.descripcion}" style="width:100%" />
+										</f:facet>
+									</p:cellEditor>
+
+								</p:column>
+							</p:dataTable>
+							<br />
+							<p:separator></p:separator>
+
+							<br />
+							<center>
+								<h:outputText value="Productos esperados"
+									style='font-weight: bold;' />
+							</center>
+
+							<h:outputText
+								value="* Seleccionar del siguiente listado los productos de acuerdo a los términos de referencia de la convocatoria o el alcance de la propuesta" />
+							<h:outputText
+								value="* En esta sección, también podrá escoger el tipo producto 'Estudiante en formación' e ingresar el número de estudiantes participantes en caso de no 
+							tener los nombres exactos de los estudiantes."
+								rendered="#{manejadorFichaMinimaProyectos.esPosgrado1_2}" />
+
+							<h:outputText
+								value=". Si el producto esperado no se encuentra en el listado, por favor comunicarse a las extensiones 18414, 10978 y 10997."
+								rendered="#{manejadorFichaMinimaProyectos.esProyectoInnoModDos}" />
+
+
+
+							<br />
+							<h:panelGrid columns="1" id="panelProductos" align="center">
+
+								<h:panelGrid columns="1" align="left"
+									id="panelProductosAdicionados" style="width:550px">
+
+									<p:dataTable id="tablaProductos"
+										value="#{manejadorFichaMinimaProyectos.proyectoActual.listaProductosProyecto}"
+										var="proyectoProducto" cellpadding="6" cellspacing="3"
+										border="0"
+										emptyMessage="No existen productos asociados al proyecto">
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="PRODUCTOS ADICIONADOS" />
+											</f:facet>
+											<h:outputText value="#{proyectoProducto.producto.nombre}" />
+										</p:column>
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="CANTIDAD" />
+											</f:facet>
+											<h:outputText value="#{proyectoProducto.cantidad}" />
+										</p:column>
+									</p:dataTable>
+
+								</h:panelGrid>
+							</h:panelGrid>
+
+						</p:tab>
+
+						<p:tab title="Clasificación y duración del proyecto"
+							id="duracionClasificacion">
+							<br />
+
+							<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+								id="panelDurac">
+
+								<h:outputText value="Area de la ciencia principal:"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}" />
+								<p:selectOneMenu style="width:160px"
+									value="#{manejadorFichaMinimaProyectos.areaCiencia}"
+									id="areaCiencia"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.areaCienciaItems}" />
+								</p:selectOneMenu>
+								<h:outputLink
+									value="#{manejadorFichaMinimaProyectos.linkLineas}"
+									target="_blank">
+									<h:graphicImage id="imageee" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+
+								<h:outputText value="Area de la ciencia secundaria:"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}" />
+								<p:selectOneMenu style="width:160px"
+									value="#{manejadorFichaMinimaProyectos.areaCienciaSec}"
+									id="areaCiencia1"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.areaCienciaItems}" />
+								</p:selectOneMenu>
+								<p:message for="areaCiencia" display="icon" />
+
+
+								<h:outputText value="Objetivo socioeconómico:"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}" />
+								<p:selectOneMenu id="socioeconomico" style="width:160px"
+									rendered="#{!manejadorFichaMinimaProyectos.esConvIni}"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.objetivoSocioeconomico}">
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.objSocioeconomicoItems}" />
+								</p:selectOneMenu>
+								<h:outputLink
+									value="#{manejadorFichaMinimaProyectos.linkObjetivos}"
+									target="_blank">
+									<h:graphicImage id="images" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+
+								<h:outputText value="Duración (Meses):" />
+								<p:inputText
+									value="#{ manejadorFichaMinimaProyectos.proyectoActual.duracion}"
+									size="3" id="horam">
+								</p:inputText>
+								<p:message for="horam" display="icon" />
+
+
+							</h:panelGrid>
+
+
+
+
+							<br />
+						</p:tab>
+
+						<p:tab title="Palabras clave" id="palabrasClave"
+							rendered="#{!manejadorFichaMinimaProyectos.esConvIni}">
+							
+							<br />
+							<p:outputPanel id="grupoListaPalabras" align="center">
+								<p:dataTable id="palabrasTable"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.listaPalabrasES}"
+									var="pal"
+									emptyMessage="No se encuentran palabras clave registradas">
+
+									<p:column style="width:25%">
+										<f:facet name="header">
+											<h:outputText value="Palabra Clave" />
+										</f:facet>
+										<h:outputText value="#{pal.palabraVista}" />
+									</p:column>
+
+								</p:dataTable>
+							</p:outputPanel>
+							<br />
+
+						</p:tab>
+
+						<p:tab title="Equipo de trabajo UN" id="equipoTrabajo">
+
+							<br />
+							<br />
+
+							<center>
+								<h:outputText value="Director del proyecto"
+									style='font-weight: bold;' />
+							</center>
+							<br />
+							<h:outputText value="El director del proyecto es:"
+								style='font-weight: bold;' />
+							<br />
+							<br />
+
+							<center>
+								<p:dataTable id="directorTabla" var="coinvestigador"
+									value="#{manejadorFichaMinimaProyectos.listaDirector}"
+									emptyMessage="No se ha agregado el director" style="width:80%">
+
+									<p:column headerText="Director">
+										<h:outputText
+											value="#{coinvestigador.investigador.nombre1} #{coinvestigador.investigador.apellido1}" />
+									</p:column>
+									<p:column headerText="Documento">
+										<h:outputText
+											value="#{coinvestigador.investigador.id.documento}" />
+									</p:column>
+
+									<p:column headerText="Unidad">
+										<h:outputText
+											value="#{coinvestigador.investigador.dependencia.nombre}" />
+									</p:column>
+
+									<p:column headerText="td" style="width:60%">
+										<h:outputText value=" #{coinvestigador.dedicacionHorasSemana}" />
+									</p:column>
+
+									<p:column headerText="Valor(dedicación-$)" style="width:60%">
+										<h:outputText value=" #{coinvestigador.valorPagar}" />
+									</p:column>
+
+								</p:dataTable>
+							</center>
+							<br />
+
+
+
+							<br />
+							<p:separator></p:separator>
+							<br />
+							<center>
+								<h:outputText value="Participantes del proyecto:"
+									style='font-weight: bold;' />
+							</center>
+							<br />
+
+							<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+								id="msgEstudiante" style='font-weight: bold;'>
+								<h:outputText
+									value=" A continuación ingrese el(los) estudiante(s) que haga(n) parte del equipo de trabajo del proyecto. Para ello, tenga en cuenta  que debe asociar al estudiante que desarrollará el proyecto con el tipo de vinculación 'Estudiante Líder'"
+									rendered="#{manejadorFichaMinimaProyectos.verFichaMin}" />
+
+								<h:outputText
+									value="* No es necesario ingresar los estudiantes del curso como partipantes del proyecto"
+									rendered="#{manejadorFichaMinimaProyectos.materiasSIA}" />
+
+								<h:outputText
+									value="* Para la Modalidad 2: Ingrese sólo un estudiante"
+									rendered="#{manejadorFichaMinimaProyectos.verFichaMin}" />
+
+								<h:outputText
+									value="* Para la Modalidad 3: Se aclara que cada apoyo está dirigido a financiar el trabajo de grado de un estudiante. 
+									No obstante, si el trabajo de grado puede ser desarrollado por más de un estudiante, podrá hacerse solo una postulación vinculando los estudiantes respectivos."
+									rendered="#{manejadorFichaMinimaProyectos.verFichaMin}" />
+
+								<h:outputText
+									value="NOTA: Si ya tiene definidos los estudiantes de posgrado que va a vincular, puede ingresarlos a continuación. De lo contrario NO es obligatorio"
+									rendered="#{manejadorFichaMinimaProyectos.esPosgrado1_2}" />
+
+							</p:panelGrid>
+
+							<br />
+
+							<br />
+							<h:outputText
+								value="#{manejadorFichaMinimaProyectos.errorEstudiantes}"
+								style="color: #FF0000; font-weight: bold;" />
+
+							<br />
+							<h:outputText value="Participantes Actuales:"
+								style='font-weight: bold;' />
+							<br />
+							<br />
+
+							<center>
+								<p:dataTable id="participantesTabla" var="coinvestigadorPart"
+									value="#{manejadorFichaMinimaProyectos.listaParticipantes}"
+									emptyMessage="No se han agregado participantes"
+									style="width:80%">
+
+									<p:column headerText="Participante">
+										<h:outputText
+											value="#{coinvestigadorPart.investigador.nombre1} #{coinvestigadorPart.investigador.apellido1}" />
+									</p:column>
+									<p:column headerText="Documento">
+										<h:outputText
+											value=" #{coinvestigadorPart.investigador.id.documento}" />
+									</p:column>
+
+									<p:column headerText="Unidad">
+										<h:outputText
+											value="#{coinvestigadorPart.investigador.dependencia.nombre}" />
+									</p:column>
+
+									<p:column headerText="Tipo Vinculación" style="width:60%">
+										<h:outputText value="#{coinvestigadorPart.tipo.nombre}" />
+									</p:column>
+
+									<p:column headerText="td" style="width:60%">
+										<h:outputText
+											value=" #{coinvestigadorPart.dedicacionHorasSemana}" />
+									</p:column>
+
+
+									<p:column headerText="Valor(dedicación-$)" style="width:60%"
+										rendered="false">
+										<h:outputText value="" />
+									</p:column>
+
+								</p:dataTable>
+							</center>
+							<br />
+							<center>
+								<p:commandButton icon="ui-icon-clock"
+									action="#{manejadorFichaMinimaProyectos.cargarHistorico}"
+									rendered="#{manejadorFichaMinimaProyectos.proyectoActual.id!=null and (manejadorFichaMinimaProyectos.proyectoActual.proyectoPadre==null or manejadorFichaMinimaProyectos.proyectoActual.proyectoPadre==0 )}"
+									value="Consultar Histórico de Integrantes del Proyecto"
+									oncomplete="dialogHistorico.show();" update="@form">
+								</p:commandButton>
+							</center>
+						</p:tab>
+
+					</p:accordionPanel>
+
+				</p:panel>
+				<br />
+
+				<p:panel id="panelInformacionFinanciera"
+					header="II. INFORMACIÓN FINANCIERA DEL PROYECTO" toggleable="true"
+					toggleSpeed="500" closeSpeed="500">
+
+					<p:accordionPanel id="panelUnoInfFin" multiple="true"
+						activeIndex="">
+
+
+					</p:accordionPanel>
+
+				</p:panel>
+				<br />
+
+
+			</h:panelGrid>
+
+			<h:panelGrid id="mostrarSiConvocatoriaEventos" align="center"
+				rendered="#{manejadorFichaMinimaProyectos.mostrarSiConvocatoriaEventos}"
+				style="width:100%">
+
+				<p:panel id="informacionGeneralEventos" header="Información General">
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del docente:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Sede:" />
+						<h:outputText value="#{manejadorFichaMinimaProyectos.nombreSede}" />
+
+						<h:outputText value="Facultad/Instituto:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.nombreFacultad}" />
+
+						<h:outputText value="Departamento:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.nombreDepartamento}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{manejadorFichaMinimaProyectos.emailPersonaActual}" />
+
+						<h:outputText value="Teléfono de contacto:" />
+						<p:inputText size="20" id="idTelefono"
+							value="#{manejadorFichaMinimaProyectos.telefono}" />
+
+
+
+					</h:panelGrid>
+
+				</p:panel>
+
+				<br />
+
+				<p:panel id="informacionDelEvento" header="Información del evento">
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5" id="formInfoGeneralEvento">
+
+						<h:outputText value="* Nombre del evento:" />
+						<p:inputTextarea rows="5" cols="60" autoResize="false"
+							counter="counter" maxlength="1000"
+							counterTemplate="{0} caracteres restantes."
+							id="nombreEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.nombre}"
+							requiredMessage="El nombre del evento es obligatorio" />
+						<h:outputText id="count" value="" />
+						<h:outputText id="counter" />
+
+						<h:outputText value="* Tipo de evento:" />
+						<p:selectOneMenu
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.claseEvento}"
+							id="tipoEvento">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.tipoEventoItems}" />
+							<p:ajax
+								listener="#{manejadorFichaMinimaProyectos.cambiarTipoEvento}"
+								update="formInfoGeneralEvento, otroEventotxt, otroEvento" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Otro tipo - Cuál?:" id="otroEventotxt"
+							rendered="#{manejadorFichaMinimaProyectos.mostrarOtroTipoEvento}" />
+						<p:inputText size="40" id="otroEvento"
+							rendered="#{manejadorFichaMinimaProyectos.mostrarOtroTipoEvento}"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.otroClaseEvento}" />
+
+						<h:outputText value="* Número de estudiantes que apoyan el evento:" />
+						<p:inputText id="numeroEstudiantes"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.maxAsistentes}"
+							converterMessage="Debe ingresar un número entero válido mayor a 0 (cero)"
+							validatorMessage="El número de estudiantes que apoya el evento debe ser máximo de 3 dígitos y mayor a 0"
+							size="5">
+							<f:validateLength minimum="1" maximum="3" />
+							<f:validateDoubleRange minimum="1" maximum="999" />
+						</p:inputText>
+
+						<h:outputText value="* Número total de cupos:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:inputText id="numeroCupos"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.cuposDescuento}"
+							size="5"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						</p:inputText>
+						
+						<h:outputText value="* Población objetivo del evento:" rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:selectCheckboxMenu id="menu"
+									value="#{manejadorFichaMinimaProyectos.selectedPoblacionObjetivo}"
+									panelStyleClass="test" label="Seleccione alguna opcion(es)"
+									panelStyle="width:250px"
+									rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.poblacionObjetivoEventoItem}" />
+							<p:ajax listener="#{manejadorFichaMinimaProyectos.cambioPoblacionObjetivo}"
+									update="poblacionObjetivoEventoGrupoDirige,poblacionObjetivoEventoPoblacionDirige" 
+									process="poblacionObjetivoEventoGrupoDirige,poblacionObjetivoEventoPoblacionDirige" />
+						</p:selectCheckboxMenu>
+						
+						<h:outputText value="* Grupo al que se dirige:" rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:selectOneMenu
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.grupoDirige}"
+							id="poblacionObjetivoEventoGrupoDirige"
+							disabled="#{!manejadorFichaMinimaProyectos.mostrarPoblacionExterno}"
+							style="width:200px;"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.poblacionObjetivoEventoGrupoItem}" />
+						</p:selectOneMenu>
+						
+						<h:outputText value="* Población a la que se dirige:" rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:selectOneMenu
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.poblacionDirige}"
+							id="poblacionObjetivoEventoPoblacionDirige"
+							disabled="#{!manejadorFichaMinimaProyectos.mostrarPoblacionExterno}"
+							style="width:200px;"
+							panelStyle="width:350px"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.poblacionObjetivoEventoPoblacionItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="* Metodología del evento:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:selectOneMenu
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.logistica}"
+							id="metodologiaEvento"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.metodologiaEventoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="* Intensidad Horaria:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:inputText id="intensidadHoraria"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.horaSesion}"
+							size="5"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						</p:inputText>
+
+						<h:outputText value="* Se otorgará certificación a los asistentes:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:selectOneMenu id="certAsistentes"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.tipoCertificacion}"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItem itemLabel="No" itemValue="NO" />
+							<f:selectItem itemLabel="Sí" itemValue="SI" />
+						</p:selectOneMenu>
+
+						<h:outputText value="* El evento tendrá sistema de calificación:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:selectOneMenu id="sisteCal"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.sistCalificacion}"
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItem itemLabel="No" itemValue="NO" />
+							<f:selectItem itemLabel="Sí" itemValue="SI" />
+						</p:selectOneMenu>
+
+						<h:outputText value="* Fecha de inicio del evento:" />
+						<p:calendar
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.fechaTentativaInicio}"
+							id="popupButtonCalFecIni" locale="es" />
+
+						<h:outputText value="* Fecha de terminación del evento:" />
+						<p:calendar
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.fechaFinalizacion}"
+							id="popupButtonCalFecFin" locale="es" />
+							
+						<h:outputText value="* País de realización del evento:" rendered="#{manejadorFichaMinimaProyectos.mostrarPaises}"/>
+						<p:selectOneMenu id="idPaisEvento" filter="true" rendered="#{manejadorFichaMinimaProyectos.mostrarPaises}"
+							required="false"
+							filterMatchMode="contains" style="width:200px"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.paisEvento}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.listaPaisesItem}" />
+							<p:ajax update="formInfoGeneralEvento"
+								listener="#{manejadorFichaMinimaProyectos.revisarPais}" />
+						</p:selectOneMenu>						
+
+						<h:outputText id="deptoTitulo" value="* Departamento de realización del evento:" rendered="#{manejadorFichaMinimaProyectos.siColombia}"/>
+						<p:selectOneMenu
+							value="#{manejadorFichaMinimaProyectos.departamentoActual.id}" rendered="#{manejadorFichaMinimaProyectos.siColombia}"
+							effect="fade" id="depto" filter="true" style="width:200px">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.departamentoItem}" />
+							<p:ajax update="depto,ciudad "
+								listener="#{manejadorFichaMinimaProyectos.cambiarDepartamento}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="* Ciudad de realización del evento:"
+							id="ciudText" rendered="#{manejadorFichaMinimaProyectos.siColombia}" />
+						<p:selectOneMenu rendered="#{manejadorFichaMinimaProyectos.siColombia}"
+							value="#{manejadorFichaMinimaProyectos.ciudadActual.id}"
+							effect="fade" id="ciudad" filter="true">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorFichaMinimaProyectos.ciudadItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="* Lugar de realización del evento: " />
+						<p:inputTextarea rows="5" cols="60" autoResize="false"
+							counter="counterLugar" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." id="lugarEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.lugar}"
+							requiredMessage="El lugar de realización del evento es obligatorio" />
+						<h:outputText id="idCounterLugar" value="" />
+						<h:outputText id="counterLugar" />
+
+						<h:outputText
+							value="* Mencione la estrategia de divulgación para asegurar la participación y difusión de resultados y memorias del mismo:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:inputTextarea rows="5" cols="60" autoResize="false"
+							counter="counterDivulgacion" maxlength="4000"
+							counterTemplate="{0} caracteres restantes."
+							id="divulgacionEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.campoGenericoOcho}"
+							requiredMessage="La divulgación del evento es obligatorio" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<h:outputText id="countDiv" value="" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<h:outputText id="counterDivulgacion" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+
+						<h:outputText value="* Justificación:" rendered="#{not(manejadorFichaMinimaProyectos.esConvMoots2021_M1 or manejadorFichaMinimaProyectos.esConvMoots2021_M2)}" />
+						<h:outputText value="* Justificación de la participación y estrategia pedagógica:" rendered="#{manejadorFichaMinimaProyectos.esConvMoots2021_M1 or manejadorFichaMinimaProyectos.esConvMoots2021_M2}" />
+						<p:inputTextarea rows="5" cols="60" autoResize="false"
+							counter="counterJusti" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." id="justifiEvento"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.justificacion}"
+							requiredMessage="La justificación del evento es obligatorio" />
+						<h:outputText id="countJust" value="" />
+						<h:outputText id="counterJusti" />
+
+						<h:outputText value="* Objetivo general:" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<p:inputTextarea
+							validatorMessage="Objetivo Principal debe estar entre 1 - 4000 caracteres"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.objetivoGeneral}"
+							style="width: 350px; height: 100px;" rows="3" id="objeto"
+							counter="counterObjeto" maxlength="4000"
+							counterTemplate="{0} caracteres restantes."
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						</p:inputTextarea>
+						<h:outputText id="countObj" value="" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+						<h:outputText id="counterObjeto" 
+							rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+					</h:panelGrid>
+
+					<p:separator 
+						rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;"
+						rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						<h:outputText value="* OBJETIVOS ESPECÍFICOS"
+							style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="pgObjEspEve" 
+						rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						<p:row>
+							<p:column style="width:180px">
+								<h:outputText
+									value="Por favor ingrese cada objetivo específico (Máx. 2000 caracteres):" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea
+									value="#{manejadorFichaMinimaProyectos.objetivoEspecifico}"
+									rows="3" id="objetoEspecificoEven"
+									style="width: 350px; height: 60px;"
+									binding="#{manejadorFichaMinimaProyectos.objetoEspecificoEven}"
+									validatorMessage="El objetivo específico debe estar entre 1 - 2000 caracteres"
+									counter="counterObjetivo" maxlength="2000"
+									counterTemplate="{0} caracteres restantes.">
+								</p:inputTextarea>
+								<p:message id="msgObjEspEven" for="objetoEspecificoEven"
+									showSummary="false"></p:message>
+								<h:outputText id="counterObjetivo" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: center;" colspan="2">
+								<p:commandButton
+									action="#{manejadorFichaMinimaProyectos.insertarObjetivo}"
+									value="Adicionar objetivo" icon="ui-icon-plus"
+									update="objetivoEspTableEven, objetoEspecificoEven, msgObjEspEven"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="objetivoEspTableEven"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.listaObjetivos}"
+									var="obj"
+									emptyMessage="No se encuentran objetivos específicos registrados"
+									editable="true" style="margin-top: 10px;width:550px;">
+
+									<p:column style="font-weight: bold;width:5%;">
+										<f:facet name="header">
+											<h:outputText value="" />
+										</f:facet>
+										<h:outputText value="#{obj.numeroOrden}" />
+									</p:column>
+
+									<p:column style="width:70%;">
+										<f:facet name="header">
+											<h:outputText value="Objetivo Específico" />
+										</f:facet>
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{obj.nombre}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputTextarea rows="3" maxlength="2000"
+													value="#{obj.nombre}" style="width:100%" />
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column style="width:10%; text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Editar" />
+										</f:facet>
+										<p:rowEditor />
+									</p:column>
+									<p:column style="width:10%; text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Eliminar" />
+										</f:facet>
+										<p:commandButton id="selectButton"
+											update="objetivoEspTableEven" icon="ui-icon-trash"
+											action="#{manejadorFichaMinimaProyectos.eliminarObjetivo}"
+											title="Eliminar objetivo específico"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{obj}"
+												target="#{manejadorFichaMinimaProyectos.objetivoTabla}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+					<p:separator 
+						rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}"/>
+
+					<t:div style="text-align: center; margin-bottom: 10px; margin-top: 30px;"
+						   rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019}">
+						<h:outputText
+							value="OBJETIVOS DE DESARROLLO SOSTENIBLE CON LOS QUE ESTÁ RELACIONADO EL EVENTO"
+							style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid id="panelObjetivosDesarrolloSostenible"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="* Objetivo principal:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{manejadorFichaMinimaProyectos.objetivoDesarrolloSosteniblePrimario}"
+									id="objetivoDesarrolloSostenible">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.objetivosDesarrolloSostenibleItems}" />
+								</p:selectOneMenu>
+								<h:outputLink id="paginaODS"
+									value="#{manejadorFichaMinimaProyectos.linkObjetivosDesarrolloSostenible}"
+									target="_blank">
+									<h:graphicImage id="paginaODSPri" alt="jsf-sun"
+										url="/images/NU-icono2.PNG">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="paginaODS"
+									value="Consultar página web con la descripción de los objetivos de desarrollo sostenible."
+									showEffect="fade" hideEffect="fade" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Objetivo secundario:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{manejadorFichaMinimaProyectos.objetivoDesarrolloSostenibleSecundario}"
+									id="objetivoDesarrolloSostenibleSec">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+									<f:selectItems
+										value="#{manejadorFichaMinimaProyectos.objetivosDesarrolloSostenibleItems}" />
+								</p:selectOneMenu>
+								<h:outputLink id="paginaODSSecu"
+									value="#{manejadorFichaMinimaProyectos.linkObjetivosDesarrolloSostenible}"
+									target="_blank">
+									<h:graphicImage id="paginaODSSec" alt="jsf-sun"
+										url="/images/NU-icono2.PNG">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="paginaODSSec"
+									value="Consultar página web con la descripción de los objetivos de desarrollo sostenible."
+									showEffect="fade" hideEffect="fade" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:commandButton id="btnObjDesSosSec"
+									action="#{manejadorFichaMinimaProyectos.agregarObjetivoDesarrolloSostenible}"
+									binding="#{manejadorFichaMinimaProyectos.btnObjDesSosSec}"
+									value="Adicionar objetivo secundario" icon="ui-icon-plus"
+									update="panelObjetivosDesarrolloSostenible, tablaObjDesSos, msgObjeDesSos, objetivoDesarrolloSostenibleSec"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+								<br />
+								<br />
+								<p:message id="msgObjeDesSos" for="btnObjDesSosSec"
+									showSummary="false" />
+								<br />
+								<center>
+									<p:dataTable
+										value="#{manejadorFichaMinimaProyectos.valoresObjetivosDesarrolloSostenible}"
+										var="gru" emptyMessage="No hay valores adicionados"
+										id="tablaObjDesSos">
+
+										<p:column
+											headerText="Objetivos de desarrollo sostenible secundarios">
+											<h:outputText value="#{gru.nombreValor}"
+												style="text-align: left; width: 50%; padding-bottom: 10px;" />
+										</p:column>
+
+										<p:column style="width:20%" headerText="(-)">
+											<p:commandButton id="eliminarObjDesSos"
+												update="tablaObjDesSos" icon="ui-icon-trash"
+												action="#{manejadorFichaMinimaProyectos.eliminarObjetivoDesarrolloSostenible}"
+												title="Eliminar">
+												<f:setPropertyActionListener value="#{gru}"
+													target="#{manejadorFichaMinimaProyectos.objetivoDesarrolloSostenibleSeleccionado}" />
+											</p:commandButton>
+										</p:column>
+									</p:dataTable>
+								</center>
+							</p:column>
+						</p:row>
+
+					</p:panelGrid>
+					<br />
+					<p:panelGrid id="panelObjetivosDesarrolloSostenibleDes"
+						styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText
+									value="* Mencione la relación del evento con los Objetivos de Desarrollo Sostenible:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea rows="5" cols="60" autoResize="false"
+									maxlength="3500" id="relacionObjEvento"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.descripcion}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+
+					<p:separator />
+
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="DEPENDENCIAS" style="font-weight: bold;" />
+					</t:div>
+					<br />
+					<center>
+						<p:dataTable id="dependenciasDataTable"
+							value="#{manejadorFichaMinimaProyectos.proyectoActual.listaDependenciasAreaResponsabilidad}"
+							var="dependenciaArea" cellpadding="6" cellspacing="3" border="0"
+							emptyMessage="No existen dependencias asociadas al proyecto">
+
+							<f:facet name="header">
+								<h:outputText value="DEPENDENCIAS ASOCIADAS" />
+							</f:facet>
+
+							<p:column>
+								<h:outputText value="#{dependenciaArea.dependencia.nombre}" />
+							</p:column>
+
+
+							<p:column>
+								<p:commandButton
+									action="#{manejadorFichaMinimaProyectos.eliminarDependencia}"
+									icon="ui-icon-trash" update="dependenciasDataTable"
+									title="Eliminar Área de Responsabilidad">
+
+									<f:setPropertyActionListener
+										target="#{manejadorFichaMinimaProyectos.dependenciaAreaResponsabilidadSeleccionada}"
+										value="#{dependenciaArea}" />
+
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+					</center>
+
+
+					<p:separator />
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="INSTITUCIONES EXTERNAS ORGANIZADORAS"
+							style="font-weight: bold;" />
+					</t:div>
+					
+					<br />					
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;" id="entidadesParticipantes">
+
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="tablaEntParticip" var="entidad"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.listaEntidadesParticipantes}"
+									align="center"
+									emptyMessage="No se han agregado instituciones organizadoras">
+									<p:column headerText="Institución">
+										<h:outputText value="#{entidad.fuente.descripcion}" />
+									</p:column>
+									<p:column headerText="Valor aporte efectivo"
+										style="text-align: center;">
+										<h:outputText value="#{entidad.valor}">
+											<f:convertNumber currencySymbol="$" groupingUsed="true"
+												maxFractionDigits="0" minFractionDigits="0" type="currency" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Valor aporte especie"
+										style="text-align: center;">
+										<h:outputText value="#{entidad.valorEspecie}">
+											<f:convertNumber currencySymbol="$" groupingUsed="true"
+												maxFractionDigits="0" minFractionDigits="0" type="currency" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+
+					</p:panelGrid>
+
+
+
+				</p:panel>
+				
+				<br />
+				
+				<p:panel id="integrantesFichaProyectos" header="Integrantes" rendered="#{manejadorFichaMinimaProyectos.esConvEventos2019 || manejadorFichaMinimaProyectos.esConvocatoriaEventos}">
+				
+				<t:div>
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="INTEGRANTES ACTUALES DEL PROYECTO"
+							style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width: 100%;" id="infoEquipoTrabajo">
+						<p:row>
+							<p:column style="text-align: center;" colspan="2">
+								<p:dataTable id="participantesTablaNum"
+									var="coinvestigadorPartNum"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.listaInvestigadoresProyectoSinDatos}"
+									emptyMessage="No se han agregado participantes"
+									style="width:100%;">
+									<f:facet name="header">
+										<h:outputText
+											value="Participantes de los cuales NO se conocen los datos personales" />
+									</f:facet>
+									<p:column headerText="Tipo de participante"
+										style="width:20%">
+										<h:outputText value="#{coinvestigadorPartNum.tipo.nombre}" />
+									</p:column>
+									<p:column headerText="Cantidad" style="width:10%">
+										<h:outputText
+											value=" #{coinvestigadorPartNum.dedicacionHorasSemana}" />
+									</p:column>
+									<p:column headerText="Actividades"
+										rendered="#{manejadorFichaMinimaProyectos.convocatoriaActual.mostrarActividadesInvestigadorNoConocido}">
+										<h:outputText value=" #{coinvestigadorPartNum.funcion}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+			
+						<p:row>
+							<p:column style="text-align: center;" colspan="2">
+								<p:dataTable id="participantesTabla" var="coinvestigadorPart"
+									value="#{manejadorFichaMinimaProyectos.proyectoActual.listaInvestigadoresProyectoConDatos}"
+									emptyMessage="No se han agregado participantes"
+									style="width:100%">
+									<f:facet name="header">
+										<h:outputText
+											value="Participantes de los cuales se conocen los datos personales" />
+									</f:facet>
+									<p:column headerText="Participante" style="width:20%">
+										<h:outputText
+											value="#{coinvestigadorPart.investigador.nombre1} #{coinvestigadorPart.investigador.apellido1}" />
+										<br />
+										<h:outputText
+											value=" #{coinvestigadorPart.investigador.id.tipoDocumento} - #{coinvestigadorPart.investigador.id.documento}" />
+										<t:div rendered="#{coinvestigadorPart.grupo != null}">
+											<br />
+											<h:outputText
+												value="Grupo: #{coinvestigadorPart.grupo.nombre}" />
+										</t:div>
+									</p:column>
+									<p:column headerText="Unidad" style="width:20%">
+										<h:outputText
+											value="#{coinvestigadorPart.investigador.dependencia.nombre}" />
+									</p:column>
+									<p:column style="width:10%">
+										<f:facet name="header">
+											<h:outputText value="Tipo " />
+											<br />
+											<h:outputText value="vinculación" />
+										</f:facet>
+										<h:outputText value="#{coinvestigadorPart.tipo.nombre}" />
+									</p:column>
+									<p:column headerText="h/s" style="width:5%">
+										<h:outputText
+											value=" #{coinvestigadorPart.dedicacionHorasSemana}" />
+									</p:column>
+									<p:column headerText="m" style="width:5%">
+										<h:outputText
+											value=" #{coinvestigadorPart.totalHorasVinculacion}" />
+									</p:column>
+									<p:column style="width:10%">
+										<f:facet name="header">
+											<h:outputText value="Valor " />
+											<br />
+											<h:outputText value="(dedicación-$)" />
+										</f:facet>
+										<h:outputText value="#{coinvestigadorPart.valorPagar}">
+											<f:convertNumber currencySymbol="$" groupingUsed="true"
+												type="currency" minFractionDigits="0"
+												maxFractionDigits="0" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Act/Resp." style="width:60%"
+										rendered="#{manejadorFichaMinimaProyectos.convocatoriaActual.mostrarActividadesInvestigador}">
+										<h:outputText value=" #{coinvestigadorPart.funcion}" />
+									</p:column>	
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+				
+				</p:panel>
+				
+				<br />
+
+				<p:panel id="presupuestoDelEvento" header="Presupuesto">
+
+					<p:tab title="Información financiera" id="infoFinanciera2">
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							id="panelGridFinanciacionConvocatoria">
+							<p:row>
+								<p:column colspan="2" style="text-align: center; width: 630px;">
+									<p:dataTable cellpadding="6" cellspacing="3"
+										value="#{manejadorFichaMinimaProyectos.proyectoActual.listaFuentesFinancacionFicha}"
+										var="financiacion" id="listaFuentesFinan2"
+										rendered="#{not empty manejadorFichaMinimaProyectos.proyectoActual.listaFinanciones}">
+										<p:column style="width:40%">
+											<f:facet name="header">
+												<h:outputText value="Fuente de financiación" />
+											</f:facet>
+											<h:outputText value="#{financiacion.fuente.descripcion}" />
+										</p:column>
+
+										<p:column style="width:20%">
+											<f:facet name="header">
+												<h:outputText value="Valor" />
+											</f:facet>
+											<h:outputText value="#{financiacion.valor}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													type="currency" minFractionDigits="0" maxFractionDigits="0" />
+											</h:outputText>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column colspan="2">
+									<p:dataTable id="dataTableGastoVista2" var="gasto"
+										value="#{manejadorFichaMinimaProyectos.listaGastos}"
+										align="center" border="1" cellpadding="4" cellspacing="0">
+										<p:column style="width: 40%;">
+											<f:facet name="header">
+												<h:outputText value="Entidad" />
+											</f:facet>
+											<h:outputText
+												value="#{gasto.financiacion.fuente.descripcion}" />
+										</p:column>
+										<p:column style="width: 40%;">
+											<f:facet name="header">
+												<h:outputText value="Rubro" />
+											</f:facet>
+											<h:outputText value="#{gasto.tipoRubro.nombre}" />
+										</p:column>
+										<p:column style="width: 40%;">
+											<f:facet name="header">
+												<h:outputText value="Descripción" />
+											</f:facet>
+											<h:outputText value="#{gasto.descripcion}" />
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Valor efectivo" />
+											</f:facet>
+											<h:outputText value="#{gasto.valor}"
+												rendered="#{!gasto.tipoRubro.rubroContrapartida}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													type="currency" minFractionDigits="0" maxFractionDigits="0" />
+											</h:outputText>
+										</p:column>
+										<p:column style="text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Valor especie" />
+											</f:facet>
+											<h:outputText value="#{gasto.valor}"
+												rendered="#{gasto.tipoRubro.rubroContrapartida}">
+												<f:convertNumber currencySymbol="$" groupingUsed="true"
+													type="currency" minFractionDigits="0" maxFractionDigits="0" />
+											</h:outputText>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:tab>
+
+				</p:panel>
+
+				<br />
+
+				<p:panel id="productosDelEvento" header="Productos Esperados">
+
+					<h:panelGrid columns="1" id="panelProductosEventos" align="center">
+
+						<h:panelGrid columns="1" align="left"
+							id="panelProductosAdicionadosEventos" style="width:550px">
+
+							<p:dataTable id="tablaProductosEventos"
+								value="#{manejadorFichaMinimaProyectos.proyectoActual.listaProductosProyecto}"
+								var="proyectoProducto" cellpadding="6" cellspacing="3"
+								border="0"
+								emptyMessage="No existen productos asociados al proyecto">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="PRODUCTOS ADICIONADOS" />
+									</f:facet>
+									<h:outputText value="#{proyectoProducto.producto.nombre}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="CANTIDAD" />
+									</f:facet>
+									<h:outputText value="#{proyectoProducto.cantidad}" />
+								</p:column>
+							</p:dataTable>
+
+						</h:panelGrid>
+					</h:panelGrid>
+
+				</p:panel>
+
+			</h:panelGrid>
+
+			<br />
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<p:dialog
+				header="Histórico Integrantes de Proyecto - ID: #{manejadorFichaMinimaProyectos.proyectoActual.id}"
+				widgetVar="dialogHistorico" modal="true" resizable="false"
+				width="800">
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="histIntegrante" var="historico"
+					value="#{manejadorFichaMinimaProyectos.historicoIntegrantes}"
+					emptyMessage="No hay un histórico para este proyecto"
+					paginator="true" rows="5" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Documento de Identidad" />
+						</f:facet>
+						<h:outputText value="#{historico.documento}:" />
+						<br />
+						<h:outputText value="#{historico.integrante.id.documento}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText value="#{historico.integrante.nombreCompleto}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de Integrante" />
+						</f:facet>
+						<h:outputText
+							value="#{historico.tipoVinculacionGrupo} - #{historico.tipoInvestigadorProyecto.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Datos Adicionales" />
+						</f:facet>
+						<h:outputText
+							rendered="#{historico.tipoVinculacionGrupo == 'Externo'}"
+							value="N/A" />
+						<h:outputText rendered="#{!empty historico.dependencia}"
+							style="font-weight: bold;" value="Facultad: " />
+						<h:outputText rendered="#{!empty historico.dependencia}"
+							value="#{historico.dependencia.nombre}" />
+						<ui:fragment rendered="#{!empty historico.dependencia}">
+							<br />
+						</ui:fragment>
+						<h:outputText rendered="#{!empty historico.sede}"
+							style="font-weight: bold;" value="Sede: " />
+						<h:outputText rendered="#{!empty historico.sede}"
+							value="#{historico.sede.nombre}" />
+						<ui:fragment rendered="#{!empty historico.sede}">
+							<br />
+						</ui:fragment>
+						<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+							style="font-weight: bold;" value="Tipo de Vinculación a la UN: " />
+						<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+							value="#{historico.tipoVinculacion.nombre}" />
+						<ui:fragment rendered="#{!empty historico.tipoVinculacion}">
+							<br />
+						</ui:fragment>
+						<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+							style="font-weight: bold;" value="Dedicación: " />
+						<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+							value="#{historico.tipoDedicacion.nombre}" />
+						<ui:fragment rendered="#{!empty historico.tipoDedicacion}">
+							<br />
+						</ui:fragment>
+						<h:outputText rendered="#{!empty historico.tipoFormacion}"
+							style="font-weight: bold;" value="Máximo nivel de estudios: " />
+						<h:outputText rendered="#{!empty historico.tipoFormacion}"
+							value="#{historico.tipoFormacion.nombre}" />
+						<ui:fragment rendered="#{!empty historico.tipoFormacion}">
+							<br />
+						</ui:fragment>
+						<h:outputText rendered="#{!empty historico.planEstudios}"
+							style="font-weight: bold;" value="Programa Académico: " />
+						<h:outputText rendered="#{!empty historico.planEstudios}"
+							value="#{historico.planEstudios.nombre}" />
+						<ui:fragment rendered="#{!empty historico.planEstudios}">
+							<br />
+						</ui:fragment>
+						<h:outputText rendered="#{!empty historico.semestreActual}"
+							style="font-weight: bold;" value="Semestre: " />
+						<h:outputText rendered="#{!empty historico.semestreActual}"
+							value="#{historico.semestreActual}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha Ingreso" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaIngreso}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha Retiro" />
+						</f:facet>
+						<h:outputText value="#{historico.fechaRetiro}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

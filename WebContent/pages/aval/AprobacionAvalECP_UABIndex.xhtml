@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="title">Aval Institucional UAB</ui:define>
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Avales unidad académica básica<br/></t:div>
+			En esta sección puede realizar la revisión de avales para proyectos de jornada docente de los profesores adscritos.<br />
+			Por favor tener en cuenta el <a href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=9" target="_blank" style="color: #16A8E2;font-weight: bold;">instructivo</a> 
+			para el rol de Director de UAB.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form>
+			<br />
+			<p:dataTable var="aval"
+				value="#{ManejadorAprobacionAvalUAB.listaAval}"
+				emptyMessage="No tiene avales para revisión." paginator="true"
+				rows="15" paginatorPosition="bottom">
+				<f:facet name="header">Solicitud de avales pendientes</f:facet>
+
+				<p:column style="text-align: center;" headerText="Código">
+					<h:outputText value="#{aval.aviId}" />
+				</p:column>
+				
+				<p:column style="text-align: center;" headerText="Título">
+					<h:outputText value="#{aval.aviTitulo}" />
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Profesor solicitante">
+					<h:outputText value="#{aval.nombreInvestigador}" />
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Tipo solicitud">
+					<h:outputText value="#{aval.nombreTipo}" />
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Fecha Solicitud">
+					<h:outputText value="#{aval.fechaUltimoEnvio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Revisar">
+					<p:commandButton
+						action="#{ManejadorAprobacionAvalUAB.editarAval}"
+						icon="ui-icon-circle-triangle-e">
+						<f:setPropertyActionListener value="#{aval}"
+									target="#{ManejadorAprobacionAvalUAB.aval}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{ManejadorAprobacionAvalUAB.tamannioLista} avales</f:facet>
+
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<SCRIPT LANGUAGE="JavaScript">
+   var pop = null; 
+   function abrePop(){
+      pop = window.open("../../Personas/InvestigadorExterno.xhtml","","uno,height=300,width=800,scrollbars=yes");
+	 }
+  </SCRIPT>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Participantes</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+			
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorInvestigadores.inicioTitulo}"
+						style="font-weight: bold" />
+				</t:div>
+			
+			</h:panelGrid>
+			<br />
+
+			<p:panel header="Integrantes" id="idIntegrantes">
+				<p:dataTable var="i" style="width:650px"
+					value="#{manejadorInvestigadores.listaInvestigadoresVista}"
+					id="listaIntegrantes">
+
+					<p:column style="width:30%">
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigadorProyecto.investigador.nombre1} #{i.investigadorProyecto.investigador.nombre2} #{i.investigadorProyecto.investigador.apellido1} #{i.investigadorProyecto.investigador.apellido2}" />
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Rol" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigadorProyecto.tipo.id == 'A' ? 'Estudiante':(i.investigadorProyecto.tipo.id == 'AL' ? 'Estudiante Líder':( i.investigadorProyecto.tipo.id == 'P' ? 'Director':'Coinvestigador'))}" rendered="#{!manejadorDatosBasicos.esExtensionSolidaria}"/>
+						<h:outputText
+							value="#{i.investigadorProyecto.tipo.id == 'ESPR' ? 'Estudiante pregrado':(i.investigadorProyecto.tipo.id == 'ESPO' ? 'Estudiante posgrado':( i.investigadorProyecto.tipo.id == 'EGES' ? 'Egresado':(i.investigadorProyecto.tipo.id == 'CES' ? 'Codirector':( i.investigadorProyecto.tipo.id == 'PRES' ? 'Profesor':( i.investigadorProyecto.tipo.id == 'PEES' ? 'Pensionado':( i.investigadorProyecto.tipo.id == 'EXES' ? 'Externo':'Director'))))))}" rendered="#{manejadorDatosBasicos.esExtensionSolidaria}"/>
+					</p:column>
+
+					<p:column style="width:10%">
+						<f:facet name="header">
+							<h:outputText value="Dedicación semanal" />
+						</f:facet>
+						<h:outputText
+							value="#{i.investigadorProyecto.dedicacionHorasSemana}" />
+					</p:column>
+
+					<p:column style="width:30%">
+						<f:facet name="header">
+							<h:outputText value="Función" />
+						</f:facet>
+						<h:outputText value="#{i.investigadorProyecto.funcion}" />
+					</p:column>
+
+				</p:dataTable>
+				<br />
+
+			</p:panel>
+			<br />
+		</h:form>
+	</ui:define>
+</ui:composition>

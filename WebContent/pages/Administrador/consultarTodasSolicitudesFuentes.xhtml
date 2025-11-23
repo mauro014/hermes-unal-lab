@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Solicitudes de creación de fuentes</t:div>
+
+		<h:form id="content">
+
+			<p:messages id="msgs" />
+
+			<br> </br>
+
+			<p:dataTable var="solicitud"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{manejadorFuentesAdministrador.listaSolicitudes}"
+				paginator="true" paginatorposition="bottom" rows="20">
+
+				<f:facet name="header">  
+	            	Solicitudes registradas
+	        		</f:facet>
+
+
+				<p:column headerText="Número"
+					style="text-align: center;font-size: 11px;">
+					<h:outputText value="#{solicitud.id}" />
+				</p:column>
+							
+				<p:column headerText="Solicitante" >
+					<center>	  
+						<h:outputText value="#{solicitud.nombreSolicitante} #{solicitud.apellidoSolicitante}" />
+					</center>	
+				</p:column>	
+				
+				<p:column headerText="Estado" >
+					<center>	  
+						<h:outputText value="#{solicitud.estado}" />
+					</center>	
+				</p:column>	
+
+				<p:column headerText="Fecha" >
+					<h:outputText value="#{solicitud.fechaRegistro}" />
+				</p:column>
+				
+				
+
+				<p:column headerText="Revisar/Consultar" style="text-align: center;font-size: 11px;">
+					<p:commandButton
+						action="#{manejadorFuentesAdministrador.editarSolicitud}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{solicitud}"
+							target="#{manejadorFuentesAdministrador.solicitudSeleccionada}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{manejadorFuentesAdministrador.consultarSolicitud}"
+						icon="ui-icon-search" ajax="false">
+						<f:setPropertyActionListener value="#{solicitud}"
+							target="#{manejadorFuentesAdministrador.solicitudSeleccionada}" />
+					</p:commandButton>
+				</p:column>
+
+			<f:facet name="footer">  
+	            	<h:outputText value="Se encontraron #{manejadorFuentesAdministrador.numeroSolicitudes} solicitudes" />
+	        </f:facet>
+
+			</p:dataTable>
+
+			<br> </br>
+			<br> </br>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

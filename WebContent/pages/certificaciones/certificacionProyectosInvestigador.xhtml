@@ -1,0 +1,507 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formEDS" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Certificaciones Investigador</t:div>
+
+			<br />
+
+			<p:panel id="panelRegistro" header="Información del docente">
+
+				<h:panelGrid columns="3" cellpadding="10">
+
+					<h:outputText value="Tipo de documento: " style="font-weight: bold" />
+					<h:outputText id="tipoDocInvesti"
+						value="#{ManejadorCertificaciones.ii.id.tipoDocumento}" />
+					<p:message for="tipoDocInvesti" />
+
+					<h:outputText value="Documento de identidad: "
+						style="font-weight: bold" />
+					<h:outputText id="docIdentidadInv"
+						value="#{ManejadorCertificaciones.ii.id.documento}" />
+					<p:message for="docIdentidadInv" />
+
+					<h:outputText value="Nombre completo: " style="font-weight: bold" />
+					<h:outputText id="primerNombreInvestigador"
+						value="#{ManejadorCertificaciones.nombreCompletoPersona}" />
+					<p:message for="primerNombreInvestigador" />
+
+					<h:outputText value="Correo electrónico: "
+						style="font-weight: bold" />
+					<h:outputText id="email"
+						value="#{ManejadorCertificaciones.ii.email}" />
+					<p:message for="email" />
+
+					<h:outputText value="Sede: " style="font-weight: bold" />
+					<h:outputText id="sede"
+						value="#{ManejadorCertificaciones.ii.dependencia.sede.nombre}" />
+					<p:message for="sede" />
+
+					<h:outputText value="Facultad: " style="font-weight: bold" />
+					<h:outputText id="facultad"
+						value="#{ManejadorCertificaciones.ii.dependencia.facultad.nombre}" />
+					<p:message for="facultad" />
+
+					<h:outputText value="Dependencia: " style="font-weight: bold" />
+					<h:outputText id="dep"
+						value="#{ManejadorCertificaciones.ii.dependencia.nombre}" />
+					<p:message for="dep" />
+
+				</h:panelGrid>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="panelCertificaciones" header="Certificaciones">
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+					align="center">
+					<h:outputText
+						value="Por favor seleccione el tipo de certificado que desea generar: " />
+
+					<p:selectOneRadio id="opcionesCertificados"
+						value="#{ManejadorCertificaciones.opcionesCertificado}">
+						<f:selectItem itemLabel="Participación en proyectos"
+							itemValue="participacion" />
+						<f:selectItem itemLabel="Participación en semilleros" itemValue="semilleros" />
+						<f:selectItem itemLabel="Participación en grupos de investigación" itemValue="grupos" />
+						<f:selectItem itemLabel="Paz y salvo" itemValue="pazysalvo" />
+						
+						<p:ajax event="change"
+							update="panelCertificaciones, panelCertificadoParticipacion, panelCertificadoPazYSalvo, panelCertificadoParticipacionSemilleros, panelCertificadoParticipacionGrupos"
+							listener="#{ManejadorCertificaciones.cambiarTipoBusqueda}" />
+					</p:selectOneRadio>
+					
+					<h:outputText
+						value="Para generar el certificado de participación de proyectos, grupos o semilleros de estudiantes, debe dar clic en estudiantes en el menú ubicado al lado derecho." />
+
+				</h:panelGrid>
+
+				<br />
+
+				<p:outputPanel id="panelCertificadoParticipacion"
+					rendered="#{ManejadorCertificaciones.mostrarCertParticipacion}">
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los proyectos en estado finalizado en los que se encuentra vinculado el docente, por favor seleccione el proyecto del cual desea generar el certificado de participación: " />
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaProyectosFinalizados}"
+						id="tablaProyectosFinalizados" var="proy" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{proy.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{proy.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacion}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{proy}"
+										target="#{ManejadorCertificaciones.proyectoSeleccionado}" />
+								</h:commandLink>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<br />
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los proyectos en estado finalizado en los que el docente estuvo vinculado, por favor seleccione el proyecto del cual desea generar el certificado de participación: " />
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaProyectosFinalizadosNoVinculadoActualmente}"
+						id="tablaProyectosFinalizadosNoVinc" var="proy" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{proy.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{proy.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionNoVinculado}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{proy}"
+										target="#{ManejadorCertificaciones.proyectoSeleccionado}" />
+								</h:commandLink>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+
+				<p:outputPanel id="panelCertificadoParticipacionSemilleros"
+					rendered="#{ManejadorCertificaciones.mostrarCertSemilleros}">
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los semilleros que aparecen activos en los cuales el docente se encuentra vinculado, por favor seleccione el semillero del cual desea generar el certificado de participación." />
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaSemillerosActivos}"
+						id="tablaSemilleros" var="sem" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{sem.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{sem.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionSemillero}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{sem}"
+										target="#{ManejadorCertificaciones.semilleroSeleccionado}" />
+								</h:commandLink>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+				
+				<p:outputPanel id="panelCertificadoParticipacionGrupos"
+					rendered="#{ManejadorCertificaciones.mostrarCertGrupos}">
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los grupos que aparecen activos en los cuales el docente se encuentra vinculado, por favor seleccione el grupo del cual desea generar el certificado de participación." />
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaGruposActivos}"
+						id="tablaGrupos" var="gru" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{gru.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{gru.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionGrupo}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{gru}"
+										target="#{ManejadorCertificaciones.grupoSeleccionado}" />
+								</h:commandLink>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+				<br />
+
+				<p:outputPanel id="panelCertificadoParticipacionDes"
+					rendered="#{ManejadorCertificaciones.mostrarCertGrupos}">
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los grupos en estado Activo en los que estuvo vinculado el docente, por favor seleccione el grupo del cual desea generar el certificado de participación: " />
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaGruposActivosNoVinculados}"
+						id="tablaGruposNoVinculados" var="gru" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{gru.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{gru.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionGrupoNoVinc}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{gru}"
+										target="#{ManejadorCertificaciones.grupoSeleccionado}" />
+								</h:commandLink>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+
+
+				<p:outputPanel id="panelCertificadoPazYSalvo"
+					rendered="#{ManejadorCertificaciones.mostrarCertPazysalvo}">
+
+					<center>
+						<h:panelGrid columns="1" id="panelGenCertPazSalvo">
+							<p:commandButton value="Generar certificado de paz y salvo"
+								id="botonPazSalvo"
+								action="#{ManejadorCertificaciones.generarCertificadoPazYSalvo}"
+								update="panelCertificadoPazYSalvo, panelSiPazYSalvo, panelNoPazYSalvo, tablaProyectosActivos"
+								styleClass="ui-priority-primary" />
+						</h:panelGrid>
+					</center>
+					<br />
+					<p:outputPanel id="panelNoPazYSalvo"
+						rendered="#{ManejadorCertificaciones.mostrarNoPazysalvo}">
+
+						<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+							align="center">
+							<h:outputText
+								value="El docente investigador NO se encuentra a paz y salvo en relación con los proyectos y demás actividades de investigación (movilidades y semilleros) registrados en el sistema de Información Hermes. Los compromisos pendientes se presentan a continuación: " />
+						</h:panelGrid>
+						<br />
+						<p:dataTable
+							value="#{ManejadorCertificaciones.listaCompromisosProyectos}"
+							id="tablaProyectosActivos" var="proy" cellpadding="1"
+							cellspacing="15" align="center">
+							<p:column>
+								<f:facet name="header">
+									Código<br/>
+									Proyecto
+								</f:facet>
+								<h:outputText value="#{proy.proyecto.id}"></h:outputText>
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									Estado<br/>
+									Proyecto
+								</f:facet>
+								<h:outputText value="#{proy.proyecto.estadoProyecto.nombre}"></h:outputText>
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									Compromiso
+								</f:facet>
+								<h:outputText value="#{proy.tipoInforme.nombre}"></h:outputText>
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									Estado<br/>
+									Compromiso
+								</f:facet>
+								<h:outputText value="Pendiente de entrega por parte del investigador"
+									rendered="#{proy.proyecto.tieneCompromisosPendientes == 'S' and proy.tipoInforme.id == 2}"/>
+								<h:outputText value="En revisión por parte del coordinador o de la facultad"
+									rendered="#{proy.proyecto.tieneCompromisosPendientes == 'E' and proy.tipoInforme.id == 2}"/>
+								<h:outputText value=""
+									rendered="#{proy.proyecto.tieneCompromisosPendientes == 'N' and proy.tipoInforme.id != 2}"/>
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									Fecha<br/>
+									Vencimiento
+								</f:facet>
+								<h:outputText value="#{proy.fechaVencProrroga == null ? proy.fechaVencimiento : proy.fechaVencProrroga}">
+									<f:convertDateTime pattern="yyyy-MM-dd"/>
+								</h:outputText>
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									Número<br/>
+									Notificaciones
+								</f:facet>
+								<h:outputText value="#{proy.numeroNotificaciones}"></h:outputText>
+							</p:column>
+
+						</p:dataTable>
+						<br />
+						<p:dataTable
+							value="#{ManejadorCertificaciones.listaCompromisosSemilleros}"
+							id="tablaProyectosSemilleros" var="semi" cellpadding="1"
+							cellspacing="15" align="center">
+							<p:column>
+								<f:facet name="header">
+									Código<br/>
+									Semillero
+								</f:facet>
+								<h:outputText value="#{semi.semillero.id}"></h:outputText>
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									Estado<br/>
+									Semillero
+								</f:facet>
+								<h:outputText value="#{semi.semillero.estadoActual.nombre}"></h:outputText>
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									Compromiso
+								</f:facet>
+								<h:outputText value="Informe"></h:outputText>
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									Estado<br/>
+									Compromiso
+								</f:facet>
+								<h:outputText value="Pendiente de entrega por parte del investigador"
+									rendered="#{semi.fechaEntrega == null}"/>
+								<h:outputText value="En revisión por parte del coordinador"
+									rendered="#{semi.fechaEntrega != null}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									Fecha<br/>
+									Vencimiento
+								</f:facet>
+								<h:outputText value="#{semi.fechaCompromiso}">
+									<f:convertDateTime pattern="yyyy-MM-dd"/>
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									Número<br/>
+									Notificaciones
+								</f:facet>
+								<h:outputText value="#{semi.numeroNotificaciones}"></h:outputText>
+							</p:column>
+						</p:dataTable>
+						<br />
+						<p:dataTable
+							value="#{ManejadorCertificaciones.listaCompromisosMovilidades}"
+							id="tablaMovilidades" var="mov" cellpadding="1"
+							cellspacing="15" align="center">
+							<p:column>
+								<f:facet name="header">
+									Código<br/>
+									Movilidad
+								</f:facet>
+								<h:outputText value="#{mov[0]}"></h:outputText>
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									Tipo<br/>
+									Movilidad
+								</f:facet>
+								<h:outputText value="#{mov[1]}"></h:outputText>
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									Estado <br/>
+									Movilidad
+								</f:facet>
+								<h:outputText value="#{mov[2]}"></h:outputText>
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									Estado<br/>
+									Compromiso
+								</f:facet>
+								<h:outputText value="Pendiente de entrega por parte del investigador"
+									rendered="#{mov[3] == null}"/>
+								<h:outputText value="En revisión por parte del coordinador"
+									rendered="#{mov[3] != null}"/>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									Fecha<br/>
+									Vencimiento
+								</f:facet>
+								<h:outputText value="#{mov[4]}">
+									<f:convertDateTime pattern="yyyy-MM-dd"/>
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									Número<br/>
+									Notificaciones
+								</f:facet>
+								<h:outputText value="#{mov[5]}"></h:outputText>
+							</p:column>
+						</p:dataTable>
+						<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+							align="center">
+							<h:outputText
+								value="Le recomendamos cumplir los compromisos pendientes o comunicarse con la facultad o sede responsable de seguimiento para revisar los informes pendientes." 
+								style="color: #FF0000;"/>
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<p:outputPanel id="panelSiPazYSalvo"
+						rendered="#{ManejadorCertificaciones.mostrarSiPazysalvo}">
+						<center>
+
+							<h:commandLink value="Descargar certificado" target="_blank"
+								action="#{ManejadorCertificaciones.descargarCertificadoPazySalvo}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+
+						</center>
+					</p:outputPanel>
+
+				</p:outputPanel>
+
+			</p:panel>
+
+			<br />
+
+			<center>
+				<h:panelGrid columns="1" id="panelSalir">
+
+					<p:commandButton value="Ir al inicio" id="botonInicio"
+						action="#{ManejadorCertificaciones.irInicio}"
+						styleClass="ui-priority-primary" />
+
+				</h:panelGrid>
+			</center>
+
+			<br />
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<br />
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

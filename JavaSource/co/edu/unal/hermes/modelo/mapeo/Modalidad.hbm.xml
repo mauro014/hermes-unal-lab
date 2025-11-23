@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!--  
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ 								"D:\hermes\dtds\hibernate-mapping-3.0.dtd">
+-->
+                                  
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+ <class name="Modalidad" table="HER_MODALIDAD">
+  
+  <id name="id" column="MOD_ID" type="long">
+   <generator class="sequence">
+    <param name="sequence">SEQ_MODALIDAD</param>
+   </generator>
+  </id>
+  
+  <many-to-one name="tipo" class="TipoModalidad" column="TMO_ID" not-null="true" lazy="false"/>
+
+  <set name="proyectos" table="HER_PROYECTO" inverse="true">
+   		<key column="MOD_ID"/>
+   		<one-to-many class="Proyecto"/>
+   </set>
+
+  <set name="criteriosTipoPregunta" table="HER_MODALIDAD_CRITERIO" inverse="true" cascade="all-delete-orphan">
+   		<key column="MOD_ID"/>
+   		<one-to-many class="ModalidadCriterioTipoPregunta"/>
+   </set>
+    <!--
+    
+	 <set name="criterios" table="HER_MODALIDAD_CRITERIO" lazy="false" inverse="false" order-by="CRI_ID asc">
+      <key>
+        <column name="MOD_ID" not-null="true"/>
+      </key>
+      <many-to-many class="CriterioEvaluacion">
+        <column name="CRI_ID" not-null="true"/>
+      </many-to-many>
+    </set>
+-->    
+
+ <set name="rubrosFinanciables" table="HER_RUBRO_FINANCIABLE"  inverse="true" cascade="all-delete-orphan">
+	   		<key column="MOD_ID"/>
+	   		<one-to-many class="RubroFinanciable" />
+  	  </set>
+  <!-- Convocatoria hereda de Modalidad   -->
+  <joined-subclass name="Convocatoria" table="HER_CONVOCATORIA">
+      <key column="CON_ID"/>
+    
+	  <many-to-one name="dependencia" class="Dependencia" column="DPN_ID" not-null="false"/>
+	  <many-to-one name="sede" class="Sede" column="SED_ID" not-null="false"/>
+	  <many-to-one name="estadoConvocatoria" class="EstadoConvocatoria" column="ECO_ID" lazy="false"/>
+	  <many-to-one name="padre" class="ConvocatoriaPadre" column="CNP_ID" lazy="false"/>
+	  <many-to-one name="restriccion" class="RestriccionConvocatoria" column="CON_RESTRICCION" lazy="false"/>
+	  
+	  <many-to-one name="dependenciaRestriccion" class="Dependencia" column="DPN_RESTRICCION"/>
+	  
+	  <property name="titulo" column="CON_TITULO"/>
+	  <property name="fechaInicio" column="CON_FINICIO"/>
+	  <property name="fechaFinal" column="CON_FFINAL"/>
+	  <property name="fechaPublicacionResultados" column="CON_FPUBLICACION_RESULTADOS"/>
+	  <property name="dirigidoA" column="CON_DIRIGIDO_A"/>
+	  <property name="oferente" column="CON_OFERENTE"/>
+	  <property name="objetivo" column="CON_OBJETIVO"/>
+	  <property name="recursosFinancieros" column="CON_RECURSOS_FINANCIEROS"/>
+	  <property name="informacionAdicional" column="CON_INFORMACION_ADICIONAL"/>
+	  <property name="areaDirigida" column="CON_AREA_DIRIGIDA"/>        
+  	  <property name="numeroApoyos" column="CON_NUMERO_APOYOS"/>  
+  	  <property name="montoApoyoGanadores" column="CON_MONTO_APOYO_GANADORES"/>
+  	  <property name="tiempoEjecucionProyecto" column="CON_TIEMPO_PROYECTOS"/>
+  	  <property name="mostrarArchivosEvaluador" column="CON_ARCHIVOS_EVALUADOR"/>
+  	  <property name="fechaInicioEval" column="CON_FINICIO_EVAL"/>
+  	  <property name="fechaFinalEval" column="CON_FFINAL_EVAL"/>
+  	  <property name="cambioRubroFacultad" column="CON_CAMBIO_RUBRO"/>  
+  	  <property name="documentoEvaluacion" column="CON_DOC_EVALUACION"/>  
+  	  <property name="documentoEvaluacionDocente" column="CON_DOC_EVALUACION_DOCENTE"/>  
+  	  <property name="informacionAdicionalMesa" column="CON_INFO_ADICIONAL_MESA"/>  
+  	  <property name="fechaInicioReclamacion" column="CON_FECHA_INI_RECLAMACION"/>
+  	  <property name="fechaFinalReclamacion" column="CON_FECHA_FIN_RECLAMACION"/>
+  	  <property name="fechaInicioReclamacionEvaluacion" column="CON_FECHA_INI_RECLAMACION_EVAL"/>
+  	  <property name="fechaFinalReclamacionEvaluacion" column="CON_FECHA_FIN_RECLAMACION_EVAL"/>
+  	  <property name="requisitosConvTexto" column="CON_REQUISITOS"/>
+  	  <property name="criteriosCalificacionConv" column="CON_CRITERIOS_CALIFICACION"/>  	  
+  	  <property name="compromisosTexto" column="CON_COMPROMISOS"/>  
+  	  <property name="esInterDependencias" column="CON_ES_INTER_DEPENDENCIA" type="yes_no"/>  
+  	  <property name="interDependenciasRestriccion" column="CON_DEPENDENCIAS_RESTRICCION"/>
+  	  <property name="mostrarDetalleGasto" column="CON_MOSTRAR_DETALLE_GASTO"/>
+  	  <property name="detalleRubroObligatorio" column="CON_DETALLE_RUBRO_OB"/>
+  	  <property name="tamanoArchivoMb" column="CON_TAMANO_MAX_ARCHIVOS"/>
+  	  <property name="infoAdicionalFormulario" column="CON_INFO_ADICIONAL_FORM"/>
+  	  
+  	  
+  	    
+  	  
+  	  <!-- propiedades para las convocatorias de grupos -->
+  	  <property name="esParaGrupos" column="CON_ES_PARA_GRUPOS" type="yes_no"/>  	  
+  	  <property name="gruposRegistrados" column="CON_GRUPOS_REGISTRADOS" type="yes_no"/>
+  	  <property name="gruposReconocidos" column="CON_GRUPOS_RECONOCIDOS" type="yes_no"/>
+   	  <property name="gruposCategoriaA" column="CON_GRUPOS_CATEGORIA_A" type="yes_no"/>
+   	  <property name="gruposCategoriaA1" column="CON_GRUPOS_CATEGORIA_A1" type="yes_no"/>
+  	  <property name="gruposCategoriaB" column="CON_GRUPOS_CATEGORIA_B" type="yes_no"/>
+  	  <property name="gruposCategoriaC" column="CON_GRUPOS_CATEGORIA_C" type="yes_no"/>
+  	  <property name="gruposCategoriaD" column="CON_GRUPOS_CATEGORIA_D" type="yes_no"/>
+  	  <property name="esIntersedes" column="GRU_INTERSEDES" type="yes_no"/>
+  	  
+  	  <property name="tieneProyectoAsociado" column="CON_PRY_ASOCIADO" type="yes_no"/>
+  	  <property name="conMostrarDescripcionProblema" column="CON_MOSTRAR_DESCR_PROBLEMA" />
+  	  <property name="conMostrarBiodiversidad" column="CON_MOSTRAR_BIODIVERSIDAD" />
+  	  <property name="conValidarEquipoTrabajo" column="CON_VALIDAD_EQUIPO_TRABAJO" />
+  	  <property name="conMostrarResumen" column="CON_MOSTRAR_RESUMEN" />
+  	  <property name="conMostrarResultados" column="CON_MOSTRAR_RESULTADOS" />  	  
+  	   	
+  	  
+  	  <property name="actoNombre" column="CON_ACT_NOMBRE"/>
+   	  <property name="actoNumero" column="CON_ACT_NUMERO"/>
+   	  <property name="actoFecha" column="CON_ACT_FECHA"/>
+   	  <property name="actoNombreFuncionario" column="CON_ACT_NOMBRE_FUNCIONARIO"/>
+   	  <property name="programaAcademico" column="CON_PRO_ACA"/>
+   	  <property name="esProyectoObligagorio" column="CON_PROYE_OBLIGA"/>
+   	  <property name="habilitarModEstudiantes" column="CON_HAB_INFORMES_ESTUDIAN"/>
+   	  <property name="habilitarModTutor" column="CON_HAB_INFORMES_TUTOR"/>
+   	  <property name="variosInformesAvance" column="CON_VARIOS_INFORMES_AVANCE"/>
+   	  <property name="variosInformesFinales" column="CON_VARIOS_INFORMES_FINALES"/>
+   	  <property name="permitirInformeTutor" column="CON_PERMITIR_TUTOR_INFORME"/>
+   	  <property name="mensajeFormularioInforme" column="CON_MENSAJE_FORMULARIO_INFORME"/>
+   	  <property name="esAsignaturaObligatoria" column="CON_ASIGNATURA_OBLIGA"/>
+		<property name="mostrarIntegrantesSinDatos" column="CON_MOSTRAR_INTEGRAN_SIN_DATOS" type="boolean"/>
+		<property name="mostrarActividadesInvestigador" column="CON_MOSTRAR_ACT_INVESTIGADOR" type="boolean"/>
+		<property name="mostrarActividadesInvestigadorNoConocido" column="CON_MOSTRAR_ACT_INVESTIGADOR_N" type="boolean"/>
+		<property name="mostrarEvaluacionesIndividuales" column="CON_MOSTRAR_EVALUACIONES_IND" type="boolean"/>
+		<property name="mostrarEstudianteLider" column="CON_MOSTRAR_ESTUDIANTE_LIDER" type="boolean"/>
+		<property name="mostrarEntidadesParticipantes" column="CON_MOSTRAR_ENT_PARTICIPANTES" type="boolean"/>
+        <property name="mostrarEspecieConvocantes" column="CON_MOSTRAR_ESPECIE_CONVOCANTE" type="boolean"/>
+        <property name="permitirCrearFinanciacion" column="CON_PERMITIR_CREAR_FIN" type="boolean"/>
+        <property name="montonMinimo" column="CON_MONTO_MIN"/>
+        <property name="vigenciaPredeterminada" column="CON_VIGENCIA_PREDETERMINADA"/>
+        <property name="tipoFinanciacion" column="CON_TIPO_FINANCIACION"/>
+        <property name="mostrarProductosAcademicos" column="CON_MOSTRAR_PRODUCTOS"/>
+        <property name="mostrarOtroProyecto" column="CON_MOSTRAR_OTRO_PROYECTO"/>
+        <property name="mostrarMetas" column="CON_MOSTRAR_METAS"/>
+        <property name="mostrarNombreLab" column="CON_MOSTRAR_NOMBRE_LAB"/>
+        <property name="incluirContrapartidaFinanacion" column="CON_INCLUIR_CONTRAPARTIDA_FIN"/>
+        <property name="actividadesObjetivosMetas" column="CON_ACTI_OBJ_METAS"/>
+       
+	    <property name="urlRequisitosSede" column="CON_URL_REQUISITOS_SEDE"/>
+	    <property name="habilitarRegistro" column="CON_HABILITAR_REGISTRO"/>
+	    <property name="instruccionesIngresoCostos" column="CON_INSTRUCCIONES_COSTOS"/>
+	    <property name="tipoInvestigadoresConvocatoria" column="CON_TIPO_INVESTIGADOR"/>
+	    <property name="numeroProductosObligatorios" column="CON_NUMERO_PRODUCTOS_OBL"/>
+	    <property name="mensajeArchivosAdjuntos" column="CON_MENSAJE_ARCHIVOS"/>
+	    <property name="numeroProyectosPorProfesor" column="CON_NUM_PROY_POR_PROFESOR"/>
+	    <property name="numeroMovilidadesPorEstudiante" column="CON_NUM_POR_ESTUDIANTE"/>
+	    <property name="esConvocatoriaMultigrupos" column="CON_ES_MULTIGRUPOS" type="yes_no"/>
+	    <property name="numeroMinimoGrupos" column="CON_NUM_MIN_GRUPOS"/>
+	    <property name="dependenciaGruposRestriccion" column="CON_DEP_GRUPOS"/>
+	    <property name="restriccionEquipoTrabajo" column="CON_EQUIPO_TRABAJO_REST"/>  	
+	    <property name="textoValidacionEquipoTrabajo" column="CON_TEXTO_VAL_EQU_TRABAJO"/>	
+	    <property name="mensajeRubrosBasicos" column="CON_MENSAJE_RUBROS_BASICO"/>
+	    <property name="productosAValidar" column="CON_PRODUCTOS_VALIDAR"/> 
+	    <property name="mensajeProductosAValidar" column="CON_MENSAJE_PROD_VAL"/>
+	    <property name="caracterEventoConvocatoriaMovilidad" column="CON_MOV_CARACTER_EVENTO"/> 
+	    <property name="submodalidadConvocatoriaMovilidad" column="CON_MOV_DOM_SUBMODALIDA"/> 
+	    <property name="validacionCostosConvocatoriaMovilidad" column="CON_VAL_COSTO_MOVILIDAD"/> 
+	    <property name="validacionDuracionMovilidad" column="CON_MOV_MAX_DURACION"/>
+	    <property name="mostrarColombiaMovilidad" column="CON_MOV_MOSTRAR_COLOMBIA"/>
+	    <property name="mostrarLaboratorios" column="CON_MOSTRAR_LABORATORIOS"/>
+	    <property name="numeroLaboratoriosValidacion" column="CON_NUMERO_LABORATORIOS"/>
+	    <property name="tipoEstudianteMovilidad" column="CON_MOV_TIPO_ESTUDIANTE"/>
+	    <property name="dependenciasEstudiantesMovilidad" column="CON_MOV_DEP_ESTUDIANTES"/>	    
+	    <property name="dependenciaRevisionMovilidadesEst" column="CON_MOV_DEP_REVISION"/>
+		<property name="dominioTipologiaProyectos" column="CON_DOM_TIPOLOGIA_PRY"/>
+	    <property name="tipoEvaluacionProyectos" column="CON_TIPO_EVALUACION"/>
+		
+	    <property name="mostrarPasaporteMovilidad" column="CON_MOSTRAR_PASAPORTE_MOV"/>
+	    <property name="maxTrabajosMovilidad" column="CON_MAX_OBJETIVOS_MOV"/>
+	    <property name="mostrarGrupoMovilidad" column="CON_MOSTRAR_GRUPO_MOV"/>
+	    <property name="mostrarFinanciacion" column="CON_MOSTRAR_FINANCIACION"/>
+	    <property name="mostrarEventoMovilidad" column="CON_MOSTRAR_EVENTO_MOV"/>
+	    
+	  <property name="mostrarDependenciasAportantes" column="CON_DEPENDENCIAS_APORTANTES"/>
+	  <property name="mostrarEquiposServicios" column="CON_SERVICIOS_LAB"/>
+	   <property name="adquisicionEquiposObligatorio" column="CON_SERVICIOS_LAB_OBLIG"/>
+	  
+	  <property name="usarFormularioProyectoEditorial" column="CON_FORM_PROY_EDITORIAL"/>
+	  <property name="editaCreadorProyecto" column="CON_EDITA_SOLO_CREADOR"/>
+	  <property name="incluirFinanciacionExterna" column="CON_FINANCACION_EXTERNA"/>
+	  <property name="gruposSinRestriccionIntegrante" column="CON_GRUPO_SIN_INTEGRANTE"/>
+	  <property name="notaLaboratorios" column="CON_NOTA_LAB"/>
+	  <property name="mostrarTipoMovilidad" column="CON_MOSTRAR_TIPO_MOV"/>
+   	  
+   	  
+   	  <property name="etapaCreacion" column="CON_ETAPA" type="long"/>
+   	  
+   	  <property name="esParaSemilleros"
+	column="CON_ES_SEMILLEROS" type="yes_no" />
+	<property name="liderSemilleros" column="CON_LIDER_SEMILLERO"
+		type="yes_no" />
+	<property name="numeroMinimoSemilleros"
+		column="CON_NUM_MIN_SEMILLEROS" type="integer" />  
+		<property name="coordinadorLaboratorios"
+	column="CON_COORDINADOR_LABORATORIOS" type="yes_no" />
+   
+   	  
+   	  <!--  
+   	  <set name="productosConvocatoria" table="HER_CONVOCATORIA_PRODUCTO" inverse="true" cascade="all-delete-orphan">
+   			<key column="CON_ID"/>
+   			<one-to-many class="ProductoConvocatoria"/>
+  	  </set>
+  	  -->
+  	  
+  	  <set name="productos" table="HER_CONVOCATORIA_PRODUCTO">
+		   <key column="CON_ID"/>
+		   <many-to-many class="ProductoTipo" column="PRD_ID"/>
+	  </set>
+	  
+	  <set name="compromisos" table="HER_CONVOCATORIA_COMPROMISO">
+		   <key column="CON_ID"/>
+		   <many-to-many class="TipoCompromiso" column="TPC_ID"/>
+	  </set>
+	  
+	  <set name="requisitos" table="HER_CONVOCATORIA_REQUISITO">
+		   <key column="CON_ID"/>
+		   <many-to-many class="TipoRequisito" column="TPR_ID" />
+	  </set>
+	  
+	  <property name="requiereEvaluacion" column="CON_REQUIERE_EVALUACION" type="integer"/>
+	  <property name="mostrarLugarEspecifico" column="CON_MOSTRAR_LUGESP" type="integer"/>
+	  <property name="registrosPorGrupo" column="CON_NUM_REG_POR_GRUPO" type="integer"/>
+	  <property name="registrosPorLaboratorio" column="CON_NUM_REG_POR_LAB" type="integer"/>
+	  <property name="mostrarObjetivos" column="CON_MOSTRAR_OBJETIVOS" type="integer"/>
+	  <property name="obligatorioSubirArchivos" column="CON_ARCHIVOS_OBL" type="integer"/>
+	  <property name="mostrarColeccionAsociada" column="CON_MOSTRAR_COLECCION_ASO" type="integer"/>
+	  <property name="mostrarTituloRevista" column="CON_MOSTRAR_MARCO" type="integer"/>
+  	   
+  	   
+ 	<!--   <set name="rubrosFinanciables" table="HER_RUBRO_FINANCIABLE" inverse="true" cascade="all-delete-orphan">
+	   		<key column="CON_ID"/>
+	   		<one-to-many class="RubroFinanciable"/>
+  	  </set>-->
+		<property name="habilitarCartasFirmaVicedecanatura" column="CON_HABILITAR_CARTAS_VICEDECAN" />
+   </joined-subclass>   
+   
+   <!-- Contrapartida hereda de Modalidad   -->
+   <joined-subclass name="Contrapartida" table="HER_CONTRAPARTIDA">
+      <key column="CNT_ID"/>
+    
+	  <many-to-one name="financiacionExterna" class="FuenteFinanciacion" column="FFI_ID" not-null="true"/>
+	  <many-to-one name="estadoContrapartida" class="EstadoConvocatoria" column="ECO_ID" not-null="true"/>
+	  <property name="numeroAval" column="CNT_NUM_AVAL"/>
+	  <property name="nombre" column="CNT_NOMBRE"/>
+	  <property name="numeroAprobacionFinanciacionExterna" column="CNT_NUM_APROBACION"/>
+	  <property name="fechaAval" column="CNT_FECHA_AVAL"/>
+	  <property name="fechaAprobacionFinanciacionExterna" column="CNT_FECHA_APROBACION"/>
+	  
+   </joined-subclass> 
+   
+   <!-- Jornada Docente hereda de Modalidad   -->
+   <joined-subclass name="JornadaDocente" table="HER_JORNADA_DOCENTE">
+      <key column="JOD_ID"/>
+
+	  <property name="semestre" column="JOD_SEMESTRE"/>
+	  <property name="año" column="JOD_AÑO"/>
+	  <property name="descripcion" column="JOD_DESCRIPCION"/>
+  	  <many-to-one name="estadoJornadaDocente" class="EstadoConvocatoria" column="ECO_ID" not-null="true"/>
+   </joined-subclass>  
+   
+    <joined-subclass name="Registro" table="HER_PROYECTOS_DE_REGISTRO">
+      <key column="ID"/>
+
+	  <property name="nombre" column="NOMBRE"/>
+	  <property name="semestre" column="SEMESTRE"/>
+	  <property name="año" column="ANNO"/>
+	  <property name="descripcion" column="DESCRIPCION"/>
+  	  <many-to-one name="estadoRegistro" class="EstadoConvocatoria" column="ECO_ID" not-null="true" lazy="false"/>
+  	  
+   </joined-subclass>
+	
+   
+
+ </class>
+</hibernate-mapping>

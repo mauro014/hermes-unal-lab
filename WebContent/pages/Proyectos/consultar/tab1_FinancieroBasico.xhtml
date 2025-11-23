@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Fuentes de	Financiación</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorFuentesFinancieras.inicioTitulo}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+
+			<p:panel header="Fuentes de Financiación">
+				<p:dataTable cellpadding="6" cellspacing="3"
+					value="#{manejadorFuentesFinancieras.listaFinanciaciones}"
+					var="financiacion" border="0"
+					binding="#{manejadorFuentesFinancieras.tablaFinanciacion}"
+					id="listaFuentesFinan">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="NOMBRE FUENTE ADICIONADA"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<h:outputText value="#{financiacion.fuente.descripcion}" />
+					</p:column>
+
+					<p:column style="width:20%" rendered="#{manejadorFuentesFinancieras.esExtensionSolidaria}">
+						<f:facet name="header">
+							<h:outputText value="ROL"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<h:outputText
+							value="#{financiacion.rol == 'ROL_FT_FINA' ? 'Entidad Financiadora' : financiacion.rol == 'ROL_FT_EJE' ? 'Entidad Ejecutora' : financiacion.rol == 'ROL_FT_BENE' ? 'Comunidad o Institución Beneficiaria':'Por Establecer'}"
+							rendered="#{!financiacion.borrable}" />
+					</p:column>
+
+					<p:column style="width:10%" rendered="#{manejadorFuentesFinancieras.esExtensionSolidaria}">
+						<f:facet name="header">
+							<h:outputText value="TIPO"
+								style="font-weight: bold; font-style: italic;" />
+							<br />
+							<h:outputText value="DE ENTIDAD"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<h:outputText
+							value="#{financiacion.fuente.naturaleza == 'NAT_PUBLIC' ? 'Pública' : financiacion.fuente.naturaleza == 'NAT_PRIVAD' ? 'Privada' : financiacion.fuente.naturaleza == 'NAT_OTRA' ? 'Otra' : financiacion.fuente.naturaleza == 'NAT_MIXTA' ? 'Mixta' : financiacion.fuente.naturaleza == 'NAT_INTERN' ? 'Internacional' : 'Por Establecer'}"
+							rendered="#{!financiacion.borrable}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="VALOR"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<h:outputText id="valorFinanciacion" value="#{financiacion.valor}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<h:panelGrid columns="1" align="left" cellpadding="6" cellspacing="3">
+				<h:outputText
+					value="#{manejadorFuentesFinancieras.mensajeMontoConvocatoria}"
+					style="font-size: xx-small; color:#FF3939; font-weight: bold; text-align: left; font-style: normal" />
+				<br />
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,385 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Información específica</t:div>
+			<p:menubar style="margin-bottom: 20px;">
+				<p:menuitem value="Información general" action="editarGrupo"
+					icon="ui-icon-right" />
+				<p:menuitem value="Integrantes" action="irEdicionIntegrantes"
+					icon="ui-icon-right"
+					disabled="#{!manejadorMenuFormularioGrupos.opcionIntegrantes}" />
+				<p:menuitem value="Áreas y lineas de investigación" action="lineasGrupo"
+					icon="ui-icon-right"
+					disabled="#{!manejadorMenuFormularioGrupos.opcionLineas}" />
+				<p:menuitem value="Información específica"
+					action="irVisionPrioridadesPerspectiva" icon="ui-icon-right"
+					disabled="#{!manejadorMenuFormularioGrupos.opcionEspecifica}" />
+			</p:menubar>
+		</h:form>
+		<h:form>
+			<p:panel id="panelInformacionLaboratorio">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 100px;">
+						<h:outputText value="Id: " />
+					</t:div>
+					<h:outputText value="#{manejadorEdicionGrupo.grupoActual.id}"
+						style=' font-weight: bold;' />
+					<h:outputText value="Nombre grupo: " />
+					<h:outputText value="#{manejadorEdicionGrupo.grupoActual.nombre}"
+						style=' font-weight: bold;' />
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:messages id="msgs" />
+			<p:panel header="Pertinencia y necesidad">
+				<h:panelGrid columns="2" align="center" style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					columnClasses="columnaEtiquetasGrupos,columnaValoresGrupos">
+					<h:outputText
+						value="Necesidad académica o investigativa del grupo (*):" />
+					<p:inputTextarea
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.necesidad}"
+						cols="50" rows="10" 
+						requiredMessage="Campo requerido: Necesidad"
+						maxlength="3950" counter="counterGrupoNecesidad"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoNecesidad" />
+					<h:outputText value="Pertinencia de las actividades planteadas de investigación del grupo(*):" />
+					<p:inputTextarea
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.pertinencia}"
+						cols="50" rows="10" 
+						requiredMessage="Campo requerido: Pertinencia" maxlength="3950"
+						counter="counterGrupoPertinencia"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoPertinencia" />
+					<h:outputText value="¿Existe otro grupo que trabaje las mismas líneas de investigación en la unidad académica básica o en la facultad, instituto, centro o sede de presencia nacional? :" />
+					<p:selectOneMenu styleClass="selectGrupo" style="width: 50px;"
+						id="esgruporepetido" value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.grupoSimilar}"
+						panelStyle="width: 50px;"
+						disabled="#{manejadorMenuFormularioGrupos.esConsulta}">
+						<f:selectItem itemLabel="NO" itemValue="N" />
+						<f:selectItem itemLabel="SI" itemValue="S" />
+						<p:ajax update="@form" process="@form" />
+					</p:selectOneMenu>
+					<h:outputText id="campoAdicional" rendered="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.grupoSimilar == 'S'}"
+						value="Justifique el porqué de la formación de este grupo:" />
+					<p:inputTextarea rendered="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.grupoSimilar == 'S'}"
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.explicacionGrupoSimilar}"
+						cols="50" rows="10" maxlength="3950"
+						counter="counterGrupoJusti"
+						counterTemplate="{0} caracteres restantes."
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+					<h:outputText value="" rendered="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.grupoSimilar == 'S'}" />
+					<h:outputText id="counterGrupoJusti" rendered="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.grupoSimilar == 'S'}"/>
+				</h:panelGrid>
+			</p:panel>
+			<p:panel header="Visión">
+				<h:panelGrid columns="2" align="center" style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					columnClasses="columnaEtiquetasGrupos,columnaValoresGrupos">
+					<h:outputText
+						value="Enfoque estratégico del grupo, en términos de respuesta a problemas del conocimiento o problemas de la sociedad(*):" />
+					<p:inputTextarea
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.vision}"
+						cols="50" rows="10" required="true"
+						requiredMessage="Campo requerido: Enfoque estratégico"
+						maxlength="3950" counter="counterGrupoVision"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoVision" />
+					<h:outputText value="Prioridades de investigación del grupo(*):" />
+					<p:inputTextarea
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.prioridad}"
+						cols="50" rows="10" required="true"
+						requiredMessage="Campo requerido: Prioridades" maxlength="3950"
+						counter="counterGrupoPrioridad"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoPrioridad" />
+					<h:outputText
+						value="Describa su perspectiva interdisciplinaria, de trabajo en red y de internacionalización(*):" />
+					<p:inputTextarea
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.grupoActual.perspectiva}"
+						cols="50" rows="10" required="true"
+						requiredMessage="Campo requerido: Perspectiva" maxlength="3950"
+						counter="counterGrupoPerspectiva"
+						counterTemplate="{0} caracteres restantes."
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoPerspectiva" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel header="Proyectos asociados al grupo" style="margin-top: 20px;">
+				<h:panelGrid columns="3" align="center" style="width: 100%;"
+					rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+					styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Asociar proyecto al grupo:" />
+					<p:selectOneMenu
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.nuevoProyecto}"
+						effect="fade" style="width:300px" panelStyle="width:300px"
+						id="selectPosiblesProyectos">
+						<f:selectItem itemLabel="Seleccione un proyecto" itemValue="" />
+						<f:selectItems
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.opcionesProyectos}" />
+					</p:selectOneMenu>
+					<p:commandButton
+						action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.agregarProyecto}"
+						update="proyectosTabla,selectPosiblesProyectos"
+						id="agregarProyecto" value="Agregar proyecto"
+						title="Agregar proyecto" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+				</h:panelGrid>
+				<p:dataTable id="proyectosTabla" var="proyecto"
+					value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.proyectoAsociados}"
+					emptyMessage="No se han agregado proyectos" style="width:100%; ">
+					<f:facet name="header">
+						<h:outputText value="Proyectos asociados al grupo" />
+					</f:facet>
+					<p:column headerText="Código">
+						<h:outputText value="#{proyecto[0]}" />
+					</p:column>
+					<p:column headerText="Nombre">
+						<h:outputText value="#{proyecto[1]}" />
+					</p:column>
+					<p:column headerText="Estado">
+						<h:outputText value="#{proyecto[4]}" />
+					</p:column>
+					<p:column style="width: 50px;"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.eliminarProyecto}"
+							update="proyectosTabla" id="eliminarProyecto"
+							icon="ui-icon-trash" title="Eliminar proyecto"
+							onclick="if(!confirm('Esta seguro que desea eliminar este proyecto.'))return false"
+							rendered="#{proyecto[2] == 'S'}" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+							<f:setPropertyActionListener value="#{proyecto}"
+								target="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.proyectoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<br />
+				<!-- Productos de sara para asociar al grupo
+				<br />
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+					id="productos-sara"
+					rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+					style="border-collapse: separate;">
+					<h:outputText
+						value="¿Algún integrante de su grupo tiene productos registrados en SARA?  " />
+					<p:selectOneMenu
+						value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.prodSara}">
+						<f:selectItems
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.listaOpciones}" />
+						<p:ajax update="@form" process="@form" />
+					</p:selectOneMenu>
+					<p:commandButton value="Actualizar formualrio" update="@form"
+						ajax="false" />
+				</p:panelGrid>
+				<br /> -->
+				<t:div
+					rendered="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.prodSara == 'NO'}">
+					<p:panel style="margin-top: 10px; margin-bottom:20px;"
+						header="Nuevo producto">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							id="panelCumplimientoResultados"
+							rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+							style="border-collapse: separate;">
+							
+							<h:outputText
+								value="Listado de productos académicos: "/>
+							<h:outputLink value="#{manejadorMenuFormularioGrupos.linkProductos}"
+											target="_blank" icon="ui-icon-search">
+											<h:graphicImage id="images" alt="jsf-sun"
+												url="/images/iconpdf.png">
+											</h:graphicImage>
+							</h:outputLink>
+
+							<h:outputText value="Tipo de producto: " />
+							<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+								value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoNivel1}">
+								<f:selectItems
+									value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoNivel1Item}" />
+								<p:ajax update="panelCumplimientoResultados,msgs"
+									listener="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.cambiarProductoNivel1}" />
+							</p:selectOneMenu>
+							<h:outputText value="Subtipo 1: " />
+							<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+								value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoNivel2}">
+								<f:selectItems
+									value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoNivel2Item}" />
+								<p:ajax update="panelCumplimientoResultados,msgs"
+									listener="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.cambiarProductoNivel2}" />
+							</p:selectOneMenu>
+							<h:outputText value="Subtipo 2: " />
+							<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+								value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoNivel3}">
+								<f:selectItems
+									value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoNivel3Item}" />
+							</p:selectOneMenu>
+							<h:outputText value="Nombre del producto:  " />
+							<p:inputText
+								value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.nombreProducto}"
+								size="60" maxlenght="4000" />
+						</p:panelGrid>
+						<t:div style="width: 100%; text-align: center;">
+							<p:commandButton
+								action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.agregarProductoNuevo}"
+								update="@form" id="agregarProductoNuevo"
+								value="Agregar producto" title="Agregar producto"
+								onstart="dialogEspere.show()" ajax="false"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</t:div>
+					</p:panel>
+				</t:div>
+				<t:div
+					rendered="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.prodSara == 'SI'}">
+					<h:outputText
+						value="A continuación, podrá buscar productos por palabra clave que tenga registrados algún integrante de su grupo en el sistema de información SARA y asociarlos al proyecto de investigación." />
+					<br />
+					<br />
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;">
+						<h:outputText value="Nombre del producto (palabra clave):  " />
+						<p:inputText id="udNombreProducto"
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.nombreProducto}"
+							size="40" />
+						<p:commandButton value="Buscar"
+							action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.buscarProductos}"
+							ajax="false" update="" />
+					</p:panelGrid>
+					<br />
+					<t:div>
+						<h:outputText
+							value="Seleccione el producto (Antes de dar clic sobre 'Adicionar'):" />
+						<br />
+						<br />
+						<p:selectOneMenu
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoLlave}"
+							style="width: 600px;" panelStyle="width: 600px;">
+							<f:selectItems
+								value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productosSaraItems}" />
+							<p:ajax update="info-prod"
+								listener="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.dropdownPS_processValueChange}" />
+						</p:selectOneMenu>
+					</t:div>
+					<br />
+					<p:panelGrid columns="2" id="info-prod"
+						styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;">
+						<h:outputText value="Nombre: " />
+						<h:outputText
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoSara.nombreProducto}"
+							maxlength="500" style="font-weight: bold;" />
+						<h:outputText value="Tipo:  " />
+						<h:outputText
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoSara.nombreSeccion}"
+							style="font-weight: bold;" />
+						<h:outputText value="Título 1:  " />
+						<h:outputText
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoSara.titulo1}"
+							style="font-weight: bold;" />
+						<h:outputText value="Título 2:  " />
+						<h:outputText
+							value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoSara.titulo2}"
+							style="font-weight: bold;" />
+					</p:panelGrid>
+				</t:div>
+				<h:panelGrid columns="1" align="center"
+					rendered="#{!manejadorMenuFormularioGrupos.esConsulta and manejadorEdicionGrupoVisionPrioridadesPerspectiva.prodSara == 'SI'}"
+					style="width: 100%; text-align: center;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:commandButton
+						action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.agregarProducto}"
+						update="@form" id="agregarProducto" value="Agregar producto"
+						title="Agregar producto" onstart="dialogEspere.show()"
+						ajax="false" oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+				</h:panelGrid>
+				<p:dataTable id="productosTabla" var="productoGrupo"
+					value="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productosAsociados}"
+					emptyMessage="No se han agregado productos" style="width:100%; "
+					rows="20" paginator="true" paginatorPosition="bottom" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} productos, Pagina: {currentPage}/{totalPages})"
+					paginatorAlwaysVisible="true">
+					<f:facet name="header">
+						<h:outputText value="Productos asociados al grupo" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{productoGrupo.tipoProducto}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText value="#{productoGrupo.nombreProducto}" />
+					</p:column>
+					<p:column style="width: 50px;"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<p:commandButton
+							action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.eliminarProducto}"
+							update="@form" id="eliminarProducto" icon="ui-icon-trash"
+							title="Eliminar producto"
+							onclick="if(!confirm('Esta seguro que desea eliminar este producto.'))return false"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							<f:setPropertyActionListener value="#{productoGrupo}"
+								target="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.productoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<!-- Fin productos de sara para agregar al grupo -->
+			</p:panel>
+			<p:messages id="msgs" />
+			<div style="width: 100%; text-align: center;">
+				<br />
+				<p:commandButton
+					action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.atras}"
+					rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+					value="Anterior" ajax="false"
+					onclick="if(!confirm('¿Esta seguro que desea rergresar? Se perderan los cambios que no hayan sido guardados.'))return false" />
+				<p:commandButton
+					action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.guardarEdicionGrupo}"
+					rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+					value="Guardar y continuar después" update="msgs"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton
+					action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.guardarEnviar}"
+					rendered="#{!manejadorMenuFormularioGrupos.esConsulta and manejadorEdicionGrupoVisionPrioridadesPerspectiva.lider}"
+					value="Guardar y finalizar" update="msgs" ajax="false" />
+				<p:commandButton
+					action="#{manejadorEdicionGrupoVisionPrioridadesPerspectiva.salir}"
+					rendered="#{manejadorMenuFormularioGrupos.esConsulta
+						 and manejadorMenuFormularioGrupos.esCoordinador }"
+					value="Salir" update="msgs" ajax="false" />
+			</div>
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+								Por favor espere
+				</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

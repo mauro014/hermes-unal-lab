@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../principal/PlantillaUnalVacia.xhtml">
+	<ui:define name="content">
+		<div class="estilo-instructivos">
+			<h:form>
+			<h:outputText value="#{manejadorBusquedaAyuda.busquedaInstructivos}" />	
+				<div>
+					
+					<t:div styleClass="contenido-titulo-general-ancizar-100" style="margin-bottom: 30px;">Instructivos</t:div>
+					
+					<div class="informacion-capsula">
+						<div class="informacion-texto" style="padding-bottom: 0px;">
+							En esta sección usted encontrará instructivos y guías para
+							descargar, que le permiten realizar diferentes actividades y
+							tramitar solicitudes relacionadas con los diferentes servicios de los componentes de 
+							investigación, extensión y laboratorios, que se encuentran en el
+							Sistema de Información HERMES.<br /> <br />
+						</div>
+						<t:div style="display:table; width:900px;">
+							<t:div style="float:right; padding-bottom:10px;">
+								<img
+									src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/flecha_reiniciar.png" />
+
+								<p:commandLink
+									style="text-decoration:underline; 
+								color: #16A8E2;
+								font-size:12px;
+								font-weight: bold;
+								padding-left:2px;"
+									value="Reiniciar búsqueda"
+									action="#{manejadorBusquedaAyuda.reiniciarBusqueda}"
+									update="@form">
+								</p:commandLink>
+								<br />
+							</t:div>
+						</t:div>
+						<t:div styleClass="panel-buscar-principal-docentes"
+							style="margin-bottom: -9px;" id="panel-buscador-ppal">
+							<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes1"
+								style="margin:auto;">
+								<h:inputText id="campo"
+									value="#{manejadorBusquedaAyuda.campoBusqueda}"
+									styleClass="campo-buscador-nombre2" />
+								<p:watermark for="campo"
+									value="Ingrese todo o parte del nombre del instructivo" />
+								<p:commandButton
+									action="#{manejadorBusquedaAyuda.busquedaInstructivos}"
+									styleClass="boton_buscar_principal" value="" update="@form"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+									ajax="false" />
+							</p:panelGrid>
+						</t:div>
+						<br />
+						<p:dataTable
+							value="#{manejadorBusquedaAyuda.instructivosClasificados}"
+							var="componente" emptyMessage="No se encontraron instructivos.">
+							<p:column>
+								<t:div style="margin-top: 20px;">
+									<t:outputText value="#{componente[0]}"
+										style=" font-weight: bold;
+										    color: #585956;
+										    margin-bottom: 15px;
+										    margin-top: 32px;
+										    font-size: 16px;" />
+									<br />
+									<br />
+									<p:dataTable styleClass="ocultar-nombres-columnas"
+										value="#{componente[1]}" var="clasificacion"
+										emptyMessage="No se encontraron instructivos.">
+										<p:column>
+											<p:accordionPanel activeIndex="null">
+												<p:tab title="#{clasificacion[0].nombre}"
+													style="color: #464646 !important;">
+													<div class="informacion-texto">
+														<t:dataList var="instructivo" value="#{clasificacion[1]}"
+															layout="unorderedList">
+															<t:div styleClass="informacion-subtitulo">
+																<h:outputLink
+																	value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=#{instructivo.id}"
+																	target="_blank">
+																	<t:outputText value="#{instructivo.nombre}"
+																		id="instruct"
+																		style="color: #16A8E2;
+																	font-weight: bold;
+																	padding-left:2px;
+																	font-size: 12px;" />
+																</h:outputLink>
+																<t:outputText
+																	value=" - Archivo #{instructivo.extensionArchivo}"
+																	style="font-size: 11px; font-weight: bold;" />
+															</t:div>
+														</t:dataList>
+													</div>
+												</p:tab>
+											</p:accordionPanel>
+										</p:column>
+									</p:dataTable>
+								</t:div>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Archivos Adjuntos</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorArchivos.proyectoActual.nombre}"
+						style="font-weight: bold" />
+				</t:div>
+
+			</h:panelGrid>
+			<br />
+
+
+			<p:panel header="Archivos" id="subirArchivos">
+				<br />
+				<t:div style="text-align:center;"
+					rendered="#{!manejadorArchivos.esPermisoMarcoAsignatura}">
+					<span> Aquí puede adjuntar los archivos relacionados con el
+						proyecto. (Recuerde que el tamaño máximo permitido de los archivos
+						es de 3MB). </span>
+				</t:div>
+				<br />
+
+				<t:div
+					rendered="#{!empty manejadorArchivos.mensajeArchivosAdjuntos}">
+					<h:outputText value="#{manejadorArchivos.mensajeArchivosAdjuntos}"
+						escape="false" />
+				</t:div>
+
+				<br />
+
+				<h:panelGrid id="subirArchivos" columns="2" border="0"
+					cellspacing="5" align="center"
+					rendered="#{(manejadorArchivos.proyectoActual.estadoProyecto.id == 'I' or manejadorArchivos.proyectoActual.estadoProyecto.id == 'EL') 
+						or (manejadorArchivos.proyectoActual.permitirModificacion != null and manejadorArchivos.proyectoActual.permitirModificacion == 'S')}">
+
+					<h:outputText value="Tipo de Archivo:"
+						rendered="#{manejadorArchivos.esSolicitudISBN or manejadorArchivos.esJovenesInvestigadoresColciencias or manejadorArchivos.esCorredorTecnologico}" />
+					<p:selectOneMenu value="#{manejadorArchivos.tipoArchivo.id}"
+						rendered="#{manejadorArchivos.esSolicitudISBN or manejadorArchivos.esJovenesInvestigadoresColciencias or manejadorArchivos.esCorredorTecnologico}"
+						style="width:400px">
+						<f:selectItems value="#{manejadorArchivos.tipoArchivoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Archivo: " />
+					<p:fileUpload value="#{manejadorArchivos.archivo}" mode="simple" />
+
+					<h:outputText />
+					<p:commandButton value="Adjuntar Archivo" ajax="false"
+						actionListener="#{manejadorArchivos.insertarArchivo}"
+						update="@form" />
+				</h:panelGrid>
+				<br />
+
+				<p:dataTable var="archivoResumen"
+					value="#{manejadorArchivos.listaArchivos}" cellpadding="1"
+					cellspacing="8" align="center" border="1"
+					binding="#{manejadorArchivos.tablaArchivos}" emptyMessage=""
+					rendered="#{not empty manejadorArchivos.listaArchivos}"
+					id="tabla-archivo" style="width: 100%;">
+
+					<p:column
+						rendered="#{manejadorArchivos.esSolicitudISBN or manejadorArchivos.esJovenesInvestigadoresColciencias}">
+						<f:facet name="header">
+							<h:outputText value="Tipo Archivo" />
+						</f:facet>
+						<div style="width: 200px;">
+							<h:outputText value=" #{archivoResumen.tipoArchivo.nombre}" />
+						</div>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<div style="width: 200px;">
+							<h:outputText value=" #{archivoResumen.nombre}" />
+						</div>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+						<center>
+							<p:commandButton action="#{manejadorArchivos.descargarArchivo}"
+								icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+								ajax="false" 
+								rendered="#{!manejadorArchivos.esSolicitudISBN}"/>
+							<p:commandButton action="#{manejadorArchivos.descargarArchivoISBN}"
+								icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo ISBN"
+								ajax="false" 
+								rendered="#{manejadorArchivos.esSolicitudISBN}"/>
+						</center>
+					</p:column>
+
+					<p:column
+						rendered="#{(manejadorArchivos.proyectoActual.estadoProyecto.id == 'I' or manejadorArchivos.proyectoActual.estadoProyecto.id == 'EL') 
+							or (manejadorArchivos.proyectoActual.permitirModificacion != null and manejadorArchivos.proyectoActual.permitirModificacion == 'S')}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<center>
+							<p:commandButton action="#{manejadorArchivos.eliminarArchivo}"
+								icon="ui-icon-trash" title="Eliminar archivo" ajax="false"
+								onclick="if(!confirm('¿Esta seguro de eliminar este archivo?, esta acción no puede deshacerse'))return false"
+								rendered="#{!manejadorArchivos.esSolicitudISBN}"/>
+							<p:commandButton action="#{manejadorArchivos.eliminarArchivoISBN}"
+								icon="ui-icon-trash" title="Eliminar archivo" ajax="false"
+								onclick="if(!confirm('¿Esta seguro de eliminar este archivo?, esta acción no puede deshacerse'))return false"
+								rendered="#{manejadorArchivos.esSolicitudISBN}"/>
+						</center>
+					</p:column>
+
+				</p:dataTable>
+
+				<h:outputText
+					rendered="{!manejadorArchivos.esPermisoMarco and !manejadorArchivos.esPermisoMarcoAsignatura}"
+					value="Recuerde verificar que se encuentran cargados todos los documentos para participar en la convocartoria" />
+				<br /><br />
+				<h:outputText rendered="#{!manejadorArchivos.esPermisoMarco and !manejadorArchivos.esSolicitudISBN}"
+					value="En caso de que lo requiera, recuerde verificar que se encuentran cargados todos los documentos necesarios para la participación en esta convocatoria" />
+				<br /><br />
+				<h:outputText rendered="#{manejadorArchivos.proyectoActual.modalidad.padre.esConvocatoriaLaboratorios2024}"
+					value="Por favor adjuntar los documentos requeridos en el numeral 7 documentos obligatorios de los términos de referencia de la convocatoria"> </h:outputText> 
+				<h:outputLink rendered="#{manejadorArchivos.proyectoActual.modalidad.padre.esConvocatoriaLaboratorios}"
+				value="https://investigacion.unal.edu.co/fileadmin/recursos/siun/convocatorias/2022-2024/terminos/conv-laboratorios-unal-2022-2024.pdf" ></h:outputLink>
+				<br /><br />
+				<h:outputText rendered="#{manejadorArchivos.proyectoActual.modalidad.padre.esConvocatoriaLaboratorios2023}"
+					value="Por favor adjuntar los documentos requeridos en el numeral 10 documentos obligatorios de los términos de referencia de la invitación"> </h:outputText> 
+				<br /><br />
+				<h:outputText
+					rendered="{manejadorArchivos.esPermisoMarco || manejadorArchivos.esPermisoMarcoAsignatura}"
+					value="En caso de que lo requiera, recuerde adjuntar los formatos de autorización o consulta previa." />
+				<h:outputText rendered="{manejadorArchivos.esPermisoMarco}"
+					value="En caso de que lo requiera, recuerde adjuntar los formatos de autorización o consulta previa." />
+				
+				<h:outputText
+					rendered="#{manejadorArchivos.esSolicitudISBN}"
+					value="Después de haber subido a la plataforma Hermes todos los documentos mencionados se debe hacer la 
+						solicitud formal al área de gestión de ISBN a través del correo isbn_nal@unal.edu.co. En este correo 
+						se debe indicar el código generado por la plataforma Hermes y adjuntar los archivos que no se hayan 
+						podido subir a la plataforma."/>
+				<br /><br />
+				<h:outputText
+					rendered="#{manejadorArchivos.esSolicitudISBN}"
+					value="Con el fin de que su solicitud cambie el estado de 'Ingresando proyecto' a 'Propuesto' se recomienda 
+						adjuntar el soporte del correo electrónico en PDF sobre los archivos que por su peso no se hayan podido subir. "/>
+
+				<br /><br />
+				
+				<h:panelGrid columns="2" align="center" cellpadding="1"
+					cellspacing="1">
+					<h:outputText
+						rendered="#{!manejadorArchivos.esPermisoMarcoAsignatura and !manejadorArchivos.esPermisoMarco}"
+						value="Su proyecto se ingresó satisfactoriamente con el número:" />
+					<h:outputText
+						rendered="#{manejadorArchivos.esPermisoMarco}"
+						value="Su proyecto se asoció satisfactoriamente con el número:" />
+					<h:outputText
+						rendered="#{manejadorArchivos.esPermisoMarcoAsignatura}"
+						value="Su asignatura se ingresó satisfactoriamente con el número:" />
+					<h:outputText value="#{manejadorArchivos.proyectoActual.id}" />
+					<h:outputText
+						rendered="#{manejadorArchivos.esPermisoMarco}"
+						value="Recuerde que debe dar clic en 'enviar proyecto para revisión' para que sea enviado a revisión. Si desea realizar alguna modificación antes de enviarlo, recuerde que puede editarlo en la opción 'solicitudes de biodiversidad' buscando el código y dar clic en editar." />
+					<h:outputText
+						rendered="#{manejadorArchivos.esPermisoMarcoAsignatura}"
+						value="Recuerde que debe dar clic en 'Solicitar certificado de movilización' para que sea enviado a revisión. Si desea realizar alguna modificación antes de enviarlo, recuerde que puede editarlo en la opción 'solicitudes de biodiversidad' buscando el código y dar clic en editar." />
+					
+					<h:outputText rendered="false"
+						value="Si desea hacer alguna modificación, tiene plazo hasta:" />
+					<h:outputText rendered="false"
+						value="#{manejadorArchivos.fechaFinalConvocatoria}" />
+				</h:panelGrid>
+				
+				<br />
+				<p:panel rendered="#{manejadorArchivos.esPermisoMarcoAsignatura}"> 
+			
+						<t:div  style="text-align:justify; color:#FF8000;">
+							El <font color="FF8000"><b>CERTIFICADO DE MOVILIZACIÓN</b></font> es el documento obligatorio que debe ser portado en las salidas de campo junto con la resolución del permiso vigente. 
+						</t:div>
+					</p:panel>
+				<br />
+				
+				<center>
+					<h:commandLink value="Descargar reporte" target="_blank"
+						action="#{manejadorArchivos.reporte}"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" />
+					<br />
+					<h:outputText
+						value="Este propuesta esta asociada a otro proyecto de investigacion"
+						rendered="#{!empty manejadorArchivos.proyectoActual.codigoDib and manejadorArchivos.checkProyectoAsociado}" />
+					<br />
+					<h:commandLink target="popupWindow"
+						value="Ver reporte de proyecto asociado"
+						action="#{manejadorArchivos.imprimirProyectoAsociado}"
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;"
+						rendered="#{!empty manejadorArchivos.proyectoActual.codigoDib}">
+					</h:commandLink>
+				</center>
+			</p:panel>
+			
+			<br />
+			
+			<center>
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5" id="pgBotonEnviarProyecto"
+					rendered="#{(manejadorArchivos.esProyectoLaboratorios or manejadorArchivos.esConvFichaMinima or manejadorArchivos.esConvocatoriaFichaMinimaHome) 
+							and manejadorArchivos.esDirector 
+							and manejadorArchivos.convocatoriaActiva
+							and (manejadorArchivos.proyectoActual.estadoProyecto.id == 'I' or manejadorArchivos.proyectoActual.estadoProyecto.id == 'EL')}">
+
+					<p:commandButton
+						disabled="#{!manejadorArchivos.botonEnviarProyecto}"
+						action="#{manejadorArchivos.enviarProyecto}"
+						value="Enviar proyecto para revisión" update="@form"
+						id="enviarLib" />
+
+				</h:panelGrid>
+			</center>
+
+			<center>
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5"
+					rendered="#{manejadorArchivos.esSolicitudISBN and manejadorArchivos.esDirector}">
+
+					<p:commandButton
+						disabled="#{!manejadorArchivos.botonEnviarProyecto}"
+						action="#{manejadorArchivos.enviarProyectoISBN}"
+						value="Enviar solicitud" update="confirmacion" id="enviarISBN" />
+
+				</h:panelGrid>
+			</center>
+
+			<center>
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5"
+					rendered="#{manejadorArchivos.esPermisoMarco and manejadorArchivos.esDirector}">
+
+					<p:commandButton
+						disabled="#{!manejadorArchivos.botonEnviarProyecto}"
+						action="#{manejadorArchivos.enviarProyectoPermisoMarco}"
+						value="Enviar proyecto para revisión" update="confirmacion"
+						id="enviar" />
+
+				</h:panelGrid>
+			</center>
+
+			<center>
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5"
+					rendered="#{manejadorArchivos.esPermisoMarcoAsignatura and manejadorArchivos.esDirector}">
+
+					<p:commandButton
+						disabled="#{!manejadorArchivos.botonEnviarProyecto}"
+						action="#{manejadorArchivos.solicitarPermisoAsignatura}"
+						value="Solicitar certificado de movilización"
+						update="confirmacion" id="enviar-asignatura" />
+
+				</h:panelGrid>
+			</center>
+
+			<br />
+
+			<p:messages id="confirmacion" autoUpdate="true" />
+
+			<br />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

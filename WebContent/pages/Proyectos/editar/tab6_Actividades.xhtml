@@ -1,0 +1,530 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Actividades</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorActividades.inicioTitulo}"
+						style="font-weight: bold" />
+				</t:div>
+			</h:panelGrid>
+			<br />
+			<p:panel header="#{manejadorActividades.titulo}"
+				id="grupoInsercionActividades"
+				rendered="#{!manejadorActividades.esProyectoLaboratorios and !manejadorActividades.mostrarActividadesObjetivosMetas}">
+				<h:panelGrid columns="1"
+					styleClass="estilo-panelgrid-sinbordes">
+					<t:div>
+						<b>NOTA:</b>  Por favor señale el plan de actividades del proyecto y su cronograma.
+					</t:div>
+				</h:panelGrid>
+				<br/>
+				<p:dataTable id="tablaActividades" cellpadding="6" cellspacing="3"
+					value="#{manejadorActividades.listaActividades}" var="actividad"
+					border="0" binding="#{manejadorActividades.tablaActividades}"
+					emptyMessage="No existen actividades asociadas al proyecto">
+					<p:column style="width:25%;">
+						<f:facet name="header">
+							<h:outputText value="DESCRIPCIÓN DE LA ACTIVIDAD" />
+						</f:facet>
+						<p:message id="descripcion" for="descripcion" />
+						<p:inputTextarea id="descripcion" value="#{actividad.descripcion}"
+							style="width: 100%;" rows="4" rendered="#{!actividad.borrable}"
+							required="true" requiredMessage="Ingrese la descripción"
+							validatorMessage="Máximo 500 caracteres" autoResize="false"
+							maxlength="500">
+							<f:validateLength maximum="500" />
+						</p:inputTextarea>
+					</p:column>
+					<p:column style="width:25%;">
+						<f:facet name="header">
+							<h:outputText value="DURACIÓN" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid align="center"
+								styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{!actividad.borrable}">
+								<p:row>
+									<p:column colspan="2">
+										<p:message for="mes_Inicial" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="Mes inicial:" /></b>
+									</p:column>
+									<p:column>
+										<p:inputText id="mes_Inicial" value="#{actividad.mesInicial}"
+											size="4" required="true"
+											requiredMessage="Ingrese el mes inicial"
+											validatorMessage="Dato inválido"
+											converterMessage="El dato debe ser numérico">
+											<f:validateLongRange minimum="1" maximum="999999999999" />
+										</p:inputText>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2">
+										<p:message for="duracion_Meses" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="Duración en meses:" /></b>
+									</p:column>
+									<p:column>
+										<p:inputText id="duracion_Meses"
+											value="#{actividad.duracionMeses}" size="4" required="true"
+											requiredMessage="Ingrese la duración"
+											validatorMessage="Dato inválido"
+											converterMessage="El dato debe ser numérico">
+											<f:validateLongRange minimum="1" maximum="999999999999" />
+										</p:inputText>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column style="width:25%;"
+						rendered="#{manejadorActividades.proyectoActual.modalidad.tipo.id!='SE'}">
+						<f:facet name="header">
+							<h:outputText value="RESPONSABLE" />
+						</f:facet>
+						<p:selectOneMenu id="responsable" value="#{actividad.idInv}" rendered="#{!actividad.borrable}"
+							required="#{manejadorActividades.proyectoActual.modalidad.tipo.id!='SE'}">
+							<f:selectItems
+								value="#{manejadorActividades.listainvestigadoresitem}" />
+						</p:selectOneMenu>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="ELIMINAR" />
+						</f:facet>
+						<center>
+							<p:commandButton title="Eliminar actividad" icon="ui-icon-trash"
+								onclick="if(!confirm('¿Está seguro(a) de eliminar la actividad?'))return false"
+								action="#{manejadorActividades.eliminarActividad}"
+								immediate="true" rendered="#{!actividad.borrable}"
+								update="tablaActividades" />
+						</center>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<center>
+					<p:commandButton action="#{manejadorActividades.insertarActividad}"
+						value="Agregar Nueva Actividad" update="tablaActividades" />
+				</center>
+				<br />
+			</p:panel>
+			<p:panel header="#{manejadorActividades.titulo}"
+				id="grupoInsercionActividadesMetas" style="width:680px;"
+				rendered="#{manejadorActividades.esProyectoLaboratorios}">
+				<center>
+					<p:panel border="1" style="width:580px">
+						<br />
+						<p:panelGrid id="panelActividadesMetasResultados"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width:120px">
+									<h:outputText value="Ingrese cada actividad" />
+									<h:outputText value=" (Máx. 500 caracteres):" />
+								</p:column>
+								<p:column>
+									<p:inputTextarea value="#{manejadorActividades.actividad}"
+										rows="3" id="actividadProyecto"
+										style="width: 380px; height: 60px;"
+										binding="#{manejadorActividades.actividadProyecto}"
+										validatorMessage="La actividad debe estar entre 1 - 500 caracteres"
+										counter="counterActividad" maxlength="500"
+										counterTemplate="{0} caracteres restantes."
+										requiredMessage="Ingrese la actividad">
+									</p:inputTextarea>
+									<p:message id="msgActividad" for="actividadProyecto"
+										showSummary="false"></p:message>
+									<h:outputText id="counterActividad" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width:120px">
+									<h:outputText value="Meta:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										value="#{manejadorActividades.metaObjetivoSelectValue}"
+										id="actividadesProyecto" style="width:380px"
+										panelStyle="width:380px"
+										requiredMessage="Seleccione una meta de la lista">
+										<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+										<f:selectItems value="#{manejadorActividades.metasItem}" />
+									</p:selectOneMenu>
+									<p:tooltip for="actividadesProyecto" showEffect="fade"
+										hideEffect="fade">
+										<h:panelGrid columns="1"
+											style="border-bottom: 0px; padding-bottom: 0px; width: 300px">
+											<h:outputText
+												value="Para agregar la actividad, por favor ingrese el texto de la actividad, seleccione una meta y resultado, y haga clic en el botón [Adicionar Actividad]" />
+										</h:panelGrid>
+									</p:tooltip>
+									<p:message id="msgMetas" for="actividadesProyecto"
+										showSummary="false" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width:120px">
+									<h:outputText value="Resultado:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										value="#{manejadorActividades.resultadoSelectValue}"
+										id="resultadosProyecto" style="width:380px"
+										panelStyle="width:380px"
+										requiredMessage="Seleccione un resultado de la lista">
+										<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+										<f:selectItems value="#{manejadorActividades.resultadosItem}" />
+									</p:selectOneMenu>
+									<p:tooltip for="resultadosProyecto" showEffect="fade"
+										hideEffect="fade">
+										<h:panelGrid columns="1"
+											style="border-bottom: 0px; padding-bottom: 0px; width: 300px">
+											<h:outputText
+												value="Para agregar la actividad, por favor ingrese el texto de la actividad, seleccione una meta y resultado, y haga clic en el botón [Adicionar Actividad]" />
+										</h:panelGrid>
+									</p:tooltip>
+									<p:message id="msgResultados" for="resultadosProyecto"
+										showSummary="false" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width:120px">
+									<h:outputText value="Mes inicial" />
+								</p:column>
+								<p:column>
+									<p:inputText id="mes_Inicial"
+										value="#{manejadorActividades.mesInicial}" size="10"
+										maxlength="3" requiredMessage="Ingrese el mes inicial"
+										validatorMessage="Dato inválido"
+										converterMessage="El dato debe ser numérico"
+										binding="#{manejadorActividades.mesInicialUI}">
+										<f:validateLongRange minimum="1" maximum="999" />
+									</p:inputText>
+									<p:message id="msgMesInicial" for="mes_Inicial"
+										showSummary="false" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width:120px">
+									<h:outputText value="Duración" />
+								</p:column>
+								<p:column>
+									<p:inputText id="duracion"
+										value="#{manejadorActividades.duracion}" size="10"
+										maxlength="3" requiredMessage="Ingrese la duración"
+										validatorMessage="Dato inválido"
+										converterMessage="El dato debe ser numérico"
+										binding="#{manejadorActividades.duracionUI}">
+										<f:validateLongRange minimum="1" maximum="999" />
+									</p:inputText>
+									<p:message id="msgDuracion" for="duracion" showSummary="false" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width:120px">
+									<h:outputText value="Responsable" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="responsable"
+										value="#{manejadorActividades.responsable}"
+										required="#{manejadorActividades.proyectoActual.modalidad.tipo.id!='SE'}">
+										<f:selectItems
+											value="#{manejadorActividades.listainvestigadoresitem}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<center>
+										<p:commandButton
+											action="#{manejadorActividades.insertarActividadMetaResultado}"
+											value="Adicionar Actividad" icon="ui-icon-plus"
+											update="tablaActividadesMetasResultados2"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" />
+									</center>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<br />
+				</center>
+				<p:dataTable id="tablaActividadesMetasResultados2" cellpadding="1"
+					cellspacing="1" value="#{manejadorActividades.listaActividades}"
+					var="actividad"
+					emptyMessage="No existen actividades asociadas al proyecto"
+					style="width:100%;" rows="10" paginator="true"
+					paginatorPosition="bottom" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} Laboratorios, Pagina: {currentPage}/{totalPages})"
+					sortBy="#{actividad.metaObjeto.objetivo.numeroOrden} . #{actividad.metaObjeto.numeroOrden} . #{actividad.numeroOrden}">
+					<p:column
+						style="width:10%; text-align: center;font-weight: bold;font-size: 11px;"
+						sortBy="#{actividad.metaObjeto.objetivo.numeroOrden} . #{actividad.metaObjeto.numeroOrden} . #{actividad.numeroOrden}">
+						<f:facet name="header">
+							<h:outputText value="N°" />
+						</f:facet>
+						<h:outputText
+							value="#{actividad.metaObjeto.objetivo.numeroOrden} . #{actividad.metaObjeto.numeroOrden} . #{actividad.numeroOrden}" />
+					</p:column>
+					<p:column style="width:30%; font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="Actividad / Meta /Resultado" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid cellpadding="6" cellspacing="3"
+								styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="Actividad:" style="font-weight: bold;" />
+									</p:column>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="#{actividad.descripcion}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="Meta:" style="font-weight: bold;" />
+									</p:column>
+									<p:column style="vertical-align: top;">
+										<h:outputText
+											value="#{actividad.metaObjeto.objetivo.numeroOrden}.#{actividad.metaObjeto.numeroOrden} - #{actividad.metaObjeto.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="vertical-align: top;">
+										<h:outputText value="Resultado:" style="font-weight: bold;" />
+									</p:column>
+									<p:column style="vertical-align: top;">
+										<h:outputText
+											value="#{actividad.resultado.numeroOrden} - #{actividad.resultado.descripcion}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column style="width:20%; font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="Duración" />
+						</f:facet>
+						<h:outputText
+							value="&lt;b&gt;Mes inicial: &lt;/b&gt;#{actividad.mesInicial}"
+							escape="false" />
+						<br />
+						<h:outputText
+							value="&lt;b&gt;Duración en meses: &lt;/b&gt;#{actividad.duracionMeses}"
+							escape="false" />
+					</p:column>
+					<p:column style="width:20%; font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{actividad.responsable}" />
+					</p:column>
+					<p:column style="font-size: 11px;">
+						<f:facet name="header">
+							<h:outputText style="text-align: center; font-weight: bold;"
+								value="(X)" />
+						</f:facet>
+						<p:commandButton id="selectButtonActividad"
+							update="tablaActividadesMetasResultados2" icon="ui-icon-trash"
+							action="#{manejadorActividades.eliminarActividadMetaResultado}"
+							title="Eliminar actividad" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+							<f:setPropertyActionListener value="#{actividad}"
+								target="#{manejadorActividades.actividadTabla}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel header="#{manejadorActividades.titulo}"
+				id="grupoInsercionActividades2" style="width:680px;"
+				rendered="#{manejadorActividades.mostrarActividadesObjetivosMetas}">
+				<p:dataTable id="tablaActividades2" cellpadding="1" cellspacing="1"
+					value="#{manejadorActividades.listaActividades}" var="actividad"
+					border="0" binding="#{manejadorActividades.tablaActividades2}"
+					emptyMessage="No existen actividades asociadas al proyecto"
+					style="width:100%;">
+					<p:column style="width:20%;">
+						<f:facet name="header">
+							<h:outputText value="DURACIÓN" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid align="center"
+								styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{!actividad.borrable}">
+								<p:row>
+									<p:column colspan="2">
+										<p:message for="mes_Inicial2" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="Mes inicial:" /></b>
+									</p:column>
+									<p:column>
+										<p:inputText id="mes_Inicial2" value="#{actividad.mesInicial}"
+											size="2" required="true"
+											requiredMessage="Ingrese el mes inicial"
+											validatorMessage="Dato inválido"
+											converterMessage="El dato debe ser numérico">
+											<f:validateLongRange minimum="1" maximum="999999999999" />
+										</p:inputText>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2">
+										<p:message for="duracion_Meses2" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<b><h:outputText value="Duración en meses:" /></b>
+									</p:column>
+									<p:column>
+										<p:inputText id="duracion_Meses2"
+											value="#{actividad.duracionMeses}" size="2" required="true"
+											requiredMessage="Ingrese la duración"
+											validatorMessage="Dato inválido"
+											converterMessage="El dato debe ser numérico">
+											<f:validateLongRange minimum="1" maximum="999999999999" />
+										</p:inputText>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column style="width:80%;">
+						<f:facet name="header">
+							<h:outputText value="INFORMACIÓN ACTIVIDAD" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid style="width: 100%;"
+								styleClass="estilo-panelgrid-sinbordes"
+								rendered="#{!actividad.borrable}">
+								<p:row>
+									<p:column style="width: 30%;">
+										<h:outputText value="DESCRIPCIÓN:" />
+									</p:column>
+									<p:column>
+										<p:message id="descripcionmsg2" for="descripcion2" />
+										<p:inputTextarea id="descripcion2"
+											value="#{actividad.descripcion}" style="width: 100%;"
+											rows="4" rendered="#{!actividad.borrable}" required="true"
+											requiredMessage="Ingrese la descripción"
+											validatorMessage="Máximo 500 caracteres" autoResize="false"
+											maxlength="500">
+											<f:validateLength maximum="500" />
+										</p:inputTextarea>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="META:" />
+									</p:column>
+									<p:column>
+										<p:message id="metaMsg2" for="meta2" />
+										<p:inputTextarea id="meta2" value="#{actividad.meta}"
+											style="width: 100%;" rows="4"
+											rendered="#{!actividad.borrable}" required="true"
+											requiredMessage="Ingrese la meta para la actividad"
+											validatorMessage="Máximo 500 caracteres" autoResize="false"
+											maxlength="500">
+											<f:validateLength maximum="500" />
+										</p:inputTextarea>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="OBJETIVO ASOCIADO:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="objetivosProyecto2"
+											value="#{actividad.objetivoEspecifico.id}"
+											style="width: 100%" panelStyle="width: 500px"
+											rendered="#{!actividad.borrable}">
+											<f:selectItems
+												value="#{manejadorActividades.listaObjetivosItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="RESPONSABLE:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="responsable" value="#{actividad.idInv}"
+											style="width: 100%"
+											required="#{manejadorActividades.proyectoActual.modalidad.tipo.id!='SE'}">
+											<f:selectItems
+												value="#{manejadorActividades.listainvestigadoresitem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column style="width:10%;">
+						<f:facet name="header">
+							<h:outputText value="(-)" />
+						</f:facet>
+						<center>
+							<p:commandButton title="Eliminar actividad" icon="ui-icon-trash"
+								onclick="if(!confirm('¿Está seguro(a) de eliminar la actividad?'))return false"
+								action="#{manejadorActividades.eliminarActividadConMetaObjetivo}"
+								immediate="true" rendered="#{!actividad.borrable}"
+								update="tablaActividades2" />
+						</center>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<center>
+					<p:commandButton
+						action="#{manejadorActividades.insertarActividadConMetaObjetivo}"
+						value="Agregar Nueva Actividad" update="tablaActividades2" />
+				</center>
+				<br />
+			</p:panel>
+			<br />
+			<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+				closable="true" showSummary="true" showDetail="true" />
+			<br />
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="4" cellpadding="3">
+						<p:commandButton action="#{manejadorActividades.atras}"
+							value="Atrás" immediate="true" />
+						<p:commandButton action="#{manejadorActividades.salirGuardar}"
+							rendered="#{manejadorActividades.validarBotonGuardar}"
+							value="Guardar y continuar después" update="@form" />
+						<p:commandButton action="#{manejadorActividades.siguiente}"
+							update="@form"
+							rendered="#{manejadorActividades.validarBotonGuardar}"
+							value="Guardar y avanzar" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

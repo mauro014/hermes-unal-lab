@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Convocatorias Externas</t:div>
+
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelBusquedaProyectosxConvocatoria">
+					<t:div style="width: 120px;">
+						<h:outputText value="Entidad convocante:" />
+					</t:div>
+					<t:div>
+						<p:selectOneMenu style="width:520px;"
+							value="#{manejadorAdministrarConvocatoriasExternas.entidadSeleccionada}"
+							panelStyle="width: 520px;" filter="true"
+							filterMatchMode="contains">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{manejadorAdministrarConvocatoriasExternas.listaEntidadesItem}" />
+						</p:selectOneMenu>
+					</t:div>
+					<h:outputText value="Estado convocatoria:" />
+					<p:selectOneMenu style="width:520px;"
+						value="#{manejadorAdministrarConvocatoriasExternas.estadoConvocatoria}"
+						panelStyle="width: 220px;">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems
+							value="#{manejadorAdministrarConvocatoriasExternas.estadoConvocatoriasItems}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<div
+					style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+					<p:commandButton value="Consultar convocatorias"
+						icon="ui-icon-search" update="@form" ajax="false"
+						actionListener="#{manejadorAdministrarConvocatoriasExternas.consultarConvocatorias}" />
+				</div>
+			</p:panel>
+			<p:messages id="msgs" autoUpdate="true"	closable="true" />
+			<br />
+			<p:dataTable var="convocatoria"
+				value="#{manejadorAdministrarConvocatoriasExternas.listaConvocatoriasExternas}"
+				emptyMessage="No se encontraron convocatorias externas"
+				paginator="true" rows="20" paginatorPosition="bottom"
+				filteredValue="#{manejadorAdministrarConvocatoriasExternas.filteredConvocatoriasExternas}">
+				<f:facet name="header">Convocatorias Externas</f:facet>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Visible?" />
+					</f:facet>
+					<p:graphicImage value="/images/check.png"
+						rendered="#{convocatoria.visibilidad}" style="width: 25px;" />
+					<p:graphicImage value="/images/cancel.png"
+						rendered="#{!convocatoria.visibilidad}" style="width: 20px;" />
+				</p:column>
+				<p:column style="text-align: center;"
+					filterBy="#{convocatoria.numero}" filterStyle="width: 35px;">
+					<f:facet name="header">
+						<h:outputText value="Número" />
+					</f:facet>
+					<h:outputText value="#{convocatoria.numero}" />
+				</p:column>
+				<p:column style="text-align: center;"
+					filterBy="#{convocatoria.nombre}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<h:outputText value="#{convocatoria.nombre}" />
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Fecha apertura" />
+					</f:facet>
+					<h:outputText value="#{convocatoria.fechaApertura}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Fecha cierre" />
+					</f:facet>
+					<h:outputText value="#{convocatoria.fechaCierre}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="-">
+					<p:commandButton
+						action="#{manejadorAdministrarConvocatoriasExternas.editarConvocatoriaExterna}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{convocatoria}"
+							target="#{manejadorAdministrarConvocatoriasExternas.convocatoriaSeleccionada}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{manejadorAdministrarConvocatoriasExternas.consultarConvocatoriaExterna}"
+						icon="ui-icon-search" ajax="false">
+						<f:setPropertyActionListener value="#{convocatoria}"
+							target="#{manejadorAdministrarConvocatoriasExternas.convocatoriaSeleccionada}" />
+
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{manejadorAdministrarConvocatoriasExternas.tamanoLista} convocatorias externas</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

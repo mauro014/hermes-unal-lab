@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			
+			<p:panelGrid columns="1" rendered="#{ManejadorLaboratoriosReportes.tipoRolSeleccionado == 'E'}">
+				<t:div styleClass="contenido-titulo-general-myriad">Reportes SNL</t:div>
+				<p:panel
+					rendered="#{ManejadorLaboratoriosReportes.esLaboratorios or ManejadorLaboratoriosReportes.esLaboratoriosSede or ManejadorLaboratoriosReportes.esLaboratoriosFacultad or ManejadorLaboratoriosReportes.esLaboratoriosDepto or ManejadorLaboratoriosReportes.esLaboratoriosConsulta}">
+					<h:outputText
+						value="Seleccione la Sede, Facultad, o Departamento (si es necesario), y haga clic en el botón correspondiente al reporte que desea generar:"
+						styleClass="negrilla" />
+						
+					<p:separator />	
+					
+					<p:panelGrid columns="2">
+						<h:outputText value="Sede" styleClass="negrilla" />
+						<p:selectOneMenu
+							value="#{ManejadorLaboratoriosReportes.sedeSeleccionada.id}"
+							id="somSedes">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosReportes.selectItemSedes}" />
+							<p:ajax update="somFacultades, somDepartamentos"
+								listener="#{ManejadorLaboratoriosReportes.cambiarSede}" />
+						</p:selectOneMenu>
+						<h:outputText value="Facultad" styleClass="negrilla" />
+						<p:selectOneMenu style="width:400px;"
+							value="#{ManejadorLaboratoriosReportes.facultadSeleccionada.id}"
+							id="somFacultades">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosReportes.selectItemFacultades}" />
+							<p:ajax update="somDepartamentos"
+								listener="#{ManejadorLaboratoriosReportes.cambiarFacultad}" />
+						</p:selectOneMenu>
+						<h:outputText value="Departamento" styleClass="negrilla" />
+						<p:selectOneMenu style="width:400px;"
+							value="#{ManejadorLaboratoriosReportes.departamentoSeleccionado.id}"
+							id="somDepartamentos">
+							<f:selectItems
+								value="#{ManejadorLaboratoriosReportes.selectItemDepartamentos}" />
+							<p:ajax update="@parent"
+								listener="#{ManejadorLaboratoriosReportes.cambiarDepartamento}" />
+						</p:selectOneMenu>
+	
+						<h:outputText />
+						<h:outputText value="#{ManejadorLaboratoriosReportes.mensajeError}"
+							rendered="#{empty ManejadorLaboratoriosReportes.listaReporte}"
+							styleClass="mensajeerror" />
+					</p:panelGrid>	
+				</p:panel>
+			
+			</p:panelGrid>
+			
+			<p:panelGrid columns="1" rendered="#{ManejadorLaboratoriosReportes.tipoRolSeleccionado == 'I'}">
+				<t:div styleClass="contenido-titulo-general-myriad">Reportes coordinador de laboratorio</t:div>
+				<p:panel>
+					<h:outputText styleClass="negrilla"
+						value="Seleccione el reporte que desea generar para los laboratorios en donde usted es el coordinador o donde se encuentra asociado con algún otro rol" />
+					<br/>	
+					<p:spacer height="30" />
+					
+					<p:panelGrid columns="2" style="width: 100%">
+						<h:outputText value="Laboratorio" styleClass="negrilla" />
+						<p:selectOneMenu id="listaLaboratorios" style="width: 550px"
+							value="#{ManejadorLaboratoriosReportes.labSeleccionado}"
+							filter="true"
+							filterMatchMode="contains">
+							<f:selectItems value="#{ManejadorLaboratoriosReportes.laboratoriosSelectItem}" />
+							<p:ajax update="@this" process="@this"/>
+						</p:selectOneMenu>
+					</p:panelGrid>	
+				</p:panel>
+			</p:panelGrid>
+			
+			<p:panel>
+				<p:panelGrid columns="4">
+						<t:div style="width: 40px;">
+							<p:commandButton icon="ui-icon-play"
+								action="#{ManejadorLaboratoriosReportes.reporteLaboratoriosRegistrados}" update="@form"
+								process="@parent"
+								title="Información consolidada sobre cada Laboratorio."
+								onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						</t:div>
+						<t:div style="width: 270px;">
+							<h:outputText value="Laboratorios registrados" />
+						</t:div>
+	
+						<t:div style="width: 40px;">
+							<p:commandButton icon="ui-icon-play"
+								action="#{ManejadorLaboratoriosReportes.reporteEquipos}"
+								update="@form" process="@parent"
+								title="Información consolidada sobre cada Equipo."
+								onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						</t:div>
+						<t:div style="width: 270px;">
+							<h:outputText value="Equipos registrados" />
+						</t:div>
+	
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteActividadesRegistradas}"
+							update="@form" process="@parent"
+							title="Información consolidada sobre actividades de Mantenimiento, Calibración y Verificación de Equipos."
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Actividades Registradas" />
+	
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteAsignaturasDeptos}"
+							update="@form" process="@parent"
+							title="Información sobre los Departamentos/Facultades cuyas Asignaturas se dictan en los Laboratorios."
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Asignaturas Registradas" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteInfraRiesgos}"
+							update="@form" process="@parent"
+							title="Información sobre estado actual, requerimientos a nivel de infraestructura y riesgos en los laboratorios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Infraestructura y Riesgos" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteSustanciasControladas}"
+							update="@form" process="@parent"
+							title="Información sobre el inventario de sustancias químicas usadas por los laboratorios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Sustancias y Productos Químicos" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteGestion}"
+							update="@form" process="@parent"
+							title="Información sobre la pestaña gestión"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Gestión" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteProyectos}"
+							update="@form" process="@parent"
+							title="Información sobre los proyectos asociados a los laboratorios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Proyectos" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteGrupos}"
+							update="@form" process="@parent"
+							title="Información sobre los grupos de investigación asociados a los proyectos asociados a laboratorios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Grupos" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteSemilleros}"
+							update="@form" process="@parent"
+							title="Información sobre los semilleros de investigación asociados a los laboratorios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Semilleros" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteEnsayosServicios}"
+							update="@form" process="@parent"
+							title="Información los ensayos y servicios asociados a los laboratorios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Servicios" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteEquiposFacultadSede}"
+							update="@form" process="@parent"
+							title="Información consolidada sobre cada Equipo."
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" 
+							rendered="#{ManejadorLaboratoriosReportes.esLaboratoriosFacultad}"/>
+						<h:outputText value="Equipos registrados (Todos los de la sede)" 
+									  rendered="#{ManejadorLaboratoriosReportes.esLaboratoriosFacultad}"/>
+									  
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reportePersonalAsociado}"
+							update="@form" process="@parent"
+							title="Información consolidada sobre el personal asociado al laboratorio"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Personal asociado al Laboratorio" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteEquiposDadosBaja}"
+							update="@form" process="@parent"
+							title="Equipos dados de baja"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Equipos dados de baja" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteCriticidadEquipos}"
+							update="@form" process="@parent"
+							title="Criticidad de equipos"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+						<h:outputText value="Criticidad de equipos" />
+						
+						<p:commandButton icon="ui-icon-play"
+							action="#{ManejadorLaboratoriosReportes.reporteRoles}"
+							update="@form" process="@parent"
+							title="Roles y usuarios"
+							onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" 
+							rendered="#{ManejadorLaboratoriosReportes.rolSeleccionadoLabs == 'DL' or ManejadorLaboratoriosReportes.rolSeleccionadoLabs == 'LF' or ManejadorLaboratoriosReportes.rolSeleccionadoLabs == 'LS'}"/>
+						<h:outputText value="Roles y usuarios" 
+							rendered="#{ManejadorLaboratoriosReportes.rolSeleccionadoLabs == 'DL' or ManejadorLaboratoriosReportes.rolSeleccionadoLabs == 'LF' or ManejadorLaboratoriosReportes.rolSeleccionadoLabs == 'LS'}"/>
+	
+					</p:panelGrid>
+					
+					<p:panelGrid columns="1" rendered="#{ManejadorLaboratoriosReportes.tipoRolSeleccionado == 'E'}">
+						<p:spacer height="20" />
+						<t:div styleClass="contenido-titulo-general-ancizar-left">Metrología</t:div>
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="4">
+						
+							<t:div style="width: 40px;">
+								<p:commandButton icon="ui-icon-play"
+									action="#{ManejadorLaboratoriosReportes.reporteMetrologiaMedidasQuimicas}"
+									update="@form" process="@parent"
+									title="Información las Medidas Químicas asociados a los laboratorios"
+									onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+							</t:div>
+							<t:div style="width: 270px;">
+								<h:outputText value="Medidas Químicas" />
+							</t:div>
+							
+							<t:div style="width: 40px;">
+								<p:commandButton icon="ui-icon-play"
+									action="#{ManejadorLaboratoriosReportes.reporteMetrologiaMedidasMicrobiologicas}"
+									update="@form" process="@parent"
+									title="Información las Medidas Microbiológicas asociados a los laboratorios"
+									onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+							</t:div>
+							<t:div style="width: 270px;">
+								<h:outputText value="Medidas Microbiológicas" />
+							</t:div>
+							
+							<p:commandButton icon="ui-icon-play"
+								action="#{ManejadorLaboratoriosReportes.reporteMetrologiaMedidasFisicas}"
+								update="@form" process="@parent"
+								title="Información las Medidas Físicas asociados a los laboratorios"
+								onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+							<h:outputText value="Medidas Físicas" />
+							
+							<p:commandButton icon="ui-icon-play"
+								action="#{ManejadorLaboratoriosReportes.reporteMetrologiaEnsayosFisicos}"
+								update="@form" process="@parent"
+								title="Información los Ensayos Físicos asociados a los laboratorios"
+								onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+							<h:outputText value="Ensayos Físicos" />
+							
+							<p:commandButton icon="ui-icon-play"
+								action="#{ManejadorLaboratoriosReportes.reporteMetrologiaMaterialesReferencia}"
+								update="@form" process="@parent"
+								title="Información las Materiales Referencia asociados a los laboratorios"
+								onstart="dlgEspere.show()" oncomplete="dlgEspere.hide()" />
+							<h:outputText value="Materiales Referencia" />
+						
+						</p:panelGrid>
+					</p:panelGrid>
+			</p:panel>
+			<p:panel rendered="#{!empty ManejadorLaboratoriosReportes.listaReporte}">
+					
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+							 cellspacing="5" style="text-align: right;width: 100%">
+					<p:row>
+						<p:column style="font-weight:bold; text-align:center;font-size: 16px;padding: 15px;text-transform: uppercase;">
+							<h:outputText value="#{ManejadorLaboratoriosReportes.headerDatatable}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align: right;">
+							<p:commandButton value="Exportar a Excel" ajax="false" icon="ui-icon-circle-arrow-s">
+								<p:dataExporter type="xls" target="reporte"
+									fileName="#{ManejadorLaboratoriosReportes.nombreArchivo}"
+									postProcessor="#{ManejadorLaboratoriosReportes.postProcessXLS}" />
+							</p:commandButton>
+							<br />
+							<h:outputText value="#{ManejadorLaboratoriosReportes.mensajeError}" styleClass="negrilla" />
+							<p:commandButton value="Generar PDF" ajax="false" rendered="false">
+								<p:dataExporter type="pdf" target="reporte"
+									fileName="#{ManejadorLaboratoriosReportes.nombreArchivo}"
+									encoding="ISO-8859-1"
+									preProcessor="#{ManejadorLaboratoriosReportes.preProcessPDF}" />
+							</p:commandButton>
+						</p:column>
+					</p:row>	
+				</p:panelGrid>
+				
+				<br />
+				
+				<p:dataTable id="reporte" var="registro"
+					value="#{ManejadorLaboratoriosReportes.listaReporte}"
+					paginator="true" paginatorPosition="bottom" pageLinks="5" rows="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} registros, Pagina: {currentPage}/{totalPages})"
+					scrollable="true" scrollWidth="650">
+					<f:facet name="header">
+						<h:outputText
+							value="#{ManejadorLaboratoriosReportes.headerDatatable}" />
+					</f:facet>
+					<p:columns value="#{ManejadorLaboratoriosReportes.columnas}" 
+						width="#{
+							columna.header == 'DESCRIPCION_ACTIVIDADES' 
+							or columna.header == 'OBJETIVO_DES_SOST_PRINCIPAL' 
+							or columna.header == 'OBJETIVOS_DES_SOST_SECUNDARIOS' 
+							or columna.header == 'URL_LAB' 
+							or columna.header == 'CONVOCATORIA_PRY' 
+							or columna.header == 'MODALIDAD_PRY' 
+							or columna.header == 'NOMBRE_PRY'
+							or columna.header == 'NOMBRE_SERVICIO'
+							or columna.header == 'DESCRIPCION_SERVICIO'
+							or columna.header == 'EQUIPOS_ASOCIADOS_SERVICIO'
+							or columna.header == 'MOTIVO_DADO_DE_BAJA'
+							? 400 
+							: 130}"
+						sortBy="#{registro[columna.property]}" 
+						var="columna"
+						columnIndexVar="colIndex"
+						styleClass="pequennio">
+						<f:facet name="header">
+							<h:outputText value="#{columna.header}" />
+						</f:facet>
+						<h:outputText value="#{registro[columna.property]}" />
+					</p:columns>
+				</p:dataTable>
+
+			</p:panel>
+			
+			<p:panel rendered="#{ManejadorLaboratoriosReportes.tipoRolSeleccionado == 'E'}">
+				<p:graphicImage value="#{ManejadorLaboratoriosReportes.chart}" cache="true" />
+				<p:spacer height="20" />
+				<p:graphicImage value="#{ManejadorLaboratoriosReportes.chart2}" cache="false" />
+				<p:spacer height="20" />
+				<p:graphicImage value="#{ManejadorLaboratoriosReportes.chart3}" />
+			</p:panel>
+			
+			<p:panelGrid columns="1" rendered="#{ManejadorLaboratoriosReportes.tipoRolSeleccionado == 'N'}">
+				<p:panel>
+					<h:outputText value="Su rol no le permite generar reportes de laboratorios" styleClass="negrilla" />
+				</p:panel>
+			</p:panelGrid>
+			
+			<br />
+			<p:messages id="messages" closable="true" />
+
+			<p:dialog header="Consultando información..." widgetVar="dlgEspere"
+				resizable="false" closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+					
+		</h:form>
+	</ui:define>
+</ui:composition>

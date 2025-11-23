@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Presupuesto</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />
+		</h:form>
+
+		<h:form id="form">
+
+			<p:panel
+				header="#{manejadorLaboratorioPresupuesto.laboratorioActual.nombre} - #{manejadorLaboratorioPresupuesto.laboratorioActual.id}"
+				id="panelPresupuesto">
+
+				<p:dataTable var="rubro"
+					value="#{manejadorLaboratorioPresupuesto.listaRubros}"
+					emptyMessage="No existen rubros registrados." id="dtRubros">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fuente" />
+						</f:facet>
+						<h:outputText value="#{rubro.fuenteFinanciacion.descripcion}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Rubro" />
+						</f:facet>
+						<h:outputText value="#{rubro.tipoRubro.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descripción" />
+						</f:facet>
+						<h:outputText value="#{rubro.descripcion}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Valor ($)" />
+						</f:facet>
+						<h:outputText value="#{rubro.valor}" style="text-align:right">
+							<f:convertNumber pattern="$###,###" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Eliminar"
+						rendered="#{not manejadorLaboratorioPresupuesto.soloLectura}">
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="dtRubros"
+								action="#{manejadorLaboratorioPresupuesto.eliminarRubro}"
+								onclick="if(!confirm('Está seguro(a) de eliminar?'))return false">
+								<f:setPropertyActionListener value="#{rubro}"
+									target="#{manejadorLaboratorioPresupuesto.rubroEliminar}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="3" style="text-align:right"
+								footerText="Total:" />
+							<p:column>
+								<f:facet name="footer">
+									<h:outputText
+										value="#{manejadorLaboratorioPresupuesto.totalPresupuesto}">
+										<f:convertNumber pattern="$###,###" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+							<p:column footerText="" />
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+
+				<br />
+				<p:separator />
+				<br />
+
+				<p:fieldset legend="Nuevo presupuesto"
+					rendered="#{not manejadorLaboratorioPresupuesto.soloLectura}">
+					<p:panelGrid columns="2" id="pgNuevoRubro"
+						styleClass="estilo-panelgrid-sinbordes">
+
+						<p:outputLabel value="Tipo Fuente" for="siTF"
+							styleClass="negrilla" />
+						<p:selectOneMenu id="siTF"
+							value="#{manejadorLaboratorioPresupuesto.nuevoRubro.fuenteFinanciacion.internaExterna}">
+							<f:selectItems
+								value="#{manejadorLaboratorioPresupuesto.selectItemTipoFuente}" />
+							<p:ajax update="siFF" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Fuente" for="siFF" styleClass="negrilla" />
+						<p:selectOneMenu id="siFF" filter="true"
+							filterMatchMode="contains" style="width:400px;"
+							value="#{manejadorLaboratorioPresupuesto.nuevoRubro.fuenteFinanciacion.id}">
+							<f:selectItems
+								value="#{manejadorLaboratorioPresupuesto.selectItemFuentes}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Tipo Rubro" for="siTipoRubro"
+							styleClass="negrilla" />
+						<p:selectOneMenu id="siTipoRubro"
+							value="#{manejadorLaboratorioPresupuesto.nuevoRubro.tipoRubro.id}">
+							<f:selectItems
+								value="#{manejadorLaboratorioPresupuesto.selectItemTipoRubro}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Valor" for="itValorRubro"
+							styleClass="negrilla" />
+						<p:inputText id="itValorRubro"
+							readonly="#{manejadorLaboratorioPresupuesto.soloLectura}"
+							value="#{manejadorLaboratorioPresupuesto.nuevoRubro.valor}">
+						</p:inputText>
+
+						<p:outputLabel value="Descripción" for="itDescripcionRubro"
+							styleClass="negrilla" />
+						<p:inputText id="itDescripcionRubro"
+							value="#{manejadorLaboratorioPresupuesto.nuevoRubro.descripcion}"
+							size="60" maxlength="256" />
+
+						<p:commandButton value="Agregar" icon="ui-icon-plusthick"
+							update="pgNuevoRubro, dtRubros"
+							action="#{manejadorLaboratorioPresupuesto.agregarRubro}" />
+
+						<p:panelGrid columns="1">
+							<p:message for="siFF" redisplay="false" />
+							<p:message for="siTipoRubro" redisplay="false" />
+							<p:message for="itValorRubro" redisplay="false" />
+							<p:message for="itDescripcionRubro" redisplay="false" />
+						</p:panelGrid>
+
+					</p:panelGrid>
+				</p:fieldset>
+
+				<br />
+				<p:separator />
+				<br />
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:110px;">
+						<p:outputLabel value="Sostenibilidad" for="itSost"
+							styleClass="negrilla" />
+					</t:div>
+					<p:inputTextarea id="itSost" rows="7" cols="60" autoResize="false"
+						counter="counterSostenibilidad" maxlength="4000"
+						counterTemplate="{0} caracteres restantes"
+						readonly="#{manejadorLaboratorioPresupuesto.soloLectura}"
+						value="#{manejadorLaboratorioPresupuesto.laboratorioActual.sostenibilidad}" />
+					<h:outputText
+						rendered="#{not manejadorLaboratorioPresupuesto.soloLectura}" />
+					<h:outputText
+						rendered="#{not manejadorLaboratorioPresupuesto.soloLectura}"
+						id="counterSostenibilidad" styleClass="pequennio" />
+				</p:panelGrid>
+
+				<br />
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!manejadorLaboratorioPresupuesto.soloLectura}">
+						<p:commandButton action="#{manejadorLaboratorioPresupuesto.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" />
+						<p:commandButton
+							action="#{manejadorLaboratorioPresupuesto.salirGuardar}"
+							value="Guardar y salir" />
+					</p:panelGrid>
+				</center>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+
+
+
+

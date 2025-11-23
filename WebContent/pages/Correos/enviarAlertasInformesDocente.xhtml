@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="formEnviarAlertasInformes">
+			<t:div styleClass="contenido-titulo-general-myriad">Compromisos pendientes por docentes acumulados</t:div>
+			<p:messages id="msgs" />
+			<p:dataTable var="investigador" style="margin-top: 10px;"
+				emptyMessage="No hay alertas pendiente por revisión asociadas a roles de Coordinador."
+				value="#{manejadorEnviarAlertasInformesDocentes.listaInvestigadores}"
+				rows="15" paginator="true"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+				<f:facet name="header">
+					<h:outputText
+						value="Usuarios con rol coordinador que tienen alertas que aún no han sido revisadas (#{manejadorEnviarAlertasInformesDocentes.numeroInvestigadores})" />
+				</f:facet>
+				<p:column headerText="Documento">
+			    	#{investigador[2]}
+			    </p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Tipo" />
+						<br />
+						<h:outputText value="documento" />
+						<br />
+					</f:facet>
+			    	#{investigador[3]}
+			    </p:column>
+				<p:column headerText="Nombre">
+			    	#{investigador[0]}
+			    </p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Numero alertas" />
+						<br />
+						<h:outputText value="pendientes" />
+						<br />
+						<h:outputText value="por notificar" />
+					</f:facet>
+			    	#{investigador[1]}
+			    </p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Enviar" />
+						<br />
+						<h:outputText value="notificación" />
+					</f:facet>
+					<p:selectBooleanCheckbox value="#{investigador[4]}" />
+				</p:column>
+			</p:dataTable>
+			<t:div style="width: 100%; margin-bottom: 10px; text-align: center;">
+				<p:commandButton style="margin-top: 10px;"
+					action="#{manejadorEnviarAlertasInformesDocentes.enviarNotificaciones}"
+					icon="ui-icon-carat-1-e" value="Enviar notificaciones"
+					update="@form" onstart="dialogEspere.show()"
+					oncomplete="dialogEspere.hide()"
+					onclick="if(!confirm('¿Esta seguro de enviar las notificaciones?'))return false">
+				</p:commandButton>
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

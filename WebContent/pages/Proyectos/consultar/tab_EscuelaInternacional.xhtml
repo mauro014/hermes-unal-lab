@@ -1,0 +1,320 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Curso Escuela Internacional</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<p:panel id="panelInformacionAcademica"
+				header="I. INFORMACIÓN GENERAL" toggleable="true" toggleSpeed="500"
+				closeSpeed="500">
+
+				<p:accordionPanel id="panelUnoInfAcad" multiple="false"
+					activeIndex="">
+
+					<p:tab title="Información General del Curso" id="infoGeneralCurso">
+
+						<h:panelGrid columns="2" cellpadding="10" align="center">
+
+							<h:outputText value="Nombre del curso propuesto"
+								styleClass="legend2" />
+							<p:inputTextarea rows="5" cols="65" autoResize="false"
+								readonly="true" counter="counterTitulo" maxlength="1000"
+								counterTemplate="{0} caracteres restantes." required="true"
+								id="Titulo"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.nombre}"
+								requiredMessage="El título del proyecto es obligatorio" />
+							<h:outputText id="countTitulo" value="" />
+							<h:outputText id="counterTitulo" />
+							
+							<h:outputText value="Justificación sobre la relación entre el tema del curso y 
+							el tema global de la Escuela Internacional de Investigación que es Biodiversidad y Desarrollo Sostenible"
+								styleClass="legend20" />
+							<p:inputTextarea rows="5" cols="65" autoResize="false"
+								counter="counterJustificacion2" maxlength="4000"
+								counterTemplate="{0} caracteres restantes." required="true"
+								id="justificacion2"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.marcoTeorico}"
+								requiredMessage="Esta justificación es obligatoria" readonly="true" />
+							<h:outputText id="countJustificacion2" value="" />
+							<h:outputText id="counterJustificacion2" />
+
+							<h:outputText
+								value="Descripción del curso (resumen corto - Máx. 4000 caracteres)" />
+							<p:inputTextarea id="Resumen" autoResize="false" readonly="true"
+								counter="counterResumen" maxlength="1000"
+								counterTemplate="{0} caracteres restantes."
+								value="#{ManejadorEscuelaInternacional.proyectoActual.resumen}"
+								rows="10" cols="65" required="false">
+							</p:inputTextarea>
+							<h:outputText id="countRes" value="" />
+							<h:outputText id="counterResumen" />
+
+							<h:outputText
+								value="Motivación y Justificación del curso (resumen corto - Máx. 4000 caracteres):" />
+							<p:inputTextarea id="motivacion" autoResize="false"
+								readonly="true" counter="counterJustificacion" maxlength="1000"
+								counterTemplate="{0} caracteres restantes."
+								validatorMessage="La Motivación debe estar entre 1 - 4000 caracteres"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.justificacion}"
+								rows="10" cols="65">
+							</p:inputTextarea>
+							<h:outputText id="countJustificacion" value="" />
+							<h:outputText id="counterJustificacion" />
+
+							<h:outputText
+								value="Objeto/Objetivo principal (Máx. 4000 caracteres):" />
+							<p:inputTextarea id="objeto" autoResize="false" readonly="true"
+								counter="counterObjeto" maxlength="1000"
+								counterTemplate="{0} caracteres restantes."
+								validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+								value="#{ManejadorEscuelaInternacional.proyectoActual.objetivoGeneral}"
+								rows="10" cols="65">
+							</p:inputTextarea>
+							<h:outputText id="countObj" value="" />
+							<h:outputText id="counterObjeto" />
+
+						</h:panelGrid>
+						<br />
+						<p:separator></p:separator>
+						<br />
+						<center>
+							<h:outputText value="Objetivos específicos"
+								style='font-weight: bold;' />
+						</center>
+
+
+						<br />
+						<p:dataTable id="objetivoEspTable"
+							value="#{ManejadorEscuelaInternacional.listaObjetivos}" var="obj"
+							emptyMessage="No se encuentran objetivos específicos registrados"
+							editable="true">
+
+							<p:column style="width:80%">
+								<f:facet name="header">
+									<h:outputText value="Objetivo Específico" />
+								</f:facet>
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{obj.nombre}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{obj.nombre}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+						</p:dataTable>
+						<br />
+
+					</p:tab>
+
+					<p:tab title="Docentes Proponente y Participantes de la UN"
+						id="infoGeneralDocUN">
+
+						<br />
+						<center>
+							<p:dataTable var="i" style="width:550px"
+								value="#{ManejadorEscuelaInternacional.listaParticipantes}"
+								id="listaParticipantes">
+
+								<p:column style="width:80%">
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText
+										value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+								</p:column>
+
+								<p:column style="width:10%">
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText
+										value="#{i.tipo.id == 'PIEI' ? 'Docente UN':(i.tipo.id == 'PEEI' ? 'Docente Invitado':( i.tipo.id == 'P' ? 'Principal - Docente proponente':''))}" />
+								</p:column>
+
+
+							</p:dataTable>
+
+						</center>
+						<br />
+					</p:tab>
+
+
+					<p:tab title="Docentes Invitados Nacionales e Internacionales"
+						id="in">
+
+
+						<center>
+							<p:dataTable var="e" style="width:550px"
+								value="#{ManejadorEscuelaInternacional.listaParticipantesExternos}"
+								id="listaParticipantesExternos">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText
+										value="#{e.invExt.nombre1} #{e.invExt.nombre2} #{e.invExt.apellido1} #{e.invExt.apellido2}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText
+										value="#{e.invExtProyecto.tipo.id == 'IIEI' ? 'Invitado internacional':(e.invExtProyecto.tipo.id == 'INEI' ? 'Invitado nacional':'')}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Institución" />
+									</f:facet>
+									<h:outputText value="#{e.nombreInstitucion}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Pais procedencia" />
+									</f:facet>
+									<h:outputText value="#{e.nombrePais}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Email" />
+									</f:facet>
+									<h:outputText value="#{e.invExt.email}" />
+								</p:column>
+
+
+							</p:dataTable>
+
+						</center>
+						<br />
+					</p:tab>
+
+
+				</p:accordionPanel>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="panelInformacionFinanciera"
+				header="II. INFORMACIÓN FINANCIERA DEL PROYECTO" toggleable="true"
+				toggleSpeed="500" closeSpeed="500">
+
+				<p:accordionPanel id="panelUnoInfFin" multiple="true" activeIndex="">
+					<p:tab title="Información Financiera" id="infoFinanciera">
+
+						<p:dataTable cellpadding="6" cellspacing="3"
+							value="#{ManejadorEscuelaInternacional.listaFinanciaciones}"
+							var="financiacion" id="listaFuentesFinan"
+							rendered="#{not empty ManejadorEscuelaInternacional.listaFinanciaciones}">
+							<p:column style="width:40%"
+								headerText="FUENTE DE FINANCIACIÓN INTERNA">
+								<h:outputText value="#{financiacion.fuente.descripcion}" />
+							</p:column>
+
+							<p:column style="width:20%" headerText="VALOR">
+								<p:inputText id="valorFinanciacion" readonly="true"
+									value="#{financiacion.valor}" required="true" />
+							</p:column>
+
+						</p:dataTable>
+
+
+						<br />
+
+						<p:dataTable cellpadding="6" cellspacing="3"
+							value="#{ManejadorEscuelaInternacional.listaFuentesExternasAdicionadas}"
+							var="financiacionExt" id="listaFuentesFinanExt">
+							<p:column style="width:40%">
+								<f:facet name="header">
+									<h:outputText value="FUENTES DE FINANCIACIÓN EXTERNA" />
+								</f:facet>
+								<h:outputText value="#{financiacionExt.fuente.descripcion}" />
+							</p:column>
+
+							<p:column style="width:20%">
+								<f:facet name="header">
+									<h:outputText value="VALOR" />
+								</f:facet>
+								<p:inputText id="valorFinanciacion"
+									value="#{financiacionExt.valor}" />
+							</p:column>
+
+
+						</p:dataTable>
+						<br />
+
+
+
+						<p:dataTable id="dataTableGastoVista" var="gasto"
+							value="#{ManejadorEscuelaInternacional.listaGastos}"
+							rendered="#{!empty ManejadorEscuelaInternacional.listaGastos }">
+
+
+							<p:column headerText="FUENTE">
+								<h:outputText value="#{gasto.financiacion.fuente.descripcion}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="RUBRO" />
+								</f:facet>
+
+								<h:outputText value="#{gasto.tipoRubro.nombre}" />
+
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="AÑO" />
+								</f:facet>
+
+								<h:outputText value="#{gasto.vigencia}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="DESCRIPCIÓN" />
+								</f:facet>
+								<h:outputText value="#{gasto.descripcion}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="VALOR" />
+								</f:facet>
+								<h:outputText value="#{gasto.valor}" />
+							</p:column>
+
+						</p:dataTable>
+					</p:tab>
+
+				</p:accordionPanel>
+
+			</p:panel>
+
+			<br />
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<br />
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

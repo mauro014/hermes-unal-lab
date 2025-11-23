@@ -1,0 +1,482 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Semillero - Líneas y Áreas de Trabajo</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" action="irGeneral"
+						icon="ui-icon-down" />
+					<p:menuitem value="Integrantes" action="irIntegrantes"
+						icon="ui-icon-down" />
+					<p:menuitem value="Líneas y Áreas de Trabajo" icon="ui-icon-down" />
+					<p:menuitem value="Plan de Trabajo"
+						disabled="#{manejadorSemilleroLineasAreas.semilleroActual.fase lt 3}"
+						action="irPlanTrabajo" icon="ui-icon-down" />
+					<p:menuitem value="Cargar Archivos y Enviar"
+						action="irArchivosEnviar"
+						disabled="#{manejadorSemilleroLineasAreas.semilleroActual.fase lt 4}"
+						icon="ui-icon-down" />
+				</p:menubar>
+			</h:form>
+			<h:form>
+				<p:messages id="msgs" />
+				<p:panel id="panelInfo">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Id: " />
+						<h:outputText
+							value="#{manejadorSemilleroLineasAreas.semilleroActual.id}"
+							style=' font-weight: bold;' />
+						<h:outputText value="Nombre semillero: " />
+						<h:outputText
+							value="#{manejadorSemilleroLineasAreas.semilleroActual.nombre}"
+							style=' font-weight: bold;' />
+					</p:panelGrid>
+				</p:panel>
+				<p:panelGrid style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;" id="ocdePrincipal">
+								<f:facet name="header">
+									<h:outputText value="* Área ODCE:" />
+								</f:facet>
+								<p:panelGrid cellpadding="5" cellspacing="5"
+									style="width: 100%;"
+									rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+									id="panelOCDEPrincipal" styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column>
+											<p:commandButton id="btnOCDEPri" icon="ui-icon-info">
+											</p:commandButton>
+											<p:tooltip for="btnOCDEPri" showEffect="fade"
+												hideEffect="fade">
+												<h:outputText
+													value="Área OCDE principal asociada al semillero." />
+											</p:tooltip>
+											<h:outputText value="Área OCDE Principal:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:250px"
+												disabled="#{manejadorSemilleroLineasAreas.esConsulta and manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroLineasAreas.semilleroActual.areaOCDEPrincipal}"
+												id="areaOCDE">
+												<f:selectItem itemLabel="Seleccione un área" itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.areaOCDEItems}" />
+												<p:ajax
+													listener="#{manejadorSemilleroLineasAreas.cambiarSubAreaODCE}"
+													update="subAreaOCDE" onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+											<h:outputLink
+												value="#{manejadorSemilleroLineasAreas.linkLineas}"
+												target="_blank"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+												<h:graphicImage id="image" alt="jsf-sun"
+													url="/images/iconpdf.png">
+												</h:graphicImage>
+											</h:outputLink>
+											<p:tooltip for="image"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												value="Descargar pdf con la clasificación de las áreas."
+												showEffect="fade" hideEffect="fade" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Sub-área OCDE Principal:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:250px"
+												disabled="#{manejadorSemilleroLineasAreas.esConsulta and manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroLineasAreas.semilleroActual.subAreaOCDEPrincipal}"
+												id="subAreaOCDE">
+												<f:selectItem itemLabel="Seleccione una sub-área"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.subAreaOCDEItems}" />
+											</p:selectOneMenu>
+											<h:outputLink
+												value="#{manejadorSemilleroLineasAreas.linkLineas}"
+												target="_blank"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+												<h:graphicImage id="image" alt="jsf-sun"
+													url="/images/iconpdf.png">
+												</h:graphicImage>
+											</h:outputLink>
+											<p:tooltip for="image"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												value="Descargar pdf con la clasificación de las áreas."
+												showEffect="fade" hideEffect="fade" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:commandButton id="btnAreaSec" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="btnAreaSec" showEffect="fade"
+												hideEffect="fade"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+												<h:outputText
+													value="Áreas OCDE secundarias asociadas al semillero." />
+											</p:tooltip>
+											<h:outputText value="Área OCDE Secundaria:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:250px" id="areaOCDESecundaria"
+												value="#{manejadorSemilleroLineasAreas.areaOCDESecundaria}">
+												<f:selectItem itemLabel="Seleccione un área" itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.areaOCDEItems}" />
+												<p:ajax
+													listener="#{manejadorSemilleroLineasAreas.cambiarSubAreaODCESecundaria}"
+													update="subareaOCDESecudaria" onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+											<h:outputLink
+												value="#{manejadorSemilleroLineasAreas.linkLineas}"
+												target="_blank">
+												<h:graphicImage id="image2" alt="jsf-sun"
+													url="/images/iconpdf.png">
+												</h:graphicImage>
+											</h:outputLink>
+											<p:tooltip for="image2"
+												value="Descargar pdf con la clasificación de las áreas."
+												showEffect="fade" hideEffect="fade" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText value="Sub-área OCDE Secundarias:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:250px"
+												id="subareaOCDESecudaria"
+												value="#{manejadorSemilleroLineasAreas.subAreaOCDESecundaria}">
+												<f:selectItem itemLabel="Seleccione una sub-área"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.subAreaOCDESecundariaItems}" />
+											</p:selectOneMenu>
+											<h:outputLink
+												value="#{manejadorSemilleroLineasAreas.linkLineas}"
+												target="_blank">
+												<h:graphicImage id="image2" alt="jsf-sun"
+													url="/images/iconpdf.png">
+												</h:graphicImage>
+											</h:outputLink>
+											<p:tooltip for="image2"
+												value="Descargar pdf con la clasificación de las áreas."
+												showEffect="fade" hideEffect="fade" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="text-align: center;" colspan="2">
+											<p:commandButton
+												action="#{manejadorSemilleroLineasAreas.agregarAreaOCDESecundaria}"
+												value="Adicionar área OCDE secundaria" icon="ui-icon-plus"
+												onstart="dialogEspere.show()" update="areasTabla, msgs"
+												oncomplete="dialogEspere.hide()" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2">
+											<p:dataTable id="areasTabla" var="area"
+												value="#{manejadorSemilleroLineasAreas.semilleroActual.listaAreasOCDESecundarias}"
+												emptyMessage="No se han agregado áreas secundarias"
+												style="width:100%; margin-top: 20px;">
+												<f:facet name="header">
+													<h:outputText value="Áreas OCDE secundarias vinculadas" />
+												</f:facet>
+												<p:column headerText="Área">
+													<h:outputText value="#{area.areaOCDE.descripcion}" />
+												</p:column>
+												<p:column headerText="Subárea">
+													<h:outputText value="#{area.subAreaOCDE.descripcion}" />
+												</p:column>
+												<p:column
+													rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+													<p:commandButton
+														action="#{manejadorSemilleroLineasAreas.eliminarArea}"
+														update="areasTabla" id="eliminararea" icon="ui-icon-trash"
+														title="Eliminar" onstart="dialogEspere.show()"
+														oncomplete="dialogEspere.hide()">
+														<f:setPropertyActionListener value="#{area}"
+															target="#{manejadorSemilleroLineasAreas.areaEliminar}" />
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;" id="lineasInvestigacion"
+								header="* Agendas de conocimiento">
+								<p:panelGrid cellpadding="5" cellspacing="5" style="width:100%"
+									rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+									id="panelAreasSecundarias"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column>
+											<p:commandButton id="infAgendaPrinc" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="infAgendaPrinc" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroGeneral.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												showDelay="999">
+												<t:div style="text-align: left; float:left;">Seleccione la agenda de conocimiento principal asociada al semillero</t:div>
+											</p:tooltip>
+											<h:outputText value="Agenda principal:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:350px"
+												disabled="#{manejadorSemilleroLineasAreas.esConsulta and manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroLineasAreas.agendaPrincipal}">
+												<f:selectItem
+													itemLabel="Seleccione una agenda de conocimiento"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.listaPosiblesAgendasItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<p:commandButton id="infAgendaSec" icon="ui-icon-info"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}" />
+											<p:tooltip for="infAgendaSec" styleClass="tooltip-mesage"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												showDelay="999">
+												<h:outputText
+													value="Seleccione las agendas de conocimiento secundarias asociadas al semillero" />
+											</p:tooltip>
+											<h:outputText value="Agenda secundaria:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:350px"
+												value="#{manejadorSemilleroLineasAreas.agendaSecundariaSeleccionada}"
+												id="agendaSecundaria"
+												disabled="#{manejadorSemilleroLineasAreas.esConsulta and manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id != 5}">
+												<f:selectItem
+													itemLabel="Seleccione una agenda de conocimiento"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.listaPosiblesAgendasItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align:center;">
+											<p:commandButton
+												action="#{manejadorSemilleroLineasAreas.agregarAgenda}"
+												update="agentasTabla,msgs" id="agregarAgenda"
+												title="Agregar agenda" value="Agregar agenda secundaria"
+												onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()">
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<p:dataTable id="agentasTabla" var="agenda"
+									value="#{manejadorSemilleroLineasAreas.semilleroActual.listaAgendasSecundarias}"
+									emptyMessage="No se han agregado agendas del conocimiento secundarias"
+									style="width:100%;">
+									<f:facet name="header">
+										<h:outputText
+											value="Agendas del conocimiento secundarias vinculadas" />
+									</f:facet>
+									<p:column headerText="Nombre">
+										<h:outputText value="#{agenda.agenda.nombre}" />
+									</p:column>
+									<p:column style="width: 50px;"
+										rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+										<p:commandButton
+											action="#{manejadorSemilleroLineasAreas.eliminarAgenda}"
+											update="agentasTabla" id="eliminararea" icon="ui-icon-trash"
+											title="Eliminar" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{agenda}"
+												target="#{manejadorSemilleroLineasAreas.agendaSecundariaEliminar}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;" id="ocdePrincipal">
+								<f:facet name="header">
+									<p:commandButton id="btnODSPri" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+									</p:commandButton>
+									<p:tooltip for="btnODSPri" showEffect="fade" hideEffect="fade"
+										rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+										<h:outputText
+											value="Objetivo de Desarrollo Sostenible asociado al semillero." />
+									</p:tooltip>
+									<h:outputText value="* Objetivos de Desarrollo Sostenible:" />
+								</f:facet>
+								<p:panelGrid cellpadding="5" cellspacing="5"
+									style="width: 100%;"
+									rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+									id="panelODS" styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="Objetivo de Desarrollo Sostenible Principal:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+												disabled="#{manejadorSemilleroLineasAreas.esConsulta and manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroLineasAreas.semilleroActual.objetivoDesarrolloSosteniblePrincipal}"
+												id="objetivoDesarrolloSostenible">
+												<f:selectItem itemLabel="Seleccione una opción"
+													itemValue="0" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.objetivosDesarrolloSostenibleItems}" />
+											</p:selectOneMenu>
+											<h:outputLink id="paginaODS"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												value="#{manejadorSemilleroLineasAreas.linkObjetivosDesarrolloSostenible}"
+												target="_blank">
+												<h:graphicImage id="paginaODSPri" alt="jsf-sun"
+													url="/images/NU-icono2.PNG">
+												</h:graphicImage>
+											</h:outputLink>
+											<p:tooltip for="paginaODSPri"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												value="Consultar página web con la descripción de los objetivos de desarrollo sostenible."
+												showEffect="fade" hideEffect="fade" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column>
+											<h:outputText
+												value="* Objetivo de Desarrollo Sostenible Secundario:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+												disabled="#{manejadorSemilleroLineasAreas.esConsulta and manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id != 5}"
+												value="#{manejadorSemilleroLineasAreas.semilleroActual.objetivoDesarrolloSostenibleSecundario}">
+												<f:selectItem itemLabel="Seleccione una opción"
+													itemValue="0" />
+												<f:selectItems
+													value="#{manejadorSemilleroLineasAreas.objetivosDesarrolloSostenibleItems}" />
+											</p:selectOneMenu>
+											<h:outputLink id="paginaODS"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												value="#{manejadorSemilleroLineasAreas.linkObjetivosDesarrolloSostenible}"
+												target="_blank">
+												<h:graphicImage id="paginaODSSec" alt="jsf-sun"
+													url="/images/NU-icono2.PNG">
+												</h:graphicImage>
+											</h:outputLink>
+											<p:tooltip for="paginaODSSec"
+												rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+												value="Consultar página web con la descripción de los objetivos de desarrollo sostenible."
+												showEffect="fade" hideEffect="fade" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel style="margin-top: 10px;">
+								<f:facet name="header">
+									<p:commandButton id="infoTipo" icon="ui-icon-info"
+										rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}" />
+									<p:tooltip for="infoTipo" styleClass="tooltip-mesage"
+										rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">
+								       	Si la línea de trabajo que va asociar no aparece en la lista,<br />
+								       	por favor comunicarse con el Sistema de Información HERMES - Componente de Investigación<br />
+								       	(Tel 3165000 ext. 11111 o a correo hermes@unal.edu.co). 
+									</t:div>
+									</p:tooltip>
+									<h:outputText value="* Líneas de trabajo asociadas" />
+								</f:facet>
+								<p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+									style="width:100%;"
+									rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+									id="panelAreasSecundarias"
+									styleClass="estilo-panelgrid-sinbordes">
+									<h:outputText value="Línea de Trabajo:" />
+									<p:selectOneMenu style="width: 400px;"
+										panelStyle="width: 400px;"
+										value="#{manejadorSemilleroLineasAreas.lineaSeleccionada}"
+										filter="true" filterMatchMode="contains">
+										<f:selectItem itemLabel="Seleccione una línea" itemValue="" />
+										<f:selectItems
+											value="#{manejadorSemilleroLineasAreas.lineasInvestigacionItem}" />
+									</p:selectOneMenu>
+									<p:commandButton
+										action="#{manejadorSemilleroLineasAreas.adicionarLinea}"
+										value="Agregar" update="tabla-lineas, msgs"
+										onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+								</p:panelGrid>
+								<p:dataTable
+									value="#{manejadorSemilleroLineasAreas.semilleroActual.listaLineasInvestigacion}"
+									var="linea" id="tabla-lineas"
+									emptyMessage="No hay líneas de trabajo asociadas">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Linea de trabajo" />
+										</f:facet>
+										<h:outputText value="#{linea.linea.nombre}" />
+									</p:column>
+									<p:column style="width: 50px;"
+										rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}">
+										<t:div style="text-align: center;">
+											<p:commandButton
+												action="#{manejadorSemilleroLineasAreas.eliminarLinea}"
+												styleClass="botonGrupo" update="tabla-lineas"
+												icon="ui-icon-trash" title="Eliminar"
+												onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()">
+												<f:setPropertyActionListener value="#{linea}"
+													target="#{manejadorSemilleroLineasAreas.lineaEliminar}" />
+											</p:commandButton>
+										</t:div>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:messages id="msgs" />
+				<div style="width: 100%; text-align: center;">
+					<p:commandButton
+						rendered="#{!manejadorSemilleroLineasAreas.esConsulta}"
+						action="#{manejadorSemilleroLineasAreas.guardarParcialmente}"
+						value="Guardar Parcialmente" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton
+						rendered="#{!manejadorSemilleroLineasAreas.esConsulta or manejadorSemilleroLineasAreas.semilleroActual.estadoActual.id eq 5}"
+						action="#{manejadorSemilleroLineasAreas.siguiente}"
+						value="Siguiente" ajax="false" />
+				</div>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 			</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

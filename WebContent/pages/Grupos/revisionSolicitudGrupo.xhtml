@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión Solicitud Grupo</t:div>
+			<br />
+			<p:panel id="panelAvalInfo">
+				<p:panelGrid id="pgU" styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column>
+							<h:outputText value="Código del grupo: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorTramitesGrupo.solicitudGrupo.grupo.id}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Código solicitud: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorTramitesGrupo.solicitudGrupo.id}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo de solicitud: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorTramitesGrupo.solicitudGrupo.tipoSolicitud.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorTramitesGrupo.solicitudGrupo.grupo.responsable.nombreCompletoMinusculas}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Consultar información del grupo: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte grupo" target="_popUpWindow3"
+								action="#{manejadorTramitesGrupo.imprimirReporteFormatoGrupo}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+
+			<br />
+			<p:fieldset legend="Nuevo estado solicitado" id="panelAval" rendered="#{manejadorTramitesGrupo.solicitudGrupo.tipoSolicitud.id == 2}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left" id="revision">
+					<p:row id="estadoActual">
+						<p:column>
+							<h:outputText value="Estado actual: "  />
+						</p:column>
+						<p:column>
+						 	<h:outputText value="#{manejadorTramitesGrupo.solicitudGrupo.grupo.estadoGrupo.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row id="estadoSolicitado">
+						<p:column>
+							<h:outputText value="Estado solicitado: "  />
+						</p:column>
+						<p:column>
+						 	<h:outputText value="#{manejadorTramitesGrupo.solicitudGrupo.estadoSolicitado.nombre}"></h:outputText>
+						
+						</p:column>
+					</p:row>
+					<p:row id="justi">
+						<p:column>
+							<h:outputText value="Justificación: "  />
+						</p:column>
+						<p:column>
+								<h:outputText value="#{manejadorTramitesGrupo.solicitudGrupo.descripcion}"></h:outputText>
+						
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:fieldset>
+			<p:fieldset legend="Revisión de requisitos" id="panelAval" rendered="#{manejadorTramitesGrupo.solicitudGrupo.tipoSolicitud.id == 1}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left" id="revision">
+					<p:row id="requisitos">
+						<p:column colspan="2">
+							<div class="panelgrid-interno-sinbordes">
+								<p:dataTable var="requisito3"
+									value="#{manejadorTramitesGrupo.listaRequisito}"
+									emptyMessage="No se han encontrado requisitos">
+									<p:column style="width: 10px;">
+										<f:facet name="header">
+											<h:outputText value="Cumplió" style="font-size: 12px;" />
+										</f:facet>
+										<t:div style="width: 100%; text-align: center;">
+											<p:selectBooleanCheckbox
+												value="#{requisito3.cumplidoCheckbox}" />
+										</t:div>
+									</p:column>
+									<p:column style="width: 60%;">
+										<f:facet name="header">
+											<h:outputText value="Requisito" style="font-size: 12px;" />
+										</f:facet>
+										<table>
+											<tr>
+												<td style="border: 1px solid #FFFFFF;"><h:outputText
+														value="#{requisito3.requisito.descripcion}" /></td>
+											</tr>
+										</table>
+									</p:column>
+									<p:column style="width: 30%;">
+										<f:facet name="header">
+											<h:outputText value="Observaciones" style="font-size: 12px;" />
+										</f:facet>
+										<p:inputTextarea value="#{requisito3.comentario}" rows="3"
+											cols="40" />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:fieldset>						
+						
+						<br />
+			<p:fieldset legend="Trámite solicitud"
+				id="panelAvalRevision">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPrincipal" style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Decisión solicitud:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu d="somCategoriaGrupos"
+								value="#{manejadorTramitesGrupo.selItem}"
+								style="width:200px"
+								effect="fade">
+								<f:selectItem itemValue="1" itemLabel="--" />
+								<f:selectItem itemValue="2" itemLabel="Aprobado"/>
+								<f:selectItem itemValue="3" itemLabel="No aprobado"/>
+								<f:selectItem itemValue="4" itemLabel="Devolver para correcciones" itemDisabled="#{manejadorTramitesGrupo.solicitudGrupo.tipoSolicitud.id == 2}"/>
+								<p:ajax update="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+						<p:row>
+						<p:column>
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="50" rows="5" autoResize="false" id="neg"
+								value="#{manejadorTramitesGrupo.solicitudGrupo.comentarios}"
+								maxlength="1800" style="width:100%;">
+								<f:validateLength minimum="0" maximum="1800" for="neg"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counter" value="Tamaño máximo 1800 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorTramitesGrupo.solicitudGrupo.tipoSolicitud.id == 1}">
+						<p:column>
+							<h:outputText value="Adjuntar aval o carta de no aprobación: " />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorTramitesGrupo.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorTramitesGrupo.solicitudGrupo.tipoSolicitud.id == 1}">
+						<p:column>
+							<h:outputText value="Archivo adjunto:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{manejadorTramitesGrupo.solicitudGrupo.grupo.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<h:panelGroup id="panelRevision">
+					<center>
+						<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<p:commandButton action="#{manejadorTramitesGrupo.guardar}"
+								value="Guardar revisión" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton action="#{manejadorTramitesGrupo.anterior}"
+								value="Regresar" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</h:panelGrid>
+					</center>
+				</h:panelGroup>
+				<p:messages id="msgs" autoUpdate="true" />
+				<br />
+			</p:fieldset>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

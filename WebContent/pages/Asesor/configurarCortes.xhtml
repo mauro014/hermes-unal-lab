@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Configurar cortes</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelBusquedaProyectosxConvocatoria">
+					<t:div style="width: 120px;"><h:outputText value="Nombre convocatoria:" /></t:div>
+					<t:div>
+						<p:inputText id="numCom"  style="width:418px;"	
+							value="#{manejadorAdministrarConvocatorias.nombreConvocatoriaBusqueda}" />
+						<p:commandButton
+							actionListener="#{manejadorAdministrarConvocatorias.consultarConvocatoriasPermenanentes}"
+							value="Consultar"
+							update="panelBusquedaProyectosxConvocatoria">
+						</p:commandButton>
+					</t:div>
+					<h:outputText value="Convocatoria:" />
+					<p:selectOneMenu style="width:520px;"
+						value="#{manejadorAdministrarConvocatorias.idConvocaPadre}"
+						id="somConvocatoriaPadre"
+						panelStyle="width: 520px;" >
+						<f:selectItems
+							value="#{manejadorAdministrarConvocatorias.convocatoriaPadreItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<div style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+						<p:commandButton value="Cargar cortes convocatoria" 
+						icon="ui-icon-search"
+						update="@form" ajax="false"
+						actionListener="#{manejadorAdministrarConvocatorias.cargarCortesConvocatoriaPadre}"/>
+					</div>
+			</p:panel>
+			<p:panel rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null}"
+				style="margin-top: 20px;">
+					<p:panelGrid columns="2" id="panelProyectosxConvocatoria" 
+						styleClass="estilo-panelgrid-sinbordes"  >
+						<h:outputText
+							value="Convocatoria:" />
+						<h:outputText
+							value="#{manejadorAdministrarConvocatorias.convocatoriaPadre.titulo}"  
+							style="font-weight:bold;" />
+					</p:panelGrid>
+			</p:panel>
+			<p:messages id="msgs" /> 
+			<p:dataTable id="cortesConvocatoria" var="corte" 
+				value="#{manejadorAdministrarConvocatorias.listaCortes}"
+				style="margin-top: 20px;" 
+				rendered="#{!empty manejadorAdministrarConvocatorias.listaCortes}">
+				<f:facet name="header">
+					<h:outputText value="Cortes convocatoria" />
+				</f:facet>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Número" />
+					</f:facet>
+					<t:div style="width: 20px;">
+						<h:outputText value="#{corte.numero}" />
+					</t:div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Sede" />
+					</f:facet>
+					<t:div style="width: 100px;">
+						<h:outputText value="#{corte.sede.nombre}" />
+					</t:div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Fecha de inicio" />
+					</f:facet>
+					<t:div style="width: 100px;">
+						<h:outputText value="#{corte.fechaInicial}" />
+					</t:div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Fecha final" />
+					</f:facet>
+					<t:div style="width: 100px;">
+						<h:outputText value="#{corte.fechaFinal}" />
+					</t:div>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Opciones" />
+					</f:facet>
+					<p:commandButton icon="ui-icon-pencil" 
+						title="Modificar corte"  
+						update="@form"
+						action="#{manejadorAdministrarConvocatorias.modificarCorte}">
+						<f:setPropertyActionListener value="#{corte}"
+							target="#{manejadorAdministrarConvocatorias.corteSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash" 
+						title="Eliminar corte"  
+						update="@form"
+						onclick="if(!confirm('¿Esta seguro de eliminar este corte?, esta acción no puede deshacerse'))return false"
+						action="#{manejadorAdministrarConvocatorias.eliminarCorte}">
+						<f:setPropertyActionListener value="#{corte}"
+							target="#{manejadorAdministrarConvocatorias.corteSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:panel rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null
+				and manejadorAdministrarConvocatorias.mostrarAgregarCorte}"
+				style="margin-top: 20px;" header="Agregar corte convocatoria">
+					<p:panelGrid columns="2" id="panelProyectosxConvocatoria" 
+						styleClass="estilo-panelgrid-sinbordes"  >
+						<t:div style="width: 100px;">
+							<h:outputText value="Fecha inicial:" />
+						</t:div>
+						<p:calendar id="fechaInicio" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaInicial}"
+							actionListener="#{manejadorAdministrarConvocatorias.cambioFechaInicial}">
+							<p:ajax event="dateSelect" update="fechafin"
+								listener="#{manejadorAdministrarConvocatorias.cambioFechaInicial}"
+								onstart="dialogEspere.show()" 
+								oncomplete="dialogEspere.hide()"
+									process="@form" />
+						</p:calendar>
+						<t:div style="width: 100px;">
+							<h:outputText value="Sede:" />
+						</t:div>
+						<p:selectOneMenu id="sedeCorte" 
+							value="#{manejadorAdministrarConvocatorias.sedeId}" 
+							panelStyle="width:130px" style="width:130px">
+            				<f:selectItem itemLabel="Seleccione" itemValue="" />
+				            <f:selectItems 
+				            	value="#{manejadorAdministrarConvocatorias.sedes}" 
+				            	var="sede" itemLabel="#{sede.nombre}" 
+				            	itemValue="#{sede.id}" />
+				            <p:ajax event="valueChange" update="numeroCorte"
+                				listener="#{manejadorAdministrarConvocatorias.cambiarSede}" 
+                				process="@form"/>
+				        </p:selectOneMenu>
+						<h:outputText value="Fecha final:" />
+						<p:calendar id="fechafin" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaFinal}"
+							mindate="#{manejadorAdministrarConvocatorias.fechaInicial}">
+						</p:calendar>
+						
+						<h:outputText value="Fecha inicio reclamaciones requisitos:" />
+						<p:calendar id="fechaIniRecReq" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaInicialReclamacionRequisitos}"
+							mindate="#{manejadorAdministrarConvocatorias.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha final reclamaciones requisitos:" />
+						<p:calendar id="fechafinRecReq" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaFinalReclamacionRequisitos}"
+							mindate="#{manejadorAdministrarConvocatorias.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha inicio reclamaciones evaluación:" />
+						<p:calendar id="fechaIniRecEva" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaInicialReclamacionEvaluacion}"
+							mindate="#{manejadorAdministrarConvocatorias.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha final reclamaciones evaluación:" />
+						<p:calendar id="fechafinRecEva" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaFinalReclamacionEvaluacion}"
+							mindate="#{manejadorAdministrarConvocatorias.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha publicación de resultados:" />
+						<p:calendar id="fechaPubResult" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.fechaPublicacionResultados}"
+							mindate="#{manejadorAdministrarConvocatorias.fechaInicial}">
+						</p:calendar>					
+						
+						<h:outputText value="Numero corte:" />
+						<p:spinner id="numeroCorte" readonlyInput="true"
+							disabled="#{manejadorAdministrarConvocatorias.sedeId == ''}"
+							value="#{manejadorAdministrarConvocatorias.numeroCorte}"
+							min="#{manejadorAdministrarConvocatorias.minimoCortePermitido}" max="20" />
+					</p:panelGrid>
+					<t:div style="width: 100%; text-align: center; margin-top: 10px;">
+					    <p:commandButton 
+					    	action="#{manejadorAdministrarConvocatorias.agregarCorte}" 
+					    	value="Agregar" update="@form"/>
+				    </t:div>
+			</p:panel>
+			<p:panel rendered="#{manejadorAdministrarConvocatorias.convocatoriaPadre != null
+				and manejadorAdministrarConvocatorias.mostrarEditarCorte}"
+				style="margin-top: 20px;" header="Modificar Corte Convocatoria">
+					<p:panelGrid columns="2" id="panelProyectosxConvocatoriaEdit" 
+						styleClass="estilo-panelgrid-sinbordes"  >
+						<t:div style="width: 100px;">
+							<h:outputText value="Fecha inicial:" />
+						</t:div>
+						<p:calendar id="fechaInicioEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>
+						<t:div style="width: 100px;">
+							<h:outputText value="Sede:" />
+						</t:div>
+						<p:selectOneMenu id="sedeCorteEdicion" 
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.sede.id}" 
+							panelStyle="width:130px" style="width:130px">
+            				<f:selectItem itemLabel="Seleccione" itemValue="" />
+				            <f:selectItems 
+				            	value="#{manejadorAdministrarConvocatorias.sedes}" 
+				            	var="sede" itemLabel="#{sede.nombre}" 
+				            	itemValue="#{sede.id}" />
+				        </p:selectOneMenu>
+						<h:outputText value="Fecha final:" />
+						<p:calendar id="fechafinEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaFinal}"
+							mindate="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>
+						
+						<h:outputText value="Fecha inicio reclamaciones requisitos:" />
+						<p:calendar id="fechaIniRecReqEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicioReclamacion}"
+							mindate="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha final reclamaciones requisitos:" />
+						<p:calendar id="fechafinRecReqEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaFinalReclamacion}"
+							mindate="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha inicio reclamaciones evaluación:" />
+						<p:calendar id="fechaIniRecEvaEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicioReclamacionEvaluacion}"
+							mindate="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha final reclamaciones evaluación:" />
+						<p:calendar id="fechafinRecEvaEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaFinalReclamacionEvaluacion}"
+							mindate="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>
+						<h:outputText value="Fecha publicación de resultados:" />
+						<p:calendar id="fechaPubResultEdicion" pages="1" locale="es"
+							readonlyInput="true" pattern="dd/MM/yyyy" 
+							navigator="true"
+							value="#{manejadorAdministrarConvocatorias.corteEdicion.fechaPublicacionResultados}"
+							mindate="#{manejadorAdministrarConvocatorias.corteEdicion.fechaInicial}">
+						</p:calendar>					
+						
+						<h:outputText value="Numero corte:" />
+						<h:outputText value="#{manejadorAdministrarConvocatorias.corteEdicion.numero}" />
+					</p:panelGrid>
+					<t:div style="width: 100%; text-align: center; margin-top: 10px;">
+					    <p:commandButton
+					    	action="#{manejadorAdministrarConvocatorias.actualizarCorte}" 
+					    	value="Guardar Cambios de Corte" update="@form"/>
+				    </t:div>
+			</p:panel>
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

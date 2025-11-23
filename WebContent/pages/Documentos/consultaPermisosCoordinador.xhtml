@@ -1,0 +1,1165 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<style type="text/css">
+.tabla-especimenes .ui-datatable, .tabla-especimenes .ui-column-filter {
+	width: 65px;
+}
+</style>
+		<div class="estilo_blanco">
+			<h:form id="form">
+				<t:div styleClass="contenido-titulo-general-myriad">Autorizaciones de biodiversidad</t:div>
+
+				<p:tabView>
+
+					<!-- Permiso marco -->
+
+					<p:tab title="Permiso marco" titleStyle="font-size:12px" rendered="#{manejadorConsultaConvenioMarco.esEncargadoInclusionPM}">
+						<br />
+						<p:accordionPanel>
+							<p:tab title="Solicitudes" id="solicitudes">
+								<div style="text-align: right;">
+									<h:commandLink value="Exportar">
+										<p:dataExporter type="xls" target="tabla-especimenes"
+											fileName="solicitudes-permiso-marco" />
+									</h:commandLink>
+									<br />
+								</div>
+								<p:dataTable styleClass="tabla-especimenes"
+									value="#{manejadorConsultaConvenioMarco.listaSolicitudesRecoleccionEspecimenes}"
+									id="tabla-especimenes" widgetVar="tabla-especimenes"
+									var="solicitud" style="width:100%;"
+									emptyMessage="No se ha realizado ninguna solicitud" rows="10"
+									paginator="true" rowsPerPageTemplate="5,10,15"
+									filteredValue="#{manejadorConsultaConvenioMarco.listaSolicitudesRecoleccionEspecimenesFiltered}">
+									<p:column style="width: 2%;" filterMatchMode="contains">
+										<f:facet name="header">Id</f:facet>
+										<h:outputText value="#{solicitud.aviId}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column style="width: 8%;" filterBy="#{solicitud.fecha}"
+										filterMatchMode="contains" filterStyle="width: 35px;">
+										<f:facet name="header">Fecha</f:facet>
+										<h:outputText value="#{solicitud.fecha}"
+											style="font-size:9px;" />
+									</p:column>
+									<p:column style="width: 8%;">
+										<f:facet name="header">Estado</f:facet>
+										<h:outputText value="Pendiente"
+											rendered="#{solicitud.aviEstado == 'I'}"
+											style="font-size:8px;" />
+										<h:outputText value="Estudio en ANLA"
+											rendered="#{solicitud.aviEstado == 'P'}"
+											style="font-size:8px;" />
+									</p:column>
+									<p:column style="width: 8%;"
+										filterBy="#{solicitud.modalidadDoc}"
+										filterMatchMode="contains"
+										filterOptions="#{manejadorConsultaConvenioMarco.tipoSolicitudItem}"
+										filterStyle="width: 15px;">
+										<f:facet name="header">Solicitud</f:facet>
+										<h:outputText value="Inclusión"
+											rendered="#{solicitud.modalidadDoc == 'I'}"
+											style="font-size:9px;" />
+										<h:outputText value="Exclusión"
+											rendered="#{solicitud.modalidadDoc == 'E'}"
+											style="font-size:9px;" />
+									</p:column>
+									<p:column style="width: 24%;"
+										filterBy="#{solicitud.palabraClave}"
+										filterMatchMode="contains" filterStyle="width: 40px;">
+										<f:facet name="header">Nombre</f:facet>
+										<h:outputText value="#{solicitud.palabraClave}"
+											style="font-size:9px;" />
+									</p:column>
+									<p:column style="width: 24%;"
+										filterBy="#{solicitud.nombreGrupoPINV}"
+										filterMatchMode="contains" filterStyle="width: 40px;">
+										<f:facet name="header">Grupo</f:facet>
+										<h:outputText value="#{solicitud.nombreGrupoPINV}"
+											style="font-size:9px;" />
+									</p:column>
+									<p:column style="width: 3%;" exportable="false">
+										<f:facet name="header"></f:facet>
+										<p:commandButton
+											action="#{manejadorConsultaConvenioMarco.consultarInformacionSolicitud}"
+											icon="ui-icon-search" oncomplete="dialogSolicitud.show();"
+											title="Consultar" update="@form">
+											<f:setPropertyActionListener value="#{solicitud.aviId}"
+												target="#{manejadorConsultaConvenioMarco.idAval}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<p:dialog header="Información de la solicitud" scrollable="true" scrollHeight="650"
+									widgetVar="dialogSolicitud" modal="true" resizable="true"
+									width="650" height="680">
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+										style="width: 100%;">
+										<p:row>
+											<p:column style="width:30%;">
+												<h:outputText value="Id de la solicitud: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.aviId}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Tipo de permiso: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.nombreTipo}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Tipo de solicitud: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText value="Inclusión"
+													rendered="#{manejadorConsultaConvenioMarco.aval.modalidadDoc == 'I'}" />
+												<h:outputText value="Exclusión"
+													rendered="#{manejadorConsultaConvenioMarco.aval.modalidadDoc == 'E'}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Permiso de la solicitud: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText value="Permiso marco de recolección de especímenes 2014-2024"
+													rendered="#{manejadorConsultaConvenioMarco.aval.aviConvocatoria == '1'}" />
+												<h:outputText value="Permiso marco de recolección de especímenes 2024-2034"
+													rendered="#{manejadorConsultaConvenioMarco.aval.aviConvocatoria == '2'}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Fecha: " style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.fecha}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Solicitante: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.tipoDocumento} #{manejadorConsultaConvenioMarco.aval.documento} - #{manejadorConsultaConvenioMarco.aval.nombreInvestigador}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText
+													value="Estado del investigador en el Permiso: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText value="Incluido"
+													rendered="#{manejadorConsultaConvenioMarco.personaSolicitante.tienePermisoMarco == 'S'}" />
+												<h:outputText value="No incluido"
+													rendered="#{manejadorConsultaConvenioMarco.personaSolicitante.tienePermisoMarco == 'N'}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Facultad: " style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.aviTitulo}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Grupo de investigación: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.nombreGrupoPINV}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Estado del grupo en Colciencias: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.palabraClave}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Actividades de recolección del grupo: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.aval.resumen}" />
+											</p:column>
+										</p:row>
+										<p:row
+											rendered="#{not empty manejadorConsultaConvenioMarco.listaIntegrantesSolicitud}">
+											<p:column colspan="2">
+												<p:dataTable rows="3" id="tablaIntegrantes" var="persona"
+													style="margin-top: 20px; width:100%;" paginator="true"
+													value="#{manejadorConsultaConvenioMarco.listaIntegrantesSolicitud}"
+													emptyMessage="No se ha encontrado otras personas en la solicitud, además del solicitante."
+													paginatorPosition="bottom" paginatorAlwaysVisible="false"
+													rowsPerPageTemplate="5,10,15">
+													<f:facet name="header">  
+									            Personas relacionadas
+									        </f:facet>
+
+													<p:column style="width:5%;">
+														<f:facet name="header">
+												Tipo de documento
+											</f:facet>
+														<h:outputText value="#{persona.idDocumento}" />
+													</p:column>
+													<p:column style="width:10%;">
+														<f:facet name="header">
+												Documento
+											</f:facet>
+														<h:outputText value="#{persona.idPersona}" />
+													</p:column>
+													<p:column style="width:50%;">
+														<f:facet name="header">
+												Nombres
+											</f:facet>
+														<h:outputText value="#{persona.nombreCandidato}" />
+													</p:column>
+													<p:column style="width:35%;">
+														<f:facet name="header">
+												Tipo
+											</f:facet>
+														<h:outputText value="Estudiante"
+															rendered="#{persona.rol == 'E'}" />
+														<h:outputText value="Investigador externo"
+															rendered="#{persona.rol == 'IE'}" />
+													</p:column>
+												</p:dataTable>
+
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2">
+												<p:dataTable style="border:none; margin-top: 10px;"
+													id="historicosEstadoGrupo" var="historico"
+													value="#{manejadorConsultaConvenioMarco.historicosEstadoGrupo}"
+													emptyMessage="No hay un histórico para este grupo"
+													paginator="true" rows="2" paginatorPosition="bottom"
+													paginatorAlwaysVisible="false"
+													paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+													<f:facet name="header">  
+									            Histórico estado del grupo
+									        </f:facet>
+													<p:column style="width: 20%;">
+														<f:facet name="header">
+															<h:outputText value="Fecha" />
+														</f:facet>
+														<h:outputText value="#{historico.fecha}">
+															<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+														</h:outputText>
+													</p:column>
+													<p:column style="width: 40%;">
+														<f:facet name="header">
+															<h:outputText value="Estado unal" />
+														</f:facet>
+														<h:outputText value="#{historico.estadoGrupo.nombre}" />
+													</p:column>
+													<p:column style="width: 40%;">
+														<f:facet name="header">
+															<h:outputText value="Estado SCienTI" />
+														</f:facet>
+														<h:outputText
+															value="#{historico.estadoGrupoColciencias.nombre}" />
+													</p:column>
+												</p:dataTable>
+
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2" style="text-align:center;">
+												<br />
+												<h:outputText value=" REVISIÓN SOLICITUD"
+													style='font-weight: bold;' />
+												<br />
+												<p:separator />
+												<br />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Observaciones" />
+											</p:column>
+											<p:column>
+												<p:inputTextarea id="revision"
+													value="#{manejadorConsultaConvenioMarco.observacionPermiso}"
+													rows="2" style="width:100%;" cols="100"
+													counter="revision-coordinador" maxlength="1200"
+													counterTemplate="{0} caracteres restantes.">
+												</p:inputTextarea>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="" />
+											</p:column>
+											<p:column>
+												<h:outputText id="revision-coordinador" />
+											</p:column>
+										</p:row>
+										<p:row style="text-align:center;">
+											<p:column colspan="2" style="text-align:center;">
+												<p:commandButton value="En estudio en ANLA"
+													rendered="#{manejadorConsultaConvenioMarco.aval.aviEstado != 'P'}"
+													action="#{manejadorConsultaConvenioMarco.revisarSolicitud}"
+													process="@form" update="@form" ajax="false" />
+												<p:commandButton value="Aprobar"
+													action="#{manejadorConsultaConvenioMarco.aceptarSolicitud}"
+													process="@form" update="@form" ajax="false" />
+												<p:commandButton value="Rechazar"
+													action="#{manejadorConsultaConvenioMarco.rechazarSolicitud}"
+													process="@form" update="@form" ajax="false" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+
+								</p:dialog>
+							</p:tab>
+							<p:tab title="Investigadores con permiso">
+								<div style="text-align: right;">
+									<h:commandLink value="Exportar">
+										<p:dataExporter type="xls"
+											target="tabla-investigadores-incluidos"
+											fileName="investigadores-grupos-permiso-marco" />
+									</h:commandLink>
+									<br />
+								</div>
+								<p:dataTable
+									value="#{manejadorConsultaConvenioMarco.listaInvestigadoresPermiso}"
+									id="tabla-investigadores-incluidos"
+									widgetVar="tabla-investigadores-incluidos" var="investigador"
+									emptyMessage="No hay investigadores incluidos" rows="10"
+									paginator="true" rowsPerPageTemplate="5,10,15"
+									filteredValue="#{manejadorConsultaConvenioMarco.listaInvestigadoresIncluidosFiltered}">
+									<p:column style="width: 1%;" filterMatchMode="contains">
+										<f:facet name="header">Tipo de doc</f:facet>
+										<h:outputText value="#{investigador.tienePermisoMarco}" />
+									</p:column>
+									<p:column style="width: 10%;"
+										filterBy="#{investigador.telExtension}"
+										filterMatchMode="contains" filterStyle="width: 50px;">
+										<f:facet name="header">Documento</f:facet>
+										<h:outputText value="#{investigador.telExtension}" />
+									</p:column>
+									<p:column style="width: 43%;" filterBy="#{investigador.perfil}"
+										filterMatchMode="contains" filterStyle="width: 40px;">
+										<f:facet name="header">Nombre</f:facet>
+										<h:outputText value="#{investigador.perfil}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column style="width: 40%;"
+										filterBy="#{investigador.urlWebDocente}"
+										filterMatchMode="contains" filterStyle="width: 50px;">
+										<f:facet name="header">Grupo</f:facet>
+										<h:outputText value="#{investigador.urlWebDocente}"
+											style="font-size:10px;" />
+									</p:column>
+								</p:dataTable>
+							</p:tab>
+						</p:accordionPanel>
+					</p:tab>
+					<p:tab title="Recurso genético" titleStyle="font-size:12px" rendered="#{manejadorConsultaConvenioMarco.esEncargadoSolicitudConceptoAR}">
+
+						<p:accordionPanel>
+							<p:tab title="Solicitudes" id="solicitudes">
+								<div style="text-align: right;">
+									<h:commandLink value="Exportar">
+										<p:dataExporter type="xls" target="tabla-acceso"
+											fileName="solicitudes-acceso-recurso-genetico" />
+									</h:commandLink>
+								</div>
+								<p:dataTable
+									value="#{manejadorConsultaConvenioMarco.listaSolicitudesAccesoRecurso}"
+									id="tabla-acceso" var="solicitud"
+									emptyMessage="No se ha realizado ninguna solicitud" rows="10"
+									paginator="true"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="5,10,15"
+									filteredValue="#{manejadorConsultaConvenioMarco.listaSolicitudesAccesoRecursoFiltered}"
+									styleClass="tabla-especimenes">
+									<f:facet name="header">
+							Solicitudes de concepto de acceso a recurso genético
+						</f:facet>
+									<p:column style="width: 60px;" filterMatchMode="contains">
+										<f:facet name="header">Id</f:facet>
+										<h:outputText value="#{solicitud.id}" />
+									</p:column>
+									<p:column style="width: 5%;"
+										filterBy="#{solicitud.fechaSolicitud}"
+										filterMatchMode="contains">
+										<f:facet name="header">Fecha</f:facet>
+										<h:outputText value="#{solicitud.fechaSolicitud}" />
+									</p:column>
+									<p:column filterBy="#{solicitud.proyecto.id}"
+										filterMatchMode="contains" style="text-align:center;">
+										<f:facet name="header">Id pry</f:facet>
+										<h:outputText id="pry" value="#{solicitud.proyecto.id}"
+											style="font-size:9px;" />
+										<p:tooltip for="pry" styleClass="tooltip-mesage"
+											trackMouse="true">
+											<t:div style="text-align: left; float:left;">
+												<h:outputText value="#{solicitud.proyecto.nombre} " />
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="text-align:center; width: 5%;">
+										<f:facet name="header">Estado</f:facet>
+										<h:outputText value="#{solicitud.nombreEstado}"
+											style="font-size:9px;" />
+									</p:column>
+									<p:column style="width: 40%;"
+										filterBy="#{solicitud.investigador.nombreCompletoMinusculas}"
+										filterMatchMode="contains">
+										<f:facet name="header">Nombre</f:facet>
+										<h:outputText
+											value="#{solicitud.investigador.nombreCompletoMinusculas}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column style="width: 10%;"
+										filterBy="#{solicitud.modalidad.id}"
+										filterMatchMode="contains"
+										filterOptions="#{manejadorConsultaConvenioMarco.tipoContratoItem}"
+										filterStyle="width: 15px;">
+										<f:facet name="header">Tipo de contrato</f:facet>
+										<h:outputText value="Contrato individual"
+											rendered="#{solicitud.modalidad.id == 21}"
+											style="font-size:10px;" />
+										<h:outputText value="Contrato marco"
+											rendered="#{solicitud.modalidad.id == 22}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column style="width: 5%;">
+										<f:facet name="header"></f:facet>
+										<p:commandButton
+											action="#{manejadorConsultaConvenioMarco.consultarInformacionSolicitudConcepto}"
+											icon="ui-icon-search" oncomplete="dialogSolicitud2.show();"
+											title="Consultar" update="@form" process="@form">
+											<f:setPropertyActionListener value="#{solicitud.id}"
+												target="#{manejadorConsultaConvenioMarco.idConcepto}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<p:dialog header="Información de la solicitud"
+									widgetVar="dialogSolicitud2" modal="true" resizable="false"
+									width="600" height="680" id="revision-coordinador-concepto">
+									<t:div id="panel-concepto">
+										<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+											style="width: 100%;">
+											<p:row>
+												<p:column style="width:30%;">
+													<h:outputText value="Id de la solicitud: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.id}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Tipo de solicitud: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="Contrato individual de acceso a recurso genético"
+														rendered="#{manejadorConsultaConvenioMarco.concepto.modalidad.id  == '21'}" />
+													<h:outputText
+														value="Contrato marco de acceso a recurso genético"
+														rendered="#{manejadorConsultaConvenioMarco.concepto.modalidad.id  == '22'}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Fecha: " style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.fechaSolicitud}">
+														<f:convertDateTime pattern="dd/MM/yyyy" />
+													</h:outputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Solicitante: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.investigador.id.tipoDocumento} #{manejadorConsultaConvenioMarco.concepto.investigador.id.documento} 
+											- #{manejadorConsultaConvenioMarco.concepto.investigador.nombreCompletoMinusculas}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Facultad: " style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.investigador.dependencia.facultad.nombre}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Proyecto de investigación: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.proyecto.id} - #{manejadorConsultaConvenioMarco.concepto.proyecto.nombre}" />
+											-
+											<h:commandLink
+														action="#{manejadorConsultaConvenioMarco.reporteProyecto}"
+														value="Ver reporte" target="_popUpWindow"
+														onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+														style="text-decoration:none; 
+												color: #16A8E2;
+												font-weight: bold;">
+													</h:commandLink>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Estado actual del proyecto: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.proyecto.estadoProyecto.nombre}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText
+														value="Actividades que configuran acceso a recurso genético: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<p:dataTable
+														value="#{manejadorConsultaConvenioMarco.concepto.listaActividades}"
+														id="tabla-actividades-concepto" var="actividad"
+														emptyMessage="No se agregó ninguna actividad" rows="1"
+														paginator="true" paginatorPosition="bottom">
+														<p:column>
+															<h:outputText value="#{actividad.descripcion}" />
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Descripción de las actividades: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<h:outputText
+														value="#{manejadorConsultaConvenioMarco.concepto.descripcionActividad}" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText
+														value="Entidades participantes del proyecto: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<p:dataTable
+														value="#{manejadorConsultaConvenioMarco.concepto.listaEntidades}"
+														id="tabla-entidades-concepto" var="entidad"
+														emptyMessage="No se agregó ninguna entidad" rows="1"
+														paginator="true" paginatorPosition="bottom">
+														<p:column>
+															<h:outputText value="#{entidad.descripcion}" />
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Archivos adjuntos a la solicitud: "
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<p:dataTable
+														value="#{manejadorConsultaConvenioMarco.listaArchivos}"
+														width="100%" var="archivo" paginator="true" rows="2"
+														paginatorPosition="bottom" paginatorAlwaysVisible="false"
+														emptyMessage="No hay archivos asociados"
+														id="tabla-archivo">
+
+														<p:column headerText="Id" style="width:3%">
+															<div>
+																<h:outputText value="#{archivo.id}"
+																	style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+															</div>
+														</p:column>
+														<p:column headerText="Documentos adjuntos"
+															tyle="width:90%">
+															<div style="width: 250px; font-size: 9px;">
+																<h:outputText value="#{archivo.nombre}"
+																	style="text-align: left; width: 300px; text-transform:uppercase; padding-bottom: 10px;" />
+															</div>
+														</p:column>
+														<p:column headerText="Descargar"
+															style="width:3%; text-align:center;">
+															<p:commandButton id="descargar"
+																action="#{manejadorConsultaConvenioMarco.descargarArchivo}"
+																icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+																ajax="false">
+																<f:setPropertyActionListener value="#{archivo}"
+																	target="#{manejadorConsultaConvenioMarco.archivoSeleccionado}" />
+															</p:commandButton>
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column colspan="2" style="text-align:center;">
+													<br />
+													<h:outputText value=" REVISIÓN SOLICITUD"
+														style='font-weight: bold;' />
+													<br />
+													<p:separator />
+													<br />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Estado:" style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<p:selectOneMenu id="decision"
+														value="#{manejadorConsultaConvenioMarco.decisionConcepto}"
+														style="width:200px">
+														<f:selectItem itemLabel="" itemValue="" />
+														<f:selectItems
+															value="#{manejadorConsultaConvenioMarco.estadoConceptoItems}" />
+													</p:selectOneMenu>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="Número de radicado (si aplica):"
+														style="font-weight: bold;" />
+												</p:column>
+												<p:column>
+													<p:inputText
+														value="#{manejadorConsultaConvenioMarco.concepto.numeroRadicado}"
+														size="50" style="width:100%;">
+													</p:inputText>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText style='font-weight: bold;'
+														value="Observaciones:" />
+												</p:column>
+												<p:column>
+													<p:inputTextarea id="revision2"
+														value="#{manejadorConsultaConvenioMarco.observaciones}"
+														rows="4" style="width:100%;" cols="100" maxlength="1200"
+														autoResize="false">
+													</p:inputTextarea>
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column>
+													<h:outputText value="" />
+												</p:column>
+												<p:column>
+													<h:outputText value="Tamaño máximo 1200 caracteres" id="revision-coordinador2" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column colspan="2">
+													<p:fileUpload
+														fileUploadListener="#{manejadorConsultaConvenioMarco.adjuntarArchivo}"
+														mode="advanced" auto="true"
+														update="tabla-archivo-coordinador" multiple="true"
+														sizeLimit="3072000" label="Seleccionar archivo" />
+												</p:column>
+											</p:row>
+											<p:row>
+												<p:column colspan="2">
+													<p:dataTable
+														value="#{manejadorConsultaConvenioMarco.listaArchivosCoordinador}"
+														width="100%" var="documento" paginator="true" rows="2"
+														paginatorPosition="bottom" paginatorAlwaysVisible="false"
+														emptyMessage="No hay archivos asociados"
+														id="tabla-archivo-coordinador">
+
+														<p:column headerText="Id" style="width:3%">
+															<div>
+																<h:outputText value="#{documento.id}"
+																	style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+															</div>
+														</p:column>
+														<p:column headerText="Documentos adjuntos"
+															tyle="width:90%">
+															<div style="width: 280px; font-size: 11px;">
+																<h:outputText value="#{documento.nombre}"
+																	style="text-align: left; width: 350px; text-transform:uppercase; padding-bottom: 10px;" />
+															</div>
+														</p:column>
+														<p:column headerText="Descargar"
+															style="width:3%; text-align:center;">
+															<p:commandButton id="descargar"
+																action="#{manejadorConsultaConvenioMarco.descargarArchivo}"
+																icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+																ajax="false">
+																<f:setPropertyActionListener value="#{documento}"
+																	target="#{manejadorConsultaConvenioMarco.archivoSeleccionado}" />
+															</p:commandButton>
+														</p:column>
+														<p:column style="width:3%; text-align:center;"
+															headerText="(-)">
+															<p:commandButton id="selectButton"
+																update="tabla-archivo-coordinador" icon="ui-icon-trash"
+																action="#{manejadorConsultaConvenioMarco.eliminarArchivo}"
+																title="Eliminar archivo">
+																<f:setPropertyActionListener value="#{documento}"
+																	target="#{manejadorConsultaConvenioMarco.archivoSeleccionado}" />
+															</p:commandButton>
+														</p:column>
+													</p:dataTable>
+												</p:column>
+											</p:row>
+											<p:row style="text-align:center;">
+												<p:column colspan="2" style="text-align:center;">
+													<p:commandButton value="Guardar revisión"
+														action="#{manejadorConsultaConvenioMarco.guardar}"
+														update="@form" process="@form" />
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</t:div>
+								</p:dialog>
+							</p:tab>
+							<p:tab title="Conceptos tramitados" id="conceptos">
+								<div style="text-align: right;">
+									<h:commandLink value="Exportar">
+										<p:dataExporter type="xls" target="tabla-conceptos"
+											fileName="conceptos-tramitados-contrato" />
+									</h:commandLink>
+									<br />
+								</div>
+								<p:dataTable styleClass="tabla-conceptos"
+									value="#{manejadorConsultaConvenioMarco.listaConceptosTramitados}"
+									id="tabla-conceptos" widgetVar="tabla-conceptos" var="concepto"
+									emptyMessage="No hay investigadores incluidos" rows="10"
+									paginator="true" rowsPerPageTemplate="5,10,15"
+									filteredValue="#{manejadorConsultaConvenioMarco.listaConceptosTramitadosFiltered}">
+									<p:column style="width: 1%;" filterMatchMode="contains">
+										<f:facet name="header">Id</f:facet>
+										<h:outputText value="#{concepto.id}" />
+									</p:column>
+									<p:column style="width: 3%;" filterMatchMode="contains">
+										<f:facet name="header">Fecha trám.</f:facet>
+										<h:outputText value="#{concepto.fechaTramite}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column filterBy="#{concepto.proyecto.id}"
+										filterStyle="width: 30px;" filterMatchMode="contains"
+										style="text-align:center; width: 5%;">
+										<f:facet name="header">Cód. pry</f:facet>
+										<h:outputText id="pry-concepto"
+											value="#{concepto.proyecto.id}" style="font-size:10px;" />
+										<p:tooltip for="pry-concepto" styleClass="tooltip-mesage"
+											trackMouse="true">
+											<t:div style="text-align: left; float:left;">
+												<h:outputText value="#{concepto.proyecto.nombre} " />
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width: 60%;"
+										filterBy="#{concepto.investigador.nombreCompletoMinusculas}"
+										filterMatchMode="contains" filterStyle="width: 40px;">
+										<f:facet name="header">Nombre</f:facet>
+										<h:outputText
+											value="#{concepto.investigador.nombreCompletoMinusculas}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column style="width: 8%;"
+										filterBy="#{concepto.modalidad.id}" filterMatchMode="contains"
+										filterOptions="#{manejadorConsultaConvenioMarco.tipoContratoItem}"
+										filterStyle="width: 12px;">
+										<f:facet name="header">Modalidad</f:facet>
+										<h:outputText value="Contrato individual"
+											rendered="#{concepto.modalidad.id == 21}"
+											style="font-size:10px;" />
+										<h:outputText value="Contrato marco"
+											rendered="#{concepto.modalidad.id == 22}"
+											style="font-size:10px;" />
+									</p:column>
+									<p:column filterBy="#{concepto.proyectoContrato.id}"
+										filterStyle="width: 30px;" filterMatchMode="contains"
+										style="text-align:center; width: 3%;">
+										<f:facet name="header">Cód. pry-cont.</f:facet>
+										<h:outputText id="pry-contrato"
+											value="#{concepto.proyectoContrato.id}"
+											style="font-size:10px;" />
+										<p:tooltip for="pry-contrato" styleClass="tooltip-mesage"
+											trackMouse="true">
+											<t:div style="text-align: left; float:left;">
+												<h:outputText value="#{concepto.proyectoContrato.nombre} " />
+											</t:div>
+										</p:tooltip>
+									</p:column>
+									<p:column style="width: 5%;">
+										<f:facet name="header"></f:facet>
+										<p:commandButton
+											action="#{manejadorConsultaConvenioMarco.consultarInformacionSolicitudConcepto}"
+											icon="ui-icon-search" oncomplete="dialogSolicitud3.show();"
+											title="Consultar" update="@form">
+											<f:setPropertyActionListener value="#{concepto.id}"
+												target="#{manejadorConsultaConvenioMarco.idConcepto}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<p:dialog header="Consulta de la solicitud"
+									widgetVar="dialogSolicitud3" modal="true" resizable="false"
+									width="600" height="680">
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+										style="width: 100%;">
+										<p:row>
+											<p:column style="width:30%;">
+												<h:outputText value="Id de la solicitud: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.id}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Tipo de solicitud: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="Contrato individual de acceso a recurso genético"
+													rendered="#{manejadorConsultaConvenioMarco.concepto.modalidad.id  == '21'}" />
+												<h:outputText
+													value="Contrato marco de acceso a recurso genético"
+													rendered="#{manejadorConsultaConvenioMarco.concepto.modalidad.id  == '22'}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Fecha: " style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.fechaSolicitud}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Solicitante: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.investigador.id.tipoDocumento} #{manejadorConsultaConvenioMarco.concepto.investigador.id.documento} 
+											- #{manejadorConsultaConvenioMarco.concepto.investigador.nombreCompletoMinusculas}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Facultad: " style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.investigador.dependencia.facultad.nombre}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Proyecto de investigación: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.proyecto.id} - #{manejadorConsultaConvenioMarco.concepto.proyecto.nombre}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Estado actual del proyecto: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.proyecto.estadoProyecto.nombre}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText
+													value="Actividades que configuran acceso a recurso genético: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<p:dataTable
+													value="#{manejadorConsultaConvenioMarco.concepto.listaActividades}"
+													id="tabla-actividades" var="actividad"
+													emptyMessage="No se agregó ninguna actividad" rows="1"
+													paginator="true" paginatorPosition="bottom">
+													<p:column>
+														<h:outputText value="#{actividad.descripcion}" />
+													</p:column>
+												</p:dataTable>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Descripción de las actividades: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.descripcionActividad}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Entidades participantes del proyecto: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<p:dataTable
+													value="#{manejadorConsultaConvenioMarco.concepto.listaEntidades}"
+													id="tabla-entidades-concepto" var="entidad"
+													emptyMessage="No se agregó ninguna entidad" rows="1"
+													paginator="true" paginatorPosition="bottom">
+													<p:column>
+														<h:outputText value="#{entidad.descripcion}" />
+													</p:column>
+												</p:dataTable>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Archivos adjuntos a la solicitud: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<p:dataTable
+													value="#{manejadorConsultaConvenioMarco.listaArchivos}"
+													width="100%" var="archivo" rows="4" paginator="true"
+													paginatorPosition="bottom"
+													emptyMessage="No hay archivos asociados" id="tabla-archivo-recurso">
+
+													<p:column headerText="Id" style="width:3%">
+														<div>
+															<h:outputText value="#{archivo.id}"
+																style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+														</div>
+													</p:column>
+													<p:column headerText="Documentos adjuntos" tyle="width:90%">
+														<div style="width: 250px; font-size: 9px;">
+															<h:outputText value="#{archivo.nombre}"
+																style="text-align: left; width: 300px; text-transform:uppercase; padding-bottom: 10px;" />
+														</div>
+													</p:column>
+													<p:column headerText="Descargar"
+														style="width:3%; text-align:center;">
+														<p:commandButton id="descargar"
+															action="#{manejadorConsultaConvenioMarco.descargarArchivo}"
+															icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+															ajax="false">
+															<f:setPropertyActionListener value="#{archivo}"
+																target="#{manejadorConsultaConvenioMarco.archivoSeleccionado}" />
+														</p:commandButton>
+													</p:column>
+												</p:dataTable>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2" style="text-align:center;">
+												<br />
+												<h:outputText value=" REVISIÓN SOLICITUD"
+													style='font-weight: bold;' />
+												<br />
+												<p:separator />
+												<br />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Fecha trámite: "
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.fechaTramite}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Número de radicado (si aplica):"
+													style="font-weight: bold;" />
+											</p:column>
+											<p:column>
+												<p:inputText
+													value="#{manejadorConsultaConvenioMarco.concepto.numeroRadicado}"
+													size="50" style="width:100%;" disabled="true">
+												</p:inputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText style='font-weight: bold;'
+													value="Decisión de la solicitud:" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.nombreEstado}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText style='font-weight: bold;'
+													value="Observaciones:" />
+											</p:column>
+											<p:column>
+												<h:outputText
+													value="#{manejadorConsultaConvenioMarco.concepto.observaciones}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2">
+												<h:outputText style='font-weight: bold;'
+													value="Archivos de trámite de la solicitud" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2">
+												<p:dataTable
+													value="#{manejadorConsultaConvenioMarco.listaArchivosCoordinador}"
+													width="100%" var="archivo" rows="2" paginator="true"
+													paginatorPosition="bottom"
+													emptyMessage="No hay archivos asociados"
+													id="tabla-archivo-tramite">
+
+													<p:column headerText="Id" style="width:3%">
+														<div>
+															<h:outputText value="#{archivo.id}"
+																style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+														</div>
+													</p:column>
+													<p:column headerText="Documentos adjuntos" tyle="width:90%">
+														<div style="width: 280px; font-size: 11px;">
+															<h:outputText value="#{archivo.nombre}"
+																style="text-align: left; width: 350px; text-transform:uppercase; padding-bottom: 10px;" />
+														</div>
+													</p:column>
+													<p:column headerText="Descargar"
+														style="width:3%; text-align:center;">
+														<p:commandButton id="descargar"
+															action="#{manejadorConsultaConvenioMarco.descargarArchivo}"
+															icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+															ajax="false">
+															<f:setPropertyActionListener value="#{archivo}"
+																target="#{manejadorConsultaConvenioMarco.archivoSeleccionado}" />
+														</p:commandButton>
+													</p:column>
+												</p:dataTable>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:dialog>
+							</p:tab>
+						</p:accordionPanel>
+					</p:tab>
+					<!-- Reportes biodiversidad -->
+					<p:tab title="Reportes" titleStyle="font-size:12px" rendered="#{manejadorConsultaConvenioMarco.esEncargadoInclusionPM}">
+						<p:dataTable
+							value="#{manejadorConsultaConvenioMarco.reportesHabilitados}"
+							id="tabla-reportes" var="reporte"
+							emptyMessage="No hay reportes disponibles" rows="15"
+							paginator="true" paginatorPosition="bottom">
+							<p:column headerText="Reporte">
+								<h:outputText value="#{reporte[1]}" />
+							</p:column>
+							<p:column headerText="" style="width:5%;">
+								<p:commandButton
+									action="#{manejadorConsultaConvenioMarco.generarReporte}"
+									icon="ui-icon-circle-arrow-s" title="Generar" ajax="false">
+									<f:setPropertyActionListener value="#{reporte[0]}"
+										target="#{manejadorConsultaConvenioMarco.reporte}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+					<!-- parametrizacion tramites por dependencia y persona -->
+					<p:tab title="Encargados trámites biodiversidad" titleStyle="font-size:12px" rendered="#{manejadorTramitesBiodiversidad.tieneControlEncargadosBiodiversidad}">
+						<p:dataTable
+							value="#{manejadorTramitesBiodiversidad.tiposTramiteBiodiversidad}"
+							id="tabla-tramites" var="tramite"
+							emptyMessage="No hay tramites disponibles" rows="15"
+							paginator="true" paginatorPosition="bottom">
+							<p:column headerText="Trámite">
+								<h:outputText value="#{tramite.nombre}" />
+							</p:column>
+							<p:column headerText="" style="width:10%;">
+								<p:commandButton
+									action="#{manejadorTramitesBiodiversidad.modificarTramite}"
+									icon="ui-icon-pencil" title="Editar" ajax="false">
+									<f:setPropertyActionListener value="#{tramite.id}"
+										target="#{manejadorTramitesBiodiversidad.idTramite}" />
+								</p:commandButton>
+								<p:commandButton
+									action="#{manejadorTramitesBiodiversidad.consultarTramite}"
+									icon="ui-icon-search" title="Consultar" ajax="false">
+									<f:setPropertyActionListener value="#{tramite.id}"
+										target="#{manejadorTramitesBiodiversidad.idTramite}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+				</p:tabView>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

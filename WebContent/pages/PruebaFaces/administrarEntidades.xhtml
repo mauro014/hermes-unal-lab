@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">ADMINISTRAR ENTIDADES</ui:define>
+
+	<ui:define name="content">
+		<h:form id="Entidades">
+
+			<p:panel id="panel1" header="Buscar Entidad" widgetVar="panel1">
+
+				<h:panelGrid columns="2">
+					<h:outputLabel for="descripcion" value="Nombre o Descripción: " />
+					<p:inputText id="descripcion"
+						value="#{ManejadorAdministrarEntidad.descripcion_busqueda}"
+						label="descripcion">
+					</p:inputText>
+
+					<h:outputLabel for="nit" value="NIT: " />
+					<p:inputText id="nit"
+						value="#{ManejadorAdministrarEntidad.nit_busqueda}" label="nit">
+					</p:inputText>
+
+					<h:outputText value="Naturaleza:" />
+					<p:selectOneMenu
+						value="#{ManejadorAdministrarEntidad.naturaleza_busqueda}"
+						effect="fade" id="naturaleza" filter="true">
+						<f:selectItems
+							value="#{ManejadorAdministrarEntidad.naturalezaItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Sector:" />
+					<p:selectOneMenu
+						value="#{ManejadorAdministrarEntidad.sector_busqueda}"
+						effect="fade" id="sector" filter="true">
+						<f:selectItems value="#{ManejadorAdministrarEntidad.sectorItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Nivel Territorial:" />
+					<p:selectOneMenu
+						value="#{ManejadorAdministrarEntidad.nvlterritorial_busqueda}"
+						effect="fade" id="nvlterritorial" filter="true">
+						<f:selectItems
+							value="#{ManejadorAdministrarEntidad.nvlterritorialItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="" />
+					<p:commandButton value="Buscar" id="buscar"
+						actionListener="#{ManejadorAdministrarEntidad.buscarEntidad}"
+						styleClass="ui-priority-primary" update="entidades" />
+				</h:panelGrid>
+
+				<p:separator />
+				<h3>Descripción de Entidades</h3>
+				<p:dataTable id="entidades" var="fuenteFinanciacion"
+					value="#{ManejadorAdministrarEntidad.listaEntidades}" rows="10"
+					align="center" border="1" paginator="#{ManejadorAdministrarEntidad.tamlista}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginatorPosition="bottom" rowsPerPageTemplate="10,15">
+					
+					<f:facet name="header">  
+	        		    Entidades  
+	        		</f:facet>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="NIT" />
+						</f:facet>
+						<h:outputText value="#{fuenteFinanciacion.nit}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre de la Entidad" />
+						</f:facet>
+						<h:outputText value="#{fuenteFinanciacion.descripcion}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Ver" />
+						</f:facet>
+						<p:commandButton id="ver" icon="ui-icon-search"
+							title="Consultar Entidad"
+							action="#{ManejadorAdministrarEntidad.consultarEntidad}">
+							<f:setPropertyActionListener
+								target="#{ManejadorAdministrarEntidad.entidadSeleccionada}"
+								value="#{fuenteFinanciacion}" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Editar" />
+						</f:facet>
+						<p:commandButton id="editar" icon="ui-icon-refresh"
+							title="Editar Entidad"
+							action="#{ManejadorAdministrarEntidad.editarEntidad}"
+							update="entidades">
+							<f:setPropertyActionListener
+								target="#{ManejadorAdministrarEntidad.entidadSeleccionada}"
+								value="#{fuenteFinanciacion}" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column align="center">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton id="delete" icon="ui-icon-trash"
+							title="Eliminar Entidad" update="entidades" onclick="dlg.show()"
+							actionListener="#{ManejadorAdministrarEntidad.verDescNit}">
+							<f:setPropertyActionListener
+								target="#{ManejadorAdministrarEntidad.entidadSeleccionada}"
+								value="#{fuenteFinanciacion}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+				
+				<p:confirmDialog
+					message="¿Esta seguro que desea eliminar esta entidad?"
+					header="Eliminar Entidad" severity="alert" widgetVar="dlg"
+					id="confirmaEliminacion">
+					<h:panelGrid columns="2" align="center">
+						<p:commandButton value="Eliminar" id="eliminar_2"
+							action="#{ManejadorAdministrarEntidad.eliminarEntidad}"
+							styleClass="ui-priority-primary"
+							onclick="dlg.hide()" />
+						<p:commandButton value="Cancelar" id="volver_2"
+							styleClass="ui-priority-primary" onclick="dlg.hide()" />
+					</h:panelGrid>
+				</p:confirmDialog>
+								
+			</p:panel>			
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,1202 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Costos Servicios de Laboratorio</t:div>
+
+			<p:panel>
+				<center>
+					<p:panelGrid columns="2">
+						<h:outputText value="Nombre servicio" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.servicio.nombre}" />
+
+						<h:outputText value="Laboratorio" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.servicio.laboratorio.nombre}" />
+
+						<h:outputText value="Sede" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.servicio.laboratorio.sede.nombre}" />
+
+						<h:outputText value="Valor kWh" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorkWh}">
+							<f:convertNumber maxFractionDigits="2" type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Valor m2 sede" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorM2}">
+							<f:convertNumber maxFractionDigits="2" type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Año" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.annio}">
+						</h:outputText>
+					</p:panelGrid>
+				</center>
+
+				<p:spacer height="15" />
+				<p:separator />
+				<p:spacer height="15" />
+
+				<p:outputPanel id="opEquipos">
+					<p:dataTable var="ensayoEquipo" id="tablaEquipos2" editable="true"
+						value="#{manejadorCostosServiciosLaboratorio.listaEquiposEnsayo}"
+						emptyMessage="No existen equipos asociados a este servicio.">
+
+						<f:facet name="header">
+							Equipos usados en el Servicio
+						</f:facet>
+
+						<p:ajax event="rowEdit"
+							listener="#{manejadorCostosServiciosLaboratorio.onRowEditEquipos}"
+							update=":form:tablaEquipos2, :form:pgTotales, :form:pgTotales2" />
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Equipo" styleClass="pequennio" />
+							</f:facet>
+							<h:outputText value="#{ensayoEquipo.equipo.equipo}"
+								styleClass="pequennio" />
+							<br />
+							<h:outputText value="(placa #{ensayoEquipo.equipo.placa})"
+								styleClass="pequennio" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor" styleClass="pequennio" />
+							</f:facet>
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{ensayoEquipo.equipo.valor}"
+										styleClass="pequennio">
+										<f:convertNumber currencySymbol="$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{ensayoEquipo.equipo.valor}" size="10" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Vida útil" styleClass="pequennio" />
+								<br />
+								<h:outputText value="(años)" styleClass="pequennio" />
+							</f:facet>
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{ensayoEquipo.equipo.vidaUtilAnnios}">
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{ensayoEquipo.equipo.vidaUtilAnnios}"
+										size="5" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Uso" styleClass="pequennio" />
+								<br />
+								<h:outputText value="(min)" styleClass="pequennio" />
+							</f:facet>
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{ensayoEquipo.tiempoUsoMinutos}">
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{ensayoEquipo.tiempoUsoMinutos}" size="5" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Potencia" styleClass="pequennio" />
+								<br />
+								<h:outputText value="(W)" styleClass="pequennio" />
+							</f:facet>
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{ensayoEquipo.equipo.potenciaW}" />
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{ensayoEquipo.equipo.potenciaW}" size="5" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Costo Energía" styleClass="pequennio" />
+							</f:facet>
+							<h:outputText value="#{ensayoEquipo.costoEnergia}"
+								styleClass="pequennio">
+								<f:convertNumber type="currency" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Depreciación" styleClass="pequennio" />
+							</f:facet>
+							<h:outputText value="#{ensayoEquipo.depreciacion}"
+								styleClass="pequennio">
+								<f:convertNumber type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column
+							rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+							<f:facet name="header">
+								<h:outputText value="Editar" styleClass="pequennio" />
+							</f:facet>
+							<p:rowEditor />
+						</p:column>
+
+						<p:columnGroup type="footer" id="footerEquipos">
+							<p:row>
+								<p:column colspan="5" style="text-align:right"
+									footerText="Totales:" />
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{manejadorCostosServiciosLaboratorio.totalCostoEnergia}"
+											styleClass="pequennio">
+											<f:convertNumber type="currency" />
+										</h:outputText>
+									</f:facet>
+								</p:column>
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{manejadorCostosServiciosLaboratorio.totalDepreciacion}"
+											styleClass="pequennio">
+											<f:convertNumber type="currency" />
+										</h:outputText>
+									</f:facet>
+								</p:column>
+								<p:column
+									rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+								</p:column>
+							</p:row>
+						</p:columnGroup>
+					</p:dataTable>
+				</p:outputPanel>
+
+				<p:spacer height="15" />
+
+				<p:dataTable editable="true"
+					value="#{manejadorCostosServiciosLaboratorio.listaFalsa}">
+					<p:ajax event="rowEdit"
+						listener="#{manejadorCostosServiciosLaboratorio.onRowEditIluminacion}"
+						update=":form:pgTotales, :form:pgTotales2" />
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Iluminación" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionNombre}"
+									styleClass="pequennio" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionNombre}"
+									size="15" maxlength="100" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Potencia (W)" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionPotenciaW}"
+									styleClass="pequennio" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionPotenciaW}"
+									size="5" maxlength="5" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Minutos" styleClass="pequennio" />
+							<br />
+							<h:outputText value="utilizados" styleClass="pequennio" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionTiempoMinutos}"
+									styleClass="pequennio">
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionTiempoMinutos}"
+									size="5" maxlength="5" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" styleClass="pequennio" />
+							<br />
+							<h:outputText value="minuto" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText
+							value="#{(manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorkWh * manejadorCostosServiciosLaboratorio.costoSeleccionado.iluminacionPotenciaW) / 60000}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" styleClass="pequennio" />
+							<br />
+							<h:outputText value="iluminación" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoIluminacion}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+
+					<p:column
+						rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+						<f:facet name="header">
+							<h:outputText value="Editar" styleClass="pequennio" />
+						</f:facet>
+						<p:rowEditor />
+					</p:column>
+				</p:dataTable>
+
+				<p:spacer height="15" />
+				<p:separator />
+				<p:spacer height="15" />
+
+				<p:dataTable var="insumoEnsayo" id="dtInsumos"
+					value="#{manejadorCostosServiciosLaboratorio.listaInsumosEnsayo}"
+					emptyMessage="No existen insumos asociados a este servicio.">
+					<f:facet name="header">
+							Insumos usados en el servicio
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Insumo" />
+						</f:facet>
+						<h:outputText value="#{insumoEnsayo.insumo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Cantidad" />
+						</f:facet>
+						<h:outputText value="#{insumoEnsayo.cantidadUnidadesInsumo}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Unidad" />
+						</f:facet>
+						<h:outputText value="#{insumoEnsayo.insumo.unidadDeMedida.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo Unidad" />
+						</f:facet>
+						<h:outputText value="#{insumoEnsayo.costoUnidad}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align:right">
+						<f:facet name="header">
+							<h:outputText value="Costo Insumo" />
+						</f:facet>
+						<h:outputText value="#{insumoEnsayo.costoInsumo}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column
+						rendered="#{not manejadorCostosServiciosLaboratorio.soloLectura}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash"
+								update=":form:dtInsumos, :form:pgTotales, :form:pgTotales2"
+								action="#{manejadorCostosServiciosLaboratorio.eliminarInsumo}"
+								title="Eliminar insumo asociado"
+								onclick="if(!confirm('Está seguro(a) de eliminar el insumo?'))return false">
+								<f:setPropertyActionListener value="#{insumoEnsayo}"
+									target="#{manejadorCostosServiciosLaboratorio.insumoEnsayoSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="4" style="text-align:right"
+								footerText="Costo Insumos:" />
+							<p:column>
+								<f:facet name="footer">
+									<h:outputText
+										value="#{manejadorCostosServiciosLaboratorio.totalCostoInsumos}"
+										styleClass="pequennio">
+										<f:convertNumber type="currency" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+							<p:column
+								rendered="#{not manejadorCostosServiciosLaboratorio.soloLectura}"
+								footerText="" />
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+
+				<p:spacer height="15" />
+
+				<p:panelGrid id="dtNuevoInsumo"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+					<p:row>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Insumo/unidad" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Cantidad" styleClass="pequennio" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Costo Unidad ($)" styleClass="pequennio" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Agregar" styleClass="pequennio" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:selectOneMenu id="siInsumos" filter="true"
+								filterMatchMode="contains"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoInsumo.insumo.id}"
+								style="width:450px">
+								<f:selectItems
+									value="#{manejadorCostosServiciosLaboratorio.selectItemInsumos}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<p:inputText size="5" id="itCantidadInsumo"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoInsumo.cantidadUnidadesInsumo}" />
+						</p:column>
+						<p:column>
+							<p:inputText size="5" id="itCostoInsumo"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoInsumo.costoUnidad}" />
+						</p:column>
+						<p:column>
+							<p:commandButton icon="ui-icon-plusthick"
+								update=":form:dtInsumos, :form:dtNuevoInsumo, :form:pgTotales, :form:pgTotales2"
+								action="#{manejadorCostosServiciosLaboratorio.agregarInsumo}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:message for="siInsumos" />
+							<p:message for="itCantidadInsumo" />
+							<p:message for="itCostoInsumo" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<p:spacer height="15" />
+				<p:separator />
+				<p:spacer height="15" />
+
+				<p:dataTable id="dtDepreciacion"
+					value="#{manejadorCostosServiciosLaboratorio.listaFalsa}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Depreciación planta" />
+						</f:facet>
+						<h:outputText value="Recinto laboratorio" styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Valor m2" />
+						</f:facet>
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.valorM2}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Área" />
+						</f:facet>
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.servicio.laboratorio.areaM2}"
+							styleClass="pequennio">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Valor Lab" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.servicio.laboratorio.areaM2 * manejadorCostosServiciosLaboratorio.costoSeleccionado.valorM2}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Vida útil" styleClass="pequennio" />
+							<br />
+							<h:outputText value="años" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText value="20" styleClass="pequennio">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Minutos" styleClass="pequennio" />
+							<br />
+							<h:outputText value="invertidos" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalTiempoUsoEquipos}"
+							styleClass="pequennio">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" styleClass="pequennio" />
+							<br />
+							<h:outputText value="depreciación" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalDepreciacionPlanta}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+
+				</p:dataTable>
+
+				<p:spacer height="15" />
+
+				<p:separator
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<p:dataTable var="costoManttoCal" id="dtCostosMantto"
+					value="#{manejadorCostosServiciosLaboratorio.listaCostosManttoCalib}"
+					emptyMessage="No existen costos de Mantenimiento y/o Calibración asociados a este Servicio">
+					<f:facet name="header">
+							Actividades de mantenimiento/calibración de equipos
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Actividad" />
+						</f:facet>
+						<h:outputText value="#{costoManttoCal.tipoActividad.nombre}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Equipo" />
+						</f:facet>
+						<h:outputText value="#{costoManttoCal.equipo.equipo}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo Anual" />
+						</f:facet>
+						<h:outputText value="#{costoManttoCal.costoAnual}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Uso" />
+							<br />
+							<h:outputText value="(Minutos)" />
+						</f:facet>
+						<h:outputText value="#{costoManttoCal.tiempoUsoMinutos}"
+							styleClass="pequennio">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" />
+							<br />
+							<h:outputText value="minuto" />
+						</f:facet>
+						<h:outputText value="#{costoManttoCal.costoMinuto}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" />
+							<br />
+							<h:outputText value="actividad" />
+						</f:facet>
+						<h:outputText
+							value="#{costoManttoCal.costoMinuto * costoManttoCal.tiempoUsoMinutos}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="5" style="text-align:right"
+								footerText="Costo total:" />
+							<p:column>
+								<f:facet name="footer">
+									<h:outputText
+										value="#{manejadorCostosServiciosLaboratorio.totalCostoManttoCalib}"
+										styleClass="pequennio">
+										<f:convertNumber type="currency" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+						</p:row>
+					</p:columnGroup>
+
+				</p:dataTable>
+
+				<p:spacer height="15" />
+
+
+				<p:panelGrid id="pgNuevoMantto"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+					<p:row>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Actividad" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Equipo" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Costo anual ($)" styleClass="pequennio" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Agregar" styleClass="pequennio" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:selectOneMenu id="siActividades"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoMantto.tipoActividad}"
+								converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorCostosServiciosLaboratorio.selectItemActividades}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="siEquipos"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoMantto.equipo.id}">
+								<f:selectItems
+									value="#{manejadorCostosServiciosLaboratorio.selectItemEquipos}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<p:inputText size="10" id="itCostoAnual"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoMantto.costoAnual}" />
+						</p:column>
+						<p:column>
+							<p:commandButton icon="ui-icon-plusthick"
+								update=":form:dtCostosMantto, :form:pgNuevoMantto, :form:pgTotales, :form:pgTotales2"
+								action="#{manejadorCostosServiciosLaboratorio.agregarCostoMantto}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:message for="itCostoAnual" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+				<p:separator
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<p:dataTable var="costoPersonal" id="dtCostosPersonal" editable="true"
+					value="#{manejadorCostosServiciosLaboratorio.listaCostosPersonal}"
+					emptyMessage="No existe mano de obra asociada a este servicio.">
+					<f:facet name="header">
+							Costos personal
+					</f:facet>
+					
+					<p:ajax event="rowEdit"
+							listener="#{manejadorCostosServiciosLaboratorio.onRowEditPersonal}"
+							update=":form:dtCostosPersonal, :form:pgNuevoPersonal, :form:pgTotales, :form:pgTotales2" />
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Mano de obra" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{costoPersonal.nombrePersonal}"
+									styleClass="pequennio" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{costoPersonal.nombrePersonal}" size="25" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Salario" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{costoPersonal.salarioMensual}">
+									<f:convertNumber type="currency" />
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{costoPersonal.salarioMensual}" size="10" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Valor" styleClass="pequennio" />
+							<br />
+							<h:outputText value="minuto" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText value="#{costoPersonal.valorMinuto}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Minutos" styleClass="pequennio" />
+							<br />
+							<h:outputText value="invertidos" styleClass="pequennio" />
+						</f:facet>
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{costoPersonal.tiempoMinutos}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{costoPersonal.tiempoMinutos}" size="5" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" />
+						</f:facet>
+						<h:outputText value="#{costoPersonal.costo}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column
+							rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+							<f:facet name="header">
+								<h:outputText value="Editar" styleClass="pequennio" />
+							</f:facet>
+							<p:rowEditor />
+						</p:column>
+					<p:column
+						rendered="#{not manejadorCostosServiciosLaboratorio.soloLectura}">
+						<f:facet name="header">
+							<h:outputText value="(-)" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash"
+								update=":form:dtCostosPersonal, :form:pgNuevoPersonal, :form:pgTotales, :form:pgTotales2"
+								action="#{manejadorCostosServiciosLaboratorio.eliminarPersonal}"
+								title="Eliminar insumo asociado"
+								onclick="if(!confirm('Está seguro(a) de eliminar el item de costo de personal?'))return false">
+								<f:setPropertyActionListener value="#{costoPersonal}"
+									target="#{manejadorCostosServiciosLaboratorio.costoPersonalSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<p:columnGroup type="footer" rendered="false">
+						<p:row>
+							<p:column colspan="4" footerText="Costo mano de obra:" />
+							<p:column>
+								<f:facet name="footer">
+									<h:outputText
+										value="#{manejadorCostosServiciosLaboratorio.totalCostoPersonal}"
+										styleClass="pequennio">
+										<f:convertNumber type="currency" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+
+				<p:spacer height="15" />
+
+				<p:panelGrid id="pgNuevoPersonal"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+					<p:row>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Mano de obra" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Salario mensual ($)" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Minutos invertidos" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Agregar" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputText size="25" id="itNombrePersonal" maxlength="100"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoPersonal.nombrePersonal}" />
+						</p:column>
+						<p:column>
+							<p:inputText size="10" id="itSalarioMensual"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoPersonal.salarioMensual}" />
+						</p:column>
+						<p:column>
+							<p:inputText size="5" id="itTiempoMinutos"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoPersonal.tiempoMinutos}" />
+						</p:column>
+						<p:column>
+							<p:commandButton icon="ui-icon-plusthick"
+								update=":form:dtCostosPersonal, :form:pgNuevoPersonal, :form:pgTotales, :form:pgTotales2"
+								action="#{manejadorCostosServiciosLaboratorio.agregarPersonal}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:message for="itNombrePersonal" />
+							<p:message for="itSalarioMensual" />
+							<p:message for="itTiempoMinutos" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<p:spacer height="15" />
+				<p:separator
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<center>
+					<p:panelGrid id="pgAcuedAlcant">
+						<p:row>
+							<p:column styleClass="ui-state-default">
+								<h:outputText value="Acueducto y alcantarillado" />
+							</p:column>
+							<p:column styleClass="ui-state-default">
+								<h:outputText value="valor m3" />
+							</p:column>
+							<p:column styleClass="ui-state-default">
+								<h:outputText value="consumo m3" />
+							</p:column>
+							<p:column styleClass="ui-state-default">
+								<h:outputText value="Costo" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Acueducto" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorM3Acueducto}">
+									<f:convertNumber type="currency" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<h:outputText
+									rendered="#{manejadorCostosServiciosLaboratorio.soloLectura}"
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.consumoAcueductoM3}">
+								</h:outputText>
+								<p:inputText
+									rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}"
+									size="5" id="consumoAcued"
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.consumoAcueductoM3}">
+									<p:ajax event="blur"
+										update="pgAcuedAlcant, pgTotales, pgTotales2"
+										listener="#{manejadorCostosServiciosLaboratorio.cambioAcuedAlcant}" />
+								</p:inputText>
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorM3Acueducto * manejadorCostosServiciosLaboratorio.costoSeleccionado.consumoAcueductoM3}">
+									<f:convertNumber type="currency" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Alcantarillado" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorM3Alcantarillado}">
+									<f:convertNumber type="currency" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<h:outputText value="">
+								</h:outputText>
+
+								<h:outputText
+									rendered="#{manejadorCostosServiciosLaboratorio.soloLectura}"
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.consumoAlcantarilladoM3}">
+								</h:outputText>
+								<p:inputText
+									rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}"
+									size="5" id="consumoAlcant"
+									value="#{manejadorCostosServiciosLaboratorio.costoSeleccionado.consumoAlcantarilladoM3}">
+									<p:ajax event="blur"
+										update="pgAcuedAlcant, pgTotales, pgTotales2"
+										listener="#{manejadorCostosServiciosLaboratorio.cambioAcuedAlcant}" />
+								</p:inputText>
+
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.costosSedeAnnio.valorM3Alcantarillado * manejadorCostosServiciosLaboratorio.costoSeleccionado.consumoAlcantarilladoM3}">
+									<f:convertNumber type="currency" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3" style="text-align: right"
+								styleClass="ui-state-default">
+								<h:outputText value="Costo total:">
+								</h:outputText>
+							</p:column>
+							<p:column styleClass="ui-state-default">
+								<h:outputText
+									value="#{manejadorCostosServiciosLaboratorio.totalAcueductoAlcantarillado}">
+									<f:convertNumber type="currency" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+				</center>
+
+				<p:spacer height="15" />
+
+				<p:separator
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<p:dataTable var="costoGestion" id="dtCostosGestion"
+					value="#{manejadorCostosServiciosLaboratorio.listaCostosGestion}"
+					emptyMessage="No existen costos de Gestión asociados a este Ensayo">
+					<f:facet name="header">
+							Costos por Gestión (acreditación, certificación, habilitación, etc.)
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre gestión" />
+						</f:facet>
+						<h:outputText value="#{costoGestion.nombreGestion}"
+							styleClass="pequennio">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo Anual" />
+						</f:facet>
+						<h:outputText value="#{costoGestion.costoAnual}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Uso" />
+							<br />
+							<h:outputText value="(Minutos)" />
+						</f:facet>
+						<h:outputText value="#{costoGestion.tiempoUsoMinutos}"
+							styleClass="pequennio">
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" />
+							<br />
+							<h:outputText value="minuto" />
+						</f:facet>
+						<h:outputText value="#{costoGestion.costoMinuto}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Costo" />
+							<br />
+							<h:outputText value="actividad" />
+						</f:facet>
+						<h:outputText
+							value="#{costoGestion.costoMinuto * costoGestion.tiempoUsoMinutos}"
+							styleClass="pequennio">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+					</p:column>
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="4" style="text-align:right"
+								footerText="Costo total:" />
+							<p:column>
+								<f:facet name="footer">
+									<h:outputText
+										value="#{manejadorCostosServiciosLaboratorio.totalCostoGestion}"
+										styleClass="pequennio">
+										<f:convertNumber type="currency" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<p:panelGrid id="pgNuevoCostoGestion"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}">
+					<p:row>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Nombre gestión" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Costo anual ($)" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Tiempo uso (minutos)" />
+						</p:column>
+						<p:column styleClass="ui-state-default">
+							<h:outputText value="Agregar" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:inputText size="35" id="itNombreGestion" maxlength="100"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoGestion.nombreGestion}" />
+						</p:column>
+						<p:column>
+							<p:inputText size="10" id="itCostoAnualGestion"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoGestion.costoAnual}" />
+						</p:column>
+						<p:column>
+							<p:inputText size="5" id="itTiempoMinutosGestion"
+								value="#{manejadorCostosServiciosLaboratorio.nuevoGestion.tiempoUsoMinutos}" />
+						</p:column>
+						<p:column>
+							<p:commandButton icon="ui-icon-plusthick"
+								title="Agregar nuevo costo de gestión"
+								update=":form:dtCostosGestion, :form:pgNuevoCostoGestion, :form:pgTotales, :form:pgTotales2"
+								action="#{manejadorCostosServiciosLaboratorio.agregarGestion}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:message for="itNombreGestion" />
+							<p:message for="itCostoAnualGestion" />
+							<p:message for="itTiempoMinutosGestion" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<p:spacer height="15" />
+				<p:separator
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+				<p:spacer height="15"
+					rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}" />
+
+				<center>
+					<p:panelGrid id="pgTotales" columns="2"
+						columnClasses="negrilla, derecha">
+
+						<t:div style="width:300px;">
+							<h:outputText value="Costo energía eléctrica equipos" />
+						</t:div>
+						<h:outputText style="text-align:right"
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoEnergia}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo depreciación equipos"
+							styleClass="negrilla" />
+						<h:outputText styleClass="derecha"
+							value="#{manejadorCostosServiciosLaboratorio.totalDepreciacion}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo iluminación" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoIluminacion}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo insumos" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoInsumos}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo depreciación planta"
+							styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalDepreciacionPlanta}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo mantto/calibración equipos"
+							styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoManttoCalib}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costos personal" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoPersonal}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo acueducto y alcantarillado"
+							styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalAcueductoAlcantarillado}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo gestión" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoGestion}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo directo realización del servicio" />
+						<h:outputText styleClass="grande"
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoDirecto}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+					</p:panelGrid>
+
+					<p:spacer height="15" />
+
+					<p:panelGrid id="pgTotales2" columns="2"
+						columnClasses="negrilla, derecha">
+
+						<t:div style="width:300px;">
+							<h:outputText value="Modelo de Tarifas" styleClass="negrilla" />
+						</t:div>
+						<h:outputText />
+
+						<h:outputText value="Costo directo realización del servicio" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoDirecto}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costos indirectos realización del servicio" />
+						<h:outputText
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoIndirecto}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+						<h:outputText value="Costo total del servicio" />
+						<h:outputText styleClass="grande"
+							value="#{manejadorCostosServiciosLaboratorio.totalCostoServicio}">
+							<f:convertNumber type="currency" />
+						</h:outputText>
+
+					</p:panelGrid>
+				</center>
+
+				<p:spacer height="15" />
+				<p:message for="pgGuardar" />
+				<p:messages id="messages" autoUpdate="true" closable="true"
+					redisplay="false" />
+
+				<center>
+					<p:panelGrid columns="2" id="pgGuardar"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:commandButton icon="ui-icon-disk"
+							rendered="#{!manejadorCostosServiciosLaboratorio.soloLectura}"
+							action="#{manejadorCostosServiciosLaboratorio.guardar}"
+							onclick="if(!confirm('Está seguro de guardar?'))return false"
+							value="Guardar" />
+						<p:commandButton icon="ui-icon-search"
+							action="#{manejadorCostosServiciosLaboratorio.salir}"
+							onclick="if(!confirm('Está seguro de salir?  Cualquier cambio no guardado se perderá.'))return false"
+							value="Nueva búsqueda" />
+					</p:panelGrid>
+				</center>
+
+				<p:dialog header="Por favor espere..." widgetVar="dlg"
+					resizable="false" closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+					</p:dialog>
+
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

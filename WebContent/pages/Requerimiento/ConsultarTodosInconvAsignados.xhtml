@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Inconvenientes en desarrollo o asignados</t:div>
+
+		<h:form id="content">
+
+			<p:messages id="msgs" />
+
+			<br> </br>
+
+			<p:dataTable var="requerimientoRegistrado"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{ManejadorConsultarInconvenienteAdm.listaReqAsignados}"
+				paginator="true" paginatorposition="bottom" rows="20">
+
+				<f:facet name="header">  
+	            	Inconvenientes en desarrollo o asignados
+	        		</f:facet>
+
+
+				<p:column headerText="Número" style="text-align: center;"
+					sortBy="#{requerimientoRegistrado.id}">
+					<h:outputText value="#{requerimientoRegistrado.id}" />
+				</p:column>	
+				
+				<p:column headerText="Módulo" sortBy="#{requerimientoRegistrado.moduloVista}" >
+					<h:outputText value="#{requerimientoRegistrado.moduloVista}" />
+				</p:column>						
+
+				<p:column headerText="Ingeniero" sortBy="#{requerimientoRegistrado.ingenieroVista}"
+					style="text-align: center;">
+					<center>	  
+						<h:outputText value="#{requerimientoRegistrado.ingenieroVista}" />
+					</center>	
+				</p:column>		
+				
+				<p:column headerText="Fecha de solución" sortBy="#{requerimientoRegistrado.fechaEntrega}">
+					<h:outputText value="#{requerimientoRegistrado.fechaEntrega}" />
+				</p:column>
+
+
+				<p:column headerText="Editar/Consultar" style="text-align: center;">
+					<p:commandButton
+						action="#{ManejadorConsultarInconvenienteAdm.editarInconvenienteCoord}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton action="#{ManejadorConsultarInconvenienteAdm.consultarInconvenienteCoord}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarInconvenienteAdm.requerimientoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">  
+		            	<h:outputText value="Se encontraron #{ManejadorConsultarInconvenienteAdm.numeroAtendidos} inconvenientes asignados" />
+		        </f:facet>
+			</p:dataTable>
+
+			<br> </br>
+			<br> </br>
+
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

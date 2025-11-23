@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+
+
+			<t:div styleClass="contenido-titulo-general-myriad">Requisitos</t:div>
+			<br />
+			<p:menubar>
+				<p:menuitem value="Generalidades"
+					action="irGeneralidadesConvocatoria" icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarGeneralidades}" />
+				<p:menuitem value="Requisitos" action="irRequisitosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRequisitos}" />
+				<p:menuitem value="Rubros" action="irRubrosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRubros}" />
+				<p:menuitem value="Compromisos" action="irCompromisosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCompromisos}" />
+				<p:menuitem value="Productos" action="irProductosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarProductos}" />
+				<p:menuitem value="Criterios de evaluación"
+					action="irCriteriosEvaluacionConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCriterios}" />
+				<p:menuitem value="Información específica"
+					action="irDetallesInformacionEspecifica"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarInfoEspecifica}" />
+			</p:menubar>
+			<br />
+
+			<center>
+				<h:outputText
+					value="#{manejadorInsercionConvocatorias.avisoProductos}"
+					styleClass="mensajeerror" />
+			</center>
+			<br />
+			<p:panel header="Crear producto" value="true"
+				id="nuevoProductoConvocatoria" toggleable="true" toggleSpeed="500">
+
+				<h:panelGrid id="crearNuevaCategoriaProductos" align="center">
+
+					<h:outputText
+						value="Por favor seleccione el tipo de producto que desea agregar: " />
+
+					<p:selectOneRadio id="opcionesTipoProducto"
+						value="#{manejadorInsercionConvocatorias.opcionesTipoProducto}">
+						<f:selectItem itemLabel="Nuevo tipo de productos"
+							itemValue="nuevocategoria" />
+						<f:selectItem itemLabel="Producto a un tipo de producto existente"
+							itemValue="nuevoproducto" />
+						<p:ajax event="change"
+							update="nuevoProductoConvocatoria, opNuevoProducto, opNuevoTipoProducto"
+							listener="#{manejadorInsercionConvocatorias.cambiarTipoBusqueda}" />
+					</p:selectOneRadio>
+
+				</h:panelGrid>
+
+				<p:outputPanel id="opNuevoTipoProducto"
+					rendered="#{manejadorInsercionConvocatorias.mostrarPgNuevoTipoProducto}">
+					<br />
+					<center>
+						<h:panelGrid id="pgNuevoNivelProd" columns="2" align="center"
+							cellpadding="2" cellspacing="2">
+
+							<h:outputText
+								value="Por favor seleccione el nivel del tipo de producto:" />
+							<p:selectOneMenu id="selNivelProducto"
+								value="#{manejadorInsercionConvocatorias.selNivelTipoProducto}"
+								style="width:125px">
+								<f:selectItem itemLabel="-" itemValue="0" />
+								<f:selectItem itemLabel="1" itemValue="1" />
+								<f:selectItem itemLabel="2" itemValue="2" />
+								<p:ajax event="change"
+									update="opNuevoTipoProducto, crearNivel1, crearNivel2"
+									listener="#{manejadorInsercionConvocatorias.cambiarNivelTipoProducto}" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+					</center>
+
+					<br />
+					<p:outputPanel id="crearNivel1"
+						rendered="#{manejadorInsercionConvocatorias.mostrarNivelProd1}">
+						<center>
+							<h:panelGrid columns="2">
+								<h:outputText value="Tipo de producto:" />
+								<p:inputText
+									value="#{manejadorInsercionConvocatorias.nombreProductoNivel1}"
+									size="60" />
+
+								<h:outputText value="Descripción:" />
+								<p:inputTextarea
+									value="#{manejadorInsercionConvocatorias.descripcionProductoNivel1}"
+									rows="3" cols="60" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1" align="center">
+								<p:commandButton
+									action="#{manejadorInsercionConvocatorias.agregarProductoNivel1}"
+									value="Agregar" update="@form" />
+							</h:panelGrid>
+
+						</center>
+
+
+					</p:outputPanel>
+
+					<p:outputPanel id="crearNivel2"
+						rendered="#{manejadorInsercionConvocatorias.mostrarNivelProd2}">
+
+						<center>
+							<h:panelGrid columns="2">
+								<h:outputText value="Producto nivel 1:" />
+								<p:selectOneMenu id="productosNivel1Agre"
+									value="#{manejadorInsercionConvocatorias.productoNivelUnoSel}"
+									panelStyle="width:600px;" style="width:400px">
+									<f:selectItems
+										value="#{manejadorInsercionConvocatorias.productoTipoNivel1}"
+										var="productoTipoNivel1"
+										itemLabel="#{productoTipoNivel1.nombre}"
+										itemValue="#{productoTipoNivel1.id}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Tipo de producto:" />
+								<p:inputText
+									value="#{manejadorInsercionConvocatorias.nombreProductoNivel2}"
+									size="60" />
+
+								<h:outputText value="Descripción:" />
+								<p:inputTextarea
+									value="#{manejadorInsercionConvocatorias.descripcionProductoNivel2}"
+									rows="3" cols="60" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1" align="center">
+								<p:commandButton
+									action="#{manejadorInsercionConvocatorias.agregarProductoNivel2}"
+									value="Agregar" update="@form" />
+							</h:panelGrid>
+
+						</center>
+
+					</p:outputPanel>
+
+				</p:outputPanel>
+
+
+				<p:outputPanel id="opNuevoProducto"
+					rendered="#{manejadorInsercionConvocatorias.mostrarPgNuevoProducto}">
+					<h:panelGrid id="pgNuevoProducto" columns="2" align="center"
+						cellpadding="2" cellspacing="2">
+						<h:outputText value="Tipo de Producto" />
+						<h:panelGrid id="tipos_producto" columns="1">
+							<p:selectOneMenu id="productosNivel1"
+								value="#{manejadorInsercionConvocatorias.seleccionSelect[0]}"
+								panelStyle="width:600px;" style="width:400px">
+								<f:selectItems
+									value="#{manejadorInsercionConvocatorias.productoTipoNivel1}"
+									var="productoTipoNivel1"
+									itemLabel="#{productoTipoNivel1.nombre}"
+									itemValue="#{productoTipoNivel1.id}" />
+								<p:ajax update="nuevoProductoConvocatoria"
+									listener="#{manejadorInsercionConvocatorias.obtenerProductoHijo}" />
+							</p:selectOneMenu>
+							<p:selectOneMenu id="productosNivel2"
+								value="#{manejadorInsercionConvocatorias.seleccionSelect[1]}"
+								panelStyle="width:600px;" style="width:400px">
+								<f:selectItems
+									value="#{manejadorInsercionConvocatorias.productoTipoNivel2}"
+									var="productoTipoNivel2"
+									itemLabel="#{productoTipoNivel2.nombre}"
+									itemValue="#{productoTipoNivel2.id}" />
+								<p:ajax update="nuevoProductoConvocatoria"
+									listener="#{manejadorInsercionConvocatorias.obtenerProductoHijo2}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<h:outputText value="Nombre:" />
+						<p:inputText
+							value="#{manejadorInsercionConvocatorias.nombreProductoActual}"
+							size="60" />
+
+						<h:outputText value="Descripción:" />
+						<p:inputTextarea
+							value="#{manejadorInsercionConvocatorias.descripcionProductoActual}"
+							rows="3" cols="60" />
+					</h:panelGrid>
+					<h:panelGrid columns="1" align="center">
+						<p:commandButton
+							action="#{manejadorInsercionConvocatorias.agregarProducto}"
+							value="Agregar" update="@form"  onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"/>
+					</h:panelGrid>
+				</p:outputPanel>
+
+
+			</p:panel>
+			<br />
+			<p:panel id="productosConvocatoria" header="Productos">
+
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Seleccione los tipos de productos que exigirá esta convocatoria: " />
+				</h:panelGrid>
+
+				<p:dataTable var="productoNivel1" id="prodNivel1"
+					value="#{manejadorInsercionConvocatorias.productoTipoNivel1}"
+					cellpadding="1" cellspacing="15" align="center">
+
+					<p:column>
+
+						<h:commandLink rendered="#{productoNivel1.tieneHijos}"
+							action="#{manejadorInsercionConvocatorias.mostrarHijosNivel1}"
+							value="#{productoNivel1.nombre}"
+							style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+							update="prodNivel1">
+							<f:setPropertyActionListener value="#{productoNivel1}"
+								target="#{manejadorInsercionConvocatorias.productoNivel1Seleccionado}" />
+						</h:commandLink>
+
+						<p:dataTable var="productoNivel2" value="#{productoNivel1.hijos}" id="prodNivel2"
+							cellpadding="1" cellspacing="15" align="center"
+							rendered="#{productoNivel1.mostrarHijos}">
+
+							<p:column>
+								<h:commandLink
+									action="#{manejadorInsercionConvocatorias.mostrarHijosNivel2}"
+									value="#{productoNivel2.nombre}" update="prodNivel2"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{productoNivel2}"
+										target="#{manejadorInsercionConvocatorias.productoNivel2Seleccionado}" />
+								</h:commandLink>
+								<p:selectManyCheckbox rendered="#{productoNivel2.mostrarHijos}"
+									value="#{manejadorInsercionConvocatorias.listaProductoSeleccionados}"
+									layout="pageDirection">
+									<f:selectItems value="#{productoNivel2.hijos}"
+										var="productosItem" itemLabel="#{productosItem.nombre}"
+										itemValue="#{productosItem.id}" />
+								</p:selectManyCheckbox>
+							</p:column>
+						</p:dataTable>
+
+					</p:column>
+
+				</p:dataTable>
+
+
+			</p:panel>
+
+
+			<center>
+				<h:panelGrid columns="3">
+
+
+					<p:commandButton styleClass="btnedicion"
+						rendered="#{manejadorInsercionConvocatorias.mostrarGuardarAvanzar}"
+						action="#{manejadorInsercionConvocatorias.siguiente}"
+						value="Guardar y avanzar" update="@form" >
+						<f:param name="action" value="5"></f:param></p:commandButton>
+
+					<p:commandButton styleClass="btnguardar" rendered="false"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						immediate="false" value="Guardar y continuar después" />
+
+					<p:commandButton value="Guardar Convocatoria"
+						rendered="#{manejadorInsercionConvocatorias.activarGuardar}"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						update="@form" />
+
+
+				</h:panelGrid>
+
+			</center>
+
+		</h:form>
+		
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+	</ui:define>
+</ui:composition>

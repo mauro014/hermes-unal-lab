@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Resumen evaluación</t:div>
+			
+			 <p:panel style="margin-bottom: 20px;">
+				<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" style="border-collapse: separate;">
+					<h:outputText value="Título del proyecto: " style="font-weight: bold;"/>
+				    <h:outputText value="#{manejadorResumenEvaluacion.evaluacionProyecto.proyecto.nombre}"/>
+			        <h:outputText value="Código: "  style="font-weight: bold;"/>
+			        <h:outputText value="#{manejadorResumenEvaluacion.evaluacionProyecto.proyecto.id}"/>
+			        <h:outputText value="Evaluador actual: " style="font-weight: bold;"/>
+			      	<h:outputText value="#{manejadorResumenEvaluacion.nombreEvaluador}"/>
+				</p:panelGrid>
+			 </p:panel>
+			 
+		 	<p:dataTable value = "#{manejadorResumenEvaluacion.listaCC}" var="calificacion"	emptyMessage="No hay calificaciones relacionadas" >            
+	           <p:column> 
+	           	<f:facet name="header">
+						<h:outputText value="Criterios de evaluación" />
+					</f:facet>
+		      		<h:outputText value="#{calificacion.criterio.nombre}" style="font-weight: bold;"/><br /><br />
+               	   <h:outputText value="Descripción:"  style="font-weight: bold;"/><br />
+               	   <h:outputText value="#{calificacion.criterio.descripcion}" /><br /><br />
+               	   <h:outputText value="Calificación Cualitativa:"  style="font-weight: bold;"/><br />
+              		<h:outputText id="calificacionCualitativa" value="#{calificacion.cualitativa}"/><br /><br />
+          		   <t:div>
+   	               	   <h:outputText value="Calificación cuantitativa: " style="font-weight: bold;"/>
+   	               	   <h:outputText id="calificacionCuantitativa" value="#{calificacion.cuantitativa}" />
+           		   </t:div>
+	           </p:column>
+	        </p:dataTable> 
+	        <p:panel style="margin-top: 20px;" header="Observaciones adicionales">
+	        	<h:outputText value="#{manejadorResumenEvaluacion.evaluacionProyecto.observaciones}"/>
+			</p:panel>
+			 
+			<div style="width: 100%; text-align: center; padding-top: 20px;" >
+	     		<p:commandButton action="proyectosConvocatoria" value="Regresar" ajax="false"/>
+	     	</div>  
+			   
+		    
+		       
+		       <h:panelGroup id="panelConcepto" rendered="false">
+		         <s:fieldset legend="Concepto">   
+		          <h:panelGrid columns="1" align  ="left" cellpadding="6" cellspacing="3">          
+		           <h:message for="evaluacionProyectoConcepto" styleClass="mensajeerror" showDetail="true" showSummary="true"  />
+		           <t:popup id="popProyectoConcepto"
+		                styleClass="popup"
+		                closePopupOnExitingElement="true"
+		                closePopupOnExitingPopup="true"
+		                displayAtDistanceX="0"
+		                displayAtDistanceY="10" >
+		                <h:outputText id="evaluacionProyectoConcepto" value="#{manejadorResumenEvaluacion.evaluacionProyecto.concepto.nombre}"/>
+		                <f:facet name="popup">
+		                    <h:panelGroup>
+		                        <h:panelGrid columns="1" align="left">
+		                         <h:outputText value="#{manejadorResumenEvaluacion.evaluacionProyecto.concepto.nombre}" />
+		                        </h:panelGrid>
+		                    </h:panelGroup>
+		                </f:facet>
+		            </t:popup>
+		          </h:panelGrid>
+		         </s:fieldset>
+		       </h:panelGroup>
+		 </h:form>
+	</ui:define>
+</ui:composition>

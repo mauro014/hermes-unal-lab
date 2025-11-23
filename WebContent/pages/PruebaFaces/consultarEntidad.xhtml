@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+	
+<ui:define name="title">CONSULTAR ENTIDADES</ui:define>
+
+<ui:define name="content">
+<h:form id="Entidades">  
+ 	<p:panel id="panel1" header="Datos de la Entidad" toggleable="false" toggleSpeed="500" widgetVar="panel1">  
+ 		<p:messages id="msg_upd"/>  
+ 
+      	<h:panelGrid columns="3">  
+			<h:outputLabel for="descripcion" value="Nombre o Descripción: " />
+			<p:inputText id="descripcion" value="#{ManejadorAdministrarEntidad.descripcion}" required="false" label="descripcion" readonly="true">    
+	        </p:inputText>  
+	        <p:message for="descripcion"/>
+	        
+	        <h:outputLabel for="nit" value="NIT: " />  
+        	<p:inputText id="nit" value="#{ManejadorAdministrarEntidad.nit}" label="nit" required="false" readonly="true">  
+        	</p:inputText>  
+        	<p:message for="nit" id="msgNIT"/>
+        	
+        	<h:outputLabel for="direccion" value="Dirección: " />
+			<p:inputText id="direccion"
+				value="#{ManejadorAdministrarEntidad.direccion}"
+				label="direccion"
+				readonly="#{!ManejadorAdministrarEntidad.verEditarEntidades}"
+				required="#{ManejadorAdministrarEntidad.verEditarEntidades}"
+  				requiredMessage="Dirección es un campo obligatorio">
+			</p:inputText>
+			<p:message for="direccion"/>
+        	
+        	<h:outputLabel for="telefono" value="Teléfono: " />
+			<p:inputText id="telefono"
+				value="#{ManejadorAdministrarEntidad.telefono}"
+				label="telefono"
+				readonly="#{!ManejadorAdministrarEntidad.verEditarEntidades}"
+				required="#{ManejadorAdministrarEntidad.verEditarEntidades}"
+				requiredMessage="Telefono es un campo obligatorio"
+				converterMessage="Un telefono sólo puede tener números"
+            	validateMessage="Telefono es un campo obligatorio">  						   
+                <f:validateLength minimum="7" />
+                <f:validateLongRange minimum="0" maximum="999999999999"/>     
+			</p:inputText>
+			<p:message for="telefono"/> 
+        
+        	<h:outputLabel for="fax" value="Fax: " />
+			<p:inputText id="fax" value="#{ManejadorAdministrarEntidad.fax}"
+				required="false" label="fax"
+				readonly="#{!ManejadorAdministrarEntidad.verEditarEntidades}">
+			</p:inputText>
+			<p:message for="fax"/>        	        
+        	
+        	<h:outputText value="Pais:" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:inputText id="pais" value="#{ManejadorAdministrarEntidad.pais}"
+				required="false" label="pais" readonly="true" 
+				update="panelDeptoCiudConsultar, deptoText, departamento, ciudad"
+				rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:message for="pais" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelDeptoCiudConsultar" columns="3">		
+			<h:outputText value="Departamento:" id="deptoText" rendered="#{ManejadorAdministrarEntidad.verDeptCiudConsulta}"/>
+			<p:inputText id="departamento" required="false"
+				label="departamento" readonly="true"
+				rendered="#{ManejadorAdministrarEntidad.verDeptCiudConsulta}"
+				value="#{ManejadorAdministrarEntidad.departamento}" />
+			<p:message for="departamento" display="icon" rendered="#{ManejadorAdministrarEntidad.verDeptCiudConsulta}"/>
+		
+			<h:outputText value="Ciudad:" rendered="#{ManejadorAdministrarEntidad.verDeptCiudConsulta}"/>
+			<p:inputText id="ciudad"
+				value="#{ManejadorAdministrarEntidad.ciudad}" required="false"
+				label="ciudad" readonly="true"
+				rendered="#{ManejadorAdministrarEntidad.verDeptCiudConsulta}" />
+			<p:message for="ciudad" display="icon" rendered="#{ManejadorAdministrarEntidad.verDeptCiudConsulta}"/>
+		
+		</h:panelGrid>
+			
+		<h:panelGrid columns="3">					
+			<h:outputText value="Pais:" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:selectOneMenu value="#{ManejadorAdministrarEntidad.pais}"
+				effect="fade" id="pais_2" filter="true"
+				required="#{ManejadorAdministrarEntidad.verEditarEntidades}"
+				rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}">
+				<f:selectItems value="#{ManejadorAdministrarEntidad.paisItem}" />
+				<p:ajax
+					update="departamento_2, deptoText_2, ciudad_2, panelDeptoCiudEditar"
+					listener="#{ManejadorAdministrarEntidad.cargarDepto}" />
+			</p:selectOneMenu>
+			<p:message for="pais_2" display="icon" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelDeptoCiudEditar" columns="3">				
+		
+			<h:outputText value="Departamento:" id="deptoText_2" rendered="#{ManejadorAdministrarEntidad.verDeptCiudEditar and ManejadorAdministrarEntidad.pais == 'CO'}"/>
+			<p:selectOneMenu
+				value="#{ManejadorAdministrarEntidad.departamento}" effect="fade"
+				id="departamento_2" filter="true"
+				rendered="#{ManejadorAdministrarEntidad.verDeptCiudEditar and ManejadorAdministrarEntidad.pais == 'CO'}">
+				<f:selectItems
+					value="#{ManejadorAdministrarEntidad.departamentoItem}" />
+				<p:ajax update="ciudad_2"
+					listener="#{ManejadorAdministrarEntidad.cargarCiudad}" />
+			</p:selectOneMenu>
+			<h:outputText value="" rendered="#{ManejadorAdministrarEntidad.verDeptCiudEditar and ManejadorAdministrarEntidad.pais == 'CO'}"/>
+			
+			<h:outputText value="Ciudad:" rendered="#{ManejadorAdministrarEntidad.verDeptCiudEditar and ManejadorAdministrarEntidad.pais == 'CO'}"/>
+			<p:selectOneMenu value="#{ManejadorAdministrarEntidad.ciudad}" effect="fade" id="ciudad_2" filter="true" 
+				rendered="#{ManejadorAdministrarEntidad.verDeptCiudEditar and ManejadorAdministrarEntidad.pais == 'CO'}">
+				<f:selectItems value="#{ManejadorAdministrarEntidad.ciudadItem}"/>
+			</p:selectOneMenu>
+			<h:outputText value="" rendered="#{ManejadorAdministrarEntidad.verDeptCiudEditar and ManejadorAdministrarEntidad.pais == 'CO'}"/>
+		</h:panelGrid>
+		
+		<h:panelGrid columns="3">            			              
+			<h:outputLabel for="pagweb" value="Página Web: " />
+ 			<p:inputText id="pagweb" value="#{ManejadorAdministrarEntidad.pagweb}" required="false" label="pagweb"  readonly="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>  
+        	<p:message for="pagweb" display="icon"/>
+           
+        	<h:outputText value="Estado de la Entidad" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:inputText id="est_entidad" value="#{ManejadorAdministrarEntidad.estado}" required="false" label="est_entidad"  readonly="#{!ManejadorAdministrarEntidad.verEditarEntidades}" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:message for="est_entidad" display="icon" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			
+			<h:outputText value="Estado de la Entidad" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:selectOneMenu value="#{ManejadorAdministrarEntidad.estado}" effect="fade" id="est_entidad_2" filter="true" required="#{ManejadorAdministrarEntidad.verEditarEntidades}" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}">
+				<f:selectItems value="#{ManejadorAdministrarEntidad.estadoItem}" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			</p:selectOneMenu>
+			<p:message for="est_entidad_2" display="icon" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/> 
+	        
+	    </h:panelGrid>
+    </p:panel>
+    
+    <p:panel id="panel2" header="Tipo de Entidad" toggleable="false" toggleSpeed="500" widgetVar="panel2">    
+   		<h:panelGrid columns="3">    			            
+        	<h:outputText value="Naturaleza:" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:inputText id="naturaleza"
+				value="#{ManejadorAdministrarEntidad.naturaleza}" required="false"
+				label="naturaleza" readonly="true"
+				rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"
+				update="panelNvlTerriorial" />
+			<p:message for="naturaleza" display="icon" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+						
+			<h:outputText value="Sector:" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:inputText id="sector" value="#{ManejadorAdministrarEntidad.sector}" required="false" label="sector"  readonly="true" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:message for="sector" display="icon" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/>						
+			
+			<h:outputText value="Naturaleza:" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:selectOneMenu value="#{ManejadorAdministrarEntidad.naturaleza}"
+				effect="fade" id="naturaleza_2" filter="true"
+				required="#{ManejadorAdministrarEntidad.verEditarEntidades}"
+				rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}">
+				<p:ajax update="panelNvlTerriorial,nvlText, nvlterritorial_2" event="change"/>
+				<f:selectItems
+					value="#{ManejadorAdministrarEntidad.naturalezaItem}" />
+			</p:selectOneMenu>
+			<p:message for="naturaleza_2" display="icon" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+						
+			<h:outputText value="Sector:" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			<p:selectOneMenu value="#{ManejadorAdministrarEntidad.sector}"
+				effect="fade" id="sector_2" filter="true"
+				required="#{ManejadorAdministrarEntidad.verEditarEntidades}"
+				rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}">
+				<f:selectItems value="#{ManejadorAdministrarEntidad.sectorItem}" />
+			</p:selectOneMenu>
+			<p:message for="sector_2" display="icon" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"/>
+			
+		</h:panelGrid>
+		<h:panelGrid columns="3" id="panelNvlTerriorial">
+				<h:outputText id="nvlText" value="Nivel Territorial:"
+					rendered="#{ManejadorAdministrarEntidad.verEditarEntidades and ManejadorAdministrarEntidad.naturaleza == 'NAT_PUBLIC'}" />
+				<p:selectOneMenu
+				value="#{ManejadorAdministrarEntidad.nvlterritorial}"
+				effect="fade" id="nvlterritorial_2" filter="true"
+				rendered="#{ManejadorAdministrarEntidad.verEditarEntidades and ManejadorAdministrarEntidad.naturaleza == 'NAT_PUBLIC'}">
+				<f:selectItems
+					value="#{ManejadorAdministrarEntidad.nvlterritorialItem}" />
+			</p:selectOneMenu>
+			<p:message for="nvlterritorial_2" display="icon" rendered="#{ManejadorAdministrarEntidad.verEditarEntidades and ManejadorAdministrarEntidad.naturaleza == 'NAT_PUBLIC'}"/>
+			
+			<h:outputText value="Nivel Territorial:" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades and ManejadorAdministrarEntidad.naturaleza == 'NAT_PUBLIC'}"/>
+			<p:inputText id="nvlterritorial"
+				value="#{ManejadorAdministrarEntidad.nvlterritorial}"
+				required="false" label="nvlterritorial" readonly="true"
+				rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades and ManejadorAdministrarEntidad.naturaleza == 'NAT_PUBLIC'}" />
+			<p:message for="nvlterritorial" display="icon" rendered="#{!ManejadorAdministrarEntidad.verEditarEntidades and ManejadorAdministrarEntidad.naturaleza == 'NAT_PUBLIC'}"/>
+						            			                        
+        </h:panelGrid>
+    </p:panel>            
+    
+    <p:panel id="panel4" header="Datos del Registro" toggleable="false" toggleSpeed="500" widgetVar="panel4">
+        <h:panelGrid columns="2">    
+        	<h:outputText id="observaciones" value="Observaciones" />      			            
+            <p:inputTextarea rows="5" cols="40" autoResize="false" value="#{ManejadorAdministrarEntidad.observaciones}" readonly="#{!ManejadorAdministrarEntidad.verEditarEntidades}"/> 		            			                        
+        </h:panelGrid>
+    </p:panel>
+    <h:panelGrid columns="2" align="center">
+		<p:commandButton value="Volver" id="volver"
+			action="#{ManejadorAdministrarEntidad.volver}"
+			styleClass="ui-priority-primary"
+			immediate="true" />
+		
+		<p:commandButton value="Guardar" id="guardar"
+			actionListener="#{ManejadorAdministrarEntidad.guardar}"
+			styleClass="ui-priority-primary"
+			rendered="#{ManejadorAdministrarEntidad.verEditarEntidades}"
+			update="msg_upd, guardar,panel1, panel2, panel4"
+			disabled="#{ManejadorAdministrarEntidad.guardado}" />
+	</h:panelGrid>  
+	
+  
+</h:form> 
+
+</ui:define>
+
+</ui:composition>

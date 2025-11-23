@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form  enctype="multipart/form-data"> 
+			<t:div styleClass="contenido-titulo-general-myriad" >Administrar Documentos Vicerrectoría</t:div>
+			<p:tree value="#{manejadorDocumentosVice.root}" var="node" id="tree" style="width: 100%;" dynamic="true">  
+		        <p:treeNode id="treeNode" expandedIcon="ui-icon-folder-open"  
+                    collapsedIcon="ui-icon-folder-collapsed"> 
+		            <h:outputText value="(#{node.id})"/> - <h:outputText value="#{node.nombre}"/> - 
+					 <p:commandLink value="Eliminar" style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" 
+								 onclick="if(!confirm('¿Esta seguro de eliminar este elemento?'))return false" 
+								 update="@form" action="#{manejadorDocumentosVice.inactivarItem}">
+								<f:setPropertyActionListener value="#{node}" target="#{manejadorDocumentosVice.documentoSeleccionado}" />
+					</p:commandLink>
+		        </p:treeNode>  
+		        <p:treeNode type="document" icon="ui-icon ui-icon-document">
+					<h:outputText value="(#{node.id})"/> - <h:commandLink value="#{node.nombre}" action="#{manejadorDocumentosVice.descargarDocumentoEvento}" target="_blank">
+						<f:setPropertyActionListener value="#{node}" target="#{manejadorDocumentosVice.documentoSeleccionado}" />
+					</h:commandLink> - 
+					 <p:commandLink value="Eliminar" style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;" 
+								 onclick="if(!confirm('¿Esta seguro de eliminar la este elemento?'))return false" 
+								 update="@form" action="#{manejadorDocumentosVice.inactivarItem}">
+								<f:setPropertyActionListener value="#{node}" target="#{manejadorDocumentosVice.documentoSeleccionado}" />
+					</p:commandLink>
+				</p:treeNode>
+		    </p:tree> 
+			<p:panel style="margin-top: 20px;" header="Agregar nuevo archivo o carpeta">
+				<p:panelGrid columns="2" style="width: 100%;" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Es archivo:" /> 
+					<p:selectBooleanCheckbox value="#{manejadorDocumentosVice.esArchivoDocumentoNuevo}">
+						<p:ajax update="@form"  listener="#{manejadorDocumentosVice.cambiarVisible}"/>  
+			        </p:selectBooleanCheckbox> 
+					<h:outputText value="Nombre:"  rendered="#{!manejadorDocumentosVice.esArchivoDocumentoNuevo}"/>     
+					<p:inputText id="telefonoGrupo" value="#{manejadorDocumentosVice.documentoNuevo.nombre}" style="width: 200px;" required="true" 
+					     requiredMessage="Campo requerido: Nombre"  rendered="#{!manejadorDocumentosVice.esArchivoDocumentoNuevo}"
+					/>
+					<h:outputText value="Seleccione el archivo:" rendered="#{manejadorDocumentosVice.esArchivoDocumentoNuevo}"/> 
+			        <p:fileUpload value="#{manejadorDocumentosVice.file}" mode="simple"  rendered="#{manejadorDocumentosVice.esArchivoDocumentoNuevo}"/>   
+					<h:outputText value="Carpeta padre:" />
+					 <p:selectOneMenu style="width: 330px;" id="idPadre" value="#{manejadorDocumentosVice.documentoNuevo.idPadre}" >
+						<f:selectItems value="#{manejadorDocumentosVice.documentoNuevaItem}"/>   	                
+					</p:selectOneMenu>
+				</p:panelGrid>
+		        <t:div>
+		        	 <p:commandButton value="Guardar Archivo o Carpeta" ajax="false" actionListener="#{manejadorDocumentosVice.cargarArchivo}"/>
+	            </t:div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+			

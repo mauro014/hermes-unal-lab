@@ -1,0 +1,505 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<h3><p align="center"><font color = navy>Preinscripción</p></h3>
+<h:panelGrid align="center">
+<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.cursoPadre}" styleClass="labels_proyecto"
+					style='font-size: 18px; font-style: bold; color: Navy'></h:outputText>
+</h:panelGrid>
+<h:panelGrid align="center">
+<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.cursoTitulo}" styleClass="labels_proyecto"
+					style='font-size: 18px; font-style: bold; color: Navy'></h:outputText>
+</h:panelGrid>
+
+<br /><br />	
+				
+<s:fieldset legend="#{ManejadorPreinscripcionEscuelaInternacional.cursoLabel}"  styleClass="legend1" 	style='font-size: 13px;'>
+	<h:panelGroup id="identificacion">
+
+		<h:panelGrid columns="1" align="center" style="width: 361px;">
+			<div align="left">
+			<h:panelGrid columns="2" style="width: 200px; ">
+				<h:outputText value="Curso/ Exámen:"
+					styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+				<h:selectOneMenu id="selectConvocatoria" value="#{ManejadorPreinscripcionEscuelaInternacional.curso}" styleClass="labels_proyecto" 
+					style="font-size: 11px; font-style: normal" 
+					valueChangeListener="#{ManejadorPreinscripcionEscuelaInternacional.cambiarCurso}"
+					onchange="submit(this);">
+					<f:selectItems value="#{ManejadorPreinscripcionEscuelaInternacional.cursoItem}"/>
+				</h:selectOneMenu>
+			</h:panelGrid>
+			</div>
+			
+			<br/>
+			<h:panelGrid columns="2" align="center" style="width: 361px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[2]}">
+			<h:outputText value="DESCRIPCIÓN: " styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: bold' />
+			<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.cursoNombre}" styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+			<h:outputText value="FECHA/HORARIO: " styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: bold' />
+			<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.cursoHorario}" styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+			
+			</h:panelGrid>
+			<h:panelGrid columns="2" align="center" style="width: 361px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[3]}">
+			<h:outputText value="CÓDIGO SIA (Para estudiantes UN):" styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: bold' />
+			<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.cursoCodigoSIA}" styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+			</h:panelGrid>
+				<br/>
+			<h:panelGrid columns="2" align="center" style="width: 361px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[4]}">
+			<h:outputText value="PREREQUISITOS:" styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: bold' />
+			<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.cursoRequisitos}" styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+			</h:panelGrid>
+			
+			<br/>
+			
+			<h:panelGrid columns="1" align="center" style="width: 322px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[2]}">
+			<h:outputText value="NOTA: Si usted no es estudiante de la Universidad Nacional de Colombia, por favor tenga en cuenta que para el pago del curso no aplica el descuento" style="font-size: 11px; font-style: normal; color:#FF3939"/>
+			</h:panelGrid>
+			
+		<br/>
+			<h:panelGrid columns="1" align="center">
+				<h:commandButton
+					action="#{ManejadorPreinscripcionEscuelaInternacional.registro}" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[2]}"
+					value="Registrarse" image="/imgplantilla/pngtitulos/continuar2.png" >
+				</h:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:panelGroup>
+	
+	<br/>
+	<h:panelGrid columns="2" align="center" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelMensaje}">
+			<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.mensaje}"
+				style="font-size: 12px; color:#FF3939; font-weight: bold; text-align:left;" />
+	</h:panelGrid>
+		
+</s:fieldset>
+<br/>
+
+<s:fieldset legend="Preinscripción"  styleClass="legend1" 	style='font-size: 13px;' rendered="#{ManejadorPreinscripcionEscuelaInternacional.mostrarForm}">
+	<h:panelGroup id="identificacion">
+
+		<h:panelGrid columns="1" align="center">
+			<h:panelGrid columns="2">
+
+				<h:outputText value="Tipo de documento del participante:"
+					styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+				<h:selectOneMenu
+					value="#{ManejadorPreinscripcionEscuelaInternacional.tipoDocumento.id}"
+					styleClass="texto" style='font-size: 11px; font-style: normal'>
+					<f:selectItems
+						value="#{ManejadorPreinscripcionEscuelaInternacional.tipoDocumentoItem}" />
+				</h:selectOneMenu>
+
+				<h:outputText value="Número de documento del participante"
+					styleClass="labels_proyecto"
+					style='font-size: 11px; font-style: normal' />
+				<h:inputText id="Numero" styleClass="texto"
+					style='font-size: 12px; font-style: normal'
+					value="#{ManejadorPreinscripcionEscuelaInternacional.documento}"
+					size="20">
+				</h:inputText>
+			</h:panelGrid>
+			<h:panelGrid columns="2" align="center">
+				<h:commandButton
+					action="#{ManejadorPreinscripcionEscuelaInternacional.buscarPersona}"
+					value="Buscar" image="/imgplantilla/pngtitulos/cen_buscar.png" />
+				<h:commandButton
+					action="#{ManejadorPreinscripcionEscuelaInternacional.limpiar}"
+					actionListener="#{ManejadorPreinscripcionEscuelaInternacional.cancelAction}"
+					value="Limpiar" image="/imgplantilla/pngtitulos/cen_limpiar.png"
+					immediate="true" />
+
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:panelGroup>
+
+</s:fieldset>
+
+<h:panelGroup id="panelNoExiste"
+		rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[2]}">
+		<h:panelGrid columns="2" align="center">
+			<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[2]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" />
+		</h:panelGrid>
+	</h:panelGroup>
+	<br/>
+	
+<s:fieldset legend="Datos personales" styleClass="legend1" style="font-size: 13px;" 
+rendered="#{ManejadorPreinscripcionEscuelaInternacional.mostrarDatosPersona}">
+		
+		<h:panelGrid columns="1" style="width: 621px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[10]}">
+			<h:outputText value="RECUERDE: El curso adquiere el carácter de una asignatura elegible de posgrado con calificación numérica (0 a 5) y por lo tanto el no realizar el proceso de cancelación, la no asistencia del curso o la no presentación de las actividades establecidas generan una nota de 0.0 que será incluida en la historia académica del estudiante. " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		</h:panelGrid>
+	<br/>	
+	<h:panelGrid columns="2" style="width: 621px; ">
+		
+		<h:outputText value="Tipo de Participante: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:selectOneMenu value="#{ManejadorPreinscripcionEscuelaInternacional.tipoParticipacion1}" style="width : 420px" styleClass="texto" 
+		style="font-size: 11px; font-style: normal">
+		<f:selectItems value="#{ManejadorPreinscripcionEscuelaInternacional.listaTipoParticipacion1}"/>
+	  	</h:selectOneMenu>
+	  	<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[4]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[4]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[4]}"/>		
+		<h:outputText value="Nombres: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.nombres}" styleClass="texto" size="40" readonly="true" style="width: 346px; "/>
+	
+				
+		<h:outputText value="Apellidos: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.apellidos}" styleClass="texto" size="40" readonly="true" style="width: 348px; "/>
+		<h:outputText value="Semestre: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"  />
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.semestre}" styleClass="texto" size="10" readonly="true"/>			
+		
+							
+		<h:outputText value="Plan de estudios: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.carrera}"  styleClass="texto" cols="40" rows="2" readonly="true"/>
+
+				
+		<h:outputText value="Facultad: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.facultad}"  styleClass="texto" cols="40" rows="2"  readonly="true"/>
+		
+				
+		<h:outputText value="Promedio: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.promedio}" styleClass="texto" size="10" readonly="true"/>
+		
+					
+		<h:outputText value="Ciudad: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.ciudad}" styleClass="texto" size="40" readonly="true" style="width: 342px; "/>	
+	
+				
+		<h:outputText value="Dirección: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.direccion}" styleClass="texto" size="40" readonly="true" style="width: 343px; "/>	
+	
+					
+		<h:outputText value="Teléfono fijo: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.telefonoFijo}" styleClass="texto" size="15" readonly="true"/>	
+	
+							
+		<h:outputText value="Teléfono Móvil: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.telefonoMovil}" styleClass="texto" size="15"/>	
+	
+									
+		<h:outputText value="Correo electrónico: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.correo}" styleClass="texto" size="40" readonly="true" style="width: 345px; "/>									   
+		
+		
+	</h:panelGrid>
+					
+	<h:panelGrid columns="1" align="center">						
+		<h:commandButton action="#{ManejadorPreinscripcionEscuelaInternacional.calcularValor}"
+					 value="Continuar"
+					image="/imgplantilla/pngtitulos/continuar2.png">
+		</h:commandButton>
+	</h:panelGrid>
+	<br/>
+		
+</s:fieldset>
+
+<s:fieldset legend="Datos personales" styleClass="legend1" style="font-size: 12px;" 
+rendered="#{ManejadorPreinscripcionEscuelaInternacional.mostrarDatosPersona2}">
+		
+	<h:panelGrid columns="2" style="width: 601px; ">
+		
+		<h:outputText value="Tipo de Participante: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:selectOneMenu value="#{ManejadorPreinscripcionEscuelaInternacional.tipoParticipacion}" style="width : 420px" styleClass="texto" 
+		style="font-size: 11px; font-style: normal"
+		valueChangeListener="#{ManejadorPreinscripcionEscuelaInternacional.cambiarTipoParticipacion}"
+		onchange="submit(this);">
+		<f:selectItems value="#{ManejadorPreinscripcionEscuelaInternacional.listaTipoParticipacion}"/>
+	  </h:selectOneMenu>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[5]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[5]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[5]}"/>	
+					
+		<h:outputText value="Nombres: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.nombres}" styleClass="texto" size="40" style="width: 348px; "/>
+			<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[6]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[6]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[6]}"/>
+				
+		<h:outputText value="Apellidos: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.apellidos}" styleClass="texto" size="40" style="width: 345px; "/>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[7]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[7]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[7]}"/>
+		</h:panelGrid>
+		
+		<h:panelGrid  columns="2" style="width: 819px;" rendered="#{!ManejadorPreinscripcionEscuelaInternacional.publico}">
+		
+		<h:outputText value="Semestre: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" /><h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.semestre}" styleClass="texto" size="10" style="width: 172px; "/>			
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[8]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[8]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[8]}"/>
+					
+		<h:outputText value="Carrera: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.carrera}"  styleClass="texto" cols="40" rows="2" style="width: 347px; "/>
+		
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[9]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[9]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[9]}"/>		
+		<h:outputText value="Facultad: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.facultad}"  styleClass="texto" cols="40" rows="2" style="width: 346px; "/>
+		
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[10]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[10]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[10]}"/>		
+		<h:outputText value="Universidad: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.universidad}" styleClass="texto" cols="40" rows="2" style="width: 344px; "/>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[11]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[11]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[11]}"/>
+				
+		<h:outputText value="Promedio: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.promedio}" styleClass="texto" size="10" style="width: 174px; "/>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[12]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[12]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[12]}"/>
+		
+		</h:panelGrid>	
+		
+		<h:panelGrid  columns="2" style="width: 584px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.publico}">
+		<h:outputText value="Universidad/ Empresa: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.empresa}" styleClass="texto" cols="40" rows="2" style="width: 344px; "/>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[28]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[28]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[28]}"/>
+		<h:outputText value="Cargo: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.cargo}" styleClass="texto" cols="40" rows="2" style="width: 344px; "/>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[29]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[29]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[29]}"/>
+		<h:outputText value="Profesion: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.profesion}" styleClass="texto" cols="40" rows="2" style="width: 344px; "/>
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[30]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[30]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[30]}"/>
+				
+		</h:panelGrid>
+		
+		<h:panelGrid  columns="2" style="width: 601px; ">		
+		
+		<h:outputText value="Ciudad: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.ciudad}" styleClass="texto" size="40" style="width: 343px; "/>	
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[13]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[13]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[13]}"/>
+			
+		<h:outputText value="Pais: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.pais}" styleClass="texto" size="40" style="width: 343px; "/>	
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[18]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[18]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[18]}"/>
+				
+		<h:outputText value="Dirección: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.direccion}" styleClass="texto" size="40" style="width: 343px; "/>	
+			<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[14]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[14]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[14]}"/>
+					
+		<h:outputText value="Teléfono fijo: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.telefonoFijo}" styleClass="texto" size="20" style="width: 344px; "/>	
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[15]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[15]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[15]}"/>
+					
+		<h:outputText value="Teléfono Móvil: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.telefonoMovil}" styleClass="texto" size="20" style="width: 346px; "/>	
+		<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[16]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[16]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[16]}"/>
+									
+		<h:outputText value="Correo electrónico: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+		<h:inputText value="#{ManejadorPreinscripcionEscuelaInternacional.correo}" styleClass="texto" size="40" style="width: 343px; "/>									   
+			<h:outputText
+				value="" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[17]}"/>
+	  	<h:outputText
+				value="#{ManejadorPreinscripcionEscuelaInternacional.errores[17]}"
+				style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"  rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[17]}"/>
+					
+	</h:panelGrid>
+					
+					
+	<h:panelGrid columns="1" align="center">
+						
+	<h:commandButton action="#{ManejadorPreinscripcionEscuelaInternacional.calcularValor}"
+				 value="Continuar" 	image="/imgplantilla/pngtitulos/continuar2.png">
+	</h:commandButton>
+	</h:panelGrid>
+	<br/>
+	
+</s:fieldset>
+
+<s:fieldset legend="Valor" styleClass="legend1" style="font-size: 12px;" 
+rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[5]}">
+	<br/>
+	<h:panelGrid columns="1" align="center" style="width: 322px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[9]}">
+	<h:outputText value="Entre las fechas:  #{ManejadorPreinscripcionEscuelaInternacional.cursoFInicial} y  #{ManejadorPreinscripcionEscuelaInternacional.cursoFFinal}" styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+	</h:panelGrid>
+	<h:panelGrid columns="1" align="center" style="width: 322px;" >
+	<h:outputText value="El valor a pagar es de ($): #{ManejadorPreinscripcionEscuelaInternacional.valorCurso}" styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+	</h:panelGrid>
+	<br/>
+	<h:panelGrid columns="1" align="center" style="width: 322px;" rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[9]}">
+	<h:outputText value="Entre las fechas:  #{ManejadorPreinscripcionEscuelaInternacional.cursoFInicial2} y  #{ManejadorPreinscripcionEscuelaInternacional.cursoFFinal2}"  styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+	<h:outputText value="El valor a pagar es de ($): #{ManejadorPreinscripcionEscuelaInternacional.valorCurso2}" styleClass="labels_proyecto" style="font-size: 11px; font-style: normal"/>
+	</h:panelGrid>
+	
+	<br/>
+	
+	
+	<h:panelGrid columns="1" align="center" >
+				<h:commandButton action="#{ManejadorPreinscripcionEscuelaInternacional.verArchivos}" 
+				 value="Registrarse" image="/imgplantilla/pngtitulos/continuar2.png">
+				</h:commandButton>
+	</h:panelGrid>
+	
+	
+</s:fieldset>
+
+<s:fieldset legend="Documentos de Soporte" styleClass="legend1" style="font-size: 12px;" 
+rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRender[7]}">
+	<br/>
+	
+	<h:panelGrid columns="2">
+		<h:outputText value="Dirección (url) para descargar o visualizar los soportes: " styleClass="labels_proyecto" style="font-size: 11px; font-style: normal" />
+		<h:inputTextarea value="#{ManejadorPreinscripcionEscuelaInternacional.link}" styleClass="texto" style="width: 346px; "
+		cols="60" rows="4">
+		</h:inputTextarea>
+	</h:panelGrid>
+	
+	<br/>
+	<h:outputText
+		value=" Documentos para adjuntar"
+		styleClass="labels_proyecto"
+		style='font-size: 11px; font-style: normal' />	
+	<br/>
+
+	
+	<h:panelGrid columns="2">
+
+		<h:outputText value="Documentos:"
+			styleClass="labels_proyecto"
+			style='font-size: 11px; font-style: normal' />
+		<h:selectOneMenu
+			value="#{ManejadorPreinscripcionEscuelaInternacional.tipoDocumentoSel}"
+			styleClass="texto" style='font-size: 11px; font-style: normal'>
+			<f:selectItems
+				value="#{ManejadorPreinscripcionEscuelaInternacional.tipoDocumentoSelItem}" />
+		</h:selectOneMenu>
+		
+
+		<h:outputLabel for="myFileId11" value="Archivo: "
+			style='font-size: 11px; font-style: normal' />
+		<h:panelGroup>
+			<t:inputFileUpload id="myFileId11"
+				value="#{ManejadorPreinscripcionEscuelaInternacional.archivoObligatorio}"
+				storage="file" />
+			<h:commandButton value="Adjuntar Archivo"
+				action="#{ManejadorPreinscripcionEscuelaInternacional.guardarArchivoObligatorio}" />
+		</h:panelGroup>
+
+
+		<h:outputText value=""
+			rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[26]}" />
+		<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.errores[26]}"
+			style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"
+			rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[26]}" />
+		<h:outputText value="Archivos Registrados(*)"
+			style='font-size: 11px; font-style: normal'
+			styleClass="labels_proyecto" />
+		<h:dataTable var="archivoAdjunto"
+			value="#{ManejadorPreinscripcionEscuelaInternacional.listaArchivosObligatoriosSel}"
+			cellpadding="1" cellspacing="8" align="center" border="1"
+			binding="#{ManejadorPreinscripcionEscuelaInternacional.tablaArchivosObligatoriosSel}">
+
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Archivo Cargado" style='font-size: 11px;' />
+				</f:facet>
+				<h:outputText value="#{archivoAdjunto.soporte1Nombre}" styleClass="normal"
+					style='font-size: 11px; font-style: normal' />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Eliminar" style='font-size: 11px;' />
+				</f:facet>
+				<h:commandButton value="Eliminar archivo"
+					action="#{ManejadorPreinscripcionEscuelaInternacional.eliminarArchivoObligatorio}"
+					image="/imgplantilla/pngtitulos/cen_eliminar.png" />
+			</h:column>
+		</h:dataTable>
+		
+		<h:outputText value=""
+			rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[27]}" />
+		<h:outputText value="#{ManejadorPreinscripcionEscuelaInternacional.errores[27]}"
+			style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"
+			rendered="#{ManejadorPreinscripcionEscuelaInternacional.panelRenderError[27]}" />
+	</h:panelGrid>
+	
+	<br/>
+	<h:panelGrid columns="1" align="center">						
+		<h:commandButton action="#{ManejadorPreinscripcionEscuelaInternacional.enviar}"
+					 value="Enviar preinscripción"
+					 style="font-size: 12px; background-color: #A9BCF5; font-weight: bold; color: #400040; border-bottom-style: none; border-top-style: none; border-left-style: none; border-right-style: none">
+		</h:commandButton>
+	</h:panelGrid>
+	
+</s:fieldset>
+
+</h:form>
+</ui:define>
+</ui:composition>

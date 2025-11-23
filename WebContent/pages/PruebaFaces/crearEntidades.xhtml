@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+	
+	<ui:define name="title">REGISTRO ENTIDADES</ui:define>
+
+	<ui:define name="content">
+	<h:form id="Entidades">  
+  
+    <p:panel id="panel1" header="Datos de la Entidad" toggleable="false" toggleSpeed="500" widgetVar="panel1">  
+  
+        <p:messages id="msgs" />  
+  
+        <h:panelGrid columns="3">  
+  			<h:outputLabel for="descripcion" value="Nombre o Descripción: " />
+  			<p:inputText id="descripcion" value="#{ManejadorCrearEntidad.descripcion}" 
+  						 required="true"
+  						 requiredMessage="Descripción es un campo obligatorio y no puede ser nulo" 
+  						 label="descripcion">  
+                <f:validateLength minimum="2" />  
+            </p:inputText>  
+            <p:message for="descripcion"/>  
+
+            <h:outputLabel for="nit" value="NIT: " />  
+            <p:inputText id="nit" value="#{ManejadorCrearEntidad.nit}" 
+            			 label="nit" 
+            			 required="#{ManejadorCrearEntidad.pais == 'CO'}"
+            			 requiredMessage="NIT es un campo obligatorio" 
+            			 converterMessage="Un NIT sólo puede tener números"
+            			 validateMessage="NIT es un campo obligatorio">
+            	<f:validateLongRange minimum="0" maximum="999999999999"/>    
+            </p:inputText>  
+            <p:message for="nit"/> 
+            
+            <h:outputLabel for="direccion" value="Dirección: " />
+  			<p:inputText id="direccion" value="#{ManejadorCrearEntidad.direccion}" 
+  						 required="true"
+  						 requiredMessage="Dirección es un campo obligatorio"  						 
+  						 label="direccion">  
+                <f:validateLength minimum="2" />  
+            </p:inputText>  
+            <p:message for="direccion"/> 
+            
+            <h:outputLabel for="telefono" value="Teléfono: " />
+  			<p:inputText id="telefono" value="#{ManejadorCrearEntidad.telefono}" 
+  						 required="true" 
+  						 label="telefono"
+  						 requiredMessage="Telefono es un campo obligatorio"
+						 converterMessage="Un telefono sólo puede tener números"
+            			 validateMessage="Telefono es un campo obligatorio">  						   
+                <f:validateLength minimum="7" />
+                <f:validateLongRange minimum="0" maximum="999999999999"/>                  
+            </p:inputText>  
+            <p:message for="telefono"/> 
+            
+            <h:outputLabel for="fax" value="Fax: " />
+  			<p:inputText id="fax" value="#{ManejadorCrearEntidad.fax}" 
+  						 required="false" 
+  						 label="fax"
+  						 converterMessage="Un telefono sólo puede tener números">
+  				<f:validateLongRange minimum="0" maximum="999999999999"/>    
+            </p:inputText>  
+            <p:message for="fax"/>            
+			            
+            <h:outputText value="Pais:" />          			
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.pais}" effect="fade" id="pais"  filter="true" required="true">
+				<f:selectItems value="#{ManejadorCrearEntidad.paisItem}"/>
+						<p:ajax update="departamento, deptoText, ciudad, panelDeptoCiud"
+								event="change" listener="#{ManejadorCrearEntidad.cargarDepto}" />
+					</p:selectOneMenu>
+			<p:message for="pais" display="icon"/>
+		</h:panelGrid>
+			
+		<h:panelGrid id="panelDeptoCiud" columns="3">			
+			<h:outputText value="Departamento:" id="deptoText" rendered="#{ManejadorCrearEntidad.pais == 'CO'}"/>
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.departamento}"
+							 effect="fade" id="departamento" filter="true"
+							 rendered="#{ManejadorCrearEntidad.pais == 'CO'}">
+				<f:selectItems value="#{ManejadorCrearEntidad.departamentoItem}" />
+				<p:ajax update="ciudad, ciudText" event="change"
+						listener="#{ManejadorCrearEntidad.cargarCiudad}" />
+			</p:selectOneMenu>
+			<h:outputText value="" />
+			
+			<h:outputText value="Ciudad:" id="ciudText" rendered="#{ManejadorCrearEntidad.pais == 'CO'}"/>
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.ciudad}" effect="fade" id="ciudad" filter="true" rendered="#{ManejadorCrearEntidad.pais == 'CO'}">
+				<f:selectItems value="#{ManejadorCrearEntidad.ciudadItem}"/>
+			</p:selectOneMenu>
+			<h:outputText value="" />
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelWeb" columns="3">	            			              
+			<h:outputLabel for="pagweb" value="Página Web: " />
+  			<p:inputText id="pagweb" value="#{ManejadorCrearEntidad.pagweb}" required="false" label="pagweb"/>  
+            <p:message for="pagweb" display="icon"/>
+            
+            <h:outputText value="Estado de la Entidad" rendered="#{ManejadorCrearEntidad.est_solicitud == 'EST_EN_AC'}"/>
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.estado}"
+							 effect="fade" id="est_entidad" filter="true" required="true"
+							 rendered="#{ManejadorCrearEntidad.est_solicitud == 'EST_EN_AC'}">
+				<f:selectItems value="#{ManejadorCrearEntidad.estadoItem}" />
+			</p:selectOneMenu>
+			<p:message for="est_entidad" display="icon"/>
+             			            			                        
+        </h:panelGrid>  
+    </p:panel>
+    
+    <p:panel id="panel2" header="Tipo de Entidad" toggleable="false" toggleSpeed="500" widgetVar="panel2">    
+        <h:panelGrid columns="3">
+			    			            
+            <h:outputText value="Naturaleza:"/>          			
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.naturaleza}" effect="fade" id="naturaleza" filter="true" required="true">
+				<f:selectItems value="#{ManejadorCrearEntidad.naturalezaItem}"/>
+				<p:ajax update="nvlterritorial, panelNvl" event="change"/>
+			</p:selectOneMenu>
+			<p:message for="naturaleza" display="icon"/>
+						
+			<h:outputText value="Sector:" />
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.sector}" effect="fade" id="sector" filter="true" required="true">
+				<f:selectItems value="#{ManejadorCrearEntidad.sectorItem}"/>
+			</p:selectOneMenu>
+			<p:message for="sector" display="icon"/>
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelNvl" columns="3">		
+			<h:outputText value="Nivel Territorial:" rendered="#{ManejadorCrearEntidad.naturaleza == 'NAT_PUBLIC'}"/>
+			<p:selectOneMenu value="#{ManejadorCrearEntidad.nvlterritorial}"
+							 effect="fade" id="nvlterritorial" filter="true"
+							 rendered="#{ManejadorCrearEntidad.naturaleza == 'NAT_PUBLIC'}">
+				<f:selectItems value="#{ManejadorCrearEntidad.nvlterritorialItem}" />
+			</p:selectOneMenu>
+			<p:message for="nvlterritorial" display="icon"/>
+		</h:panelGrid>		            			                        
+        
+    </p:panel>        
+    
+    <p:panel id="panel4" header="Datos del Registro" toggleable="false" toggleSpeed="500" widgetVar="panel4">
+        <h:panelGrid columns="2">
+            <h:outputText value="Fecha Creación:"/>                      			
+			<h:outputText value="#{ManejadorCrearEntidad.fec_solicitud}" id="fecsol" readonly="true">  
+                <f:convertDateTime pattern="d/M/yyyy"/>  
+            </h:outputText>    
+        	<h:outputText id="observaciones" value="Observaciones" />
+			<p:inputTextarea rows="5" cols="40" counter="counter"
+							 maxlength="200" counterTemplate="{0} caracteres restantes."
+							 autoResize="false" value="#{ManejadorCrearEntidad.observaciones}" />
+			<h:outputText id="counter"/> 		            			                        
+        </h:panelGrid>
+    </p:panel>
+    
+    <br/>
+    
+    <h:panelGrid columns="2" align="center">
+	<p:commandButton value="Guardar" id="guardar"
+					actionListener="#{ManejadorCrearEntidad.guardarEntidadSolicitud}"
+					styleClass="ui-priority-primary"
+					update="msgs, panel1, panel2, panel4"/>
+	<p:commandButton value="Cancelar" update="Entidades" id="cancelar" styleClass="ui-priority-primary"/>
+	</h:panelGrid>	
+	
+</h:form> 
+
+</ui:define>
+
+</ui:composition>

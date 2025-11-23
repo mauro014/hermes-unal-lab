@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Modificar / consultar trámite </t:div>
+			<t:div style="padding:15px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelTramite" style="width:100%;">
+					<p:row>
+						<p:column colspan="2" style="width:20%;">
+							<h:outputText value="Nombre del trámite:"
+								style='font-weight:bold;' />
+						</p:column>
+						<p:column style="width:80%; text-align:justify;">
+							<h:outputText
+								value="#{manejadorTramitesBiodiversidad.tramiteBiodiversidad.nombre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="width:20%;">
+							<h:outputText value="Descripción del trámite:"
+								style='font-weight:bold;' />
+						</p:column>
+						<p:column style="width:80%; text-align:justify;">
+							<h:outputText
+								value="#{manejadorTramitesBiodiversidad.tramiteBiodiversidad.descripcion}" />
+						</p:column>
+					</p:row>
+					<p:row>
+					<p:column style="width:20px;">
+							<p:commandButton id="infoEncargados" icon="ui-icon-info" />
+							<p:tooltip for="infoEncargados" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indica si el trámite admite más de un encargado por <br />
+								       	dependencia.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="¿Permite más de un responsable?:"
+								style='font-weight:bold;' />
+						</p:column>
+						<p:column style="width:80%; text-align:justify;">
+							<h:outputText value=" SI" style='font-weight:bold;'
+								rendered="#{manejadorTramitesBiodiversidad.tramiteBiodiversidad.esVariosEncargados}" />
+							<h:outputText value=" NO" style='font-weight:bold;'
+								rendered="#{!manejadorTramitesBiodiversidad.tramiteBiodiversidad.esVariosEncargados}" />
+						</p:column>
+					</p:row>
+					<p:row>
+					<p:column style="width:20px;">
+							<p:commandButton id="infoNivel" icon="ui-icon-info" />
+							<p:tooltip for="infoNivel" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Para cambiar el nivel donde se realiza el trámite debe eliminar de la tabla <br />
+								       	las personas asignadas actualmente.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Nivel del trámite:"
+								style='font-weight:bold;' />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorTramitesBiodiversidad.tramiteBiodiversidad.nivelTramite}"
+								style="width: 100%;" id="nivel"
+								disabled="#{manejadorTramitesBiodiversidad.esConsulta or not empty manejadorTramitesBiodiversidad.tramiteBiodiversidad.listaPersonas or manejadorTramitesBiodiversidad.tramiteBiodiversidad.esTramiteVicerrectoria}">
+								<f:selectItems
+									value="#{manejadorTramitesBiodiversidad.nivelTramiteItem}" />
+								<p:ajax
+									listener="#{manejadorTramitesBiodiversidad.consultarDependencias}"
+									update="@form" process="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorTramitesBiodiversidad.esConsulta and (manejadorTramitesBiodiversidad.tramiteBiodiversidad.nivelTramite == 'S' or manejadorTramitesBiodiversidad.tramiteBiodiversidad.nivelTramite == 'F')}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDependencia" icon="ui-icon-info" />
+							<p:tooltip for="infoDependencia" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la dependencia de la persona.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Dependencia:" style='font-weight:bold;'/>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:100%;" id="dependencia"
+								value="#{manejadorTramitesBiodiversidad.dependenciaSeleccionada}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorTramitesBiodiversidad.dependenciasItem}" />
+								<p:ajax
+									listener="#{manejadorTramitesBiodiversidad.consultarCoordinadoresDependencia}"
+									update="@form" process="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorTramitesBiodiversidad.esConsulta}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoCoordinadores" icon="ui-icon-info" />
+							<p:tooltip for="infoCoordinadores" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Personal disponible en la dependencia.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Coordinadores:" style='font-weight:bold;'/>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:100%;" id="coordinador"
+								value="#{manejadorTramitesBiodiversidad.personaSeleccionada}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorTramitesBiodiversidad.listaCoordinadoresItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorTramitesBiodiversidad.esConsulta}">
+						<p:column colspan="3" style="text-align:center;">
+							<p:commandButton value="Agregar" update="@form"
+								actionListener="#{manejadorTramitesBiodiversidad.agregarPersonaEncargada}"
+								process="@form" id="agregar" icon="ui-icon-plus" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3" style="font-weight:bold; text-align:center;">
+							<br />
+							<h:outputText value="PERSONAL ENCARGADO" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:dataTable id="personal" var="persona" style="width:100%"
+								value="#{manejadorTramitesBiodiversidad.tramiteBiodiversidad.listaPersonas}"
+								align="center" emptyMessage="No se han agregado responsables">
+
+								<p:column headerText="Dependencia" style="width:10%;">
+									<h:outputText value="#{persona.dependencia.nombre}" />
+								</p:column>
+
+								<p:column headerText="Nombres" style="width:70%;">
+									<h:outputText value="#{persona.personaEncargada.nombreCompletoMinusculas}" />
+								</p:column>
+
+								<p:column headerText="Documento" style="width:10%;">
+									<h:outputText
+										value="#{persona.personaEncargada.id.tipoDocumento} - #{persona.personaEncargada.id.documento}" />
+								</p:column>
+								
+								<p:column headerText="Extensión" style="width:5%;">
+									<h:outputText
+										value="#{persona.personaEncargada.telExtension}" />
+								</p:column>
+
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorTramitesBiodiversidad.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorTramitesBiodiversidad.eliminarPersona}"
+										icon="ui-icon-trash" title="Eliminar persona">
+										<f:setPropertyActionListener value="#{persona}"
+											target="#{manejadorTramitesBiodiversidad.personaEncargadaBiodiversidad}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorTramitesBiodiversidad.esConsulta}">
+						<p:column colspan="3" style="text-align:center;">
+							<p:commandButton value="Guardar" update="@form"
+								actionListener="#{manejadorTramitesBiodiversidad.guardarCambios}"
+								process="@form" id="guardar" icon="ui-icon-disk" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			<p:messages id="msgs" autoUpdate="true" showDetail="false"
+				closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

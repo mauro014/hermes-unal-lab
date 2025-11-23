@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Colecciones científicas<br/></t:div>
+			En esta sección puede actualizar la información de las colecciones en las cuales actúa como curador(a).<br />
+			Por favor tener en cuenta el 
+			<a href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=26" target="_blank" style="color: #16A8E2;font-weight: bold;">instructivo</a> 
+			para registro o actualización de Colección Científica.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="coleccionesBiologicas">
+			<br />
+			<p:panel>
+				<t:div style="color:#464646; text-align:justify;">
+						Una <strong style="color: #FF0000;">COLECCIÓN CIENTÍFICA </strong>es un conjunto de especímenes catalogados, 
+						mantenidos y organizados que apoyan el desarrollo de la investigación científica y la conservación del patrimonio 
+						nacional; surge como evidencia de la actividad científica, preservando diversas clases de testimonios como 
+						elementos esenciales de la construcción de conocimiento investigativo y legado cultural de su labor.<br/>
+						Una colección científica pretende preservar un amplio conjunto de muestras biológicas-recolectadas o vivas-, 
+						mineralógicas, arqueológicas y otras que se pudieran establecer como susceptibles de ser coleccionadas por su 
+						carácter específico y su utilidad investigativa. (De acuerdo con la <a target="_blank" style="text-decoration:underline; 
+						color: #16A8E2;	font-weight: bold;" href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=90297" >
+						Resolución 205 de 2018</a>, art. 2)
+				</t:div>
+			</p:panel>
+			<br />
+			<p:dataTable var="coleccion"
+				value="#{manejadorColeccionesBiologicas.listaColecciones}"
+				emptyMessage="Ud. no tiene Colecciones Biológicas registradas">
+				<p:column headerText="Id-UNal"
+					style="width:20%;">
+					<h:outputText value="#{coleccion.id}" />
+				</p:column>
+				<p:column headerText="Colección"
+					style="width:20%;">
+					<h:outputText value="#{coleccion.nombre}" />
+				</p:column>
+				<p:column headerText="Estado en la UN"
+					style="width:20%;">
+					<h:outputText value="#{coleccion.nombreEstado}" />
+				</p:column>
+				<p:column style="width:20%;">
+					<f:facet name="header">
+						<h:outputText value="Estado ante la" />
+						<br/>
+						<h:outputText value="autoridad competente" />
+					</f:facet>
+					<h:outputText value="#{coleccion.nombreEstadoEntidadExterna}" />
+				</p:column>
+				<p:column
+					style="width:20%; text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Fecha del último registro" />
+						<br/>
+						<h:outputText value="/actualización ante la" />
+						<br/>
+						<h:outputText value="autoridad competente" />
+					</f:facet>
+					<h:outputText value="#{coleccion.fechaUltimoRegistroHumboldt}"
+						rendered="#{coleccion.fechaProximoRegistro != null}" />
+					<h:outputText value="Sin último registro encontrado"
+						rendered="#{coleccion.fechaProximoRegistro == null}" />
+				</p:column>
+				<p:column headerText="Acción"
+					style="width:20%; text-align:center;">
+					<p:commandButton rendered="#{coleccion.estado != 'EV' and coleccion.estado != 'IN'}"
+						action="#{manejadorColeccionesBiologicas.editarColeccion}"
+						icon="ui-icon-pencil"
+						value="Editar"
+						update="@form">
+						<f:setPropertyActionListener
+							value="#{coleccion}"
+							target="#{manejadorColeccionesBiologicas.coleccionEditar}" />
+					</p:commandButton>
+					<br/>
+					<p:commandButton
+						action="#{manejadorColeccionesBiologicas.verColeccion}"
+						icon="ui-icon-search"
+						value="Ver"
+						update="@form">
+						<f:setPropertyActionListener
+							value="#{coleccion}"
+							target="#{manejadorColeccionesBiologicas.coleccionVer}"  />
+					</p:commandButton>
+					<br/>
+					<p:commandButton
+						action="#{manejadorColeccionesBiologicas.reporteColeccion}"
+						icon="ui-icon-print"
+						value="Reporte"
+						ajax="false"
+						update="@form">
+						<f:setPropertyActionListener
+							value="#{coleccion.id}"
+							target="#{manejadorColeccionesBiologicas.idColeccion}"  />
+					</p:commandButton>
+					<br/>
+					<p:commandButton rendered="#{coleccion.estado == 'A'}"
+						action="#{manejadorColeccionesBiologicas.gestionarSolicitudesColeccion}"
+						icon="ui-icon-note"
+						value="Gestiones"
+						ajax="false"
+						update="@form">
+						<f:setPropertyActionListener
+							value="#{coleccion}"
+							target="#{manejadorColeccionesBiologicas.coleccionEditar}"  />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<center>
+				<p:commandButton action="#{manejadorColeccionesBiologicas.agregar}"
+					value="Agregar Colección" ajax="false" rendered="false">
+				</p:commandButton>
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

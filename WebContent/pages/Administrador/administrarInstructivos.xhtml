@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Instructivos Sistema</t:div>
+
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelBusquedaInstructivos">
+					<t:div style="width: 100px;">
+						<h:outputText value="Clasificación:" />
+					</t:div>
+					<t:div>
+						<p:selectOneMenu style="width:540px;"
+							value="#{manejadorAdministrarInstructivos.clasificacion}"
+							panelStyle="width: 520px;" filter="true"
+							filterMatchMode="contains">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{manejadorAdministrarInstructivos.listaClasificacionesActivasItem}" />
+						</p:selectOneMenu>
+					</t:div>
+				</p:panelGrid>
+				<div
+					style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+					<p:commandButton value="Consultar instructivos"
+						icon="ui-icon-search" update="@form" ajax="false"
+						actionListener="#{manejadorAdministrarInstructivos.consultarInstructivos}" />
+				</div>
+			</p:panel>
+			<p:messages id="msgs" autoUpdate="true" showDetail="true"
+				closable="true" />
+			<br />
+			<p:dataTable var="instructivo"
+				value="#{manejadorAdministrarInstructivos.listaInstructivos}"
+				emptyMessage="No se encontraron instructivos"
+				paginator="true" rows="20" paginatorPosition="bottom"
+				filteredValue="#{manejadorAdministrarInstructivos.filteredInstructivos}">
+				<f:facet name="header">Instructivos</f:facet>
+				<p:column style="text-align: center; width: 50px;">
+					<f:facet name="header">
+						<h:outputText value="Visible?" />
+					</f:facet>
+					<p:graphicImage value="/images/check.png"
+						rendered="#{instructivo.estado == 'A'}" style="width: 25px;" />
+					<p:graphicImage value="/images/cancel.png"
+						rendered="#{instructivo.estado != 'A'}" style="width: 20px;" />
+				</p:column>
+				<p:column
+					filterBy="#{instructivo.nombre}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<h:outputText value="#{instructivo.nombre}" />
+				</p:column>
+				<p:column style="text-align: center; width: 50px;" headerText="-">
+					<p:commandButton
+						action="#{manejadorAdministrarInstructivos.editarInstructivo}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{instructivo}"
+							target="#{manejadorAdministrarInstructivos.instructivoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{manejadorAdministrarInstructivos.tamanoLista} instructivos</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

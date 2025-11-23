@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo.seguimiento">
+	<class name="Solicitud" table="HER_SOLICITUD">
+		<id name="id" column="SOL_ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_SOLICITUD</param>
+			</generator>
+		</id>
+
+		<property name="fecha" column="SOL_FECHA" type="timestamp" />
+		<property name="respuesta" column="SOL_RESPUESTA" />
+		<property name="descripcion" column="SOL_DESCRIPCION" />
+		<property name="vistaUA" column="SOL_VISTA_UA" />
+		<property name="numeroEspecimenes" column="SOL_NUMERO_ESPECIMENES" />
+		<property name="familiaTaxonomica" column="SOL_FAMILIA_TAXONOMICA" />
+		<property name="ubicacion" column="SOL_UBICACION" />
+		<property name="sede" column="SOL_SEDE" />
+		<property name="fechaEliminacion" column="SOL_FECHA_ELIMINACION" />
+		<property name="fechaInicioRecoleccion" column="SOL_FECHA_INICIO_RECOLECTA" />
+		<property name="fechaRadicadoAnla" column="SOL_FECHA_RAD_ANLA" />
+		<property name="radicadoAnla" column="SOL_RADICADO_ANLA" />
+		
+		<many-to-one name="tipoSolLab" class="co.edu.unal.hermes.modelo.Tipos" lazy="false">
+			<column name="SOL_TIPO_SOL_LAB" />
+		</many-to-one>
+
+		<many-to-one name="proyecto" class="co.edu.unal.hermes.modelo.Proyecto"
+			column="PRY_ID" not-null="true" lazy="false" />
+		<many-to-one name="tipoSolicitud" class="TipoSolicitud"
+			column="TSO_ID" not-null="true" lazy="false" />
+		<many-to-one name="tipoViaSolicitud" class="TipoViaSolicitud"
+			column="TVSO_ID" not-null="true" lazy="false" />
+
+		<set name="detalleCambioRubro" table="HER_DETALLE_CAMBIO_RUBRO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SOL_ID" />
+			<one-to-many class="DetalleCambioRubro" />
+		</set>
+
+		<set name="tramites" table="HER_TRAMITE_SOLICITUD" inverse="true"
+			lazy="false" cascade="all-delete-orphan">
+			<key column="SOL_ID" />
+			<one-to-many class="TramiteSolicitud" />
+		</set>
+
+		<set name="documentos" table="HER_SOLICITUD_DOCUMENTO" inverse="true"
+			cascade="all-delete-orphan" lazy="false">
+			<key column="SOL_ID" />
+			<one-to-many class="SolicitudDocumento" />
+		</set>
+		
+		
+		<set name="ciudades" table="HER_SOLICITUD_CIUDAD" inverse="true"
+			cascade="all-delete-orphan" lazy="false">
+			<key column="SOL_ID" />
+			<one-to-many class="SolicitudCiudad" />
+		</set>
+
+		<many-to-one name="responsable" class="co.edu.unal.hermes.modelo.Persona"
+			lazy="false">
+			<column name="PER_ID_RESPONSABLE" />
+			<column name="TDO_ID_RESPONSABLE" />
+		</many-to-one>
+
+		<property name="fechaAprobacion" column="SOL_FECHA_REVISION" />
+
+		<property name="fechaEsperadaTerminacion" column="SOL_FECHA_ESPERADA_TERMINACION" />
+		
+		<many-to-one name="tipoCambioContenido" class="TipoCambioContenido"
+			column="TCC_ID" lazy="false" />
+
+		<property name="descripcionCambioContenido" column="SOL_DESCRIPCION_CAMBIO_CONT" />
+
+		<property name="fechaReactivacion" column="SOL_FECHA_REACTIVACION" />
+
+		<property name="fechaProcesamiento" column="SOL_FECHA_PROCESAMIENTO" />
+
+		<property name="estadoProcesamientoSolicitud" column="SOL_ESTADO_PROCESAMIENTO" />
+		
+		<many-to-one name="institucionApoyoBiodiversidad" class="co.edu.unal.hermes.modelo.DominioDetalle"
+			lazy="false">
+			<column name="DOM_ID_INSTITUCION" />
+			<column name="DOMDET_TIPO_INSTITUCION" />
+		</many-to-one>
+		
+		<property name="otraInstitucionNacionalApoyo" column="SOL_INA_BIODIVERSIDAD" />
+		
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad" rendered = "#{manejadorEvaluacion.evaluacionProyecto.proyecto.modalidad.restriccion.id != 'CONV_ALI_NAL_2018'}">Evaluación proyecto</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad" rendered = "#{manejadorEvaluacion.evaluacionProyecto.proyecto.modalidad.restriccion.id == 'CONV_ALI_NAL_2018'}">Criterios de selección</t:div>
+			<p:panel style="margin-bottom: 20px; text-align: center;"
+				rendered="false">
+				<h:outputText
+					value="Este formulario de evaluación debe ser diligenciado de manera total antes de ser guardado" />
+			</p:panel>
+			<p:panel style="margin-bottom: 20px;">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Título del proyecto: "
+						style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.proyecto.nombre}" />
+					<h:outputText value="Código: " style="font-weight: bold;"
+						rendered="false" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.proyecto.id}"
+						rendered="false" />
+					<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.nombreConvocatoria}" />
+					<h:outputText value="Modalidad:" style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.nombreModalidad}" />
+					<h:outputText value="Evaluador actual: " style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.evaluador.nombre1} #{manejadorEvaluacion.evaluacionProyecto.evaluador.nombre2} 
+				    					#{manejadorEvaluacion.evaluacionProyecto.evaluador.apellido1} #{manejadorEvaluacion.evaluacionProyecto.evaluador.apellido2} -  #{proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente}" />
+				</p:panelGrid>
+			</p:panel>
+			<p:messages />
+			<p:dataTable value="#{manejadorEvaluacion.listaCC}"
+				var="calificacion" styleClass="panel-interno-tabla"
+				rendered="#{proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente == 'N' or 
+						   	proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente == 'A' or empty proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente}">
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Criterios evaluación:" />
+					</f:facet>
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;">
+						<t:div>
+							<h:outputText value="#{calificacion.criterio.nombre}"
+								style="font-weight: bold;" />
+							<br />
+							<h:outputText value="#{calificacion.criterio.descripcion}" />
+							<br />
+							<br />
+							<t:div rendered="#{calificacion.preguntaCualitativa}">
+								<h:outputText value="Cualitativa" style="font-weight: bold;" />
+								<br />
+								<p:inputTextarea value="#{calificacion.cualitativa}"
+									style="width: 510px;" rows="3"/>
+							</t:div>
+							<t:div rendered="#{calificacion.preguntaCuantitativaCualitativa}">
+								<h:outputText value="Cualitativa:" style="font-weight: bold;" />
+								<br />
+								<p:inputTextarea value="#{calificacion.cualitativa}"
+									style="width: 510px;" rows="3"/>
+								<br />
+								<br />
+								<h:outputText
+									value="Cuantitativa (Máximo #{calificacion.criterioModalidadTipoPreguntaMaximo}):"
+									style="font-weight: bold;" />
+								<br />
+								<p:inputText id="calificacionCuantitativa2"
+									value="#{calificacion.cuantitativa}" style="width: 160px;"/>
+							</t:div>
+							<t:div rendered="#{calificacion.preguntaCuantitativa}">
+								<h:outputText
+									value="Cuantitativa (Máximo #{calificacion.criterioModalidadTipoPreguntaMaximo}):"
+									style="font-weight: bold;" />
+								<br />
+								<p:inputText id="calificacionCuantitativa1"
+									value="#{calificacion.cuantitativa}" style="width: 160px;"/>
+							</t:div>
+							<t:div rendered="#{calificacion.preguntaSeleccionUnica}">
+								<h:outputText value="Selección única:"
+									style="font-weight: bold;" />
+								<br />
+								<p:selectOneMenu value="#{calificacion.cuantitativa}"
+									style="width: 600px;" panelStyle="width: 600px;">
+									<f:selectItems value="#{calificacion.listaOpciones}" />
+								</p:selectOneMenu>
+							</t:div>
+						</t:div>
+					</p:panelGrid>
+				</p:column>
+			</p:dataTable>
+			<p:panel
+				rendered="#{!empty manejadorEvaluacion.evaluacionProyecto.documentoEvaluador}"
+				style="margin-top: 20px; text-align: center;">
+				<h:commandLink
+					action="#{manejadorEvaluacion.descargarDocumentoEvaluacion}"
+					value="Ver documento anexo de evaluación cargado"
+					style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+					target="_blank">
+				</h:commandLink>
+			</p:panel>
+			<p:panel header="Cargar archivo anexo de evaluación"
+				rendered="#{
+						(manejadorEvaluacion.evaluacionProyecto.proyecto.modalidad.documentoEvaluacion == 'Y' or 
+			   			manejadorEvaluacion.evaluacionProyecto.proyecto.modalidad.documentoEvaluacion == 'A')
+			   			and (manejadorEvaluacion.evaluacionProyecto.evaluador.id == 'MESATRABAJO' or 
+			   			manejadorEvaluacion.evaluacionProyecto.evaluador.id == 'COMITESELECCION')}"
+				style="margin-top: 20px;">
+
+				<p:messages showDetail="true" />
+				<p:fileUpload value="#{manejadorEvaluacion.archivoSubir}"
+					mode="simple" />
+				<p:commandButton value="Cargar archivo" ajax="false"
+					actionListener="#{manejadorEvaluacion.guardarArchivo}" />
+			</p:panel>
+			<p:panel header="Cargar archivo anexo de evaluación"
+				rendered="#{
+						(manejadorEvaluacion.evaluacionProyecto.proyecto.modalidad.documentoEvaluacionDocente == 'Y' or 
+			   			manejadorEvaluacion.evaluacionProyecto.proyecto.modalidad.documentoEvaluacionDocente == 'A')
+			   			and (manejadorEvaluacion.evaluacionProyecto.evaluador.id != 'MESATRABAJO' and 
+			   			manejadorEvaluacion.evaluacionProyecto.evaluador.id != 'COMITESELECCION')}"
+				style="margin-top: 20px;">
+
+				<p:messages showDetail="true" />
+				<p:fileUpload value="#{manejadorEvaluacion.archivoSubir}"
+					mode="simple" />
+				<p:commandButton value="Cargar archivo" ajax="false"
+					actionListener="#{manejadorEvaluacion.guardarArchivo}" />
+			</p:panel>
+			<br />
+			<p:panel header="Observaciones adicionales:">
+				<p:inputTextarea
+					value="#{manejadorEvaluacion.evaluacionProyecto.observaciones}"
+					style="width: 620px;" rows="10" autoResize="false" />
+				<h:outputText value="#{mensajesAyudaEvaluacion.ayudaObservaciones}" />
+			</p:panel>
+			<br />
+			<p:panel header="Recomendación final:" style="text-align: center;"
+				id="panelPromedio">
+				<h:outputText value="Calificación del proyecto: " />
+				<h:outputText value="#{manejadorEvaluacion.promedioCalificacion}">
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+				<h:outputText value=" sobre "
+					rendered="#{manejadorEvaluacion.maximaCalificacion > 0}" />
+				<h:outputText value="#{manejadorEvaluacion.maximaCalificacion}"
+					rendered="#{manejadorEvaluacion.maximaCalificacion > 0}">
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+				<h:outputText value=" " />
+				<p:commandButton
+					action="#{manejadorEvaluacion.calcularPromedioCalificaciones}"
+					value="Calcular promedio" update="@form" />
+				<br />
+				<t:div style="margin: auto; width: 200px; text-align: left;">
+					<p:selectOneRadio layout="pageDirection"
+						value="#{manejadorEvaluacion.evaluacionProyecto.concepto.id}">
+						<f:selectItems value="#{manejadorEvaluacion.recomendaciones}" />
+					</p:selectOneRadio>
+				</t:div>
+			</p:panel>
+			<br />
+			<t:div style="text-align: center;">
+				<p:messages id="msgs" />
+				<p:commandButton action="#{manejadorEvaluacion.guardarYContinuar}"
+					value="Guardar parcialmente" update="@form"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				<p:commandButton action="#{manejadorEvaluacion.guardarYFinalizar}"
+					value="Guardar y finalizar edicion" ajax="false" />
+				<p:commandButton action="#{manejadorEvaluacion.atras}" value="Atrás" />
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

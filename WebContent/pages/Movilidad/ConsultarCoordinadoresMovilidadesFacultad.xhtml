@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<s:fieldset legend="Coordinadores de Movilidades" styleClass="legend1">
+			<h:panelGrid columns="3" align="center">
+				<h:outputText value="Buscar coordinadores por:" styleClass="texto"
+					style='font-size: 12px' />
+						
+				<h:outputText value="" styleClass="texto"
+					style='font-size: 12px; font-style: normal, font-weight: lighter' />
+				<h:selectOneRadio id="tipoBusq" onclick="submit()"
+					value="#{manejadorConsultarCoordinadoresMovilidadesFacultad.tipoBusqueda}"
+					valueChangeListener="#{manejadorConsultarCoordinadoresMovilidadesFacultad.cambiarForm}"
+					styleClass="texto" style='font-size: 12px; font-style: normal, font-weight: lighter'
+					onchange="submit(this);">
+					<f:selectItem itemValue="Facultad" value="Facultad"
+						itemLabel="Facultad o Instituto" />
+					<f:selectItem itemValue="Todas" value="Todas"
+						itemLabel=" Todas las Facultades e Institutos" />
+				</h:selectOneRadio>
+
+			</h:panelGrid>
+
+</s:fieldset>
+<s:fieldset legend="Coordinadores" styleClass="legend1" 
+style="width: 559px" rendered="#{manejadorConsultarCoordinadoresMovilidadesFacultad.panelRender[1]}">
+	<br />
+	<h:outputText value="Para consultar los coordinadores de las movilidades por favor 
+	seleccione la facultad 	 o instituto de interés:"	
+	style='font-size: 12px; font-style: normal; font-weight: lighter'
+	 styleClass="texto" />
+	<br />
+	<br />
+	<h:panelGrid columns="2" style="width: 220px">	
+		<h:outputText value="Facultad: "
+			style='font-size: 12px; font-style: bold'
+			styleClass="labels_proyecto" />
+		<h:selectOneMenu  id="nivelFacConvocatoria" 			
+			value="#{manejadorConsultarCoordinadoresMovilidadesFacultad.facultad}"
+			styleClass="labels_proyecto2"
+			valueChangeListener="#{manejadorConsultarCoordinadoresMovilidadesFacultad.cambiarListaFac}"
+			onchange="submit(this);">
+			<f:selectItems value="#{manejadorConsultarCoordinadoresMovilidadesFacultad.facultadItem}" />
+		</h:selectOneMenu> 
+	
+	</h:panelGrid>
+	<br />
+		<h:outputText value="#{manejadorConsultarCoordinadoresMovilidadesFacultad.facultadConsultada}"	
+			style='font-size: 12px; font-style: normal; font-weight: lighter'
+			styleClass="labels_proyecto" 
+			rendered="#{manejadorConsultarCoordinadoresMovilidadesFacultad.mostrarTabla}"/>
+			
+		<br />
+		<br />
+			<t:dataTable var="movilidadCoordinador1"
+				value="#{manejadorConsultarCoordinadoresMovilidadesFacultad.listaCoordinadores}"
+				binding="#{manejadorConsultarCoordinadoresMovilidadesFacultad.tablaCoordinadores}" 
+				border="1"  cellpadding="4" cellspacing="0"
+				preserveDataModel="false" rows="20" id="tablaConvocatoria1"
+				rendered="#{manejadorConsultarCoordinadoresMovilidadesFacultad.mostrarTabla}">
+				
+				
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Facultad" styleClass= 'font-size: 10px; font-style: normal' />
+					</f:facet>
+					<h:outputText value="#{movilidadCoordinador1.dependencia.nombre}"
+						style='font-size: 10px; font-style: normal, font-weight: lighter' />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Coordinador" styleClass='font-size: 10px; font-style: normal' />
+					</f:facet>
+					<h:outputText value="#{movilidadCoordinador1.nombre1} #{movilidadCoordinador1.apellido1} #{movilidadCoordinador1.apellido2}"
+						style='font-size: 10px; font-style: normal, font-weight: lighter' />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Correo Electrónico" styleClass='font-size: 10px; font-style: normal' />
+					</f:facet>
+					<h:outputText value="#{movilidadCoordinador1.email}"
+						style='font-size: 10px; font-style: normal, font-weight: lighter' />
+				</h:column>
+
+				
+			</t:dataTable>
+			
+			
+				<br />
+		
+			
+</s:fieldset>
+
+
+<s:fieldset legend="Coordinadores" 
+styleClass="legend1" rendered="#{manejadorConsultarCoordinadoresMovilidadesFacultad.panelRender[2]}">
+	<h:outputText value="Coordinadores asociados a todas las facultades e institutos:" 
+		style='font-size: 12px; font-style: normal, font-weight: lighter'
+			styleClass="labels_proyecto" />
+				<br />
+				
+	<h:panelGroup id="panelCoordinadorMovilidad">
+		
+		<br />
+		
+			<t:dataTable id="tablaConvocatoria" var="movilidadCoordinador"
+				value="#{manejadorConsultarCoordinadoresMovilidadesFacultad.listaCoordinadores2}"
+				binding="#{manejadorConsultarCoordinadoresMovilidadesFacultad.tablaCoordinadores2}" 
+				border="1"  cellpadding="4" cellspacing="0" rows="15" 
+				rowClasses="table-odd-row,table-even-row" >
+				
+						
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Facultad" styleClass= 'font-size: 10px; font-style: normal' />
+					</f:facet>
+					<h:outputText value="#{movilidadCoordinador.dependencia2.nombre}"
+						style='font-size: 10px; font-style: normal' />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Coordinador" styleClass='font-size: 10px; font-style: normal' />
+					</f:facet>
+					<h:outputText value="#{movilidadCoordinador.nombre1} #{movilidadCoordinador.apellido1} #{movilidadCoordinador.apellido2}"
+						style='font-size: 10px; font-style: normal' />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Correo Electrónico" styleClass='font-size: 10px; font-style: normal' />
+					</f:facet>
+					<h:outputText value="#{movilidadCoordinador.email}"
+						style='font-size: 10px; font-style: normal' />
+				</h:column>
+
+				
+			</t:dataTable>
+			
+			
+				<br />
+		
+		
+		<h:panelGrid columns="1">
+
+				<t:dataScroller id="paginador1" for="tablaConvocatoria" fastStep="15"
+					renderFacetsIfSinglePage="false" pageCountVar="contador"
+					pageIndexVar="indice" paginator="true" paginatorMaxPages="5"
+					paginatorActiveColumnStyle="font-size:18px;font-weight:bold;">
+					
+					<f:facet name="first">
+						<t:outputText value=" <<Primero " />
+					</f:facet>
+
+					<f:facet name="previous">
+						<t:outputText value=" <Anterior " />
+					</f:facet>
+
+					<f:facet name="next">
+						<t:outputText value=" Siguiente> " />
+					</f:facet>
+
+					<f:facet name="last">
+						<t:outputText value=" Ultimo>> " />
+					</f:facet>
+				</t:dataScroller>
+
+			</h:panelGrid>
+			
+		</h:panelGroup>	
+</s:fieldset>
+
+
+</h:form>
+</ui:define>
+</ui:composition>

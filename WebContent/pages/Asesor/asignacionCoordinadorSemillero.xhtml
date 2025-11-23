@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Modificación de coordinadores a Semilleros</t:div>
+			
+			<p:messages id="msgs" />
+			<p:panelGrid style="width: 100%;"
+				styleClass="estilo-panelgrid-sinbordes">
+				<p:row>
+					<p:column style="font-weight: bold;">
+						<p:panel header="Criterios de Búsqueda"
+							style="margin-top: 10px; margin-bottom: 5px; width: 100%;"
+							id="frmCriterios">
+							<p:panelGrid align="center" style="width: 100%;">
+								<p:row>
+									<p:column>
+										<h:outputText value="ID Semillero:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:inputText style="width: 100%;"
+											value="#{manejadorSemillerosCoordinador.idSemillero}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Nombre Semillero:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:inputText style="width: 100%;"
+											value="#{manejadorSemillerosCoordinador.nombreSemillero}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Nombre Director(a) Semillero:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:inputText style="width: 100%;"
+											value="#{manejadorSemillerosCoordinador.nombreLider}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Documento Director(a) Semillero:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorSemillerosCoordinador.tipoDocLider}">
+											<f:selectItem itemvalue=""
+												itemLabel="Seleccione un Tipo de Documento" />
+											<f:selectItems
+												value="#{manejadorSemillerosCoordinador.tipoDocumentoItem}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column>
+										<h:outputText value="No." />
+									</p:column>
+									<p:column>
+										<p:inputText style="width: 100%;"
+											value="#{manejadorSemillerosCoordinador.docLider}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="4" style="text-align: center;">
+										<p:commandButton value="Buscar Semilleros"
+											action="#{manejadorSemillerosCoordinador.buscarSemilleros}"
+											icon="ui-icon-search" update="@form" process="@form" />
+										<p:commandButton value="Reiniciar Búsqueda"
+											action="#{manejadorSemillerosCoordinador.reiniciarBusqueda}"
+											icon="ui-icon-refresh" update="@form" process="@form" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:panel>
+					</p:column>
+				</p:row>
+				<p:row rendered="#{manejadorSemillerosCoordinador.nuevaBusqueda}">
+					<p:column>
+						<p:dataTable var="semillero"
+							emptyMessage="No se han encontrado semilleros con los criterios indicados."
+							paginator="true"
+							value="#{manejadorSemillerosCoordinador.semillerosBusqueda}"
+							rows="5" paginatorPosition="bottom">
+							<f:facet name="header">Semilleros encontrados: #{manejadorSemillerosCoordinador.totalResultados}</f:facet>
+							<p:column headerText="Resultados de Búsqueda">
+								<h:outputText
+									value="&lt;strong&gt;Semillero:&lt;/strong&gt; #{semillero.id} - #{semillero.nombre}"
+									escape="false" />
+								<br />
+								<h:outputText
+									value="&lt;strong&gt;Líder:&lt;/strong&gt;#{semillero.lider.nombreCompleto} (#{semillero.lider.id.tipoDocumento} - #{semillero.lider.id.documento})"
+									escape="false" />
+								<br />
+								<h:outputText
+									value="&lt;strong&gt;Sede:&lt;/strong&gt; #{semillero.lider.dependencia.sede.nombre} / &lt;strong&gt;Facultad:&lt;/strong&gt; #{semillero.lider.dependencia.facultad.nombre}"
+									escape="false" />
+									<br />
+								<h:outputText
+									value="&lt;strong&gt;UAB:&lt;/strong&gt; #{semillero.lider.dependencia.nombre}"
+									escape="false" />
+								<br />
+								<h:outputText
+									value="&lt;strong&gt;Estado Actual:&lt;/strong&gt; #{semillero.estadoActual.nombre}"
+									escape="false" />
+								<br />
+								<h:outputText
+									value="&lt;strong&gt;Fecha Activación:&lt;/strong&gt; #{empty semillero.fechaActivacion ? 'No Aplica' : semillero.fechaActivacion}"
+									escape="false" />
+								<br />
+								<h:outputText
+									value="&lt;strong&gt;Coordinador: &lt;/strong&gt; #{empty semillero.coordinador ? 'No Aplica' : semillero.coordinador.nombreCompleto}"
+									escape="false" />
+							</p:column>
+							<p:column style="text-align: center;" headerText="Acciones">
+								<p:commandButton value="Modificar coordinador"
+									action="#{manejadorSemillerosCoordinador.cargarFormularioCambioCoordinador}"
+									icon="ui-icon-plus" 
+									update="@form" process="@form">
+									<f:setPropertyActionListener value="#{semillero}"
+										target="#{manejadorSemillerosCoordinador.semilleroActual}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			
+			
+			
+			<p:panel header="Asignación de coordinador al semillero"
+				style="margin-top: 10px;" rendered="#{manejadorSemillerosCoordinador.mostrarAsignacionSemillero}">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText
+						value="En la siguiente lista de coordinadores seleccione aquel que desee asignar 
+							al semillero."/>
+					<h:outputText
+						value="Si el coordinador que desea actualizar no aparece en la lista, agreguelo en la opción 'Asociar coordinadores'." />
+					<h:outputText
+						value="	Para finalizar es necesarios dar clic sobre el botón 'Guardar coordinador' 
+							en la parte inferior." />
+				</p:panelGrid>
+				<p:panelGrid id="asigCadaUno" columns="2"
+					styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto; margin-top: 10px; margin-bottom: 10px;">
+					<h:outputText value=" Coordinador - semillero #{manejadorSemillerosCoordinador.semilleroActual.id}:  " />
+					<p:selectOneMenu
+						value="#{manejadorSemillerosCoordinador.coordinadorNuevo}"
+						style="width:550px;" panelStyle="width: 550px;">
+						<f:selectItems
+							value="#{manejadorSemillerosCoordinador.coordinadorNuevoItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panel>
+			<t:div style="width: 100%; text-align: center; margin: 10px;"
+				rendered="#{!empty manejadorSemillerosCoordinador.mensajeAsignacion}">
+				<h:outputText
+					value="#{manejadorSemillerosCoordinador.mensajeAsignacion}"
+					style="margin: 10px; color: #FF0000; font-weight: bold;" />
+			</t:div>
+			<t:div style="width: 100%; text-align: center; margin-top: 20px;"
+			rendered="#{manejadorSemillerosCoordinador.mostrarAsignacionSemillero}">
+				<p:commandButton
+					action="#{manejadorSemillerosCoordinador.guardarAsociacionSemilleroCoordinador}"
+					value="Guardar coordinador"
+					ajax="false">
+				</p:commandButton>
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

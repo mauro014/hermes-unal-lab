@@ -1,0 +1,806 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Consultar aval</t:div>
+			<p:panel style="margin-top: 20px;">
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes"
+					id="panelAval">
+					<t:div style="width: 80px;">
+						<h:outputText value="Codigo aval:" />
+					</t:div>
+					<p:inputText id="numCom" style="width:350px;"
+						value="#{ManejadorConsultarActualizarAvales.sCodigoAval}" />
+					<p:commandButton
+						action="#{ManejadorConsultarActualizarAvales.buscarReporteSolicitudAval}"
+						value="Consultar" update="@form" process="@form" ajax="false">
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarActualizarAvales.limpiar}"
+						actionListener="#{ManejadorConsultarActualizarAvales.cancelAction}"
+						value="Limpiar" update="@form" process="@form" ajax="false">
+					</p:commandButton>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel
+				rendered="#{ManejadorConsultarActualizarAvales.panelRenderError[0]}"
+				style="margin-top: 20px; text-align: center;">
+				<h:outputText
+					value="No se ha encontrado una solicitud con el código ingresado." />
+			</p:panel>
+			<p:panel
+				rendered="#{ManejadorConsultarActualizarAvales.panelRenderError[10]}"
+				style="margin-top: 20px; text-align: center;">
+				Debe ingresar un valor númerico mayor a 0.
+			</p:panel>
+			<p:panel header="Información general de la solicitud"
+				rendered="#{ManejadorConsultarActualizarAvales.imprimirReporteAval}"
+				style="margin-top: 20px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column style="width:25%;">
+							<h:outputText value="Profesor(a) solicitante: "
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.nombreProfesor} " />
+							<h:outputText
+								value=" #{ManejadorConsultarActualizarAvales.aval.documento}"
+								style="color:white; font-size:9px;" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha de la Solicitud: "
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.fecha}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Código de la Solicitud: "
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.aviId}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo de aval: " style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.nombreTipo}" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.ver and ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'}">
+						<p:column>
+							<h:outputText value="Consultar Información Aval: "
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte específico" ajax="false"
+								target="_popUpWindow"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{ManejadorConsultarActualizarAvales.imprimirAval}"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'}">
+						<p:column>
+							<h:outputText value="Título del aval: " style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.aviTitulo}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{ManejadorConsultarActualizarAvales.ver and ((ManejadorConsultarActualizarAvales.aval.tipo != 'GR' and ManejadorConsultarActualizarAvales.aval.tipo != 'INI' and 
+						ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI') or (manejadorSolicitarAvalFacultad.aval.esCentroInvestigacion and manejadorSolicitarAvalFacultad.aval.tipoAvalCIN eq 'L'))}">
+						<p:column>
+							<h:outputText
+								value="Código del proyecto:"
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.idProyecto}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{ManejadorConsultarActualizarAvales.ver and ((ManejadorConsultarActualizarAvales.aval.tipo != 'GR' and ManejadorConsultarActualizarAvales.aval.tipo != 'INI' and 
+						ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI') or (manejadorSolicitarAvalFacultad.aval.esCentroInvestigacion and manejadorSolicitarAvalFacultad.aval.tipoAvalCIN eq 'L'))}">
+						<p:column>
+							<h:outputText
+								value="Consultar Información de proyecto relacionado:"
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte proyecto" target="popUpWindow7"
+								ajax="false"
+								onclick="javascript: void window.open('', 'popUpWindow7', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{ManejadorConsultarActualizarAvales.imprimirProyecto}"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{ManejadorConsultarActualizarAvales.ver and ManejadorConsultarActualizarAvales.aval.tipo == 'GR'}">
+						<p:column>
+							<h:outputText value="Consultar Información de grupo relacionado:"
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte grupo" target="popUpWindow8"
+								ajax="false"
+								onclick="javascript: void window.open('', 'popUpWindow8', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{ManejadorConsultarActualizarAvales.imprimirGrupo}"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!ManejadorConsultarActualizarAvales.ver}">
+						<p:column>
+							<h:outputText value="Consultar Información:"
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte" target="_popUpWindow3"
+								ajax="false"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{ManejadorConsultarActualizarAvales.imprimirAval}"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'AR' 
+						and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'
+						and ManejadorConsultarActualizarAvales.aval.tipo != 'ETICO'}">
+						<p:column>
+							<h:outputText value="Entidad: " style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.entidad}" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'AR' 
+						and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'
+						and ManejadorConsultarActualizarAvales.aval.tipo != 'ETICO'}">
+						<p:column>
+							<h:outputText value="Convocatoria: " style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'JD'}"
+								value="#{ManejadorConsultarActualizarAvales.convocatoria.nombre}" />
+							<h:outputText
+								rendered="#{ManejadorConsultarActualizarAvales.aval.tipo == 'JD'}"
+								value="No aplica" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'}">
+						<p:column>
+							<h:outputText value="Estado aval: " style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.nombreEstado}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{ManejadorConsultarActualizarAvales.aval.avalRelacionado!=null and ManejadorConsultarActualizarAvales.aval.avalRelacionado!=0 and ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'}">
+						<p:column>
+							<h:outputText value="Aval relacionado con esta solicitud: "
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:commandLink
+								value="#{ManejadorConsultarActualizarAvales.aval.avalRelacionado}"
+								target="_popUpWindow3"
+								action="#{ManejadorConsultarActualizarAvales.imprimirReporteRelacionado}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:dataTable var="archivoResumen"
+					 style="width: 100%; margin-top: 10px; margin-bottom: 10px;"
+					value="#{ManejadorConsultarActualizarAvales.listaArchivosAval}"
+					emptyMessage="No existen archivos asociados" rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value=" #{archivoResumen.id}" styleClass="normal" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<h:outputText value=" #{archivoResumen.nombre}"
+							styleClass="normal" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value=" #{archivoResumen.tipoArchivo.nombre}"
+							styleClass="normal" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+						<p:commandButton id="descargar"
+							action="#{ManejadorConsultarActualizarAvales.descargarArchivoAval}"
+							icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{ManejadorConsultarActualizarAvales.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+			<t:div rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'AR' and ManejadorConsultarActualizarAvales.aval.tipo != 'BI'}">
+			<p:panel header="Revisión de aval"
+				rendered="#{ManejadorConsultarActualizarAvales.imprimirReporteAval and ManejadorConsultarActualizarAvales.aval.aviEstado != 'B' 
+				and ManejadorConsultarActualizarAvales.aval.aviEstado != 'P' and ManejadorConsultarActualizarAvales.aval.aviEstado != 'I' and ManejadorConsultarActualizarAvales.aval.aviEstado != 'C'}"
+				style="margin-top: 20px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="Documento aval: " style='font-weight: bold;' />
+							<h:outputText value="No se encontró archivo"
+								rendered="#{ManejadorConsultarActualizarAvales.aval.archivoAval==null}" />
+						</p:column>
+						<p:column>
+							<h:panelGroup
+								rendered="#{ManejadorConsultarActualizarAvales.aval.archivoAval!=null}">
+								<h:outputText
+									value="#{ManejadorConsultarActualizarAvales.aval.archivoAval}" />
+								<p:spacer width="15" />
+								<p:commandButton
+									action="#{ManejadorConsultarActualizarAvales.descargarAval}"
+									value=" Descargar Aval" icon="ui-icon-circle-arrow-s"
+									ajax="false">
+								</p:commandButton>
+							</h:panelGroup>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="width:100%;">
+							<p:dataTable var="archivoResumen" style="width:100%;"
+								emptyMessage="No se han encontrado documentos"
+								value="#{ManejadorConsultarActualizarAvales.aval.archivosCoorList}"
+								cellpadding="1" cellspacing="8" align="center" border="1">
+								<f:facet name="header">  
+								 	Documentos revisión aval
+								 </f:facet>
+								<p:column headerText="Archivo soporte aval" style="width:98%">
+									<h:outputText value=" #{archivoResumen.nombre}" />
+								</p:column>
+
+								<p:column headerText="Descargar" style="width:2%; text-align:center;">
+									<p:commandButton id="descargar"
+										action="#{ManejadorConsultarActualizarAvales.descargarArchivoCoor}"
+										icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+										ajax="false">
+										<f:setPropertyActionListener value="#{archivoResumen}"
+											target="#{ManejadorConsultarActualizarAvales.documentoSeleccionado}" />
+									</p:commandButton>
+
+								</p:column>
+
+							</p:dataTable>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Histórico del aval"
+				rendered="#{ManejadorConsultarActualizarAvales.imprimirReporteAval}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+					<p:row>
+						<p:column>
+							<p:dataTable rows="10" id="tableHistoricoEstadoAval"
+								var="historico" style="margin-top: 20px; width:100%;" paginator="true"
+								value="#{ManejadorConsultarActualizarAvales.listaHistoricoEstadoAval}"
+								emptyMessage="No se ha encontrado histórico de este aval."
+								paginatorPosition="bottom" paginatorAlwaysVisible="false"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+								<p:column style="width:5%;">
+									<f:facet name="header">
+												Aval
+											</f:facet>
+											#{historico.aval.aviId}
+										</p:column>
+								<p:column style="width:10%;">
+									<f:facet name="header">
+												Fecha
+											</f:facet>
+									<h:outputText value="#{historico.fecha}">
+										<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+									</h:outputText>
+								</p:column>
+								<p:column style="width:30%;">
+									<f:facet name="header">
+												Estado
+											</f:facet>			
+											#{historico.nombreEstado}
+								</p:column>
+								<p:column style="width:50%;">
+									<f:facet name="header">
+												Responsable
+											</f:facet>			
+											#{historico.revisor.nombreCompletoMinusculas}
+										</p:column>
+								<p:column style="width:5%;">
+									<p:commandButton action="#" icon="ui-icon-search"
+										oncomplete="dialogHistorico.show();" 
+										title="Consultar justificacion" update="@form">
+										<f:setPropertyActionListener value="#{historico}" target="#{ManejadorConsultarActualizarAvales.historicoAval}"/>
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Recurso"
+				rendered="#{ManejadorConsultarActualizarAvales.aval.tipo == 'ETICO' and ManejadorConsultarActualizarAvales.aval.avalTieneRecurso == 'SI'}">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+					<p:row>
+						<p:column style="width:25%;">
+							<h:outputText value="¿Se interpuso recurso?:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.avalTieneRecurso}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo de recurso:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.tipoRecursoAvalEtico.nombre}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha:" style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.fechaRecurso}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Justificación: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.textoRecurso}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:spacer height="10" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Revisión recurso Comité de Ética de Primera Instancia - CEPI</t:div>
+				<p:spacer height="10" />
+				<p:panelGrid id="panelRecursoRevisiónCEPI" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+					rendered="#{ManejadorConsultarActualizarAvales.aval.avalTieneRecurso == 'SI' and ManejadorConsultarActualizarAvales.aval.avalCEPIRecurso != null}">
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="CEPI: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.cepi != null? ManejadorConsultarActualizarAvales.aval.cepi.nombre : 'ERROR NOMBRE CEPI'}" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.aval.tipoRecursoAvalEtico.id == 7685 or 
+							ManejadorConsultarActualizarAvales.aval.tipoRecursoAvalEtico.id == 7686}">
+						<p:column style="width:130px">
+							<h:outputText value="Concepto CEPI: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.avalCEPIRecurso == 'S' ? 'Aprobado' : ManejadorConsultarActualizarAvales.aval.avalCEPIRecurso == 'N' ? 'No aprobado' : 'ERROR CONCEPTO REVISION RECURSO'}" />
+							<br />
+							<h:outputText value="(Enviado a CESI - #{ManejadorConsultarActualizarAvales.aval.cepi.cesi != null ? ManejadorConsultarActualizarAvales.aval.cepi.cesi.nombre : 'ERROR NOMBRE CESI'})"
+								rendered="#{ManejadorConsultarActualizarAvales.aval.aviEstado == 'ES'
+									or ManejadorConsultarActualizarAvales.aval.aviEstado == 'SS'
+									or ManejadorConsultarActualizarAvales.aval.aviEstado == 'NS'}"
+								style="font-size: 12px;"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorConsultarActualizarAvales.aval.tipoRecursoAvalEtico.id == 7687}">
+						<p:column style="width:130px">
+							<h:outputText value="Concepto CEPI: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.avalCEPIRecurso == 'S' ? 'Procedente' : ManejadorConsultarActualizarAvales.aval.avalCEPIRecurso == 'N' ? 'No procedente' : 'ERROR CONCEPTO REVISION RECURSO'}" />
+							<br />
+							<h:outputText value="(Enviado a CESI - #{ManejadorConsultarActualizarAvales.aval.cepi.cesi != null ? ManejadorConsultarActualizarAvales.aval.cepi.cesi.nombre : 'ERROR NOMBRE CESI'})" 
+								rendered="#{ManejadorConsultarActualizarAvales.aval.aviEstado == 'ES'
+									or ManejadorConsultarActualizarAvales.aval.aviEstado == 'SS'
+									or ManejadorConsultarActualizarAvales.aval.aviEstado == 'NS'}"
+								style="font-size: 12px;"/> 
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="Fecha revisión: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.fechaAvalCEPIRecurso}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="Observaciones: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.textoCEPI}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panelGrid id="panelRecursoRevisiónCEPINO" columns="1" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+						rendered="#{ManejadorConsultarActualizarAvales.aval.avalTieneRecurso == 'SI' and ManejadorConsultarActualizarAvales.aval.avalCEPIRecurso == null}">
+						<h:outputText value="A la fecha, el recurso no ha sido revisado por el CEPI - #{ManejadorConsultarActualizarAvales.aval.cepi != null? ManejadorConsultarActualizarAvales.aval.cepi.nombre : 'ERROR NOMBRE CEPI'}."/>
+				</p:panelGrid>
+				<!-- Revision CESI -->
+				<p:panelGrid id="panelRecursoRevisiónCESITitulo" columns="1" styleClass="estilo-panelgrid-sinbordes" style="width:100%"
+					rendered="#{ManejadorConsultarActualizarAvales.aval.aviEstado == 'ES' 
+						or ManejadorConsultarActualizarAvales.aval.aviEstado == 'SS' 
+						or ManejadorConsultarActualizarAvales.aval.aviEstado == 'NS'}">
+					<p:spacer height="10" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">
+							Revisión recurso Comité de Ética de Segunda Instancia - CESI
+					</t:div>
+					<p:spacer height="10"/>
+				</p:panelGrid>
+				<p:panelGrid id="panelRecursoRevisiónCESI" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+					rendered="#{ManejadorConsultarActualizarAvales.aval.avalCESI != null 
+						and (ManejadorConsultarActualizarAvales.aval.aviEstado == 'SS' or ManejadorConsultarActualizarAvales.aval.aviEstado == 'NS')}">
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="CESI: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.cepi != null? ManejadorConsultarActualizarAvales.aval.cepi.cesi.nombre : 'ERROR NOMBRE CESI'}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="Concepto CESI: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.avalCESI == 'S' ? 'Aprobado' : ManejadorConsultarActualizarAvales.aval.avalCESI == 'N' ? 'No aprobado' : 'ERROR CONCEPTO REVISION RECURSO CESI'}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="Fecha revisión: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.fechaAvalCESI}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:130px">
+							<h:outputText value="Observaciones: " style='font-weight: bold;'/>
+						</p:column>
+						<p:column style="width:500px">
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.textoCESI}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panelGrid id="panelRecursoRevisiónCESINO" columns="1" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+						rendered="#{ManejadorConsultarActualizarAvales.aval.avalCESI == null and ManejadorConsultarActualizarAvales.aval.aviEstado == 'ES'}">
+						<h:outputText value="A la fecha, el recurso no ha sido revisado por el CESI - #{ManejadorConsultarActualizarAvales.aval.cepi != null? ManejadorConsultarActualizarAvales.aval.cepi.cesi.nombre : 'ERROR NOMBRE CESI'}."/>
+				</p:panelGrid>
+				<!-- INTERPONER QUEJA -->
+				<p:panelGrid id="panelQuejaTitulo" columns="1" styleClass="estilo-panelgrid-sinbordes" style="width:100%"
+					rendered="#{ManejadorConsultarActualizarAvales.aval.avalTieneQueja == 'SI'}">
+					<p:spacer height="10" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">
+							Queja interpuesta por el docente
+					</t:div>
+					<p:spacer height="10"/>
+				</p:panelGrid>
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<p:panelGrid id="panelTieneQueja" styleClass="estilo-panelgrid-sinbordes" style="text-align:left"
+						rendered="#{ManejadorConsultarActualizarAvales.aval.avalTieneQueja == 'SI'}">
+						<p:row>
+							<p:column>
+								<h:outputText value="¿El docente interpuso una queja?: " style='font-weight: bold;'/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.avalTieneQueja}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<p:panelGrid id="panelQuejaDatos" styleClass="estilo-panelgrid-sinbordes" style="text-align:left">
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha:" style='font-weight: bold;'/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.fechaQueja}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Justificación: " style='font-weight: bold;'/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.textoQueja}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panelGrid>
+				<!-- Revision queja -->
+				<p:panelGrid id="panelRevisiónQuejaTitulo" columns="1" styleClass="estilo-panelgrid-sinbordes" style="width:100%"
+					rendered="#{ManejadorConsultarActualizarAvales.aval.avalTieneQueja == 'SI' and ManejadorConsultarActualizarAvales.aval.avalCESIQueja == 'S'}">
+					<p:spacer height="10" />
+					<t:div styleClass="contenido-titulo-general-ancizar-left">
+						Revisión queja Comité de Ética de Segunda Instancia - CESI
+					</t:div>
+					<p:spacer height="10"/>
+				</p:panelGrid>
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<p:panelGrid id="panelQuejaDatos" styleClass="estilo-panelgrid-sinbordes" style="text-align:left">
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha:" style='font-weight: bold;'/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.fechaCESIQueja}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+								</h:outputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Observaciones: " style='font-weight: bold;'/>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.textoCESIQueja}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>	
+			<p:dialog header="Información del cambio de estado"
+				widgetVar="dialogHistorico" modal="true" resizable="false"
+				width="600">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="width:10%;">
+							<h:outputText value="Aval: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.aval.aviId}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Responsable: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.historicoAval.revisor.nombreCompletoMinusculas}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.historicoAval.fecha}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column> 
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Justificación: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorConsultarActualizarAvales.historicoAval.justificacion}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+			</p:dialog>
+			<p:panel header="Personas habilitadas para trámite de aval"
+				rendered="#{ManejadorConsultarActualizarAvales.aval.aviEstado != 'B' and 
+				(
+				(ManejadorConsultarActualizarAvales.imprimirReporteAval and (ManejadorConsultarActualizarAvales.aval.aviEstado == 'I' or ManejadorConsultarActualizarAvales.aval.aviEstado == 'IF' or ManejadorConsultarActualizarAvales.aval.aviEstado == 'IS' or ManejadorConsultarActualizarAvales.aval.aviEstado == 'C')) or
+				(ManejadorConsultarActualizarAvales.imprimirReporteAval and ManejadorConsultarActualizarAvales.aval.aviEstado == 'U' and ManejadorConsultarActualizarAvales.aval.aviAvalUab == 'S' and ManejadorConsultarActualizarAvales.aval.aviAvalfacultad == null) or
+				(ManejadorConsultarActualizarAvales.imprimirReporteAval and ManejadorConsultarActualizarAvales.aval.aviEstado == 'F' and ManejadorConsultarActualizarAvales.aval.aviAvalfacultad == 'S' and ManejadorConsultarActualizarAvales.aval.tipo != 'JD' and ManejadorConsultarActualizarAvales.aval.tipo != 'PINVC') or
+				(ManejadorConsultarActualizarAvales.imprimirReporteAval and ManejadorConsultarActualizarAvales.aval.aviEstado == 'F' and ManejadorConsultarActualizarAvales.aval.aviAvalfacultad == 'S' and ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'D') or 
+				(ManejadorConsultarActualizarAvales.imprimirReporteAval and ManejadorConsultarActualizarAvales.aval.aviEstado == 'D' and ManejadorConsultarActualizarAvales.aval.aviAvaldireccion == 'S' and ((ManejadorConsultarActualizarAvales.aval.esRegalias and ManejadorConsultarActualizarAvales.aval.interSedes == 'S') or (ManejadorConsultarActualizarAvales.aval.esPaedRegalias and ManejadorConsultarActualizarAvales.aval.interSedes == 'S') or ManejadorConsultarActualizarAvales.aval.tipo == 'GR' or ManejadorConsultarActualizarAvales.aval.tipo == 'INI')) or
+				(ManejadorConsultarActualizarAvales.imprimirReporteAval and ManejadorConsultarActualizarAvales.aval.esAvalParaRevisionDRE == 'S' and empty ManejadorConsultarActualizarAvales.aval.avalDRE)
+				)}"
+				style="margin-top: 20px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="text-align:left;">
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="Dependencia: " style='font-weight: bold;' />
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.dependencia.nombre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="Facultad: " style='font-weight: bold;' />
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.dependencia.facultad.nombre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="Sede: " style='font-weight: bold;' />
+							<h:outputText
+								value="#{ManejadorConsultarActualizarAvales.dependencia.sede.nombre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="vertical-align: text-top; width:370px;">
+							<p:dataTable var="perUab"
+								value="#{ManejadorConsultarActualizarAvales.listaUab}"
+								emptyMessage="Sin personas asignadas">
+								<f:facet name="header">
+								        Unidad Académica Básica
+								    </f:facet>
+								<p:column style="text-align: left; width:600px;"
+									rendered="#{ManejadorConsultarActualizarAvales.aval.tipo == 'JD'}">
+									<h:outputText value="#{perUab.nombreCompletoMinusculas}" />
+									<h:outputText value=" #{perUab.id.documento}"
+										style="color:white; font-size:9px;" />
+								</p:column>
+								<p:column style="text-align: left; width: 170px;"
+									rendered="#{ManejadorConsultarActualizarAvales.aval.tipo == 'JD'}">
+									<h:outputText value="Ext. #{perUab.telExtension}" />
+								</p:column>
+							</p:dataTable>
+							<br />
+							<h:outputText
+								rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'JD'}"
+								value=" No aplica" style='font-weight: bold;' />
+						</p:column>
+						<p:column style="vertical-align: text-top; width:370px;">
+							<p:dataTable var="perFacultad"
+								value="#{ManejadorConsultarActualizarAvales.listaFacultad}"
+								emptyMessage="Sin personas asignadas">
+								<f:facet name="header">
+								        Vicedecanatura de la Facultad
+								    </f:facet>
+								<p:column style="text-align: left; width:600px;" rendered="#{!(ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'D') and !ManejadorConsultarActualizarAvales.aval.dependencia.sede.esSedePresenciaNacional}">
+									<h:outputText value="#{perFacultad.nombreCompletoMinusculas}" />
+									<h:outputText value=" #{perFacultad.id.documento}"
+										style="color:white; font-size:9px;" />
+								</p:column>
+								<p:column style="text-align: left; width: 170px;" rendered="#{!(ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'D') and !ManejadorConsultarActualizarAvales.aval.dependencia.sede.esSedePresenciaNacional}">
+									<h:outputText value="Ext. #{perFacultad.telExtension}" />
+								</p:column>
+							</p:dataTable>
+							<br />
+							<h:outputText
+								rendered="#{(ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'D') or ManejadorConsultarActualizarAvales.aval.dependencia.sede.esSedePresenciaNacional}"
+								value=" No aplica" style='font-weight: bold;' />
+						</p:column>
+					</p:row>
+						<p:row>
+							<p:column style="vertical-align: text-top;">
+								<p:dataTable var="perDireccion"
+									value="#{ManejadorConsultarActualizarAvales.listaDireccion}"
+									emptyMessage="Sin personas asignadas">
+									<f:facet name="header">
+								        Dirección de Investigación
+								    </f:facet>
+									<p:column style="text-align: left; width:600px;"
+										rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'JD' or ((ManejadorConsultarActualizarAvales.aval.tipo == 'JD' and ManejadorConsultarActualizarAvales.aval.dependencia.sede.esSedePresenciaNacional) or (ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'D'))}">
+										<h:outputText value="#{perDireccion.nombreCompletoMinusculas}" />
+										<h:outputText value=" #{perDireccion.id.documento}"
+											style="color:white; font-size:9px;" />
+									</p:column>
+									<p:column style="text-align: left; width: 170px;"
+										rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'JD' or ((ManejadorConsultarActualizarAvales.aval.tipo == 'JD' and ManejadorConsultarActualizarAvales.aval.dependencia.sede.esSedePresenciaNacional) or (ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'D'))}">
+										<h:outputText value="Ext. #{perDireccion.telExtension}" />
+									</p:column>
+								</p:dataTable>
+								<br />
+								<h:outputText
+									rendered="#{(ManejadorConsultarActualizarAvales.aval.tipo == 'JD' and !ManejadorConsultarActualizarAvales.aval.dependencia.sede.esSedePresenciaNacional) or (ManejadorConsultarActualizarAvales.aval.tipo == 'PINVC' and ManejadorConsultarActualizarAvales.aval.dependenciaContrapartida == 'F')}"
+									value=" No aplica" style='font-weight: bold;' />
+							</p:column>
+							<p:column style="vertical-align: text-top;"
+								rendered="#{ManejadorConsultarActualizarAvales.aval.esAvalParaRevisionVice eq 'S'}">
+								<p:dataTable var="perVice"
+									value="#{ManejadorConsultarActualizarAvales.listaVicerrectoria}"
+									emptyMessage="Sin personas asignadas">
+									<f:facet name="header">
+								        Vicerrectoría de Investigación
+								    </f:facet>
+									<p:column style="text-align: left; width:600px;"
+										rendered="#{((ManejadorConsultarActualizarAvales.aval.esRegalias or ManejadorConsultarActualizarAvales.aval.esPaedRegalias) and ManejadorConsultarActualizarAvales.aval.interSedes == 'S') or (ManejadorConsultarActualizarAvales.aval.tipo == 'GR' or ManejadorConsultarActualizarAvales.aval.tipo == 'INI') or ManejadorConsultarActualizarAvales.aval.esAvalParaRevisionDRE == 'S'}">
+										<h:outputText value="#{perVice.nombreCompletoMinusculas}" />
+										<h:outputText value=" #{perVice.id.documento}"
+											style="color:white; font-size:9px;" />
+									</p:column>
+									<p:column style="text-align: left; width: 170px;"
+										rendered="#{((ManejadorConsultarActualizarAvales.aval.esRegalias or ManejadorConsultarActualizarAvales.aval.esPaedRegalias) and ManejadorConsultarActualizarAvales.aval.interSedes == 'S') or (ManejadorConsultarActualizarAvales.aval.tipo == 'GR' or ManejadorConsultarActualizarAvales.aval.tipo == 'INI') or ManejadorConsultarActualizarAvales.aval.esAvalParaRevisionDRE == 'S'}">
+										<h:outputText value="Ext. #{perVice.telExtension}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="vertical-align: text-top;"
+								rendered="#{ManejadorConsultarActualizarAvales.aval.esAvalParaRevisionDRE == 'S'}">
+								<p:dataTable var="perDRE"
+									value="#{ManejadorConsultarActualizarAvales.listaDRE}"
+									emptyMessage="Sin personas asignadas">
+									<f:facet name="header">
+								        Dirección de Relaciones Exteriores
+								    </f:facet>
+									<p:column style="text-align: left; width:600px;">
+										<h:outputText value="#{perDRE.nombreCompletoMinusculas}" />
+										<h:outputText value=" #{perDRE.id.documento}"
+											style="color:white; font-size:9px;" />
+									</p:column>
+									<p:column style="text-align: left; width: 170px;">
+										<h:outputText value="Ext. #{perDRE.telExtension}" />
+									</p:column>
+								</p:dataTable>
+								<br />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+			</p:panel>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="Grupo" table="HER_GRUPO">
+		<id name="id" column="GRU_ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_GRUPO</param>
+			</generator>
+		</id>
+		<many-to-one name="estadoGrupo" class="EstadoGrupo"
+			column="EGR_ID" not-null="true" lazy="false" />
+
+		<many-to-one name="subAreaTematica" class="DominioDetalle"
+			lazy="false">
+			<column name="DOM_ID_SUBAREA" />
+			<column name="DOMDET_TIPO_SUBAREA" />
+		</many-to-one>
+
+		<many-to-one name="estadoGrupoColciencias" class="EstadoGrupoColciencias"
+			column="EGC_ID" not-null="true" lazy="false" />
+		<many-to-one name="dependencia" class="Dependencia"
+			column="DPN_ID" not-null="true" lazy="false" />
+		<many-to-one name="sede" class="Sede" column="SED_ID"
+			lazy="false" />
+		<many-to-one name="categoria" class="CategoriaGrupo"
+			column="GRU_CATEGORIA_COLCIENCIAS" lazy="false" />
+
+		<property name="nombre" column="GRU_NOMBRE" />
+		<property name="email" column="GRU_EMAIL" />
+		<property name="fechaCreacion" column="GRU_FCREACION" />
+		<property name="direccion" column="GRU_DIRECCION" />
+		<property name="telExtension" column="GRU_TEXTENSION" />
+		<property name="presentacion" type="text" column="GRU_PRESENTACION" />
+		<property name="telefono" column="GRU_TELEFONO" />
+		<property name="fax" column="GRU_FAX" />
+		<property name="url" column="GRU_URL" />
+		<property name="idColciencias" column="GRU_COLCIENCIAS" />
+		<property name="intersedes" column="GRU_INTERSEDES" />
+		<property name="interfacultades" column="GRU_INTERFACULTADES" />
+		<property name="historia" column="GRU_HISTORIA" />
+		<property name="experiencia" column="GRU_EXPERIENCIA" />
+		<property name="anoClasificacionColciencias" column="GRU_ANO_CLASIFICACION_COL" />
+		<property name="indiceScienticol" column="GRU_INDICE_SCIENTICOL" />
+		<property name="vision" column="GRU_VISION" type="text" />
+		<property name="prioridad" column="GRU_PRIORIDAD" type="text" />
+		<property name="perspectiva" column="GRU_PERSPECTIVA" type="text" />
+		<property name="enlaceColciencias" column="GRU_ENLACE_COLCIENCIAS" />
+		<property name="estadoMenu" column="GRU_ESTADO" />
+		<property name="enlaceGruplac" column="GRU_ENLACE_GRUPLAC" />
+		<property name="necesidad" column="GRU_NECESIDAD" type="text" />
+		<property name="pertinencia" column="GRU_PERTINENCIA" />
+		<property name="grupoSimilar" column="GRU_SIMILAR" />
+		<property name="explicacionGrupoSimilar" column="GRU_SIMILAR_EXP" />
+		<property name="archivoAval" column="GRU_AVAL" />
+
+		<many-to-one name="agendaPrincipal" class="PosibleAgendaGrupo"
+			column="AGG_ID" lazy="false" />
+
+		<set name="proyectos" table="HER_GRUPO_PROYECTO">
+			<key column="GRU_ID" />
+			<many-to-many class="Proyecto" column="PRY_ID" />
+		</set>
+
+		<set name="dependencias" table="HER_GRUPO_DEPENDENCIA" lazy="false">
+			<key column="GRU_ID" />
+			<many-to-many class="Dependencia" column="DPN_ID" />
+		</set>
+
+		<set name="planes" table="HER_GRUPO_PLAN" lazy="false">
+			<key column="GRU_ID" />
+			<many-to-many class="PlanEstudios" column="PLE_ID" />
+		</set>
+		<set name="investigadoresGrupo" table="HER_INVESTIGADOR_GRUPO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="GRU_ID" />
+			<one-to-many class="InvestigadorGrupo" />
+		</set>
+
+		<set name="clasificacionConocimiento" table="HER_GRUPO_CLAS_CON">
+			<key column="GRU_ID" />
+			<many-to-many class="ClasificacionConocimiento" column="CLC_ID" />
+		</set>
+
+		<set name="lineas" table="HER_GRUPO_LINEA" lazy="false">
+			<key column="GRU_ID" />
+			<many-to-many class="LineaInvestigacion" column="LIN_ID" />
+		</set>
+
+		<set name="areasTematicas" table="HER_GRUPO_AREA_TEMATICA"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="GRU_ID" />
+			<many-to-many class="AreaTematicaGrupo" column="ART_ID" />
+		</set>
+		<property name="objetivoDesarrolloSosteniblePrincipal"
+			column="GRU_ODS_PRINCIPAL" />
+		<property name="objetivoDesarrolloSostenibleSecundario"
+			column="GRU_ODS_SECUNDARIO" />
+			
+		<property name="interinstitucion" column="GRU_INTERINSTITUCION" />
+		<set name="instituciones" table="HER_GRUPO_INSTITUCION" inverse="true"
+			cascade="all-delete-orphan" lazy="false">
+			<key column="GRU_ID" />
+			<one-to-many class="GrupoInstitucion" />
+		</set>
+		<set name="laboratorios" table="HER_GRUPO_LABORATORIO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="GRU_ID" />
+			<one-to-many class="GrupoLaboratorio" />
+		</set>
+	</class>
+</hibernate-mapping>

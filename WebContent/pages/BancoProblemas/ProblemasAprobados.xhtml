@@ -1,0 +1,598 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+	<ui:define name="title">PROBLEMAS APROBADOS</ui:define>
+
+	<ui:define name="content">
+
+		<img
+			src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+			style="padding-bottom: 10px;" />
+
+		<h:form id="form">
+
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-informacion-pagina-buscador">
+					<h:outputText value="Banco de problemas" />
+				</t:div>
+
+				<img
+					src="#{facesContext.externalContext.requestContextPath}/images/her-ext-ecp/2018.04.25_siun_extension_convocatoria-ext-solidaria-2018_banner-hermes-01.png" 
+					style="padding-bottom: 5px;" height="181" width="703"/>
+
+				<t:div styleClass="contenedor-informacion">
+
+					<h:panelGrid columns="1" style="width: 100%">
+
+						<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+
+						<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+							closable="true" showSummary="true" showDetail="true" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" align="center" id="panelPreinscritos"
+						rendered="#{ManejadorProblemasAprobados.panelPreinscritos}">
+
+						<p:messages showDetail="true" autoUpdate="true" closable="false" />
+
+
+						<br />
+						<!-- 		INICIO DataTable Exporter -->
+
+						<p:dataTable id="tablaPreinscritosExporter"
+							value="#{ManejadorProblemasAprobados.seleccionadoDataModel}"
+							var="preinscrito"
+							emptyMessage="No existen problemas registrados que hayan sido aprobados"
+							selection="#{ManejadorProblemasAprobados.estudianteSeleccionado}"
+							selectionMode="single" paginatorPosition="bottom"
+							rendered="false">
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="ID" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.id_pre}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="TIPO DOCUMENTO" />
+								</f:facet>
+
+								<h:outputText
+									value="#{preinscrito.investigador.id.tipoDocumento}" />
+							</p:column>
+
+							<p:column style="font-size:10px;"
+								sortBy="#{preinscrito.investigador.id.documento}"
+								rendered="false">
+								<f:facet name="header">
+									<h:outputText value="DOCUMENTO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.investigador.id.documento}" />
+							</p:column>
+
+							<p:column style="font-size:10px;"
+								sortBy="#{preinscrito.investigador.nombre1}">
+								<f:facet name="header">
+									<h:outputText value="NOMBRES" />
+								</f:facet>
+
+								<h:outputText
+									value="#{preinscrito.investigador.nombre1} #{preinscrito.investigador.nombre2}" />
+							</p:column>
+
+							<p:column style="font-size:10px;"
+								sortBy="#{preinscrito.investigador.apellido1}">
+								<f:facet name="header">
+									<h:outputText value="APELLIDOS" />
+								</f:facet>
+
+								<h:outputText
+									value="#{preinscrito.investigador.apellido1} #{preinscrito.investigador.apellido2}" />
+							</p:column>
+
+							<p:column style="font-size:10px;"
+								sortBy="#{preinscrito.investigador.email}">
+								<f:facet name="header">
+									<h:outputText value="CORREO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.investigador.email}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="TELÉFONO MOVIL" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.tel_movil}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="CIUDAD" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.ciudad.nombre}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="ESTADO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.estado}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="ESTUDIANTE" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.estudianteUN}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="DOCENTE" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.esDocente}" />
+							</p:column>
+
+							<p:column style="font-size:10px;" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="EMPLEADO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.esEmpleado}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="ROL DE QUIEN REGISTRA EL PROBLEMA" />
+								</f:facet>
+
+								<h:outputText
+									value="#{preinscrito.tipo_vinculacion == 'INS_PUB' ? 'Institución pública':(preinscrito.tipo_vinculacion == 'COM' ? 'Comunidad':( preinscrito.tipo_vinculacion == 'DOC_UN' ? 'Docente UN':'Estudiante UN'))}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="EMPRESA" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.empresa}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="CARGO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.cargo}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText
+										value="¿LA EMPRESA/ENTIDAD ESTÁ INTERESADA EN COFINANCIAR EL PROYECTO QUE SURJA DE LA CONVOCATORIA?" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.tipo_empresa}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="PROBLEMA/ OPORTUNIDAD DE DESARROLLO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.nombreProblema}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="DESCRIPCIÓN PROBLEMA" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.descripcionProblema}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="DESCRIPCIÓN DE LA COMUNIDAD" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.comunidadObjetivoProblema}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="DEPARTAMENTO PROBLEMA" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.departamentoProblema.nombre}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="MUNICIPIO PROBLEMA" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.ciudadProblema.nombre}" />
+							</p:column>
+
+							<p:column style="font-size:10px;">
+								<f:facet name="header">
+									<h:outputText value="ÁREA RURAL/URBANA" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.ubicacionProblema}" />
+							</p:column>
+
+						</p:dataTable>
+
+						<!-- 		FIN DataTable Exporter -->
+
+						<!-- 	Panel Informacion Detallada -->
+
+						<p:dataTable id="tablaPreinscritos"
+							value="#{ManejadorProblemasAprobados.seleccionadoDataModel}"
+							var="preinscrito" cellpadding="6" cellspacing="3"
+							paginator="true" rows="10"
+							emptyMessage="No existen problemas registrados que hayan sido aprobados"
+							selection="#{ManejadorProblemasAprobados.estudianteSeleccionado}"
+							selectionMode="single"
+							sortBy="#{preinscrito.investigador.apellido1}"
+							paginatorPosition="bottom">
+
+							<p:ajax event="rowSelect"
+								listener="#{ManejadorProblemasAprobados.onRowSelect}"
+								update="@form" />
+
+							<p:ajax event="rowUnselect"
+								listener="#{ManejadorProblemasAprobados.onRowUnselect}"
+								update="@form" />
+
+							<p:column style="font-size:10px; width: 10px;"
+								sortBy="#{preinscrito.id_pre}">
+								<f:facet name="header">
+									<h:outputText value="ID" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.id_pre}" />
+							</p:column>
+
+							<p:column style="font-size:10px;width: 250px;"
+								sortBy="#{preinscrito.investigador.id.documento}">
+								<f:facet name="header">
+									<h:outputText value="PROBLEMA" />
+								</f:facet>
+								<t:div style="width: 250px;">
+									<h:outputText value="#{preinscrito.nombreProblema}" />
+								</t:div>
+							</p:column>
+
+							<p:column style="font-size:10px;" sortBy="#{preinscrito.estado}">
+								<f:facet name="header">
+									<h:outputText value="COMUNIDAD AFECTADA" />
+								</f:facet>
+								<t:div style="width: 250px;">
+									<h:outputText value="#{preinscrito.comunidadObjetivoProblema}" />
+								</t:div>
+							</p:column>
+
+							<p:column style="font-size:10px;"
+								sortBy="#{preinscrito.departamentoProblema.nombre}"
+								rendered="true">
+								<f:facet name="header">
+									<h:outputText value="DEPARTAMENTO" />
+								</f:facet>
+
+								<h:outputText value="#{preinscrito.departamentoProblema.nombre}" />
+							</p:column>
+
+						</p:dataTable>
+
+						<br />
+
+						<h:panelGrid columns="3" align="right">
+
+							<p:commandButton value="Salir" icon="ui-icon-circle-arrow-w"
+								action="#{ManejadorProblemasAprobados.regresar}"
+								rendered="false" />
+
+							<p:commandButton value="Exportar a Excel"
+								icon="ui-icon-document-b" ajax="false" rendered="false">
+								<p:dataExporter type="xls" target="tablaPreinscritosExporter"
+									fileName="Lista_Banco_Problemas"
+									postProcessor="#{ManejadorProblemasAprobados.postProcessXLS}" />
+							</p:commandButton>
+
+							<p:commandButton value="Guardar" icon="ui-icon-check"
+								action="#{ManejadorProblemasAprobados.guardar}" update="@form"
+								rendered="false" />
+						</h:panelGrid>
+
+						<br />
+
+					</h:panelGrid>
+
+					<!-- 	Panel Informacion Detallada -->
+
+					<p:tabView
+						rendered="#{ManejadorProblemasAprobados.estudianteSeleccionado != null}">
+
+						<p:tab title="Información General">
+
+							<t:div styleClass="contenido-titulo-general-myriad-2"
+								rendered="false">Información Personal</t:div>
+							<br />
+
+							<h:panelGrid columns="2" style="width: 625px;">
+
+								<p:column>
+
+									<h:panelGrid columns="2" cellpadding="10" cellspacing="20"
+										rendered="false">
+
+										<h:outputText value="NOMBRES " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.nombre1} 
+											 #{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.nombre2} #{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.apellido1} #{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.apellido2}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="CORREO " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.email}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="ROL DE QUIEN REGISTRA EL PROBLEMA    "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.tipo_vinculacion == 'INS_PUB' ? 'Institución pública':(ManejadorProblemasAprobados.estudianteSeleccionado.tipo_vinculacion == 'COM' ? 'Comunidad':( ManejadorProblemasAprobados.estudianteSeleccionado.tipo_vinculacion == 'DOC_UN' ? 'Docente UN':'Estudiante UN'))}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="EMPRESA/ENTIDAD "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.empresa}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="CARGO " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.cargo}" />
+										<br />
+										<h:outputText value="" />
+									</h:panelGrid>
+
+								</p:column>
+
+								<p:column>
+
+									<h:panelGrid columns="2" cellspacing="6" rendered="false">
+
+										<h:outputText value="APELLIDOS " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.apellido1} #{ManejadorProblemasAprobados.estudianteSeleccionado.investigador.apellido2}" />
+
+										<h:outputText value="" />
+										<h:outputText value="" />
+
+										<h:outputText value="TELÉFONO MOVIL "
+											style="font-weight: bold;" rendered="false" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.tel_movil}"
+											rendered="false" />
+
+									</h:panelGrid>
+
+								</p:column>
+
+
+							</h:panelGrid>
+
+							<h:panelGrid columns="2" style="width: 625px;" rendered="false">
+
+								<p:column>
+
+									<h:panelGrid columns="2" cellpadding="10" cellspacing="20">
+
+										<h:outputText
+											value="¿LA EMPRESA/ENTIDAD ESTÁ INTERESADA EN COFINANCIAR EL PROYECTO QUE SURJA DE LA CONVOCATORIA?    "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.tipo_empresa}" />
+										<br />
+										<h:outputText value="" />
+									</h:panelGrid>
+
+								</p:column>
+
+
+							</h:panelGrid>
+
+							<t:div styleClass="contenido-titulo-general-myriad-2">Información del problema</t:div>
+							<br />
+
+							<h:panelGrid columns="2" style="width: 625px;">
+
+								<p:column>
+
+									<h:panelGrid columns="2" cellpadding="10" cellspacing="20">
+
+										<h:outputText value="ID " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.id_pre}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="PROBLEMA/ OPORTUNIDAD DE DESARROLLO "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.nombreProblema}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="DESCRIPCIÓN DEL PROBLEMA "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.descripcionProblema}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="DESCRIPCIÓN DE LA COMUNIDAD "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.comunidadObjetivoProblema}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="DEPARTAMENTO " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.departamentoProblema.nombre}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="MUNICIPIO " style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.ciudadProblema.nombre}" />
+										<br />
+										<h:outputText value="" />
+
+										<h:outputText value="ÁREA RURAL/URBANA "
+											style="font-weight: bold;" />
+										<h:outputText
+											value="#{ManejadorProblemasAprobados.estudianteSeleccionado.ubicacionProblema}" />
+
+									</h:panelGrid>
+
+								</p:column>
+
+
+							</h:panelGrid>
+						</p:tab>
+
+						<p:tab title="Adjuntos" rendered="false">
+
+							<h:panelGrid columns="1" style="width: 625px;">
+
+								<t:div styleClass="contenido-titulo-general-myriad-2">Documentos Adjuntos</t:div>
+								<br />
+								<p:dataTable id="tablaArchivosAdjuntos"
+									value="#{ManejadorProblemasAprobados.listaArchivosAdjuntos}"
+									var="archivo" cellpadding="6" cellspacing="3"
+									emptyMessage="No se encuentran archivos adjuntos">
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="ARCHIVO" />
+										</f:facet>
+
+										<h:outputText value="#{archivo.nombreArchivo}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Descargar" />
+										</f:facet>
+
+										<center>
+											<p:commandButton ajax="false"
+												icon="ui-icon-arrowthickstop-1-s"
+												action="#{ManejadorProblemasAprobados.descargarArchivo}">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{ManejadorProblemasAprobados.archivoSeleccionado}" />
+											</p:commandButton>
+										</center>
+
+									</p:column>
+
+								</p:dataTable>
+
+								<br />
+
+							</h:panelGrid>
+
+						</p:tab>
+
+						<p:tab title="Aprobar" rendered="false">
+
+							<h:panelGrid columns="1" style="width: 625px;">
+
+								<h:panelGrid columns="2" align="center">
+
+									<t:div styleClass="contenido-titulo-general-myriad-2">Formalizar Asistente</t:div>
+									<br />
+
+									<h:outputText value="Estado" />
+									<p:selectOneMenu id="estadosPreinscripcionFormalizar"
+										value="#{ManejadorProblemasAprobados.estudianteSeleccionado.estado}"
+										style="width: 200px">
+										<p:ajax event="change" update=":form:panelPreinscritos" />
+										<f:selectItems
+											value="#{ManejadorProblemasAprobados.listaEstadosPreinscripcion}" />
+									</p:selectOneMenu>
+
+								</h:panelGrid>
+
+							</h:panelGrid>
+
+						</p:tab>
+
+					</p:tabView>
+
+				</t:div>
+
+				<t:div styleClass="final-contenedor-informacion" />
+
+			</t:div>
+
+		</h:form>
+
+		<t:div styleClass="contenido-menu">
+			<t:div styleClass="menu-superior">
+				<t:div styleClass="cabezote-derecho-menu" style="height:30px;">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+
+					<ul>
+
+						<li><h:form>
+								<p:commandLink
+									action="#{ManejadorPreinscripcionBancoProblemas.volver}"
+									ajax="false" style="height:28px; width:211px;">
+									<h:outputText value="Salir" />
+								</p:commandLink>
+							</h:form></li>
+
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

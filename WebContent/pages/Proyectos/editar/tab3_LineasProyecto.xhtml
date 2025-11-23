@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<div id="formulariobasico">
+		
+		<t:div styleClass="contenido-titulo-general-myriad" >Líneas de Investigación y Dependencias</t:div>
+		<br />
+		<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+		<br />
+		
+		<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+			
+			<t:div styleClass="contenido-titulo-general-myriad-1">
+				<h:outputText value="#{manejadorLineasProyecto.proyectoActual.nombre}"
+						style="font-weight: bold" />
+			</t:div>
+			
+		</h:panelGrid>
+			   	
+	   	<br />
+	   	
+	    <p:panel header="Lineas de Investigación">
+	   
+<!-- 	   	<h:outputText value="#{manejadorLineasProyecto.mensajeError}" style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" styleClass="mensajeerror"/> -->
+	   	<p:messages id="msgLinea" for="msgLinea" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+	   
+	   	<h:panelGrid columns="3" align="center" cellpadding="6" cellspacing="3">
+			             
+			 <h:outputText value="Linea:" />  
+			 
+			 <p:autoComplete id="autoCompleteLinea"
+			 				 value="#{manejadorLineasProyecto.lineaInvestigacion}" 
+			 				 completeMethod="#{manejadorLineasProyecto.obtenerListaSugeridas}" 
+			 				 size="75" 
+			 				 maxlength="250" 
+			 				 maxResults="5" 
+			 				 minQueryLength="2"/>
+			 				 
+			 <p:commandButton actionListener="#{manejadorLineasProyecto.adicionarLinea}" value="Adicionar" update="lineasDataTable,lineasPanelGrid,autoCompleteLinea,msgLinea"/>
+			  
+	   	</h:panelGrid>
+	   	
+	   	<br />
+			
+		<h:panelGrid columns="1" align="center" id="lineasPanelGrid">
+	   	                   
+	   	    <p:dataTable  id="lineasDataTable"
+	   	    			  value  ="#{manejadorLineasProyecto.proyectoActual.listaLineas}"
+	   	                  var  ="linea"
+	   	                  border="0" 
+	   	                  cellpadding="6"
+	   	                  cellspacing="3"
+	   	                  emptyMessage="No existen lineas asociadas al proyecto">
+	   	                  	
+	   	        <f:facet name="header">
+					<h:outputText value="LINEAS ASOCIADAS AL PROYECTO" />
+				</f:facet>
+				                                
+	   	        <p:column>				              
+					<h:outputText value="#{linea.nombre}"/>
+				</p:column>
+								         
+				<p:column>				            
+					<p:commandButton onclick="if(!confirm('¿Realmente quiere eliminar la línea?'))return false"
+									 action="#{manejadorLineasProyecto.eliminarLinea}"
+									 update="lineasDataTable"
+									 
+									 title="Eliminar Linea de Investigación"
+									 icon="ui-icon-trash">
+						<f:setPropertyActionListener target="#{manejadorLineasProyecto.lineaSeleccionada}" value="#{linea}" />
+					</p:commandButton>	
+			     </p:column>
+							         					                      
+	        </p:dataTable>
+			                                              
+	   </h:panelGrid>	
+			
+		
+	   </p:panel>
+	   <br />
+	   
+		<!-- 	   2 -->
+		
+        <p:panel id="panelDependencias" header="Dependencias Relacionadas">
+    	
+    	<p:messages id="msgDep" for="msgDep" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+    	              
+    	<h:panelGrid columns="2">    	
+                  	
+ 	         <h:outputText  value="Dependencia:"/>
+ 	                
+             <p:selectOneMenu  value="#{manejadorLineasProyecto.dependenciaId}" 
+                   			   id="dependenciaItem"
+               				   valueChangeListener="#{manejadorLineasProyecto.cambiarDependencia}"	
+               				   immediate="true">
+               					                        					  
+	                <f:selectItems value="#{manejadorLineasProyecto.dependenciaItem}"/>
+	                
+	          </p:selectOneMenu>
+            					            	          
+ 	          <h:outputText value="" />
+ 	          <p:message for="TextAreaDependencia" />
+ 	              	                  	    
+              <h:outputText value="Area de responsabilidad(Unidades, Grupos, Comités, etc)" />
+              
+              <p:inputTextarea value="#{manejadorLineasProyecto.dependenciaAreaResponsabilidad.areaResponsabilidad}" 
+              				   cols="70"
+              				   
+			        	       id="TextAreaDependencia"
+			        	       validatorMessage="La longitud maxima es 1000 caracteres"
+			        	       autoResize="false"
+			        	       >   
+                        <f:validateLength maximum="1000"/>
+			  </p:inputTextarea>
+              
+              <h:outputText value="" />
+              <p:commandButton actionListener="#{manejadorLineasProyecto.adicionarDependencia}" 
+              				   value="Agregar dependencia" 
+              				   update="dependenciasDataTable,msgDep,panelDependencias"/>
+                  	      	                  	   
+        </h:panelGrid>
+        
+        <br />
+	     	                 
+  	    <h:panelGrid columns="1" align="center" id="dependenciasPanelGrid">
+  	    
+  	      <h:panelGrid columns="1" style="width:600px"	>
+  	    	
+  	    	<p:dataTable id="dependenciasDataTable"
+  	                     value  ="#{manejadorLineasProyecto.proyectoActual.listaDependenciasAreaResponsabilidad}"
+  	                     var  ="dependenciaArea"
+  	                     cellpadding="6"
+  	                     cellspacing="3"
+  	                     border="0"
+  	                     emptyMessage="No existen dependencias asociadas al proyecto">
+  	                                
+	  	         <f:facet name="header">
+					<h:outputText value="DEPENDENCIAS ASOCIADAS AL PROYECTO" />
+				 </f:facet>
+	  	                                
+		         <p:column width="130">
+		           <h:outputText value="#{dependenciaArea.dependencia.nombre}"/>
+		         </p:column>
+		         
+		         <p:column width="400">
+		           <h:outputText value="#{dependenciaArea.areaResponsabilidad}"/>
+		         </p:column>
+		
+				<p:column width="30" style="width:50px;text-align:center">
+				   <p:commandButton onclick="if(!confirm('¿Realmente quiere eliminar la dependencia?'))return false" 
+				   					action="#{manejadorLineasProyecto.eliminarDependencia}"
+				   					icon="ui-icon-trash"
+				   					update="dependenciasDataTable"
+				   					title="Eliminar Área de Responsabilidad"
+				   					>
+				   
+				   <f:setPropertyActionListener target="#{manejadorLineasProyecto.dependenciaAreaResponsabilidadSeleccionada}" value="#{dependenciaArea}" />
+				   
+				   </p:commandButton>
+				</p:column>
+	   		
+	   	   </p:dataTable>
+	   	   
+	   	   </h:panelGrid>
+   		
+  	   </h:panelGrid>		       	    	            
+               
+       </p:panel>
+       
+       <br />
+       
+       <p:messages id="msgForm" for="msgForm" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+       
+       <br />
+	   
+	   <h:panelGroup>
+		<center>
+		   <h:panelGrid columns="3" cellpadding="3" >
+			  <p:commandButton action="#{manejadorLineasProyecto.atras}" value="Atrás" immediate="true" />  
+			  <p:commandButton action="#{manejadorLineasProyecto.salirGuardar}" value="Guardar y continuar después" update="dependenciasDataTable"/>
+			  <p:commandButton action="#{manejadorLineasProyecto.siguiente}" value="Guardar y avanzar" update="msgForm"/>
+		   </h:panelGrid>
+		</center>
+	   </h:panelGroup>   
+	                           
+</div>
+ 
+</h:form>
+</ui:define>
+</ui:composition>

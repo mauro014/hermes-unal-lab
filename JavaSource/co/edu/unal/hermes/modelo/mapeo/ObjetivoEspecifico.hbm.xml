@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="ObjetivoEspecifico" table="HER_OBJETIVO_ESPECIFICO">
+		<id name="id" column="OBJ_ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_OBJETIVO_ESPECIFICO</param>
+			</generator>
+		</id>
+		<property name="nombre" column="OBJ_DESCRIPCION" />
+		<property name="medioVerificacion" column="OBJ_MEDIO_VERIFICACION" />
+		<many-to-one name="proyecto" class="Proyecto" column="PRY_ID"
+			not-null="true" />
+
+		<set name="actividades" table="HER_OBJ_ESP_ACTIVIDAD" lazy="false"
+			order-by="ACT_ID">
+			<key column="OBJ_ID" />
+			<one-to-many class="ActividadObjetivo" />
+		</set>
+		
+		<set name="metasProyecto" table="HER_META_PROYECTO"
+			inverse="true" cascade="all-delete-orphan" order-by="MET_ID" lazy="false">
+			<key column="OBJ_ID" />
+			<one-to-many class="MetaProyecto" />
+		</set>
+		
+		<property name="numeroOrden" column="OBJ_ORDEN" />
+		
+	</class>
+</hibernate-mapping>

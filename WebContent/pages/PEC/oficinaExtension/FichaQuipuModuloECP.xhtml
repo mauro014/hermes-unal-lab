@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">FICHA QUIPU MODULO</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+		
+			<p:panel id="Clasificacion" header="Clasificación del módulo">
+				
+				<h:panelGrid id="PG_clasificacion" columns="2">
+					<h:outputText value="Código Módulo:" />
+					<p:selectOneMenu id="SOM_idModulo"
+						value="#{ManejadorFichaQuipuModuloECP.activdadECP}">
+						<f:selectItem itemLabel="Eventos ECP" itemValue="Cerrado" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Area Temática:" />
+					<p:selectOneMenu id="SOM_areaTematica"
+						value="#{ManejadorFichaQuipuModuloECP.areaTematica}">
+						<f:selectItem itemLabel="Área Temática" itemValue="area" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Eje Temático:" />
+					<p:selectOneMenu id="SOM_ejeTematico"
+						value="#{ManejadorFichaQuipuModuloECP.ejeTematico}">
+						<f:selectItem itemLabel="Eje tematico" itemValue="eje" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Código de Área Temática:" />
+					<p:selectOneMenu id="SOM_codAreaTematica"
+						value="#{ManejadorFichaQuipuModuloECP.codAreaTematica}">
+						<f:selectItem itemLabel="area temática" itemValue="codarea" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Plan Global:" />
+					<p:selectOneMenu id="SOM_planGlobal"
+						value="#{ManejadorFichaQuipuModuloECP.planGlobal}">
+						<f:selectItem itemLabel="plan global" itemValue="planG" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Grupo Investigacion:" />
+					<p:autoComplete id="AC_grupoInv"
+							value="#{ManejadorFichaQuipuModuloECP.grupoBusqueda}"
+							required="false"
+							completeMethod="#{ManejadorFichaQuipuModuloECP.completeGroup}"
+							size="41" />
+				</h:panelGrid>
+				
+			</p:panel>
+			
+			<br/>
+			
+			<p:panel id="Dependencias" header="Dependencias asociadas al módulo">
+			
+				<p:outputPanel id="sed">
+					<h:panelGrid id="Sedes" columns="2">
+						<h:outputText value="Sede:" />
+						<p:selectOneMenu id="Sede"
+							value="#{ManejadorFichaQuipuModuloECP.sede.id}">
+							<f:selectItems
+								value="#{ManejadorFichaQuipuModuloECP.sedeItem}" />
+							<p:ajax
+								update="facultad, facuText, fac,deptoText, departamento,dept"
+								event="change"
+								listener="#{ManejadorFichaQuipuModuloECP.cargarFacultades}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:outputPanel>
+
+				<p:outputPanel id="fac">
+					<h:panelGrid columns="2">
+						<h:outputText value="Facultad:" id="facuText"
+							rendered="#{ManejadorFichaQuipuModuloECP.mostrarFacultad}" />
+						<p:selectOneMenu
+							value="#{ManejadorFichaQuipuModuloECP.facultad.id}"
+							effect="fade" id="facultad" filter="true"
+							rendered="#{ManejadorFichaQuipuModuloECP.mostrarFacultad}">
+							<f:selectItems
+								value="#{ManejadorFichaQuipuModuloECP.facultadItem}" />
+							<p:ajax update="deptoText, departamento,dept, areaResp" event="change"
+								listener="#{ManejadorFichaQuipuModuloECP.cargarDepartamentos}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:outputPanel>
+
+				<p:outputPanel id="dept">
+					<h:panelGrid columns="2">
+						<h:outputText value="Departamento:" id="deptoText"
+							rendered="#{ManejadorFichaQuipuModuloECP.mostrarDepartamento}" />
+						<p:selectOneMenu
+							value="#{ManejadorFichaQuipuModuloECP.departamento}"
+							effect="fade" id="departamento" filter="true"
+							rendered="#{ManejadorFichaQuipuModuloECP.mostrarDepartamento}">
+							<f:selectItems
+								value="#{ManejadorFichaQuipuModuloECP.departamentoItem}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:outputPanel>
+				
+				<p:outputPanel id="areaResp">
+					<h:panelGrid columns="2" rendered="#{ManejadorFichaQuipuModuloECP.mostrarDepartamento}" >
+						<h:outputText value="Área Responsable:" id="areaText"/>
+						<p:inputText id="IT_areaAsociada"
+							value="#{ManejadorFichaQuipuModuloECP.areaResponsable}"/>
+					</h:panelGrid>
+				</p:outputPanel>
+				
+				<br/>
+				<center>
+					<p:commandButton id="CB_agregarDpn" value="agregar" title="Agregar Dependencia" 
+						action="#{ManejadorFichaQuipuModuloECP.agregarDependencias}"
+						update="DT_dependencias"/>
+				</center>
+				
+				<br/>
+				
+				<h:panelGrid columns="1" align="center">										
+					<p:dataTable id="DT_dependencias" var="dpn"
+						value="#{ManejadorFichaQuipuModuloECP.listaDependencias}"
+						paginator="#{ManejadorFichaQuipuModuloECP.mostrarPagListaDpn}" paginatorPosition="bottom" rows="10">
+						
+						<f:facet name="header">
+							Dependencias Agregadas
+						</f:facet>
+	
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{dpn.id}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{dpn.nombre}" />
+						</p:column>
+											
+					</p:dataTable>
+				</h:panelGrid>
+												
+			</p:panel>
+			
+			<br/>
+			
+			<p:panel id="Antecedentes" header="Antecedentes módulo">
+				<h:panelGrid id="PG_Antecedentes" columns="2">
+					<h:outputText value="Descripción del Antecedente:" />
+					<p:inputTextarea id="cuerpoCorreo"
+						value="#{ManejadorFichaQuipuModuloECP.antecedente}"
+						rows="5" cols="60" autoResize="true" maxlength="100"
+						counter="counter" counterTemplate="{0} caracteres restantes"/>
+						
+					<h:outputText />
+					<h:outputText id="counter" />					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<center>
+					<p:commandButton id="CB_agregarAntece" value="agregar" title="Agregar Antecedente" 
+						action="#{ManejadorFichaQuipuModuloECP.agregarAntecedente}"
+						update="DT_antecedentes"/>
+				</center>
+				
+				<br/>
+				
+				<h:panelGrid columns="1" align="center">									
+						
+					<p:dataTable id="DT_antecedentes"
+						value="#{ManejadorFichaQuipuModuloECP.listaAntecedentes}" var="antecedente"
+						paginator="#{ManejadorFichaQuipuModuloECP.mostrarPagListaAnt}" paginatorPosition="bottom" rows="10">
+						
+						<f:facet name="header">
+							Antecedentes Agregados
+						</f:facet>
+	
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descripción" />
+							</f:facet>
+							<h:outputText value="#{antecedente}" />
+						</p:column>					
+											
+					</p:dataTable>
+				</h:panelGrid>				
+			</p:panel>
+			
+			<br/>
+			
+			<p:panel id="productos" header="Productos académicos">
+				<h:panelGrid columsn="1">
+					<h:outputText value="Recuerde que el último pago del director del proyecto corresponde como mínimo al 20% de su remuneración total y está sujeto a la entrega de todos los productos académicos generados a partir del proyecto, por tanto la fecha de dicho pago será posterior a la fecha de entrega del último producto académico."/>					
+				</h:panelGrid>
+				
+				<h:panelGrid columsn="2">
+						
+					<h:outputText value="Tipo de producto:" id="tpProd"/>
+					<p:selectOneMenu
+						value="#{ManejadorFichaQuipuModuloECP.tpProd_1}"
+						effect="fade" id="prodNvl1" filter="true"
+						disabled="true">
+						<f:selectItems
+							value="#{ManejadorFichaQuipuModuloECP.productoTipoNivel1}" />
+					</p:selectOneMenu>
+					
+					<h:outputText />
+					<p:selectOneMenu
+						value="#{ManejadorFichaQuipuModuloECP.tpProd_2}"
+						effect="fade" id="prodNvl2" filter="true">
+						<f:selectItems
+							value="#{ManejadorFichaQuipuModuloECP.productoTipoNivel2}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Tipo de producto:" id="tpProd"/>
+					<p:selectOneMenu
+						value="#{ManejadorFichaQuipuModuloECP.tpProd_3}"
+						effect="fade" id="prodNvl3" filter="true">
+						<f:selectItems
+							value="#{ManejadorFichaQuipuModuloECP.productoTipoNivel3}" />
+					</p:selectOneMenu>
+					
+					<!--
+					<h:outputText value="Nombre"/>
+					<p:inputText id="IT_nombreProd"
+						value="#{ManejadorFichaQuipuModuloECP.nombreProd}"
+						size="70"/>
+					 -->
+					<h:outputText value="Cantidad"/>
+					<p:inputText id="IT_cantidadProd"
+						value="#{ManejadorFichaQuipuModuloECP.cantidadProd}"
+						size="70"/>
+					
+					<h:outputText value="Fecha de entrega:" />
+					<p:calendar value="#{ManejadorFichaQuipuModuloECP.fecEntregaProd}"
+						id="fecsus" />					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<center>
+					<p:commandButton value="agregar"/>
+				</center>
+				
+				<br/>
+				
+				<h:panelGrid columsn="1">															
+					
+					<p:dataTable id="DT_modulos" var="modulos"
+						value="#{ManejadorFichaQuipuModuloECP.listaProds}"
+						paginator="true" paginatorPosition="bottom" rows="10">
+						
+						<f:facet name="header">
+							Productos
+						</f:facet>
+	
+						<p:column style="width:30px">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{modulos.id}" />
+						</p:column>
+						
+						<p:column style="width:300px">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{modulos.titulo}" />
+						</p:column>									
+											
+					</p:dataTable>			
+				</h:panelGrid>							
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

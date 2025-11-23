@@ -1,0 +1,598 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core_rt"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Convocatorias</t:div>
+			<p:messages id="msgs" /> 
+            <p:panelGrid columns="1" style="margin-bottom: 20px;">
+					<t:div styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText
+							value="Señor usuario: Le informamos que algunas convocatorias cuentan con instructivos para postulación, puede consultarlos en el link " />
+						<a href="http://www.hermes.unal.edu.co/pages/html/descargas/index.xhtml" target="_blank" style="text-decoration:none; color: #16A8E2; font-weight: bold;">http://www.hermes.unal.edu.co/pages/html/descargas/index.xhtml</a>
+						<h:outputText
+	                    value=" o en búsqueda de convocatorias en el link "/>
+	                    <a href="http://www.hermes.unal.edu.co/pages/Consultas/BuscadorConvocatorias.xhtml" target="_blank" style="text-decoration:none; color: #16A8E2; font-weight: bold;">http://www.hermes.unal.edu.co/pages/Consultas/BuscadorConvocatorias.xhtml</a>
+						<h:outputText
+	                    value=". Adicionalmente al postularse en la convocatoria y antes de aceptar los términos de referencia puede descargar los documentos de la convocatoria."/>
+						<br />
+						<br />
+						Lo invitamos a diligenciar la 
+						<a href="https://docs.google.com/forms/d/e/1FAIpQLSdVtNHo3fKcgcj1bHg3ppRaPdkHIk2OGxTaEaK_PX2bBo1hcA/viewform"
+									target="_blank" style="color: #16A8E2; font-weight: bold;">
+							encuesta de satisfacción del proceso de gestión de investigación y creación artística
+						</a> 
+						<br />					
+					</t:div>
+			</p:panelGrid>
+			<t:div styleClass="panel_error">
+				<p:panel styleClass="panel_error"
+	                rendered="#{!empty manejadorConsultaConvocatorias.informacionAdicionalConvocatoria}"
+	                style="margin-bottom: 20px;">
+	                <h:outputText
+	                    value="#{manejadorConsultaConvocatorias.informacionAdicionalConvocatoria}"
+	                    escape="false" styleClass="info_error" />
+	            </p:panel>
+            </t:div>
+			<t:div style="font-size:20px; color: #585956;" 
+				rendered="#{manejadorConsultaConvocatorias.convocatoriasSistemaInvestigacion}">
+				<h:outputText
+						value="Convocatorias del Sistema de Investigación"/>
+			</t:div>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasPregrado}">
+			<h:outputText
+					value="Pregrado" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonPregrado"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasPregrado}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasPregrado}">
+				<p:tab title="#{convocatoria.titulo}" id="tabPregrado">
+					<p:dataTable id="modalidadesPregrado" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir Propuesta"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}"
+									 ajax="false">
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasPosgrado}">
+			<h:outputText
+					value="Posgrado" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonPosgrado"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasPosgrado}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasPosgrado}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}" id="tabPosgrado">
+					<p:dataTable id="modalidadesPosgrado" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasProyectos}">
+			<h:outputText
+					value="Proyectos" />
+			</t:div>
+			<p:accordionPanel var="convocatoria"  id="acordeonPoyectos"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasProyectos}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasProyectos}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesProyectos" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasInnovacion}">
+			<h:outputText
+					value="Innovación" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonInnovacion"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasInnovacion}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasInnovacion}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesInnovacion" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasInternacionalizacion}">
+			<h:outputText
+					value="Internacionalización" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonInternacionalizacion"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasInternacionalizacion}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasInternacionalizacion}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesInternacionalizacion" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasDifusion}">
+			<h:outputText
+					value="Difusión del conocimiento" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonDifusion"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasDifusion}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasDifusion}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesDofusion" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasLaboratorios}">
+			<h:outputText
+					value="Laboratorios" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonLaboratorios"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasLaboratorios}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasLaboratorios}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesLaboratorios" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div style="font-weight:bold; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasPublicaciones}">
+			<h:outputText
+					value="Publicaciones" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonPublicaciones"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasPublicaciones}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasPublicaciones}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesPublicaciones" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div styleClass="linea-iconos" style="margin-top:25px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasProgramasApoyo}"/>
+			<t:div style="font-size:20px; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasProgramasApoyo}">
+			<h:outputText
+					value="Programas de apoyo" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonApoyo"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasProgramasApoyo}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasProgramasApoyo}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesApoyo" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div styleClass="linea-iconos" style="margin-top:25px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasSedesFacultades}"/>
+			<t:div style="font-size:20px; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasSedesFacultades}">
+			<h:outputText
+					value="Convocatorias de sedes o facultades" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonSedesFacultades"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasSedesFacultades}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasSedesFacultades}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesSedesFacultades" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}" >
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+			<t:div styleClass="linea-iconos" style="margin-top:25px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasOtras}"/>
+			<t:div style="font-size:20px; color: #585956; margin-bottom:15px; margin-top:18px;" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasOtras}">
+			<h:outputText
+					value="Otras" />
+			</t:div>
+			<p:accordionPanel var="convocatoria" id="acordeonOtras"
+				value="#{manejadorConsultaConvocatorias.listaConvocatoriasOtras}"
+				activeIndex="" rendered="#{not empty manejadorConsultaConvocatorias.listaConvocatoriasOtras}">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatorias.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidadesOtras" var="modalidad" border="0"
+						emptyMessage="No existen modalidades habilitadas para esta convocatoria."
+						value="#{convocatoria.listaConvocatorias}" styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+									<h:outputText value="Modalidad" style="font-weight: bold;"/>
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a"  style="font-weight: bold;"/>
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"  style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+									<h:outputText value=" Fecha de cierre"  style="font-weight: bold;" rendered = "false"/>
+									<h:outputText value=" #{modalidad.fechaFinal}" rendered = "false" />
+									<h:outputText value=" Publicación de resultados"  style="font-weight: bold;"  rendered = "false" />
+									<h:outputText value=" #{modalidad.fechaPublicacionResultados}" rendered = "false"/>
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<h:outputLink value="../html/descargas/GuiaModalidadUno.pdf"
+									rendered="#{modalidad.restriccion.id == 'CM1'}">
+									<h:graphicImage id="descarga" alt="Descarga"
+										url="/imgplantilla/pngtitulos/cen_descinstructivo.png" />
+								</h:outputLink>
+								<p:commandButton value="Inscribir propuesta" ajax="false" rendered="#{modalidad.restriccion.id != 'ECOS_COLCIENCIAS'}" 
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}">
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+								<p:commandButton value="Preinscribir programa" ajax="false" rendered="#{modalidad.restriccion.id == 'ECOS_COLCIENCIAS'}"
+									action="#{manejadorConsultaConvocatorias.asignarConvocatoriaProyecto}">
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					<f:view>
+						<f:subview id="contenido">
+						</f:subview>
+					</f:view>
+				</p:tab>
+			</p:accordionPanel>
+		</h:form>
+	</ui:define>
+</ui:composition>

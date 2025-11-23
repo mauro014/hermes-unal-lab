@@ -1,0 +1,534 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="Form" enctype="multipart/form-data">
+			<p:messages id="msgs" />
+			<t:div styleClass="contenido-titulo-general-myriad">
+				Administrar grupos de investigación
+			</t:div>
+			<p:panel header="Filtrar">
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<h:outputText value="Código:" />
+					<p:inputText
+						value="#{manejadorAdministrarGruposVicerrectoria.codigoFiltro}"
+						maxlength="4" style="width: 80px;" />
+					<h:outputText value="Nombre:" />
+					<p:inputText
+						value="#{manejadorAdministrarGruposVicerrectoria.nombreFiltro}"
+						maxlength="100" style="width: 200px;" />
+					<h:outputText value="Estado Unal:" />
+					<p:selectCheckboxMenu
+						value="#{manejadorAdministrarGruposVicerrectoria.estadosUnalFiltro}"
+						label="Seleccione" style="width: 170px;"
+						panelStyle="width: 170px;">
+						<f:selectItems
+							value="#{manejadorAdministrarGruposVicerrectoria.estadosUnal}"
+							var="estadoGrupo" itemLabel="#{estadoGrupo.nombre}"
+							itemValue="#{estadoGrupo.id}" />
+					</p:selectCheckboxMenu>
+					<t:div>
+						<h:outputText value="Estado ScienTI: " />
+						<p:commandButton icon="ui-icon-info" id="helpScienTI" />
+						<p:tooltip id="toolTipTrack" for="helpScienTI" trackMouse="true">
+							<h:outputText
+								value="&lt;b&gt;No Registrado: &lt;/b&gt;No está registrado en Scienti."
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;b&gt;Registrado Sin Aval: &lt;/b&gt;Esta registrado en Scienti y no cuenta con aval institucional."
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;b&gt;Registrado: &lt;/b&gt;Esta registrado en Scienti y cuenta con aval institucional."
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;b&gt;Reconocido: &lt;/b&gt;Esta reconocido en Scienti pero no categorizado.."
+								escape="false" />
+							<br />
+							<h:outputText
+								value="&lt;b&gt;Categorizado: &lt;/b&gt;Cuenta con categoría en Minciencias."
+								escape="false" />
+						</p:tooltip>
+					</t:div>
+					<p:selectCheckboxMenu
+						value="#{manejadorAdministrarGruposVicerrectoria.estadosSCientiFiltro}"
+						style="width: 170px;" panelStyle="width: 170px;"
+						label="Seleccione">
+						<f:selectItems
+							value="#{manejadorAdministrarGruposVicerrectoria.estadosGruposCocliencias}"
+							var="estadoGrupoColciencias"
+							itemLabel="#{estadoGrupoColciencias.nombre}"
+							itemValue="#{estadoGrupoColciencias.id}" />
+					</p:selectCheckboxMenu>
+					<h:outputText value="Código COL:" />
+					<p:inputText
+						value="#{manejadorAdministrarGruposVicerrectoria.codigoColFiltro}"
+						maxlength="30" style="width: 200px;" />
+					<h:outputText value="Categoría ScienTI:" />
+					<p:selectCheckboxMenu
+						value="#{manejadorAdministrarGruposVicerrectoria.categoriasColFiltro}"
+						style="width: 170px;" panelStyle="width: 170px;"
+						label="Seleccione">
+						<f:selectItems
+							value="#{manejadorAdministrarGruposVicerrectoria.categorias}"
+							var="categoria" itemLabel="#{categoria.nombre}"
+							itemValue="#{categoria.id}" />
+					</p:selectCheckboxMenu>
+				</p:panelGrid>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%; text-align: left;">
+					<h:outputText value="Dependencia:" />
+					<p:selectOneMenu
+						value="#{manejadorAdministrarGruposVicerrectoria.dependenciaFiltro}"
+						style="width: 530px;">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{manejadorAdministrarGruposVicerrectoria.dependenciaItems}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<t:div style="text-align: center;">
+					<p:commandButton
+						action="#{manejadorAdministrarGruposVicerrectoria.filtrarGrupos}"
+						icon="ui-icon-search" update="@form" value="Filtrar"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+					<p:commandButton
+						action="#{manejadorAdministrarGruposVicerrectoria.reiniciarFiltros}"
+						update="@form" value="Reiniciar" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()"
+						onclick="if(!confirm('¿Esta seguro de borrar todos los filtros realizados?'))return false">
+					</p:commandButton>
+				</t:div>
+			</p:panel>
+			<p:dataTable style="border:none; margin-top: 10px;"
+				id="gruposInvestigacion" var="grupo"
+				value="#{manejadorAdministrarGruposVicerrectoria.gruposVista}"
+				emptyMessage="No existen grupos de investigación" paginator="true"
+				rows="10" paginatorPosition="bottom"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+				<f:facet name="header">
+					<h:outputText
+						value="Grupos de investigación (#{manejadorAdministrarGruposVicerrectoria.totalGruposInvestigacion})" />
+				</f:facet>
+				<p:column style="margin: 0px; padding: 0px;">
+					<f:facet name="header">
+						<h:outputText value="Grupo" />
+					</f:facet>
+					<t:div styleClass="panel-interno-tabla">
+						<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="#{grupo[0]} - #{grupo[1]}" />
+							<t:div>
+								<h:outputText value="Dependencia: " style="font-weight: bold;" />
+								<h:outputText value="#{grupo[2]}" />
+							</t:div>
+						</h:panelGrid>
+					</t:div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Información" />
+						<br />
+						<h:outputText value="Grupo" />
+					</f:facet>
+					<t:div styleClass="panel-interno-tabla" id="infoGrupo">
+						<h:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Estado UNal: " />
+							<p:selectOneMenu value="#{grupo[3]}">
+								<f:selectItems
+									value="#{manejadorAdministrarGruposVicerrectoria.estadosUnal}"
+									var="estadoGrupo" itemLabel="#{estadoGrupo.nombre}"
+									itemValue="#{estadoGrupo.id}" />
+								<p:ajax update="infoGrupo"
+									listener="#{manejadorAdministrarGruposVicerrectoria.verificarCambios}" />
+							</p:selectOneMenu>
+							<h:outputText value="Estado ScienTI: " />
+							<p:selectOneMenu value="#{grupo[4]}">
+								<f:selectItems
+									value="#{manejadorAdministrarGruposVicerrectoria.estadosGruposCocliencias}"
+									var="estadoGrupoColciencias"
+									itemLabel="#{estadoGrupoColciencias.nombre}"
+									itemValue="#{estadoGrupoColciencias.id}" />
+								<p:ajax update="infoGrupo"
+									listener="#{manejadorAdministrarGruposVicerrectoria.verificarCambios}" />
+							</p:selectOneMenu>
+							<h:outputText value="Código COL: " />
+							<p:inputText value="#{grupo[5]}" maxlength="30" />
+							<h:outputText value="Categoría ScienTI: " />
+							<p:selectOneMenu value="#{grupo[6]}"
+								disabled="#{grupo[4] != 'CT'}">
+								<f:selectItems
+									value="#{manejadorAdministrarGruposVicerrectoria.categorias}"
+									var="categoria" itemLabel="#{categoria.nombre}"
+									itemValue="#{categoria.id}"
+									itemDisabled="#{categoria.id eq 'S' or categoria.id eq 'R' or categoria.id eq 'G'}" />
+							</p:selectOneMenu>
+							<h:outputText rendered="#{grupo[7] eq 'SI'}"
+								value="Justificación Cambio: " />
+							<p:inputTextarea rendered="#{grupo[7] eq 'SI'}"
+								value="#{grupo[8]}" maxlength="500" counter="display"
+								counterTemplate="{0} caracteres restantes." />
+							<br />
+							<h:outputText id="display" />
+						</h:panelGrid>
+					</t:div>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Más" />
+						<br />
+						<h:outputText value="información" />
+					</f:facet>
+					<p:commandButton
+						action="#{manejadorAdministrarGruposVicerrectoria.cargarHistorico}"
+						icon="ui-icon-search" oncomplete="dialogHistorico.show();"
+						title="Consultar historico estados" update="@form">
+						<f:setPropertyActionListener value="#{grupo}"
+							target="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{manejadorAdministrarGruposVicerrectoria.imprimirReporteFormatoGrupo}"
+						icon="ui-icon-print" title="Generar reporte grupo" ajax="false">
+						<f:setPropertyActionListener value="#{grupo}"
+							target="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton title="Cambiar líder"
+						action="#{manejadorAdministrarGruposVicerrectoria.prepararCambioLider}"
+						update="@form" onstart="dialogEspere.show()" icon="ui-icon-person"
+						oncomplete="dialogEspere.hide(),lider.show()">
+						<f:setPropertyActionListener value="#{grupo}"
+							target="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton title="Adjuntar archivo"
+						action="#{manejadorAdministrarGruposVicerrectoria.abrirVentanaCargarArchivo}"
+						update="@form" onstart="dialogEspere.show()" icon="ui-icon-arrowthickstop-1-n"
+						oncomplete="dialogEspere.hide(),adjuntarArchivo.show()">
+						<f:setPropertyActionListener value="#{grupo}"
+							target="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton title="Histórico de edición"
+						action="#{manejadorAdministrarGruposVicerrectoria.cargarHistoricoFormulario}"
+						update="@form" onstart="dialogEspere.show()" icon="ui-icon-clock"
+						oncomplete="dialogEspere.hide(),dialogHistoricoFormulario.show()">
+						<f:setPropertyActionListener value="#{grupo}"
+							target="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<t:div style="width:100%; text-align: center; margin-top: 10px;">
+				<p:commandButton
+					action="#{manejadorAdministrarGruposVicerrectoria.guardarCambiosRealizados}"
+					icon="ui-icon-disk" update="@form"
+					value="Guardar cambios de estado realizados" onstart="dialogEspere.show()"
+					oncomplete="dialogEspere.hide()"
+					onclick="if(!confirm('¿Esta seguro de guardar todos los cambios realizados?'))return false">
+				</p:commandButton>
+			</t:div>
+			<p:messages id="msgs" />
+			<p:dialog header="Adjuntar archivo por cambio de estado"
+				id="adjuntarArchivo" widgetVar="adjuntarArchivo"
+				modal="true" resizable="false" width="550">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:660px; overflow: auto;"
+					id="archivoCambio">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="archivoCambioPanelGrid" style="width: 100%;">
+					<p:row id="mensajes">
+						<p:column colspan="2">
+							<p:messages id="msgs" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Grupo:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[0]}" /> - 
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[1]}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Adjuntar aval o documento: " />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorAdministrarGruposVicerrectoria.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Archivo adjunto:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[9]}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			</p:dialog>
+			<p:dialog header="Información del grupo" widgetVar="dialogHistorico"
+				modal="true" resizable="false" width="700">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="Grupo: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[0]}" /> - 
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[1]}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:commandLink
+								action="#{manejadorAdministrarGruposVicerrectoria.imprimirReporteFormatoGrupo}"
+								icon="ui-icon-print" ajax="false"
+								title="Imprimir reporte proyecto" value="Imprimir reporte grupo"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+								target="_BLANK">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="historicosEstadoGrupo" var="historico"
+					value="#{manejadorAdministrarGruposVicerrectoria.historicosEstadoGrupo}"
+					emptyMessage="No hay un histórico para este grupo" paginator="true"
+					rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Justificación de Cambio" />
+						</f:facet>
+						<h:outputText
+							value="#{!empty historico.justificacion ? historico.justificacion : 'Sin Justificación Registrada'}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Cambios Realizados" />
+						</f:facet>
+						<h:outputText rendered="#{!empty historico.estadoGrupo.nombre}"
+							value="&lt;b&gt;Estado de Grupo: &lt;/b&gt;#{historico.estadoGrupo.nombre} &lt;br /&gt;"
+							escape="false" />
+						<h:outputText
+							rendered="#{!empty historico.estadoGrupoColciencias.nombre}"
+							value="&lt;b&gt;Estado ScienTI: &lt;/b&gt;#{historico.estadoGrupoColciencias.nombre}"
+							escape="false" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{historico.responsable.nombreCompleto}" />
+					</p:column>
+					<p:column style="text-align:center;">
+					<f:facet name="header">
+							<h:outputText value="Archivo" />
+						</f:facet>
+					<p:commandButton title="Descargar archivo" rendered="#{historico.archivoCambio != null}"
+						action="#{manejadorAdministrarGruposVicerrectoria.descargarArchivo}"
+						ajax="false" onstart="dialogEspere.show()" icon="ui-icon-arrowthickstop-1-s">
+						<f:setPropertyActionListener value="#{historico}"
+							target="#{manejadorAdministrarGruposVicerrectoria.historicoSeleccionado}" />
+					</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+			<p:dialog header="Realizar cambio de líder" id="lider"
+				widgetVar="lider" modal="true" resizable="false" width="550">
+				<t:div styleClass="panel-interno-tabla"
+					style="max-height:800px; overflow: auto;" id="CambioLider">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="cambioPanelGrid" style="width: 100%;">
+						<p:row id="mensajes">
+							<p:column colspan="2">
+								<p:messages id="msgs" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Grupo:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[0]}" /> - 
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[1]}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Líder actual:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorAdministrarGruposVicerrectoria.grupoEdicion.responsable.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo documento de identidad Nuevo Lider:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorAdministrarGruposVicerrectoria.tipoDocumentoInv}">
+									<f:selectItems
+										value="#{manejadorAdministrarGruposVicerrectoria.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento de identidad Nuevo Lider:"
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<p:inputText id="numdocumento" maxlength="25"
+									value="#{manejadorAdministrarGruposVicerrectoria.documento}" />
+								<p:commandButton value="Validar nuevo líder"
+									update="cambioPanelGrid"
+									action="#{manejadorAdministrarGruposVicerrectoria.buscarNuevoLider}"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									<f:param name="idGrupo"
+										value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[0]}" />
+
+								</p:commandButton>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+								<h:outputText id="nombreNuevoLider" maxlength="25"
+									value="#{manejadorAdministrarGruposVicerrectoria.nuevoInvestigador.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="NOTA: El actual líder permanecerá en los integrantes del grupo como docente."
+									style="font-weight: bold;" />
+							</p:column>
+							<p:column>
+
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:outputPanel id="outputPanel">
+									<div style="width: 100%; text-align: center;">
+										<p:commandButton value="Cambiar líder" update="cambioPanelGrid" rendered="#{manejadorAdministrarGruposVicerrectoria.mostrarBotonCambioLider}"
+											action="#{manejadorAdministrarGruposVicerrectoria.guardarCambioLider}"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:param name="idGrupo"
+												value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[0]}" />
+
+										</p:commandButton>
+										<p:commandButton value="Cerrar" update="@form"
+											onclick="lider.hide()">
+										</p:commandButton>
+									</div>
+								</p:outputPanel>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:dialog>
+			<p:dialog header="Histórico edición información del grupo" widgetVar="dialogHistoricoFormulario"
+				modal="true" resizable="false" width="700">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="Grupo: " style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[0]}" /> - 
+							<h:outputText
+								value="#{manejadorAdministrarGruposVicerrectoria.grupoSeleccionado[1]}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:commandLink
+								action="#{manejadorAdministrarGruposVicerrectoria.imprimirReporteFormatoGrupo}"
+								icon="ui-icon-print" ajax="false"
+								title="Imprimir reporte grupo" value="Imprimir reporte grupo"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+								target="_BLANK">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:dataTable style="border:none; margin-top: 10px;"
+					id="historicosFormularioGrupo" var="historico"
+					value="#{manejadorAdministrarGruposVicerrectoria.historicosFormularioGrupo}"
+					emptyMessage="No hay un histórico de edición para este grupo" paginator="true"
+					rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{historico.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Formulario" />
+						</f:facet>
+						<h:outputText
+							value="#{historico.nombreFormulario}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Responsable" />
+						</f:facet>
+						<h:outputText value="#{historico.responsable.nombreCompleto}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+								Por favor espere
+				</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

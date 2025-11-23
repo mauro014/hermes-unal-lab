@@ -1,0 +1,304 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<script type="text/javascript">
+		if (window.addEventListener) {
+			  window.addEventListener('pageshow', function(event) {
+			    if (event.persisted) {
+			      // Eliminar caché de la página
+			      window.location.reload(); 
+			    }
+			  }, false);
+			}
+		</script>
+		<h:form id="formAdminLab">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Administración de Laboratorios</t:div>
+			
+			<t:div style="width: 100%; text-align: right; margin-bottom: 5px;" title="Instructivos del Sistema Hermes">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/index.xhtml"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Instructivos del Sistema Hermes</a>
+			</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 5px;">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=39"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Instructivo módulo Administrar Laboratorios</a>
+			</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 5px;">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=294"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Procedimiento de creación, modificación y cierre de laboratorios</a>
+			</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 5px;">
+				<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=291"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Normograma Gestión de Laboratorios</a>
+			</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 5px;">
+				<a href="https://docs.google.com/forms/d/177UYUK-FsvMRNW2HLnEqH7jobyW-PVslFjHSDKrl3TI/viewform"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Encuesta de satisfacción del proceso de gestión de  laboratorios</a>
+			</t:div>
+			
+			<p:panel id="panelAdministracionLaboratorio">
+
+				<p:dataTable var="laboratorios" id="TablaLaboratorios"
+					value="#{ManejadorAdministrarLaboratorios.listaLaboratorios}"
+					rows="10" paginator="true" paginatorPosition="bottom"
+					filteredValue="#{ManejadorAdministrarLaboratorios.laboratoriosFiltrados}"
+					pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} Laboratorios, Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No existen registros.">
+
+					<f:facet name="header">
+						#{ManejadorAdministrarLaboratorios.tituloTabla}
+					</f:facet>
+
+					<p:column sortBy="#{laboratorios.id}" filterBy="#{laboratorios.id}" filterStyle="width:30px;" filterMatchMode="exact" styleClass="pequennio">
+						<f:facet name="header">
+							<h:outputText value="id" />
+						</f:facet>
+						<h:outputText value="#{laboratorios.id}" styleClass="pequennio"
+							title="Número que identifica al Laboratorio en el sistema" />
+					</p:column>
+
+					<p:column sortBy="#{laboratorios.nombre}" headerText="Nombre" styleClass="pequennio"
+						filterBy="#{laboratorios.nombre}" filterStyle="width:200px;"
+						filterMatchMode="contains">
+						<h:outputText value="#{laboratorios.nombre}" styleClass="grande"/>
+						<br />
+						<h:outputText value="#{laboratorios.facultad.nombre}"
+							styleClass="pequennio" />
+						<br />
+						<h:outputText value="#{laboratorios.acreditacion}"
+							styleClass="azul" />
+					</p:column>
+
+					<p:column sortBy="#{laboratorios.porcentajeCompletitud}"
+						rendered = "false">
+						<f:facet name="header">
+							<h:outputText value="%" styleClass="pequennio" />
+							<br />
+							<h:outputText value="Avance" styleClass="pequennio" />
+						</f:facet>
+						<h:outputText value="#{laboratorios.porcentajeCompletitud} %"
+							styleClass="pequennio"
+							title="Porcentaje de avance de la información registrada en el Censo" />
+					</p:column>
+
+					<p:column filterBy="#{laboratorios.sede.id}"
+						filterOptions="#{ManejadorAdministrarLaboratorios.sedeSelectItem}"
+						rendered="#{ManejadorAdministrarLaboratorios.esLaboratoriosNacional or ManejadorAdministrarLaboratorios.esConsultaLaboratorios}"
+						styleClass="pequennio">
+						<f:facet name="header">
+							Sede
+						</f:facet>
+							#{laboratorios.sede.nombre}
+					</p:column>
+
+					<p:column
+						rendered="#{ManejadorAdministrarLaboratorios.esLaboratoriosNacional || ManejadorAdministrarLaboratorios.esLaboratoriosSede || ManejadorAdministrarLaboratorios.esConsultaLaboratorios || ManejadorAdministrarLaboratorios.esCoordinadorLaboratorio || ManejadorAdministrarLaboratorios.esLaboratoriosFacultad || ManejadorAdministrarLaboratorios.esLaboratoriosDepto}"
+						styleClass="pequennio">
+						<f:facet name="header">
+							<h:outputText value="Consultar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-search"
+								action="#{ManejadorAdministrarLaboratorios.consultarLaboratorios}"
+								title="Consultar Laboratorio #{laboratorios.id} - #{laboratorios.nombre}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:column
+						rendered="#{ManejadorAdministrarLaboratorios.esLaboratoriosNacional || ManejadorAdministrarLaboratorios.esLaboratoriosSede || ManejadorAdministrarLaboratorios.esCoordinadorLaboratorio || ManejadorAdministrarLaboratorios.esLaboratoriosFacultad || ManejadorAdministrarLaboratorios.esLaboratoriosDepto}"
+						styleClass="pequennio">
+						
+						<f:facet name="header">
+							<h:outputText value="Editar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-pencil"
+								action="#{ManejadorAdministrarLaboratorios.editarLaboratorios}"
+								title="Editar Laboratorio #{laboratorios.id} - #{laboratorios.nombre}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Reporte" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandLink
+								action="#{ManejadorAdministrarLaboratorios.reporte}"
+								target="_blank"
+								ajax="false">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado}" />
+								<p:commandButton icon="ui-icon-clipboard"
+									title="Reporte Laboratorio #{laboratorios.id} - #{laboratorios.nombre}">
+								</p:commandButton>
+							</p:commandLink>
+						</center>
+					</p:column>
+					
+					<p:column styleClass="pequennio">
+						<f:facet name="header">
+							<h:outputText value="Historial" />
+						</f:facet>
+						<center>
+							<h:commandLink
+								action="#{ManejadorAdministrarLaboratorios.consultarHistoricoEstadoLaboratorio}"
+								value="Ver"
+								style="text-decoration:none; 
+								color: #16A8E2; 
+								font-weight: bold;"
+								ajax="false" target="_blank"
+								title="Historial de cambios de estado para Laboratorio #{laboratorios.id} - #{laboratorios.nombre}">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado}" />
+							</h:commandLink>
+						</center>
+					</p:column>
+					
+					<p:column headerText="(X)" styleClass="pequennio"
+						rendered="#{ManejadorAdministrarLaboratorios.esLaboratoriosNacional}">
+						<center>
+							<p:commandButton 
+								icon="ui-icon-circle-close"
+								update=":formAdminLab:dialogInactivarLaboratorios"
+								oncomplete="dialogInactivarLaboratorios.show()"
+								title="Inactivar laboratorio. Se mostrará un formulario donde puede confirmar la inactivación y agregar una justificación.">
+								<f:setPropertyActionListener value="#{laboratorios}"
+									target="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+				</p:dataTable>
+
+				<center>
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{ManejadorAdministrarLaboratorios.esLaboratoriosNacional or ManejadorAdministrarLaboratorios.esLaboratoriosSede or ManejadorAdministrarLaboratorios.esConsultaLaboratorios}">
+						<p:selectBooleanCheckbox
+							value="#{ManejadorAdministrarLaboratorios.buscarAcreditados}">
+							<p:ajax update="@form" onstart="dlgEspere.show()"
+								oncomplete="dlgEspere.hide()"
+								listener="#{ManejadorAdministrarLaboratorios.buscarLaboratorios}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText
+							value="Restringir la búsqueda a laboratorios acreditados." />
+					</p:panelGrid>
+
+					<p:dialog header="Buscando Laboratorios..." widgetVar="dlgEspere"
+						resizable="false" closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+				</p:dialog>
+				</center>
+
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					style="width:100%;"
+					rendered="#{(ManejadorAdministrarLaboratorios.esLaboratoriosNacional or ManejadorAdministrarLaboratorios.esLaboratoriosSede or ManejadorAdministrarLaboratorios.esLaboratoriosFacultad or ManejadorAdministrarLaboratorios.esLaboratoriosDepto) and ManejadorAdministrarLaboratorios.esCoordinadorLaboratorio}">
+					<p:separator />
+					<h:outputText
+						value="Usted aparece como Coordinador del(los) siguiente(s) laboratorio(s):" />
+					<p:dataList
+						value="#{ManejadorAdministrarLaboratorios.laboratoriosCoordinador}"
+						var="lc" itemType="disc" styleClass="dataList-sin-borde">
+							#{lc.id}, #{lc.nombre}
+					</p:dataList>
+					<p:separator />
+				</p:panelGrid>
+
+				<br />
+				<center>
+					<p:commandButton icon="ui-icon-home"
+						action="#{ManejadorAdministrarLaboratorios.salir}"
+						onclick="if(!confirm('Está seguro de Salir?'))return false"
+						value="Inicio" />
+				</center>
+			</p:panel>
+			
+		<!-- ****************************		 DIALOG INACTIVAR LAB   *************************** -->
+			<p:dialog header="Inactivar laboratorio seleccionado" widgetVar="dialogInactivarLaboratorios"
+				dynamic="true" id="dialogInactivarLaboratorios" resizable="false" modal="true">
+				
+				<p:panelGrid id="pgNuevaActSoftwareDlg" styleClass="estilo-panelgrid-sinbordes" style="width:600px;">
+					<p:row>
+						<p:column style="width:25%;">
+							<h:outputText value="Laboratorio:" styleClass="negrilla" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado.nombre}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Justificación(*):" styleClass="negrilla" />
+						</p:column>
+						<p:column>
+							<t:div title="Ingrese la justificación o motivo de inactivar el laboratorio">
+								<p:inputTextarea id="justificacionInactivarTxt" rows="5" cols="40" counter="ctJustificacion"
+									autoResize="false" maxlength="1950"
+									counterTemplate="{0} caracteres restantes"
+									value="#{ManejadorAdministrarLaboratorios.laboratorioSeleccionado.justificacionInactivo}"
+								/>
+							</t:div>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText />
+						</p:column>
+						<p:column>
+							<h:outputText id="ctJustificacion" styleClass="pequennio" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha:" styleClass="negrilla" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorAdministrarLaboratorios.today}">
+							    <f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				
+				<p:panelGrid columns="1" id="pgErrorInactiva" style="width:100%;" styleClass="estilo-panelgrid-sinbordes">
+					<p:message for="justificacionInactivarTxt" redisplay="true" />
+				</p:panelGrid>
+					
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes">
+						<p:commandButton value="Guardar" icon="ui-icon-check" id="btnInactivarLab"
+							update=":formAdminLab:TablaLaboratorios,
+									:formAdminLab:pgErrorInactiva,
+									:formAdminLab:growlInactivar"
+							action="#{ManejadorAdministrarLaboratorios.inactivarLaboratorioSeleccionado}"/>
+						<p:spacer width="10" />
+						<p:commandButton value="Cancelar" onclick="dialogInactivarLaboratorios.hide()" />
+					</p:panelGrid>
+				</center>
+				<p:growl id="growlInactivar" for="btnInactivarLab" life="15000" severity="info"/>
+				
+<!-- 				<p:ajax event="close" update="@this" listener="#{ManejadorAdministrarLaboratorios.reiniciarActSoftwareSeleccionado}" /> -->
+				
+			</p:dialog>
+			
+		</h:form>
+
+	</ui:define>
+</ui:composition>

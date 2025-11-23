@@ -1,0 +1,976 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<f:loadBundle
+basename="co.edu.unal.hermes.vista.movilidad.MovilidadVisitanteArtes"
+var="msg"/>
+<s:pprPanelGroup id="pprSelectAreas"
+	partialTriggers="somFinanciacion, somTipoPonencia">
+	
+	<s:fieldset legend="#{msg.SeleccionIdioma}"
+		styleClass="legend1" style='font-size: 12px;'>
+		<h:panelGrid columns="2" align="left">
+		<h:commandLink
+							action="#{ManejadorCrearEditarMovilidadVisArt.setEnLocale}"
+							rendered="true">
+							
+							<h:graphicImage
+								value="/imgplantilla/png_idiomas/us.png" />
+	</h:commandLink>
+	<h:outputText value="#{msg.Ingles}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+	<h:commandLink
+							action="#{ManejadorCrearEditarMovilidadVisArt.setEsLocale}"
+							rendered="true">
+							
+							<h:graphicImage
+								value="/imgplantilla/png_idiomas/co.png" />
+	</h:commandLink>
+	<h:outputText value="#{msg.Espanol}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+
+
+	|</h:panelGrid>
+	</s:fieldset>
+	
+	<s:fieldset legend="#{msg.VisitantesArtistasUniversidadNacional}"
+		styleClass="legend1" style='font-size: 12px;'>
+
+		<h:panelGrid columns="1" align="center">
+			<h:panelGrid columns="2">
+					<h:outputText value="#{msg.MovilidadesRegistradasVisitantesArtes}"
+						styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+					<h:selectOneMenu
+						value="#{ManejadorCrearEditarMovilidadVisArt.codigoMovilidad}"
+						styleClass="texto" style='font-size: 10px; font-style: normal'>
+						<f:selectItems
+							value="#{ManejadorCrearEditarMovilidadVisArt.movilidadItem}" />
+					</h:selectOneMenu>					
+			</h:panelGrid>
+			<h:panelGrid columns="2" align="center">
+			<h:commandButton 
+			action="#{ManejadorCrearEditarMovilidadVisArt.buscarPersona}" style='font-size: 10px; font-style: normal'
+			value="#{msg.Buscar}"/>
+			
+			<h:commandButton 
+			action="#{ManejadorCrearEditarMovilidadVisArt.limpiar}" style='font-size: 10px; font-style: normal'
+			actionListener="#{ManejadorCrearEditarMovilidadVisArt.cancelAction}"
+			value="#{msg.Limpiar}" immediate="true" />
+
+			</h:panelGrid>
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" align="center"
+			rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[0]}">
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[0]}"
+				styleClass="labels_proyecto" />
+		</h:panelGrid>
+
+	</s:fieldset>
+	
+
+	<s:fieldset legend="#{msg.InformacionPersonalVisitante}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[0]}">
+		
+		<h:panelGrid columns="2">
+		
+		<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[50]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[50]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[50]}" />
+			<h:outputText value="#{msg.NombreVisitante}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="NombreVisiatente" readonly="true"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.nombresVisitante}"
+				style='font-size: 10px; font-style: normal'  size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[51]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[51]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[51]}" />
+			<h:outputText value="#{msg.ApellidosVisitante}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="ApellidosVisiatente" readonly="true"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.apellidosVisitante}"
+				style='font-size: 10px; font-style: normal'  size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+				<h:outputText value="#{msg.NivelEscolaridad}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.formacion.id}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.tipoFormacion}" />
+			</h:selectOneMenu>
+			
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[1]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[1]}" />
+			<h:outputText value="#{msg.NombreArtistico}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="NombreArtistico"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.nombreArtistico}"
+				style='font-size: 10px; font-style: normal'  size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[16]}" />
+			<h:outputText value="#{ManejadorCrearEditarMovilidadVisArt.errores[16]}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[16]}" />
+			<h:outputText value="#{msg.ContinenteOrigen}"
+					style='font-size: 10px; font-style: normal'
+					styleClass="labels_proyecto" />
+			<h:selectOneMenu value="#{ManejadorCrearEditarMovilidadVisArt.movArt.continente.id}"
+					styleClass="texto" style='font-size: 10px; font-style: normal'>
+			<f:selectItems
+						value="#{ManejadorCrearEditarMovilidadVisArt.continentes}" />
+			</h:selectOneMenu>		
+		
+			
+			<h:outputText value="#{msg.Nacionalidad}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.nacionalidad.id}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.nacionalidad}" />
+			</h:selectOneMenu>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[3]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[3]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[3]}" />
+			<h:outputText value="#{msg.NumeroPasaporte}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="NumeroPasaporte" readonly="true"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.pasaporte}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[4]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[4]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[4]}" />
+			<h:outputText value="#{msg.PaginaWeb}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="PaginaWeb"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.paginaWeb}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[5]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[5]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[5]}" />
+			<h:outputText value="#{msg.TelefonoFijo}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TelefonoFijo"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.telefonoFijo}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[6]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[6]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[6]}" />
+			<h:outputText value="#{msg.TelefonoMovil}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TelefonoMovil"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.telefonoMovil}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[7]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[7]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[7]}" />
+			<h:outputText value="#{msg.Direccion}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="Direccion"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.direccion}"
+				style='font-size: 10px; font-style: normal' size="60"
+				styleClass="labels_proyecto">
+			</h:inputText>
+
+
+
+		</h:panelGrid>
+
+	</s:fieldset>
+
+	<s:fieldset legend="#{msg.InformacionGeneralProyecto}"
+		styleClass="legend1" style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[1]}">
+
+		<h:panelGrid columns="2">
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[8]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[8]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[8]}" />
+			<h:outputText value="#{msg.NombreProyecto}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="NombreProyecto"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.nombreProyecto}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[9]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[9]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[9]}" />
+			<h:outputText value="#{msg.StatementArtista}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="StatementArtista"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.statementArtista}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[10]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[10]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[10]}" />
+			<h:outputText value="#{msg.DescripcionProyecto}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="DescripcionProyecto"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.descripcionProyecto}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[11]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[11]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[11]}" />
+			<h:outputText value="#{msg.ObjetivoGeneral}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="ObjetivoGeneral"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.objetivoGeneral}"
+				style='font-size: 10px; font-style: normal' rows="3" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[12]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[12]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[12]}" />
+			<h:outputText value="#{msg.ObjetivosEspecificos}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="ObjetivosEspecificos"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.objetivoEspecifico}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[13]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[13]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[13]}" />
+			<h:outputText value="#{msg.SintesisLocal}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="RelacionLOCAL"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.proyectoRelacionLocal}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+
+		</h:panelGrid>
+
+	</s:fieldset>
+	
+	
+	<s:fieldset legend="#{msg.DatosDesarrolloResidencia}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[2]}">
+
+		<h:panelGrid columns="2">
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[14]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[14]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[14]}" />
+			<h:outputText value="#{msg.FechaInicio}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputCalendar id="FechaInicio"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.fechainicial}"
+				valueChangeListener="#{ManejadorCrearEditarMovilidadVisArt.validarFechaInicial}"
+				renderAsPopup="true" popupTodayString="Hoy es: "
+				popupWeekString="Sem." renderPopupButtonAsImage="true"
+				onchange="submit();" />
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[15]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[15]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[15]}" />
+			<h:outputText value="#{msg.FechaFinalizacion}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputCalendar id="FechaFin"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.fechafinal}"
+				valueChangeListener="#{ManejadorCrearEditarMovilidadVisArt.validarFechaLlegada}"
+				renderAsPopup="true" popupTodayString="Hoy es: "
+				popupWeekString="Sem." renderPopupButtonAsImage="true"
+				onchange="submit();" />
+
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[19]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[19]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[19]}" />
+			<h:outputText value="#{msg.AreaArte}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.areaArte}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.areaArte}" />
+			</h:selectOneMenu>
+		
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[21]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[21]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[21]}" />
+		
+			<h:outputText value="#{msg.InteresFrontera}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="SedesFrontera"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.sedeFrontera}"
+				style='font-size: 10px; font-style: normal'  rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+		</h:panelGrid>
+		
+			<h:outputText value="#{msg.InformacionAdicionalDatosResidencia}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+
+	</s:fieldset>
+	
+	<s:fieldset legend="#{msg.Cronograma}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[3]}">
+
+		<h:panelGrid columns="2">
+		
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[25]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[25]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[25]}" />
+			<h:outputText value="#{msg.DescripcionActividadIngreso}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="DescripcionActividad"
+				value="#{ManejadorCrearEditarMovilidadVisArt.descripcionActividad}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[26]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[26]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[26]}" />
+			<h:outputText value="#{msg.FechaInicioActividad}" styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+			<t:inputCalendar id="FechaActividad"
+				value="#{ManejadorCrearEditarMovilidadVisArt.fechaActividad}"
+				renderAsPopup="true" popupTodayString="Hoy es: "
+				popupWeekString="Sem." renderPopupButtonAsImage="true" />
+				
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[27]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[27]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[27]}" />
+			<h:outputText value="#{msg.DuracionActividadDias}"
+				styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+			<h:inputText id="DuracionActividad" styleClass="textarea" style='font-size: 10px; font-style: normal'
+				value="#{ManejadorCrearEditarMovilidadVisArt.duracionActividad}"
+				size="4" />
+				
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[28]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[28]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[28]}" />				
+			<h:outputText value="" />
+			<h:commandButton value="#{msg.AdicionarActividad}"
+					action="#{ManejadorCrearEditarMovilidadVisArt.adicionarActividad}" />
+				
+			<h:outputText value="#{msg.ActividadesRegistradas}" style='font-size: 10px; font-style: normal' />		
+			<h:dataTable var="actividadMovilidad"
+					value="#{ManejadorCrearEditarMovilidadVisArt.listaActividades}"
+					cellpadding="6" cellspacing="3" align="center" border="1"
+					binding="#{ManejadorCrearEditarMovilidadVisArt.tablaActividadesSel}">
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.DescripcionActividad}" style='font-size: 10px;' />
+						</f:facet>
+					
+							<h:inputTextarea 
+						style='font-size: 10px; font-style: normal' readonly="true"
+						value="#{actividadMovilidad.descripcion}" 
+						cols="40" rows="3" style='font-size: 12px; font-style: normal' >
+					</h:inputTextarea>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.DuracionActividad}" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{actividadMovilidad.duracion}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.FechaInicioActividad}" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{actividadMovilidad.fecha}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>
+
+
+					<h:column>
+
+						<f:facet name="header">
+							<h:outputText value="#{msg.Eliminar}" style='font-size: 10px;'/>
+						</f:facet>
+						<h:commandButton value="#{msg.Eliminar}"
+							onclick="if(!confirm('Esta seguro de eliminar la Actividad?'))return false"
+							action="#{ManejadorCrearEditarMovilidadVisArt.eliminarActividad}"
+							image="/imgplantilla/pngtitulos/cen_eliminar.png" />
+					</h:column>
+
+				</h:dataTable>
+				
+			
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="#{msg.Presupuesto}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[4]}">
+
+		<h:panelGrid columns="2">
+		
+		  
+		    
+		    <h:outputText value="#{msg.ConvenioInterinstitucional}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu onchange="submit(this)"
+							valueChangeListener="#{ManejadorCrearEditarMovilidadVisArt.cambiarConvenio}"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.convenio}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.convenio}" />
+			</h:selectOneMenu>
+			
+			 
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[52]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[52]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[27]}" /> 
+			<h:outputText value="#{msg.DescripcionConvenio}" rendered="#{ManejadorCrearEditarMovilidadVisArt.banderaConvenio}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="DescripcionConvenio" rendered="#{ManejadorCrearEditarMovilidadVisArt.banderaConvenio}"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.convenioDescripcion}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+		   
+		  </h:panelGrid>   
+			<h:panelGrid columns="3">	 
+			   <h:outputText value="" />
+		    <h:outputText value="#{msg.RecursosUN}" />
+		    <h:outputText value="#{msg.RecursosPropios}" />
+		    
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[29] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[30]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[29]}"
+				styleClass="mensajeerror" 
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[29] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[30]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[30]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[29] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[30]}" />	
+			<h:outputText value="#{msg.Tiquetes}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TiqueteUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.tiquetesUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="TiqueteP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.tiquetesP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[31] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[32]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[31]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[31] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[32]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[32]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[31] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[32]}" />	
+			<h:outputText value="#{msg.Taller}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TallerUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.tallerUN}" readonly="true"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="TallerP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.tallerP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[33] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[34]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[33]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[33] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[34]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[34]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[33] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[34]}" />	
+			<h:outputText value="#{msg.Alojamiento}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="AlojamientoUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.alojamientoUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="AlojamientoP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.alojamientoP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[35] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[36]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[35]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[35] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[36]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[36]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[35] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[36]}" />	
+			<h:outputText value="#{msg.Alimentacion}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="AlimentacionUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.alimentacionUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="AlimentacionP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.alimentacionP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[37] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[38]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[37]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[37] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[38]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[38]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[37] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[38]}" />	
+			<h:outputText value="#{msg.Materiales}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="MaterialesUN" 
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.materialesUN}" readonly="true"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="MaetrialesP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.materialesP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+		    <h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[39] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[40]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[39]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[39] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[40]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[40]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[39] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[40]}" />	
+			<h:outputText value="#{msg.Transporte}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="TransporteUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.transporteUN}"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="TransporteP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.transporteP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+		    <h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[41] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[42]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[41]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[41] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[42]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[42]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[41] || ManejadorCrearEditarMovilidadVisArt.panelRenderError[42]}" />	
+			<h:outputText value="#{msg.Socializacion}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:inputText id="SocializacionUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.socializacionUN}" readonly="false"
+				style='font-size: 10px; font-style: normal' size="30"
+				styleClass="labels_proyecto">
+			</h:inputText>
+			<h:inputText id="SocializacionP"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.socializacionP}"
+				style='font-size: 10px; font-style: normal' size="30" 
+				styleClass="labels_proyecto">
+			</h:inputText>
+			
+			   <h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[2]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[2]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[2]}" />
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[2]}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />	
+			<h:outputText value="#{msg.Totales}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:outputText value="#{ManejadorCrearEditarMovilidadVisArt.movArt.totalUN}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			
+				<h:outputText value="#{ManejadorCrearEditarMovilidadVisArt.movArt.totalPropio}"
+					style='font-size: 10px; font-style: normal' 
+					styleClass="labels_proyecto" />
+				
+			<h:outputText value=""
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:commandButton value="#{msg.CalcularTotales}"
+			action="#{ManejadorCrearEditarMovilidadVisArt.calcularTotales}"/>
+				<h:outputText value=""
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+	    </h:panelGrid>
+			<h:outputText value="#{msg.InformacionAdicionalPresupuesto}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+	</s:fieldset>
+	
+	<s:fieldset legend="#{msg.Divulgacion}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[5]}">
+
+		<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[43]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[43]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[43]}" />
+			<h:outputText value="#{msg.PlanSocializacionLugarResidencia}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu value="#{ManejadorCrearEditarMovilidadVisArt.movArt.planSocializacionResidencia}"
+					styleClass="texto" style='font-size: 10px; font-style: normal'>
+			<f:selectItems
+						value="#{ManejadorCrearEditarMovilidadVisArt.socializacion}" />
+			</h:selectOneMenu>	
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[49]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[49]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[49]}" />
+			<h:outputText value="#{msg.PlanSocializacionUniversidadNacional}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="PlanSocializacionUN"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.planSocializacionUN}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="60"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="#{msg.InformacionAdicional}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[6]}">
+
+		<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[44]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[44]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[44]}" />
+			<h:outputText value="#{msg.ComoEntero}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.comoEntero}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.comoEntero}" />
+			</h:selectOneMenu>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[45]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[45]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[45]}" />
+			<h:outputText value="#{msg.AporteConsolidacionResidencia}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="RedArtistas"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.aporteRedArtistas}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[46]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[46]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[46]}" />
+			<h:outputText value="#{msg.ContribucionResidencia}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="Local104"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.contribucion}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[47]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[47]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[47]}" />
+			<h:outputText value="#{msg.DatosEspecialistas}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="especialistasArea"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.especialistasArea}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[50]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[50]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[50]}" />
+			<h:outputText value="#{msg.TrabajosTrayectoria}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<t:inputTextarea id="trabajosArea"
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.trabajos}"
+				style='font-size: 10px; font-style: normal' rows="5" cols="45"
+				styleClass="labels_proyecto">
+			</t:inputTextarea>
+			
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+	<s:fieldset legend="#{msg.DocumentosAdjuntos}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[7]}">
+
+		<h:panelGrid columns="2">
+			
+			<h:outputText value="#{msg.ListaDocumentos}" styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+			<h:selectOneMenu
+				value="#{ManejadorCrearEditarMovilidadVisArt.tipoDocumentoSel}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.tipoDocumentoSelItem}" />
+			</h:selectOneMenu>
+			
+			
+			
+			<h:outputLabel for="myFileId11" value="#{msg.Archivo} " style='font-size: 10px; font-style: normal'/>
+			<h:panelGroup>
+			<t:inputFileUpload id="myFileId11"
+			value="#{ManejadorCrearEditarMovilidadVisArt.archivoObligatorio}"
+			storage="file" />
+			<h:commandButton value="#{msg.AdjuntarArchivo}"
+			action="#{ManejadorCrearEditarMovilidadVisArt.guardarArchivoObligatorio}"/>
+			</h:panelGroup>			
+			
+			
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[48]}"/>
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[48]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[48]}" />
+			<h:outputText value="#{msg.ArchivosRegistrados}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:dataTable var="archivoAdjunto"
+					value="#{ManejadorCrearEditarMovilidadVisArt.listaArchivosObligatoriosSel}"
+					cellpadding="1" cellspacing="8" align="center" border="1"
+					binding="#{ManejadorCrearEditarMovilidadVisArt.tablaArchivosObligatoriosSel}">
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.TipoDocumento}" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{archivoAdjunto.tipoArchivo.nombre}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.ArchivoCargado}" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{archivoAdjunto.nombre}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>				
+					<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{msg.Eliminar}" style='font-size: 10px;' />
+					</f:facet>
+					<h:commandButton value="#{msg.Eliminar}"
+						action="#{ManejadorCrearEditarMovilidadVisArt.eliminarArchivoObligatorio}"
+						image="/imgplantilla/pngtitulos/cen_eliminar.png" />
+				</h:column>
+				</h:dataTable>
+	    </h:panelGrid>
+
+	</s:fieldset>
+	
+		<s:fieldset legend="#{msg.ConfirmarResidencia}" styleClass="legend1"
+		style='font-size: 12px;'
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[8]}">
+
+		<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[49]}" />
+			<h:outputText
+				value="#{ManejadorCrearEditarMovilidadVisArt.errores[49]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRenderError[49]}" />
+			<h:outputText value="#{msg.AvisoConfirmar}"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:selectOneMenu
+				value="#{ManejadorCrearEditarMovilidadVisArt.movArt.confirmarResidencia}"
+				styleClass="texto" style='font-size: 10px; font-style: normal'>
+				<f:selectItems
+					value="#{ManejadorCrearEditarMovilidadVisArt.confirmarResidencia}" />
+			</h:selectOneMenu>
+	    </h:panelGrid>
+
+	</s:fieldset>
+</s:pprPanelGroup>
+
+
+	<center><br />
+
+
+	</center>
+
+
+
+<h:panelGrid columns="2" align="center">
+	<h:commandButton
+		action="#{ManejadorCrearEditarMovilidadVisArt.guardar}" style='font-size: 10px; font-style: normal'
+		value="#{msg.GuardarContinuar}"
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[0]}" />
+		
+		<h:commandButton
+		action="#{ManejadorCrearEditarMovilidadVisArt.guardar2}" style='font-size: 10px; font-style: normal'
+		value="#{msg.GuardarSalir}"
+		rendered="#{ManejadorCrearEditarMovilidadVisArt.panelRender[0]}" />
+</h:panelGrid>
+</h:form>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Movilidades Artes</t:div>
+			<p:dataTable var="movilidadVisitante" value="#{manejadorAprobacionMovilidadArtes.listaMovilidadesVisitanteArtes}"  
+				emptyMessage="No existen movilidades asociadas" >
+				<p:column >
+					<f:facet name="header">
+						Visitantes
+					</f:facet>
+					<div class="panel-interno-tabla">   
+						<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" >
+							<h:outputText value="Fecha inicio: " />
+							<t:div style="width: 500px;">
+								<h:outputText value="#{movilidadVisitante.fechainicial}" style="font-weight: bold;" />
+							</t:div>
+							<h:outputText value="Solicitante: " />
+							<h:outputText value="#{movilidadVisitante.personaInv.id.documento}"  style="font-weight: bold;"/>
+							<h:outputText value="Nombre solicitante: " />
+							<h:outputText value="#{movilidadVisitante.personaInv.nombre1} #{movilidadVisitante.personaInv.apellido1} #{movilidadVisitante.personaInv.apellido2}"  style="font-weight: bold;"/>
+							<h:outputText value="Solicitud: "  />
+							<h:outputText value="#{movilidadVisitante.fechasolicitud}"  style="font-weight: bold;"/>
+							<h:outputText value="Solicitud número: " />
+							<h:outputText value="#{movilidadVisitante.id}"  style="font-weight: bold;" />
+							<h:outputText value="Aprobación facultad: " />
+							<h:outputText value="#{movilidadVisitante.aceptacionFacultad}"  style="font-weight: bold;" />
+							<h:outputText value="Comentarios Facultad: " rendered="#{movilidadVisitante.aceptacionFacultad != 'SI'}"/>		
+							<p:inputTextarea forceId="true" id="comFac4" rendered="#{movilidadVisitante.aceptacionFacultad != 'SI'}"
+								value="#{movilidadVisitante.comentariosFac}" style="font-weight: bold;" 
+								rows="3" cols="50"  >
+							</p:inputTextarea>
+						</p:panelGrid>
+					</div>
+					<p:dataTable var="archivoResumen" value="#{movilidadVisitante.listaArchivo}"  rendered="#{not empty movilidadVisitante.listaArchivo}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo"/>
+							</f:facet>
+							<h:outputText value="#{archivoResumen.tipoArchivo.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Archivo Cargado" />
+							</f:facet>
+							<h:commandLink
+								action="#{manejadorAprobacionMovilidadArtes.descargarDocumentoEvento}"
+								value="#{archivoResumen.nombre}" ajax="false">
+								<f:param name="archivoResumen" value="#{archivoResumen.id}" />
+								<f:param name="movilidadVisitante" value="#{movilidadVisitante.id}" />
+							</h:commandLink>
+						</p:column>
+					</p:dataTable>
+					<t:div style="width: 100%; text-align: center; margin: 20px;">
+						<p:commandButton value="Aprobar" 
+							onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false"
+							action="#{manejadorAprobacionMovilidadArtes.aprobarMovilidad}"
+							rendered="#{movilidadVisitante.aceptacionFacultad != 'SI' and movilidadVisitante.aceptacionFacultad != 'NO'}" ajax="false">
+							<f:setPropertyActionListener value="#{movilidadVisitante}"
+								target="#{manejadorAprobacionMovilidadArtes.movilidadVisitantesArtesSel}" />
+						</p:commandButton>
+						<p:commandButton value="No aprobar" 
+							onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false"
+							action="#{manejadorAprobacionMovilidadArtes.noAprobarMovilidad}"
+							rendered="#{movilidadVisitante.aceptacionFacultad != 'SI' and movilidadVisitante.aceptacionFacultad != 'NO' }" ajax="false">
+							<f:setPropertyActionListener value="#{movilidadVisitante}"
+								target="#{manejadorAprobacionMovilidadArtes.movilidadVisitantesArtesSel}" />
+						</p:commandButton>
+						<h:commandLink value="Ver reporte"
+							action="#{manejadorAprobacionMovilidadArtes.imprimirMovilidadVisitanteArtes}"
+							icon="ui-icon-search" title="Imprimir reporte" 
+							target="_blank"  style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							<f:setPropertyActionListener value="#{movilidadVisitante}"
+								target="#{manejadorAprobacionMovilidadArtes.movilidadVisitantesArtesSel}" />
+						</h:commandLink>
+					</t:div>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

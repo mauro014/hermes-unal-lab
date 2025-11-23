@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">DATOS BÁSICOS</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Datos Básicos</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<p:panel header="Información General" id="idInfoGeneral">
+
+
+
+				<h:panelGrid columns="2" cellpadding="10" align="center">
+					<h:outputText value="Título del proyecto"
+						rendered="#{!manejadorDatosBasicos.esEcosistemaColciencias}" />
+					<h:outputText value="Título del programa"
+						rendered="#{manejadorDatosBasicos.esEcosistemaColciencias}" />
+					<p:inputTextarea counter="counter" maxlength="1000"
+						counterTemplate="{0} caracteres restantes." required="true"
+						id="Titulo" style="width: 350px; height: 100px;" rows="3"
+						value="#{manejadorDatosBasicos.proyectoActual.nombre}"
+						requiredMessage="El título del proyecto es obligatorio"
+						readonly="true" />
+					<h:outputText id="count" value="" />
+					<h:outputText id="counter" />
+
+
+
+					<h:outputText value="Duración en meses"
+						rendered="#{!manejadorDatosBasicos.esEcosistemaColciencias}" />
+					<p:inputText styleClass="textarea" id="Duracion" readonly="true"
+						rendered="#{!manejadorDatosBasicos.esEcosistemaColciencias}"
+						value="#{manejadorDatosBasicos.proyectoActual.duracion}"
+						required="true" requiredMessage="La duración es obligatoria">
+						<f:validateDoubleRange minimum="1" />
+					</p:inputText>
+
+
+					<h:outputText value="Tipo de investigación"
+						rendered="#{!manejadorDatosBasicos.esExtensionSolidaria and !manejadorDatosBasicos.esEcosistemaColciencias}" />
+					<h:outputText value="Focos estratégico"
+						rendered="#{manejadorDatosBasicos.esEcosistemaColciencias}" />
+					<p:selectOneMenu id="tipoInvestigacionSelect"
+						value="#{manejadorDatosBasicos.proyectoActual.tipoInvestigacion.id}"
+						rendered="#{!manejadorDatosBasicos.esExtensionSolidaria}">
+						<f:selectItems
+							value="#{manejadorDatosBasicos.tipoInvestigacionItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Resumen" />
+					<p:inputTextarea id="Resumen" counter="counter2" readonly="true"
+						counterTemplate="{0} caracteres restantes."
+						value="#{manejadorDatosBasicos.proyectoActual.resumen}"
+						style="width: 350px; height: 100px;" rows="3" required="true"
+						requiredMessage="El resumen es obligatorio"
+						maxlength="#{manejadorDatosBasicos.esExtensionSolidaria ? 1500 : 3950}">
+						<f:validateLength minimum="#{valores.sizemin_campo_default}" />
+					</p:inputTextarea>
+					<h:outputText id="count2" value="" />
+					<h:outputText id="counter2" />
+
+					<h:outputText value="Objetivo" />
+					<p:inputTextarea id="Objetivo" counter="counter3" readonly="true"
+						counterTemplate="{0} caracteres restantes."
+						value="#{manejadorDatosBasicos.proyectoActual.objetivoGeneral}"
+						style="width: 350px; height: 100px;" rows="3" required="true"
+						requiredMessage="El Objetivo es obligatorio"
+						maxlength="#{manejadorDatosBasicos.esExtensionSolidaria ? 1500 : 3950}">
+						<f:validateLength minimum="#{valores.sizemin_campo_default}" />
+					</p:inputTextarea>
+					<h:outputText id="count3" value="" />
+					<h:outputText id="counter3" />
+
+				</h:panelGrid>
+			</p:panel>
+			<br />
+			<p:panel header="Palabras Clave" id="idPalabrasClave">
+				<br />
+				<p:outputPanel id="grupoListaPalabras" align="center">
+					<p:dataTable id="palabrasTable"
+						value="#{manejadorDatosBasicos.proyectoActual.listaPalabrasES}"
+						var="pal"
+						emptyMessage="No se encuentran palabras clave registradas">
+
+						<p:column style="width:25%">
+							<f:facet name="header">
+								<h:outputText value="Palabra Clave" />
+							</f:facet>
+							<h:outputText value="#{pal.palabraVista}" />
+						</p:column>
+
+					</p:dataTable>
+				</p:outputPanel>
+			</p:panel>
+
+			<br />
+			<p:panel header="Lugar de Ejecución" id="idLugarEjecucion"
+				rendered="#{!manejadorDatosBasicos.esEcosistemaColciencias}">
+
+				<h:panelGrid columns="2" cellpadding="10" align="center" id="dep">
+					<h:outputText value="Departamento" />
+					<p:selectOneMenu
+						value="#{manejadorDatosBasicos.departamentoActual.id}"
+						effect="fade" id="depto" filter="true" required="true">
+						<f:selectItems value="#{manejadorDatosBasicos.departamentoItem}" />
+						<p:ajax update="depto,ciudad "
+							listener="#{manejadorDatosBasicos.cambiarDepartamento}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Ciudad:" id="ciudText" />
+					<p:selectOneMenu value="#{manejadorDatosBasicos.ciudadActual.id}"
+						effect="fade" id="ciudad" filter="true">
+						<f:selectItems value="#{manejadorDatosBasicos.ciudadItem}" />
+					</p:selectOneMenu>
+
+
+					<h:outputText value="Lugar específico" />
+					<p:inputTextarea id="Lugar_Especifico"
+						value="#{manejadorDatosBasicos.proyectoActual.lugar}" rows="5"
+						cols="65" styleClass="textarea" autoResize="false"
+						maxlength="1000">
+					</p:inputTextarea>
+
+					<h:outputText value="Tipo de zona: "
+						rendered="#{manejadorDatosBasicos.esExtensionSolidaria}" />
+					<p:selectOneMenu id="tipoZona" layout="pageDirection"
+						value="#{manejadorDatosBasicos.proyectoActual.tipoZona}"
+						rendered="#{manejadorDatosBasicos.esExtensionSolidaria}">
+						<f:selectItems value="#{manejadorDatosBasicos.listaZonas}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+
+
+
+			</p:panel>
+
+			<br />
+
+			<p:panel header="Instituciones Participantes"
+				id="idInstitucionesParticipantes"
+				rendered="#{manejadorDatosBasicos.esEntidadesParticipantes or manejadorDatosBasicos.esEcosistemaColciencias}">
+
+				<h:panelGrid columns="2" cellpadding="10" align="center">
+
+					<h:outputText />
+					<p:message for="entidades" id="errorEntidades" />
+					<h:outputText value="Instituciones o Entidades Participantes: " />
+					<p:inputTextarea id="entidades" readonly="true"
+						value="#{manejadorDatosBasicos.proyectoActual.entidadesParticipantes}"
+						rows="5" cols="55" styleClass="textarea" autoResize="false"
+						maxlength="2000">
+					</p:inputTextarea>
+
+				</h:panelGrid>
+
+			</p:panel>
+			<br />
+
+			<p:panel header="Dependencias participantes"
+				rendered="#{manejadorDatosBasicos.esEcosistemaColciencias}">
+				<p:dataTable id="dependenciasTabla" var="dependencia"
+					style="margin-top: 10px; width: 550px;"
+					value="#{manejadorDatosBasicos.proyectoActual.listaDependenciasAreaResponsabilidad}"
+					styleClass="estilo-panelgrid-sinbordes"
+					emptyMessage="No se han agregado dependencias">
+					<p:column headerText="Dependencia">
+						<h:outputText value="#{dependencia.dependencia.nombre}" />
+					</p:column>
+					<p:column headerText="Sede" style="text-align: center;">
+						<h:outputText value=" #{dependencia.dependencia.sede.nombre}" />
+					</p:column>					
+				</p:dataTable>
+			</p:panel>
+
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 </p:dialog>
+	</ui:define>
+</ui:composition>
+

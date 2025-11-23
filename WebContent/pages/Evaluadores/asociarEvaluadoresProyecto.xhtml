@@ -1,0 +1,1377 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Asociar evaluadores de proyecto</t:div>
+			<t:div style="width: 100%; text-align: right; margin-bottom: 15px;">
+				<a
+					href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=30"
+					target="_blank" style="color: #16A8E2; font-weight: bold;">Instructivo
+					para la asignación de evaluadores</a>
+			</t:div>
+			<p:fieldset legend="Búsqueda" id="busqueda">
+				<br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="margin: auto; ">
+					<h:outputText value="Buscar proyectos por:" />
+					<p:selectOneButton
+						value="#{manejadorAsociarEvaluadoresProyecto.tipoBusqueda}">
+						<f:selectItem itemLabel="Convocatoria" itemValue="Convocatoria" />
+						<f:selectItem itemLabel="Código proyecto" itemValue="Individual" />
+						<p:ajax event="change" update="@form"
+							listener="#{manejadorAsociarEvaluadoresProyecto.cambiarForm}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneButton>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid
+					rendered="#{manejadorAsociarEvaluadoresProyecto.mostrarBusquedaProyecto}"
+					columns="3" styleClass="estilo-panelgrid-sinbordes"
+					style="margin:auto;" id="panelBusquedaProyectosEvaluadoresxCodigo">
+					<t:div style="width: 170px;">
+						<h:outputText value="Código del proyecto:" />
+					</t:div>
+					<p:inputText id="numCom" style="width:80px;"
+						value="#{manejadorAsociarEvaluadoresProyecto.idProyecto}" />
+					<p:commandButton
+						action="#{manejadorAsociarEvaluadoresProyecto.cargarProyectoXId}"
+						value="Consultar" update="@form" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+					<br />
+				</p:panelGrid>
+				<div style="width: 100%; text-align: center;">
+					<h:outputText
+						value="#{manejadorAsociarEvaluadoresProyecto.mensajeBusqueProyecto}"
+						style="font-size: 13px; font-weight: bold; color: #FF0000;" />
+				</div>
+				<p:panelGrid
+					rendered="#{manejadorAsociarEvaluadoresProyecto.mostrarBusquedaConvocatoria}"
+					columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelBusquedaProyectosEvaluadoresxConvocatoria">
+					<t:div style="width: 120px;">
+						<h:outputText value="Nombre convocatoria:" />
+					</t:div>
+					<t:div>
+						<p:inputText id="numCom" style="width:418px;"
+							value="#{manejadorAsociarEvaluadoresProyecto.nombreConvocatoria}" />
+						<p:commandButton
+							action="#{manejadorAsociarEvaluadoresProyecto.consultarConvocatorias}"
+							value="Consultar" update="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</t:div>
+					<h:outputText value="Convocatoria:" />
+					<p:selectOneMenu style="width:520px;" panelStyle="width: 520px;"
+						value="#{manejadorAsociarEvaluadoresProyecto.convocatoriaPadre}"
+						id="somConvocatoriaPadre"
+						valueChangeListener="#{manejadorAsociarEvaluadoresProyecto.cambiarConvocatoriaPadre}">
+						<f:selectItems
+							value="#{manejadorAsociarEvaluadoresProyecto.convocatoriaPadreItem}" />
+						<p:ajax update="somModalidad" />
+					</p:selectOneMenu>
+					<h:outputText value="Modalidad:" />
+					<p:selectOneMenu id="somModalidad" style="width:520px;"
+						panelStyle="width: 520px;"
+						value="#{manejadorAsociarEvaluadoresProyecto.convocatoria}"
+						valueChangeListener="#{manejadorAsociarEvaluadoresProyecto.cambiarModalidad}">
+						<f:selectItems
+							value="#{manejadorAsociarEvaluadoresProyecto.convocatoriaItem}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+					<div>-</div>
+					<div
+						style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+						<p:commandButton value="Buscar proyectos" icon="ui-icon-search"
+							update="@form"
+							action="#{manejadorAsociarEvaluadoresProyecto.cargarProyectos}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</div>
+				</p:panelGrid>
+
+			</p:fieldset>
+
+			<p:fieldset legend="Proyecto(s)" id="proyectos"
+				rendered="#{manejadorAsociarEvaluadoresProyecto.coordinadorTieneProyectos}"
+				style="margin-top: 10px;">
+				<br />
+				<p:panelGrid columns="3" id="panelProyectosxConvocatoria"
+					styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{!manejadorAsociarEvaluadoresProyecto.panelRender[3]}">
+					<h:outputText value="Proyecto:" />
+					<p:selectOneMenu select="select5"
+						value="#{manejadorAsociarEvaluadoresProyecto.proyectoId}"
+						style="width: 560px;" panelStyle="width: 560px;"
+						valueChangeListener="#{manejadorAsociarEvaluadoresProyecto.cambiarProyecto}"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+						<f:selectItems
+							value="#{manejadorAsociarEvaluadoresProyecto.proyectoItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<p:panelGrid
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[3]}"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column style="width:100px">
+
+							<h:outputText value="Nombre del proyecto: "
+								style='font-weight: bold' />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAsociarEvaluadoresProyecto.nombreProy}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:100px">
+							<h:outputText value="Código: " style="font-weight: bold" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAsociarEvaluadoresProyecto.proyectoActual.id}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panelGrid id="panelProyectosxConvocatoria"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column style="width:100px">
+							<h:outputText value="Convocatoria:" style="font-weight:bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAsociarEvaluadoresProyecto.nombrePadre}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:100px">
+							<h:outputText value="Modalidad:" style="font-weight:bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAsociarEvaluadoresProyecto.nombreModalidad}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:100px">
+							<h:outputText value="Fecha máxima de evaluación:"
+								style="font-weight:bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAsociarEvaluadoresProyecto.fechaFinalEvaluacion}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<div
+					style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+					<p:commandButton
+						action="#{manejadorAsociarEvaluadoresProyecto.visualizarPosiblesEvaluadores}"
+						value="Buscar posibles evaluadores" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+					</p:commandButton>
+				</div>
+			</p:fieldset>
+			<br />
+			<p:fieldset legend="Evaluadores" id="evaluadores"
+				rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[12]}">
+				<br />
+				<p:panelGrid id="panelBuscar" columns="2"
+					styleClass="estilo-panelgrid-sinbordes" style="margin: auto;">
+					<h:outputText value="Buscar evaluadores por:" />
+					<p:selectOneButton
+						value="#{manejadorAsociarEvaluadoresProyecto.tipoBusquedaEval}"
+						valueChangeListener="#{manejadorAsociarEvaluadoresProyecto.cambiarFormEval}"
+						onclick="submit();">
+						<f:selectItem itemLabel="Nombres / Apellidos" itemValue="nombre" />
+						<f:selectItem itemLabel="Documento" itemValue="documento" />
+						<p:ajax event="change" update="@form"
+							listener="#{manejadorAsociarEvaluadoresProyecto.cambiarFormEval}" />
+					</p:selectOneButton>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[7]}"
+					styleClass="estilo-panelgrid-sinbordes" style="margin: auto;">
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="nombresEV" icon="ui-icon-info" />
+							<p:tooltip for="nombresEV" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+							       Nombres del evaluador
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Nombres: " />
+						</p:column>
+						<p:column>
+							<p:inputText id="nombreConvoca" size="58"
+								value="#{manejadorAsociarEvaluadoresProyecto.campoBusquedaNombreInvestigador}"
+								update="panelBuscar" maxlength="400"
+								validatorMessage="Máximo 300 caracteres">
+							</p:inputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="ApellidosEv" icon="ui-icon-info" />
+							<p:tooltip for="ApellidosEv" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+							       Apellidos del evaluador
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Apellidos: " />
+						</p:column>
+						<p:column>
+							<p:inputText id="apellidosEv" size="58"
+								value="#{manejadorAsociarEvaluadoresProyecto.campoBusquedaApellidoInvestigador}"
+								maxlength="400" validatorMessage="Máximo 300 caracteres">
+							</p:inputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+						</p:column>
+						<p:column>
+						</p:column>
+						<p:column style="text-align: center;">
+							<p:commandButton id="buscarEvaluadorXNombre1"
+								action="#{manejadorAsociarEvaluadoresProyecto.buscarEvaluadorNombre}"
+								value="Buscar" update="@form" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panelGrid
+					rendered="#{!manejadorAsociarEvaluadoresProyecto.panelRender[7]}"
+					styleClass="estilo-panelgrid-sinbordes" style="margin: auto;">
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="tipoDocEV" icon="ui-icon-info" />
+							<p:tooltip for="nombresEV" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+							       Tipo de documento
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo de documento: " />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu select="select10"
+								value="#{manejadorAsociarEvaluadoresProyecto.tipoDocumentoB}"
+								style="width: 215px;">
+								<f:selectItems
+									value="#{manejadorAsociarEvaluadoresProyecto.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="DocEv" icon="ui-icon-info" />
+							<p:tooltip for="DocEv" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+							       Documento de identidad del evaluador
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Documento: " />
+						</p:column>
+						<p:column>
+							<p:inputText id="apellidosEv" size="58"
+								value="#{manejadorAsociarEvaluadoresProyecto.documentoEvaluadorB}"
+								maxlength="20" validatorMessage="Máximo 20 caracteres">
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<p:commandButton id="buscarXDocumento"
+								action="#{manejadorAsociarEvaluadoresProyecto.buscarEvaluador}"
+								value="Buscar" update="@form">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<div style="width: 100%; text-align: center;">
+					<h:outputText
+						value="#{manejadorAsociarEvaluadoresProyecto.mensajeBusEval}"
+						styleClass="texto"
+						style="font-size: 13px; font-weight: bold; color: #FF0000;" />
+				</div>
+				<br />
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;"
+					rendered="#{!manejadorAsociarEvaluadoresProyecto.panelRender[13] or manejadorAsociarEvaluadoresProyecto.esNuevo}">
+					<p:row style="width: 100%; text-align: center;">
+						<p:column style="width: 100%; text-align: center;">
+							<h:outputText
+								value="#{manejadorAsociarEvaluadoresProyecto.investigadorRes}"
+								style="margin: auto;" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;"
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[13]}">
+					<p:row>
+						<p:column>
+							<h:outputText value="Seleccione el evaluador: "
+								style="margin: auto;" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="posibleEvaluad3"
+								value="#{manejadorAsociarEvaluadoresProyecto.posibleEvaluadorSel3}"
+								style="width: 380px; margin: auto;">
+								<f:selectItems
+									value="#{manejadorAsociarEvaluadoresProyecto.posiblesEvaluadoresItem3}" />
+								<f:selectItem itemLabel="Crear nuevo evaluador" itemValue="N" />
+								<p:ajax
+									listener="#{manejadorAsociarEvaluadoresProyecto.activarBotones}"
+									update="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:panelGrid style="text-align: center; width: 100%;"
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[16]}"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row style=" text-align: center;">
+						<p:column>
+							<p:commandButton
+								rendered="#{!manejadorAsociarEvaluadoresProyecto.esNuevo and !manejadorAsociarEvaluadoresProyecto.panelRender[7]}"
+								action="#{manejadorAsociarEvaluadoresProyecto.verInfoEvaluador}"
+								value="Ver / editar información del evaluador" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								rendered="#{!manejadorAsociarEvaluadoresProyecto.esNuevo and manejadorAsociarEvaluadoresProyecto.panelRender[7]}"
+								action="#{manejadorAsociarEvaluadoresProyecto.verInfoEvaluadorSeleccionado}"
+								value="Ver / editar información del evaluador" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								rendered="#{manejadorAsociarEvaluadoresProyecto.esNuevo}"
+								action="#{manejadorAsociarEvaluadoresProyecto.crearEvaluadorNuevo}"
+								value="Crear evaluador" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								rendered="#{!manejadorAsociarEvaluadoresProyecto.esNuevo}"
+								action="#{manejadorAsociarEvaluadoresProyecto.verCorreo4}"
+								value="Enviar correo" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								rendered="#{!manejadorAsociarEvaluadoresProyecto.esNuevo and manejadorAsociarEvaluadoresProyecto.panelRender[7]}"
+								action="#{manejadorAsociarEvaluadoresProyecto.asociarEvaluadorSeleccionado}"
+								value="Asociar al proyecto " update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+							<p:commandButton
+								rendered="#{!manejadorAsociarEvaluadoresProyecto.esNuevo and !manejadorAsociarEvaluadoresProyecto.panelRender[7]}"
+								action="#{manejadorAsociarEvaluadoresProyecto.asociarEvaluadorBuscado}"
+								value="Asociar al proyecto " update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:messages id="mensajesErrorCorreo" showDetail="true" closable="true" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panel header="Enviar correo evaluadores"
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[11]}"
+					style="margin-top: 10px; text-align: left;">
+					<h:outputText
+						value="Para cambiar la plantilla del correo, por favor seleccione la plantilla y a continuación haga click sobre el botón: editar mensaje. " />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Tipo: " />
+						<p:selectOneMenu select="select12"
+							value="#{manejadorAsociarEvaluadoresProyecto.correoId3}"
+							style="width: 450px;">
+							<f:selectItems
+								value="#{manejadorAsociarEvaluadoresProyecto.correos}" />
+							<p:ajax update="@form"
+								listener="#{manejadorAsociarEvaluadoresProyecto.cambiarCorreo3}" />
+						</p:selectOneMenu>
+						<h:outputText value="Descripcion: " />
+						<h:outputText
+							value="#{manejadorAsociarEvaluadoresProyecto.correoActual3.descripcion}" />
+						<h:outputText value="Cuerpo" styleClass="legend2" />
+						<p:inputTextarea
+							value="#{manejadorAsociarEvaluadoresProyecto.correoActualCuerpo3}"
+							cols="60" rows="20" />
+					</p:panelGrid>
+					<div style="width: 100%; text-align: center;">
+						<p:commandButton immediate="false"
+							action="#{manejadorAsociarEvaluadoresProyecto.editarCorreo3}"
+							value="Editar Correo" update="@form">
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorAsociarEvaluadoresProyecto.enviarCorreo3}"
+							value="Enviar" update="@form">
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorAsociarEvaluadoresProyecto.cerrar3}"
+							value="Cerrar" update="@form">
+						</p:commandButton>
+					</div>
+					<h:outputText
+						value="#{manejadorAsociarEvaluadoresProyecto.mensajeCorreo3}"
+						style="font-size: 13px; font-weight: bold; color: #FF0000 " />
+					<br />
+					<br />
+				</p:panel>
+				<p:panel header="Enviar correo evaluadores"
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[15]}"
+					style="margin-top: 10px;">
+					<h:outputText
+						value="Para cambiar la plantilla del correo, por favor seleccione la plantilla y a continuación haga click sobre el botón: editar mensaje. " />
+					<br />
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Tipo: " />
+						<p:selectOneMenu select="select13"
+							value="#{manejadorAsociarEvaluadoresProyecto.correoId4}"
+							style="width: 450px;">
+							<f:selectItems
+								value="#{manejadorAsociarEvaluadoresProyecto.correos}" />
+							<p:ajax update="@form"
+								listener="#{manejadorAsociarEvaluadoresProyecto.cambiarCorreo4}" />
+						</p:selectOneMenu>
+						<h:outputText value="Descripcion: " />
+						<h:outputText
+							value="#{manejadorAsociarEvaluadoresProyecto.correoActual4.descripcion}" />
+						<h:outputText value="Cuerpo" styleClass="legend2" />
+						<p:inputTextarea
+							value="#{manejadorAsociarEvaluadoresProyecto.correoActualCuerpo4}"
+							cols="60" rows="20" />
+					</p:panelGrid>
+					<div style="width: 100%; text-align: center;">
+						<p:commandButton immediate="false"
+							action="#{manejadorAsociarEvaluadoresProyecto.editarCorreo4}"
+							value="Editar Correo" update="@form">
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorAsociarEvaluadoresProyecto.enviarCorreo4}"
+							value="Enviar" update="@form">
+						</p:commandButton>
+						<p:commandButton
+							action="#{manejadorAsociarEvaluadoresProyecto.cerrar4}"
+							value="Cerrar" update="@form">
+						</p:commandButton>
+					</div>
+					<h:outputText
+						value="#{manejadorAsociarEvaluadoresProyecto.mensajeCorreo4}"
+						style="font-size: 13px; font-weight: bold; color: #FF0000;" />
+				</p:panel>
+				<h:outputText
+					value="#{manejadorAsociarEvaluadoresProyecto.mensajeError4}"
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[16]}"
+					style="font-size: 13px; font-weight: bold; color: #FF0000 " />
+				<p:panel header="Detalles evaluador" style="margin-top: 10px;"
+					rendered="#{manejadorAsociarEvaluadoresProyecto.panelRender[14]}">
+					<p:panelGrid id="crearEvaluador"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="3">
+								<h:outputText
+									value="#{manejadorAsociarEvaluadoresProyecto.mensajeCrear}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="tipoDocCrear" icon="ui-icon-info" />
+								<p:tooltip for="tipoDocCrear" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Tipo de documento del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo documento: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									disabled="#{!manejadorAsociarEvaluadoresProyecto.esNuevo}"
+									value="#{manejadorAsociarEvaluadoresProyecto.tipoDocumentoNuevo}"
+									select="select14" style="width: 400px;">
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="DocCrear" icon="ui-icon-info" />
+								<p:tooltip for="DocCrear" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							     Documento del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Documento: " />
+							</p:column>
+							<p:column>
+								<p:inputText
+									disabled="#{!manejadorAsociarEvaluadoresProyecto.esNuevo}"
+									value="#{manejadorAsociarEvaluadoresProyecto.codigoEvaluador}" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="nombre1" icon="ui-icon-info" />
+								<p:tooltip for="nombre1" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el primer o único nombre del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Primer nombre evaluador: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58"
+									value="#{manejadorAsociarEvaluadoresProyecto.nombre}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno or manejadorAsociarEvaluadoresProyecto.esInternoAdministrativo}"
+									maxlength="400" validatorMessage="Máximo 300 caracteres">
+								</p:inputText>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="nombre2" icon="ui-icon-info" />
+								<p:tooltip for="nombre2" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el segundo nombre del evaluador (si lo posee)
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Segundo nombre evaluador: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58"
+									value="#{manejadorAsociarEvaluadoresProyecto.nombre2}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									maxlength="400" validatorMessage="Máximo 300 caracteres">
+								</p:inputText>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="apellido1" icon="ui-icon-info" />
+								<p:tooltip for="apellido1" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el primer o único apellido del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Primer apellido evaluador: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58"
+									value="#{manejadorAsociarEvaluadoresProyecto.primerApellido}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno or manejadorAsociarEvaluadoresProyecto.esInternoAdministrativo}"
+									maxlength="400" validatorMessage="Máximo 300 caracteres" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="apellido2" icon="ui-icon-info" />
+								<p:tooltip for="apellido2" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el segundo apellido del evaluador (si lo posee)
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Segundo apellido evaluador: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58"
+									value="#{manejadorAsociarEvaluadoresProyecto.segundoApellido}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno or manejadorAsociarEvaluadoresProyecto.esInternoAdministrativo}"
+									maxlength="400" validatorMessage="Máximo 300 caracteres" />
+							</p:column>
+						</p:row>
+
+						<p:row rendered="#{manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="fac" icon="ui-icon-info" />
+								<p:tooltip for="fac" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Facultad del evaluador interno
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58"
+									value="#{manejadorAsociarEvaluadoresProyecto.facultad}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}" />
+							</p:column>
+						</p:row>
+
+						<p:row rendered="#{manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="sede" icon="ui-icon-info" />
+								<p:tooltip for="sede" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Sede del evaluador interno
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sede: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58"
+									value="#{manejadorAsociarEvaluadoresProyecto.sede}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}" />
+							</p:column>
+						</p:row>
+
+						<p:row rendered="#{manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="perfil" icon="ui-icon-info" />
+								<p:tooltip for="perfil" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Perfil del evaluador interno
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Perfil: " />
+							</p:column>
+							<p:column>
+								<p:inputTextarea rows="3" cols="50" style="width:100%;"
+									value="#{manejadorAsociarEvaluadoresProyecto.perfil}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									maxlength="2900">
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="correo" icon="ui-icon-info" />
+								<p:tooltip for="correo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Ingrese el correo electrónico del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Correo electrónico: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58" maxlength="400"
+									validatorMessage="Formato de email no válido"
+									value="#{manejadorAsociarEvaluadoresProyecto.email}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno or manejadorAsociarEvaluadoresProyecto.esInternoAdministrativo}">
+									<f:validateRegex
+										pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+								</p:inputText>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="tel" icon="ui-icon-info" />
+								<p:tooltip for="tel" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Ingrese el teléfono del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Teléfono de contacto: " />
+							</p:column>
+							<p:column>
+								<p:inputText
+									value="#{manejadorAsociarEvaluadoresProyecto.telefono}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno or manejadorAsociarEvaluadoresProyecto.esInternoAdministrativo}" />
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="sexo" icon="ui-icon-info" />
+								<p:tooltip for="sexo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el sexo biológico del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sexo biológico: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorAsociarEvaluadoresProyecto.genero}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno or manejadorAsociarEvaluadoresProyecto.esInternoAdministrativo}"
+									select="select15">
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.generoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="estudio" icon="ui-icon-info" />
+								<p:tooltip for="estudio" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el máximo nivel de estudios del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Máximo nivel de estudio: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorAsociarEvaluadoresProyecto.formacion}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									select="select15">
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.tipoFormacionItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="estudioInst" icon="ui-icon-info" />
+								<p:tooltip for="estudioInst" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique la institución que expide el título académico
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="**Institución título académico: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="SOM_fuentesExternas" filter="true"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									value="#{manejadorAsociarEvaluadoresProyecto.institucionEstudio}"
+									style="width:350px" panelStyle="width:350px"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+									<f:selectItem itemLabel="UNIVERSIDAD NACIONAL DE COLOMBIA"
+										itemValue="1" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.fuentesExternasItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="tesis" icon="ui-icon-info" />
+								<p:tooltip for="tesis" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Ingrese el título de la tesis o trabajo académico del último estudio realizado
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Título de la tesis o trabajo académico: " />
+							</p:column>
+							<p:column>
+								<p:inputTextarea rows="3" cols="50" style="width:100%;"
+									value="#{manejadorAsociarEvaluadoresProyecto.tesis}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									maxlength="2900">
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="natu" icon="ui-icon-info" />
+								<p:tooltip for="natu" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Tipo de evaluador, indique si es nacional o internacional
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Tipo de evaluador: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorAsociarEvaluadoresProyecto.tipo}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									select="select15">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.tipoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="minc" icon="ui-icon-info" />
+								<p:tooltip for="minc" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique si el evaluador está reconocido por MinCiencias
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="¿Reconocido MinCiencias?: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorAsociarEvaluadoresProyecto.minciencias}"
+									select="select15">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.siNoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="lab" icon="ui-icon-info" />
+								<p:tooltip for="lab" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Seleccione la institución donde trabaja actualmente
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="**Institución donde labora: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{manejadorAsociarEvaluadoresProyecto.institucionLabora}"
+									filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItem itemLabel="UNIVERSIDAD NACIONAL DE COLOMBIA"
+										itemValue="1" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.fuentesExternasItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="ocde1" icon="ui-icon-info" />
+								<p:tooltip for="ocde1" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el área OCDE principal del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Área OCDE principal: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									value="#{manejadorAsociarEvaluadoresProyecto.areaCiencia}"
+									id="areaCiencia" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.areaCienciaItems}" />
+									<p:ajax
+										listener="#{manejadorAsociarEvaluadoresProyecto.cambiarArea}"
+										update="subareaCiencia" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="ocde2" icon="ui-icon-info" />
+								<p:tooltip for="ocde2" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique la sub-área OCDE del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Sub-área OCDE: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									value="#{manejadorAsociarEvaluadoresProyecto.subAreaCiencia}"
+									id="subareaCiencia" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+										itemValue="" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.subAreaCienciaItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="exp" icon="ui-icon-info" />
+								<p:tooltip for="exp" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Indique el área de experticia del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Área de Experticia: " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58" maxlength="400"
+									validatorMessage="Máximo 300 caracteres"
+									value="#{manejadorAsociarEvaluadoresProyecto.experticia}">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="cv" icon="ui-icon-info" />
+								<p:tooltip for="cv" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Ingrese la url del CVLac del evaluador o sitio web con hoja de vida
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Link al CVLac (o similar): " />
+							</p:column>
+							<p:column>
+								<p:inputText size="58" maxlength="400"
+									validatorMessage="Máximo 300 caracteres"
+									value="#{manejadorAsociarEvaluadoresProyecto.cvlac}"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}" />
+							</p:column>
+						</p:row>
+
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column style="width:20px;">
+								<p:commandButton id="lin" icon="ui-icon-info" />
+								<p:tooltip for="lin" styleClass="tooltip-mesage" showDelay="999">
+									<t:div style="text-align: left; float:left;">
+							       Ingrese las líneas de investigación del evaluador
+								</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Líneas de investigación: " />
+							</p:column>
+							<p:column>
+
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									disabled="#{manejadorAsociarEvaluadoresProyecto.esInterno}"
+									value="#{manejadorAsociarEvaluadoresProyecto.lineaInvestigacion}"
+									id="lineas-inv" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una línea de investigación"
+										itemValue="" />
+									<f:selectItems
+										value="#{manejadorAsociarEvaluadoresProyecto.listaLineasInvestigacionItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+							<p:column colspan="3" style="text-align:center;">
+								<p:commandButton value="Agregar línea"
+									actionListener="#{manejadorAsociarEvaluadoresProyecto.agregarLineaInvestigacion}"
+									update="@form">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column colspan="3">
+								<p:dataTable id="listaLineas" var="linea"
+									value="#{manejadorAsociarEvaluadoresProyecto.listaLineasInvestigacionEvaluador}"
+									align="center"
+									emptyMessage="No se han agregado líneas de investigación">
+
+									<p:column headerText="Líneas de investigación">
+										<h:outputText value="#{linea.nombre}" />
+									</p:column>
+									<p:column headerText="(X)" style="width:50px;"
+										rendered="#{!manejadorAsociarEvaluadoresProyecto.esInterno}">
+										<p:commandButton update="@form"
+											action="#{manejadorAsociarEvaluadoresProyecto.eliminarLinea}"
+											icon="ui-icon-trash" title="Eliminar Línea">
+											<f:setPropertyActionListener value="#{linea}"
+												target="#{manejadorAsociarEvaluadoresProyecto.lineaInvestigacionSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+
+
+
+					</p:panelGrid>
+					<br />
+					<p:panelGrid id="CrearEntidadExterna"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText
+									value="** ¿Requiere otra entidad externa que no se encuentra en la lista anterior? " />
+								<p:selectBooleanCheckbox
+									value="#{manejadorAsociarEvaluadoresProyecto.requiereOtraFuente}">
+									<p:ajax update="CrearEntidadExterna"
+										process="CrearEntidadExterna" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectBooleanCheckbox>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorAsociarEvaluadoresProyecto.requiereOtraFuente}">
+							<p:column colspan="2">
+								<p:panel id="panelFtesNuevas">
+
+									<p:panelGrid columns="1" style="margin-bottom: 20px;">
+										<div style="width: 100%; color: #FF3300;">Su solicitud
+											se enviará al equipo de trabajo del Sistema de Información
+											HERMES para su aprobación. Una vez aprobada, se le enviará un
+											correo electrónico con la respuesta de la aprobación y la
+											fuente será visible en la lista de selección.</div>
+									</p:panelGrid>
+									<p:panelGrid id="pgFormFuenteFin"
+										styleClass="estilo-panelgrid-sinbordes" style="width: 100%;">
+										<p:row>
+											<p:column>
+												<h:outputText value="Naturaleza:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="SOM_fuentesNuevas1"
+													value="#{manejadorAsociarEvaluadoresProyecto.naturalezaFuente}"
+													style="width:200px">
+													<f:selectItem itemLabel="Seleccione una opción"
+														itemValue="0" />
+													<f:selectItems
+														value="#{manejadorAsociarEvaluadoresProyecto.tiposNaturalezaFuenteItem}" />
+													<p:ajax
+														listener="#{manejadorAsociarEvaluadoresProyecto.cambiarNaturalezaFuente}"
+														onstart="dialogEspere.show()"
+														oncomplete="dialogEspere.hide()" update="pgFormFuenteFin"
+														process="pgFormFuenteFin" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row
+											rendered="#{manejadorAsociarEvaluadoresProyecto.naturalezaFuente == 'NAT_INTERN'}">
+											<p:column>
+												<h:outputText value="Pais:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="SOM_paisFuente" filter="true"
+													filterMatchMode="contains" style="width:200px"
+													value="#{manejadorAsociarEvaluadoresProyecto.paisFuente}">
+													<f:selectItem itemLabel="Seleccione una opción"
+														itemValue="" />
+													<f:selectItems
+														value="#{manejadorAsociarEvaluadoresProyecto.listaPaisesItem}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Carácter:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="SOM_fuentesCaracter"
+													value="#{manejadorAsociarEvaluadoresProyecto.caracterFuente}"
+													style="width:200px">
+													<f:selectItem itemLabel="Seleccione una opción"
+														itemValue="0" />
+													<f:selectItems
+														value="#{manejadorAsociarEvaluadoresProyecto.caracterFuenteFinanciacionItem}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Tipo de fuente:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="SOM_fuentesTipoFuente"
+													value="#{manejadorAsociarEvaluadoresProyecto.tipoFuente}"
+													style="width:200px">
+													<f:selectItem itemLabel="Seleccione una opción"
+														itemValue="0" />
+													<f:selectItems
+														value="#{manejadorAsociarEvaluadoresProyecto.tiposFuenteFinanciacionItem}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column style="width: 180px;">
+												<h:outputText value="Nombre:" />
+											</p:column>
+											<p:column>
+												<p:inputText id="nombreFuente" style="width: 350px;"
+													value="#{manejadorAsociarEvaluadoresProyecto.nombreFuente}"
+													maxlength="200">
+												</p:inputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="NIT:" />
+											</p:column>
+											<p:column>
+												<p:inputText id="nitFuente" style="width: 350px;"
+													value="#{manejadorAsociarEvaluadoresProyecto.nitFuente}"
+													maxlength="24">
+												</p:inputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Dirección:" />
+											</p:column>
+											<p:column>
+												<p:inputText id="direcc" style="width: 350px;"
+													value="#{manejadorAsociarEvaluadoresProyecto.direccionFuente}"
+													maxlength="180">
+												</p:inputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Teléfono:" />
+											</p:column>
+											<p:column>
+												<p:inputText id="tele" style="width: 350px;"
+													value="#{manejadorAsociarEvaluadoresProyecto.telefonoFuente}"
+													maxlength="200">
+												</p:inputText>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2" style="text-align: center;">
+												<p:commandButton id="CB_crearFuente"
+													binding="#{manejadorAsociarEvaluadoresProyecto.CB_crearFuente}"
+													action="#{manejadorAsociarEvaluadoresProyecto.solicitudIngresoFuente}"
+													value="Solicitar creación de fuente"
+													update="CrearEntidadExterna" onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()">
+												</p:commandButton>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2" style="text-align: center;">
+												<p:message id="msgSolicitudEntidad" for="CB_crearFuente"
+													autoUpdate="true" closable="true" showSummary="false" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column>
+								<p:panel style="width:100%" styleClass="mypanel">
+									<br />
+									<h:panelGrid columns="1"
+										styleClass="estilo-panelgrid-sinbordes">
+										<t:div style="color:#464646; text-align:justify;">
+									Para registro de información, le recomendamos tener en cuenta la Cláusula de Autorización 
+									de Tratamiento de Datos Personales de la Universidad Nacional de Colombia. En este caso la 
+									información de los datos de externos, se utilizan para información del proceso de 
+									investigación y para entregar indicadores a las instituciones que así lo requieran.
+									<br />
+											<br />
+									La Universidad Nacional de Colombia, como responsable del tratamiento de información de datos personales, 
+									informa que los datos suministrados serán tratados de acuerdo con la ley 1581 de 2012, y a nuestra 
+									Política de Datos Personales, bajo las finalidades correspondientes al uso de los datos personales de 
+									terceros y podrá informar a los titulares de la información que pueden ejercer sus derechos como 
+									titulares mediante el canal <strong style="color: #0000FF;"><a
+												href="mailto:protecdatos_na@unal.edu.co">protecdatos_na@unal.edu.co</a></strong>. 
+									<br />
+											<br />
+									DE ACUERDO A LA LEY 1581 DE 2012 DE PROTECCIÓN DE DATOS PERSONALES, HA LEÍDO, ENTENDIDO Y ACEPTA, 
+									LOS TÉRMINOS DESCRITOS EN LA <strong style="color: #0000FF;"><a
+												href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=97992"
+												target="_blank"> POLÍTICA DE TRATAMIENTO DE DATOS
+													PERSONALES </a></strong>.
+									
+									<br />
+											<t:div>
+												<p:panelGrid style="width:100%; background-color: #edf4f9;">
+													<p:row style="background-color: #edf4f9;">
+														<p:column
+															style="text-align:center; background-color: #edf4f9;">
+															<h:outputText style="font-weight:bold;"
+																value="¿Acepta los términos? " />
+															<p:selectBooleanCheckbox
+																value="#{manejadorAsociarEvaluadoresProyecto.aceptaTerminos}">
+															</p:selectBooleanCheckbox>
+														</p:column>
+													</p:row>
+												</p:panelGrid>
+											</t:div>
+											<br />
+											<br />
+									Recuerde tener en cuenta la <a
+												href="http://www.legal.unal.edu.co/rlunal/home/doc.jsp?d_i=37170"
+												target="_blank">Resolución 329 de 2009 de la Rectoría</a> "Por la cual se 
+									reglamenta la remuneración de evaluadores externos en el marco de promociones docentes, 
+									proyectos de investigación, de publicaciones y de la productividad académica".
+
+										</t:div>
+									</h:panelGrid>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row style="text-align:center;">
+							<p:column style="text-align:center;">
+								<br />
+								<p:commandButton
+									action="#{manejadorAsociarEvaluadoresProyecto.guardarEvaluador}"
+									value="Guardar" update="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+								<p:commandButton
+									action="#{manejadorAsociarEvaluadoresProyecto.cancelarAgregarPosibleEvaluador}"
+									value="Cancelar" update="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<p:messages id="mensajesError" showDetail="true" closable="true" />
+					<br />
+				</p:panel>
+			</p:fieldset>
+
+
+
+			<p:dataTable id="asociarEvaluadoresTablaEvaluadores"
+				rendered="#{!empty manejadorAsociarEvaluadoresProyecto.proyectoActual.listaEvaluadoresProyecto}"
+				style="margin-top: 10px;"
+				value="#{manejadorAsociarEvaluadoresProyecto.proyectoActual.listaEvaluadoresProyecto}"
+				emptyMessage="No se han asociado evaluadores"
+				var="evaluadorProyecto">
+				<f:facet name="header">
+					<h:outputText value="Evaluadores asociados" />
+				</f:facet>
+				<p:column style="width: 30%;">
+					<f:facet name="header">
+						<h:outputText value="Evaluador" />
+					</f:facet>
+					<h:outputText
+						value="#{evaluadorProyecto.evaluador.nombre1} #{evaluadorProyecto.evaluador.nombre2} #{evaluadorProyecto.evaluador.apellido1} #{evaluadorProyecto.evaluador.apellido2}" />
+				</p:column>
+				<p:column style="width: 30%;">
+					<f:facet name="header">
+						<h:outputText value="Comentario" />
+					</f:facet>
+					<p:inputTextarea rows="3" cols="25" style="width:100%;"
+						value="#{evaluadorProyecto.comentariosCoordinador}"
+						maxlength="2000" autoResize="false">
+					</p:inputTextarea>
+				</p:column>
+				<p:column style="width: 20%;">
+					<f:facet name="header">
+						<h:outputText value="Fecha Límite" />
+					</f:facet>
+					<p:calendar id="fechaLimiteCoord" navigator="true" locale="es"
+						readonlyInput="true" value="#{evaluadorProyecto.fechaLimite}"
+						mindate="#{manejadorAsociarEvaluadoresProyecto.today}" />
+				</p:column>
+				<p:column style="width: 10%;">
+					<f:facet name="header">
+						<h:outputText value="-" />
+					</f:facet>
+
+					<p:commandButton id="borrarEvaluador" rendered="#{evaluadorProyecto.estado != 'S'}"
+						action="#{manejadorAsociarEvaluadoresProyecto.eliminarEvaluador}"
+						onclick="if(!confirm('¿Esta seguro de eliminar el evaluador?'))return false"
+						update="@form" icon="ui-icon-trash" title="Eliminar evaluador"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+						<f:setPropertyActionListener value="#{evaluadorProyecto}"
+							target="#{manejadorAsociarEvaluadoresProyecto.evaluadorSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:panelGrid style="text-align: center; width: 100%;"
+				rendered="#{!empty manejadorAsociarEvaluadoresProyecto.proyectoActual.listaEvaluadoresProyecto}"
+				styleClass="estilo-panelgrid-sinbordes">
+				<p:row style=" text-align: center;">
+					<p:column>
+						<p:commandButton
+							action="#{manejadorAsociarEvaluadoresProyecto.guardarFechaEvaluacion}"
+							value="Guardar fecha evaluación y comentario" update="@form"
+							process="@form">
+						</p:commandButton>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

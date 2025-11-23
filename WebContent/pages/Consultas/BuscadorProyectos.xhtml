@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../principal/PlantillaUnalVacia.xhtml">
+	<ui:define name="content">
+		<style type="text/css">
+.etiqueta-proyecto-investigacion {
+	background: #144b73 !important;
+	width: 72px !important;
+	height: 18px !important;
+	border-radius: 10px !important;
+	font-size: 12px !important;
+	color: #e5e5e5 !important;
+	font-weight: normal;
+}
+
+.etiqueta-proyecto-extension {
+	background: #ff7341 !important;
+	width: 72px !important;
+	height: 18px !important;
+	border-radius: 10px !important;
+	font-size: 12px !important;
+	color: #323232 !important;
+	font-weight: normal;
+}
+
+.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-list-item label {
+	font-weight: normal;
+}
+</style>
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{ManejadorBusqueda.refrescar}" />
+		</f:metadata>
+		<h:form>
+			<t:div id="panelTitulo" style="text-align: center; width: 100%;">
+				<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes1"
+					style="width: 100%;">
+					<t:div styleClass="contendido-titulo-principal"
+						style="margin-bottom: 30px;">
+						<t:div style="text-align: center;"
+							styleClass="contenido-titulo-general-myriad-3">
+							Búsqueda Proyectos
+					    </t:div>
+						<t:div styleClass="logo-pequeño-principal"
+							style="text-align: right;">
+							<a href="#{facesContext.externalContext.requestContextPath}/">
+								<img
+								src="#{facesContext.externalContext.requestContextPath}/images/her-general/logo_hermes1.png" />
+							</a>
+						</t:div>
+					</t:div>
+				</h:panelGrid>
+			</t:div>
+			<t:div styleClass="panel-buscar-principal-docentes"
+				id="panel-buscador-ppal">
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes1"
+					style="margin:auto;">
+					<h:inputText id="campo" value="#{ManejadorBusqueda.campoBusqueda}"
+						styleClass="campo-buscador-nombre2">
+						<p:ajax event="keyup" update="busquedaAvanzada" />
+					</h:inputText>
+					<p:watermark for="campo"
+						value="Ingrese todo o parte del nombre del proyecto que desea consultar" />
+					<p:commandButton action="#{ManejadorBusqueda.buscarProyectos}"
+						styleClass="boton_buscar_principal" value="" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				</p:panelGrid>
+			</t:div>
+			<t:div
+				style="padding-top: 30px; padding-left:130px; padding-right:128px;"
+				id="toltip-principal">
+				<h:outputLink id="grow" value="#">
+					<img
+						src="#{facesContext.externalContext.requestContextPath}/images/her-pagina-principal/informacion.png" />
+				</h:outputLink>
+				<p:tooltip for="grow" styleClass="tooltip-message" showDelay="999">
+					<t:div style="text-align: left;">
+				         En <b>Búsqueda avanzada</b> puede filtrar su búsqueda agregando <br /> 
+						uno o varios filtros. Para eliminar un filtro haga click nuevamente <br /> 
+						sobre el filtro que previamente seleccionó.   
+					</t:div>
+				</p:tooltip>
+				<t:div style="float:right; padding-top:10px;">
+					<img
+						src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/flecha_reiniciar.png" />
+					<p:commandLink
+						style="text-decoration:underline; 
+								color: #16A8E2;
+								font-weight: bold;
+								padding-left:2px;
+								padding-right:10px;"
+						value="Reiniciar búsqueda"
+						action="#{ManejadorBusqueda.reiniciarBusqueda}" update="@form">
+					</p:commandLink>
+				</t:div>
+			</t:div>
+			<t:div styleClass="paraFlechita">
+				<p:growl id="growl" showDetail="true" />
+				<t:div id="busquedaAvanzada" styleClass="avanzadaDivD">
+					<p:accordionPanel toggleSpeed="500">
+						<p:tab title="Búsqueda avanzada">
+							<t:div styleClass="busqueda-exacta"
+								rendered="#{ManejadorBusqueda.campoBusqueda!=null and ManejadorBusqueda.campoBusqueda!=''}">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column style="background: #F1F3F3;">
+											<h:outputText
+												value="¿Desea buscar la coincidencia exacta del texto? " />
+										</p:column>
+										<p:column style="background: #F1F3F3;">
+											<p:selectBooleanCheckbox
+												value="#{ManejadorBusqueda.nombreExacto}">
+												<p:ajax update="@form" process="@form" />
+											</p:selectBooleanCheckbox>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+								<br />
+							</t:div>
+							<t:div id="opcionesFiltrosProyectos" styleClass="botonesFiltros">
+								<p:commandButton
+									rendered="#{!ManejadorBusqueda.mostrarAgregarSede and !ManejadorBusqueda.mostrarAgregarFacultad and empty ManejadorBusqueda.listaSedesFiltro}"
+									value="" id="sedeProyectos"
+									action="#{ManejadorBusqueda.cargarNuevaSede}"
+									styleClass="boton-sede-over"
+									update="filtroProyectos,@(.botonesFiltros)" />
+								<p:commandButton
+									rendered="#{ManejadorBusqueda.mostrarAgregarSede or ManejadorBusqueda.mostrarAgregarFacultad or not empty ManejadorBusqueda.listaSedesFiltro}"
+									value="" id="sedeProyectos2"
+									action="#{ManejadorBusqueda.cargarNuevaSede}"
+									styleClass="boton-sede"
+									update="filtroProyectos,@(.botonesFiltros)" />
+
+								<p:commandButton
+									rendered="#{!ManejadorBusqueda.mostrarAgregarFacultad and empty ManejadorBusqueda.listaFacultadesFiltro}"
+									value="" id="facultadProyectos"
+									styleClass="boton-facultad-over"
+									action="#{ManejadorBusqueda.cargarNuevaFacultad}"
+									update="filtroProyectos,@(.botonesFiltros)" />
+								<p:commandButton
+									rendered="#{ManejadorBusqueda.mostrarAgregarFacultad or not empty ManejadorBusqueda.listaFacultadesFiltro}"
+									value="" id="facultadProyectos2" styleClass="boton-facultad"
+									action="#{ManejadorBusqueda.cargarNuevaFacultad}"
+									update="filtroProyectos,@(.botonesFiltros)" />
+
+								<p:commandButton
+									rendered="#{!ManejadorBusqueda.mostrarAgregarArea and empty ManejadorBusqueda.listaAreasFiltro}"
+									value="" id="areaProyectos" styleClass="boton-area-over"
+									action="#{ManejadorBusqueda.cargarNuevaArea}"
+									update="filtroProyectos,@(.botonesFiltros)" />
+								<p:commandButton
+									rendered="#{ManejadorBusqueda.mostrarAgregarArea or not empty ManejadorBusqueda.listaAreasFiltro}"
+									value="" id="areaProyectos2" styleClass="boton-area"
+									action="#{ManejadorBusqueda.cargarNuevaArea}"
+									update="filtroProyectos,@(.botonesFiltros)" />
+
+								<p:selectBooleanButton
+									rendered="#{!ManejadorBusqueda.filtroLiderProyecto}"
+									styleClass="boton-lider-proyecto-over"
+									value="#{ManejadorBusqueda.filtroLiderProyecto}" onLabel=""
+									offLabel="">
+									<p:ajax update="filtroProyectos,@(.botonesFiltros)"
+										listener="#{ManejadorBusqueda.desactivarAgregarGeneral}" />
+								</p:selectBooleanButton>
+								<p:selectBooleanButton
+									rendered="#{ManejadorBusqueda.filtroLiderProyecto}"
+									styleClass="boton-lider-proyecto"
+									value="#{ManejadorBusqueda.filtroLiderProyecto}" onLabel=""
+									offLabel="">
+									<p:ajax update="filtroProyectos,@(.botonesFiltros)"
+										listener="#{ManejadorBusqueda.desactivarAgregarGeneral}" />
+								</p:selectBooleanButton>
+							</t:div>
+							<t:div id="divFiltrosProyecto">
+								<p:panelGrid styleClass="estilo-panelgrid-sinbordes1"
+									id="filtroProyectos">
+									<p:row>
+										<p:column style="width:200px;" styleClass="color-columnas">
+											<t:div
+												rendered="#{not empty ManejadorBusqueda.listaSedesFiltro}"
+												style="margin-left:5px;">
+									Sede
+								</t:div>
+										</p:column>
+										<p:column style="max-width:430px;" styleClass="color-columnas">
+											<t:div
+												rendered="#{not empty ManejadorBusqueda.listaSedesFiltro}"
+												styleClass="campo-filtros-usados">
+												<p:dataList var="sede"
+													value="#{ManejadorBusqueda.listaSedesFiltro}">
+													<t:div style="float: left;">
+														<h:commandButton
+															action="#{ManejadorBusqueda.eliminarSede}" value=""
+															styleClass="boton-cerrar-gris">
+															<f:setPropertyActionListener value="#{sede}"
+																target="#{ManejadorBusqueda.sedeSeleccionada}" />
+														</h:commandButton>
+													</t:div>
+													<h:outputText value="#{sede.nombre}" />
+												</p:dataList>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+											<t:div
+												rendered="#{not empty ManejadorBusqueda.listaFacultadesFiltro}"
+												style="margin-left:5px;">
+									Facultad
+								</t:div>
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div
+												rendered="#{not empty ManejadorBusqueda.listaFacultadesFiltro}"
+												styleClass="campo-filtros-usados">
+												<p:dataList var="facultad"
+													value="#{ManejadorBusqueda.listaFacultadesFiltro}">
+													<t:div style="float: left;">
+														<h:commandButton
+															action="#{ManejadorBusqueda.eliminarFacultad}" value=""
+															styleClass="boton-cerrar-gris">
+															<f:setPropertyActionListener value="#{facultad}"
+																target="#{ManejadorBusqueda.facultadSeleccionada}" />
+														</h:commandButton>
+													</t:div>
+													<h:outputText value="#{facultad.nombre}" />
+												</p:dataList>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+											<t:div
+												rendered="#{not empty ManejadorBusqueda.listaAreasFiltro}"
+												style="margin-left:5px;">
+									Áreas de conocimiento
+								</t:div>
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div
+												rendered="#{not empty ManejadorBusqueda.listaAreasFiltro}"
+												styleClass="campo-filtros-usados">
+												<p:dataList var="area"
+													value="#{ManejadorBusqueda.listaAreasFiltro}">
+													<t:div style="float: left;">
+														<h:commandButton
+															action="#{ManejadorBusqueda.eliminarArea}" value=""
+															styleClass="boton-cerrar-gris">
+															<f:setPropertyActionListener value="#{area}"
+																target="#{ManejadorBusqueda.areaSeleccionada}" />
+														</h:commandButton>
+													</t:div>
+													<h:outputText value="#{area}" />
+												</p:dataList>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+											<t:div rendered="#{ManejadorBusqueda.filtroLiderProyecto}"
+												style="margin-left:5px;">
+												<h:outputText value="Nombres investigador principal:" />
+											</t:div>
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div styleClass="paraBorde">
+												<t:div rendered="#{ManejadorBusqueda.filtroLiderProyecto}">
+													<p:inputText
+														value="#{ManejadorBusqueda.nombreLiderProyecto}"
+														styleClass="campo-buscador-nombre1" />
+												</t:div>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+
+											<t:div rendered="#{ManejadorBusqueda.filtroLiderProyecto}"
+												style="margin-left:5px;">
+												<h:outputText value="Apellidos investigador principal:" />
+											</t:div>
+
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div styleClass="paraBorde">
+												<t:div rendered="#{ManejadorBusqueda.filtroLiderProyecto}">
+													<p:inputText
+														value="#{ManejadorBusqueda.apellidoLiderProyecto}"
+														styleClass="campo-buscador-nombre1" />
+												</t:div>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+											<t:div
+												rendered="#{ManejadorBusqueda.mostrarAgregarFacultad or ManejadorBusqueda.mostrarAgregarSede}"
+												style="margin-left:5px;">
+												<h:outputText value="Agregar sede:"
+													rendered="#{ManejadorBusqueda.mostrarAgregarSede}" />
+												<h:outputText value="Seleccione sede:"
+													rendered="#{ManejadorBusqueda.mostrarAgregarFacultad}" />
+											</t:div>
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div
+												rendered="#{ManejadorBusqueda.mostrarAgregarFacultad or ManejadorBusqueda.mostrarAgregarSede}">
+												<p:selectOneMenu style="width:440px;"
+													id="opcionFacultadInvestigador5"
+													value="#{ManejadorBusqueda.sedeAgregar}"
+													disabled="#{not empty ManejadorBusqueda.listaSedesFiltro}">
+													<f:selectItems value="#{ManejadorBusqueda.listaSedesItem}" />
+													<p:ajax update="selectFacultad5"
+														listener="#{ManejadorBusqueda.cargarFacultadesSede}" />
+												</p:selectOneMenu>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+											<t:div rendered="#{ManejadorBusqueda.mostrarAgregarFacultad}"
+												style="margin-left:5px;">
+												<h:outputText value="Agregar facultad:" />
+											</t:div>
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div rendered="#{ManejadorBusqueda.mostrarAgregarFacultad}">
+												<p:selectOneMenu style="width:440px;" id="selectFacultad5"
+													value="#{ManejadorBusqueda.facultadAgregar}" filter="true"
+													filterMatchMode="contains"
+													disabled="#{not empty ManejadorBusqueda.listaFacultadesFiltro}">
+													<f:selectItems
+														value="#{ManejadorBusqueda.listaFacultadesItem}" />
+												</p:selectOneMenu>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column styleClass="color-columnas">
+											<t:div rendered="#{ManejadorBusqueda.mostrarAgregarArea}"
+												style="margin-left:5px;">
+												<h:outputText value="Agregar área de conocimiento:" />
+											</t:div>
+										</p:column>
+										<p:column styleClass="color-columnas">
+											<t:div styleClass="paraBorde">
+												<t:div rendered="#{ManejadorBusqueda.mostrarAgregarArea}">
+													<p:autoComplete minQueryLength="3"
+														value="#{ManejadorBusqueda.areaAgregar}"
+														completeMethod="#{ManejadorBusqueda.obtenerPalabraClaves}"
+														size="30" panelStyle="width: 100px;" scrollHeight="100" />
+												</t:div>
+											</t:div>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" styleClass="color-columnas">
+											<t:div
+												rendered="#{ManejadorBusqueda.mostrarAgregarSede or ManejadorBusqueda.mostrarAgregarFacultad or ManejadorBusqueda.mostrarAgregarArea or ManejadorBusqueda.filtroLiderProyecto}">
+												<p:commandButton
+													action="#{ManejadorBusqueda.buscarProyectos}"
+													styleClass="boton_agregar" value="" update="@form"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</t:div>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</t:div>
+						</p:tab>
+					</p:accordionPanel>
+
+				</t:div>
+			</t:div>
+			<t:div>
+				<t:div style="width:700px; margin:auto;" id="resultados-buscador"
+					rendered="#{ManejadorBusqueda.banderaResultadosBusqueda}">
+					<t:div styleClass="informacion-titulo-buscador">
+						<h:outputText value="Resultados " />
+					</t:div>
+					<t:div styleClass="informacion-resultado-buscador"
+						rendered="#{ManejadorBusqueda.mostrarResultadosProyectos}"
+						style="color: #464646; padding-bottom: 0px; padding-top: 3px; border-bottom: 1px solid #DCDCDC;">
+						<t:outputText
+							value="Se han encontrado #{ManejadorBusqueda.resultadosProyectos} registros" />
+						<t:div style="text-align:right; float:right;"
+							rendered="#{ManejadorBusqueda.mostrarResultadosProyectos}">
+							<img
+								src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/icono_pdf.png"
+								style="border: none; width: 18px; margin-right: 5px;" />
+							<h:commandLink value="Descargar resultados de búsqueda"
+								ajax="false"
+								style="text-decoration:underline; 
+								color: #16A8E2;
+								font-weight: bold;
+								padding-left:2px;"
+								target="_popUpWindow"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								action="#{ManejadorBusqueda.reporteProyectos}">
+							</h:commandLink>
+						</t:div>
+					</t:div>
+					<t:div styleClass="panel-buscador">
+						<p:dataList id="tablaResultadoProyectos"
+							value="#{ManejadorBusqueda.listaProyecto}"
+							rendered="#{ManejadorBusqueda.mostrarResultadosProyectos}"
+							var="proyecto" rows="8" type="none"
+							paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+							paginator="true" paginatorPosition="bottom"
+							paginatorAlwaysVisible="false" style=""
+							sortBy="#{proyecto.nombre}" sortOrder="ascending">
+							<t:div styleClass="informacion-resultado-buscador-convocatorias">
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/Consultas/Proyecto.xhtml?idProyecto=#{proyecto.id}&#38;tipo=#{proyecto.antecedentes}">
+									<t:outputText rendered="#{proyecto.esInvestigacion}"
+										value=" Investigación "
+										styleClass="etiqueta-proyecto-investigacion"
+										style="font-style: italic; padding:3px; margin-right: 8px; padding-left: 10px; padding-right: 5px;" />
+									<t:outputText rendered="#{proyecto.esExtension}"
+										value=" Extensión " styleClass="etiqueta-proyecto-extension"
+										style="font-style: italic; padding:3px; margin-right: 8px; padding-left: 10px; padding-right: 5px;" />
+									<t:outputText value="#{proyecto.nombre}" />
+								</h:outputLink>
+								<br />
+								<t:outputText
+									value="#{proyecto.dependenciaPrincipal.nombre} | Sede #{proyecto.dependenciaPrincipal.sede.nombre} | #{proyecto.estadoProyecto.nombre}" />
+							</t:div>
+						</p:dataList>
+					</t:div>
+				</t:div>
+			</t:div>
+			<!--
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-buscador"
+					rendered="#{!manejadorBuscadorProyectos.error}">
+					<h:outputText value="Buscador" />
+				</t:div>
+				<t:div styleClass="contenedor-informacion">
+					<t:div styleClass="contenido-titulo-general-myriad">Proyectos de investigación y extensión</t:div>
+					<div class="informacion">
+						<t:div styleClass="informacion-titulo">
+							<h:outputText value="Criterios de búsqueda: " />
+						</t:div>
+						<t:div styleClass="informacion-texto"
+							style="border-bottom: 0px; padding-bottom: 0px; width: 675px;">
+							<h:outputText
+								value="Puede seleccionar una o varias combinaciones de criterios de la columna de la derecha (Filtros de búsqueda) para ampliar la
+											cobertura de su búsqueda. Para quitar un criterio puede hacer click en la X del filtro que previamente haya seleccionado.
+											Cuando termine de añadir filtros de búsqueda hága click en el botón Buscar." />
+							<br />
+							<h:outputText
+								value="NO ES OBLIGATORIO ESCRIBIR LAS PALABRAS COMPLETAS" />
+						</t:div>
+						<h:panelGrid columns="2"
+							columnClasses="columna-etiquetas-buscador,''">
+							<h:outputText value="Nombre del proyecto:" />
+							<t:div style="margin: 0px; padding: 0px; line-height: 0px; ">
+								<t:div style="float: left;">
+									<f:verbatim>
+										<img
+											src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/img_campo_intr.png" />
+									</f:verbatim>
+								</t:div>
+								<h:inputText
+									value="#{manejadorBuscadorProyectos.nombreProyectoBusqueda}"
+									styleClass="campo-buscador-nombre" />
+								<t:div style="float: right;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/final_caja_buscador.png" />
+								</t:div>
+							</t:div>
+						</h:panelGrid>
+						<p:panelGrid id="panelSede" columns="2"
+							styleClass="estilo-panelgrid-buscadores-selects"
+							columnClasses="columna-etiquetas-buscador,''"
+							rendered="#{manejadorBuscadorProyectos.opcion1}">
+							<h:outputText value="Sede:" />
+							<p:selectOneMenu value="#{manejadorBuscadorProyectos.idSede}"
+								styleClass="select-item-buscador"
+								style="width: 437px; height: 20px;">
+								<f:selectItems
+									value="#{manejadorBuscadorProyectos.listaSedesItem}" />
+								<p:ajax update="selectFacultad"
+									listener="#{manejadorBuscadorProyectos.cargarFacultadesSede}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panelGrid id="panelFacultad" style="margin-top: 3px;"
+							columns="2" styleClass="estilo-panelgrid-buscadores-selects"
+							columnClasses="columna-etiquetas-buscador,''"
+							rendered="#{manejadorBuscadorProyectos.opcion2}">
+							<h:outputText value="Facultad:" />
+							<p:selectOneMenu id="selectFacultad"
+								value="#{manejadorBuscadorProyectos.idFacultad}"
+								styleClass="select-item-buscador"
+								style="width: 437px; height: 20px;">
+								<f:selectItems
+									value="#{manejadorBuscadorProyectos.facultadesSedeItem}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<h:panelGrid id="panelLider" columns="2"
+							columnClasses="columna-etiquetas-buscador,''"
+							styleClass="estilo-panelgrid-buscadores"
+							rendered="#{manejadorBuscadorProyectos.opcion3}">
+							<h:outputText value="Nombres o nombre del líder:" />
+							<t:div
+								style="margin: 0px; padding: 0px;line-height: 0px; padding-bottom: 3px;">
+								<t:div style="float: left;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/img_campo_intr.png" />
+								</t:div>
+								<h:inputText value="#{manejadorBuscadorProyectos.nombreLider}"
+									styleClass="campo-buscador-nombre" />
+								<t:div style="float: right;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/final_caja_buscador.png" />
+								</t:div>
+							</t:div>
+							<h:outputText value="Apellidos o apellido del líder:" />
+							<t:div style="margin: 0px; padding: 0px;line-height: 0px; ">
+								<t:div style="float: left;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/img_campo_intr.png" />
+								</t:div>
+								<h:inputText value="#{manejadorBuscadorProyectos.apellidoLider}"
+									styleClass="campo-buscador-nombre" />
+								<t:div style="float: right;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/final_caja_buscador.png" />
+								</t:div>
+							</t:div>
+						</h:panelGrid>
+						<p:panelGrid id="panelLineas" columns="2"
+							styleClass="estilo-panelgrid-buscadores-1"
+							columnClasses="columna-etiquetas-buscador,''"
+							rendered="#{manejadorBuscadorProyectos.opcion4}">
+							<h:outputText value="Áreas de conomiento:" />
+							<t:div
+								style="margin: 0px; margin-left: 1px; padding: 0px; line-height: 0px; ">
+								<t:div style="float: left;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/img_campo_intr.png" />
+								</t:div>
+								<p:autoComplete minQueryLength="3"
+									value="#{manejadorBuscadorProyectos.areaConocimiento}"
+									completeMethod="#{manejadorBuscadorProyectos.obtenerAreasConocimiento}"
+									size="30" />
+								<t:div style="float: right;">
+									<img
+										src="#{facesContext.externalContext.requestContextPath}/images/her-buscadores/final_caja_buscador.png" />
+								</t:div>
+							</t:div>
+						</p:panelGrid>
+						<p:panelGrid id="panelModalidad" columns="2"
+							styleClass="estilo-panelgrid-buscadores-selects"
+							columnClasses="columna-etiquetas-buscador,''"
+							rendered="#{manejadorBuscadorProyectos.opcion5}">
+							<h:outputText value="Tipo convocatoria:" />
+							<p:selectOneMenu id="selectFacultad"
+								value="#{manejadorBuscadorProyectos.convocatoriaModalidad}"
+								styleClass="select-item-buscador"
+								style="width: 437px; height: 20px;">
+								<f:selectItems
+									value="#{manejadorBuscadorProyectos.modalidadItem}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<t:div styleClass="panel-botones" id="panelBuscar"
+							rendered="#{manejadorBuscadorProyectos.opcionBuscar}">
+							<h:commandButton
+								action="#{manejadorBuscadorProyectos.buscarProyectos}"
+								styleClass="boton_buscar" value="" />
+						</t:div>
+						<t:div styleClass="panel-botones"
+							rendered="#{manejadorBuscadorProyectos.opcionAgregar}"
+							id="panelAgregar">
+							<h:commandButton
+								action="#{manejadorBuscadorProyectos.buscarProyectos}"
+								styleClass="boton_agregar" value="" />
+						</t:div>
+						<t:div styleClass="resultados-buscador">
+							<t:div styleClass="informacion-titulo-buscador"
+								rendered="#{!manejadorBuscadorProyectos.visibleResultados}">
+								<h:outputText value="Resultados " />
+							</t:div>
+							<t:div styleClass="informacion-resultado-buscador"
+								style="border-bottom: none; color: #464646; padding-bottom: 0px; padding-top: 3px;"
+								rendered="#{!manejadorBuscadorProyectos.visibleResultados}">
+								<t:outputText
+									value="Se han encontrado #{manejadorBuscadorProyectos.numeroResultados} registros" />
+							</t:div>
+							<t:div styleClass="panel-buscador">
+								<p:dataList id="tablaResultadoConvocatorias"
+									value="#{manejadorBuscadorProyectos.listaProyecto}"
+									var="proyecto" rows="8" type="none"
+									paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+									paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" style="">
+									<t:div
+										styleClass="informacion-resultado-buscador-convocatorias">
+										<p:commandLink
+											action="#{manejadorBuscadorProyectos.consultarPagina}"
+											value="#{proyecto.nombre}">
+											<f:setPropertyActionListener value="#{proyecto}"
+												target="#{manejadorBuscadorProyectos.proyectoSeleccionado}" />
+										</p:commandLink>
+										<br />
+										<t:outputText
+											value="#{proyecto.dependenciaPrincipal.nombre} | Sede #{proyecto.dependenciaPrincipal.sede.nombre} | #{proyecto.estadoProyecto.nombre}" />
+									</t:div>
+								</p:dataList>
+							</t:div>
+						</t:div>
+						<t:div styleClass="panel-inicio"
+							rendered="#{manejadorBuscadorProyectos.visibleResultados}" />
+					</div>
+				</t:div>
+				<t:div styleClass="final-contenedor-informacion" />
+			</t:div>
+			-->
+			<t:div styleClass="panel-inicio-docentes"
+				rendered="#{!ManejadorBusqueda.banderaResultadosBusqueda}" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

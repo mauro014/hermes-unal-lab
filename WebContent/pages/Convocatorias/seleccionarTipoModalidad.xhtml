@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core_rt"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Tipo de Modalidad</t:div>
+
+			<p:panel header="Tipo de Modalidad">
+				<br />
+				<h:panelGrid columns="2" id="pgTipoMod">
+
+					<h:outputText value="Tipo de modalidad: "
+						styleClass="labels_proyecto2" />
+					<p:selectOneMenu style="width:300px"
+						value="#{manejadorSeleccionarTipoModalidad.idTipoModalidad}">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{manejadorSeleccionarTipoModalidad.tipoModalidadesItem}" />
+						<p:ajax update="@form"
+							listener="#{manejadorSeleccionarTipoModalidad.cambiarTipoModalidad}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<br />
+
+				<p:dataTable id="tablaFormularios" var="formulario"
+					value="#{manejadorSeleccionarTipoModalidad.listaFormulariosModalidad}"
+					rendered="#{manejadorSeleccionarTipoModalidad.mostrarFormulariosModalidad}">
+					<p:column headerText="Formularios">
+						<h:outputText value="#{formulario.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+			
+			<br />
+			<p:messages id="msgs" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<br />
+
+			<center>
+				<h:panelGrid columns="2">
+
+					<p:commandButton styleClass="btnedicion"
+						action="#{manejadorSeleccionarTipoModalidad.siguiente}"
+						value="Guardar y avanzar" update="@form" />
+				</h:panelGrid>
+
+			</center>
+
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 </p:dialog>
+	</ui:define>
+</ui:composition>

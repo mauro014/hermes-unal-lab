@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Informes</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;">
+						<h:outputText value="Estudiante: "
+							rendered="#{manejadorPrincipalInforme.esConsultaJovenesInv}" />
+						<h:outputText
+							value="#{manejadorPrincipalInforme.jovenInvestigador.id.tipoDocumento} #{manejadorPrincipalInforme.jovenInvestigador.id.documento} - #{manejadorPrincipalInforme.jovenInvestigador.nombreCompleto}"
+							style=' font-weight: bold'
+							rendered="#{manejadorPrincipalInforme.esConsultaJovenesInv}" />
+						<h:outputText value="Código Proyecto: " />
+						<h:outputText
+							value="#{manejadorPrincipalInforme.proyectoActual.id}"
+							style=' font-weight: bold' />
+						<h:outputText value="Nombre proyecto: " />
+						<h:outputText
+							value="#{manejadorPrincipalInforme.proyectoActual.nombre}"
+							style=' font-weight: bold;' />
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+			<p:messages id="msgs" />
+			<t:div styleClass="estilo-propio" id="panelPropio">
+				<p:dataTable var="informe"
+					value="#{manejadorPrincipalInforme.listaInformes}"
+					emptyMessage="No tiene informes registrados">
+					<f:facet name="header">
+						<h:outputText value="Informes registrados" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Opciones" />
+						</f:facet>
+						<div style="text-align: center;">
+							<p:commandButton value="Enviar" rendered="flase"
+								action="#{manejadorPrincipalInforme.cerrarInforme}"
+								update="@form" style="margin-bottom: 1px;"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								onclick="if(!confirm('¿Está seguro(a) de que desea enviar definitivamente el informe?'))return false">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+							<br />
+							<p:commandButton value="Editar" style="margin-bottom: 1px;"
+								rendered="#{(informe.estadoInforme.id &lt; 2 or informe.estadoInforme.id == 5) and !manejadorPrincipalInforme.esConsultaJovenesInv}"
+								action="#{manejadorPrincipalInforme.ingresardetalleEditaInforme}">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+							<br />
+							<p:commandButton icon="ui-icon-print" title="Imprimir"
+								style="margin-bottom: 1px;"
+								action="#{manejadorPrincipalInforme.imprimirInforme}"
+								ajax="false"
+								rendered="#{informe.tipoInforme.id == 1 or informe.tipoInforme.id == 2 }">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+							<p:commandButton icon="ui-icon-trash" title="Eliminar"
+								style="margin-bottom: 1px;"
+								action="#{manejadorPrincipalInforme.eliminarInforme}"
+								ajax="false"
+								rendered="#{informe.estadoInforme.id == '1' and (manejadorPrincipalInforme.esInvestigadorPrincipal or manejadorPrincipalInforme.esTutor)}"
+								onclick="if(!confirm('¿Esta seguro de eliminar este informe? Esta acción no puede ser revertida.'))return false">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+							<p:commandButton icon="ui-icon-search" title="consultar"
+								action="#{manejadorPrincipalInforme.ingresardetalleConsultaInforme}"
+								rendered="#{!(informe.estadoInforme.id &lt; 2 or informe.estadoInforme.id == 5) or manejadorPrincipalInforme.esConsultaJovenesInv}">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+							<br /> <br />
+							<h:commandLink
+								action="#{manejadorPrincipalInforme.consultarHistoricoEstadoInforme}"
+								value="Histórico estado informe"
+								style="text-decoration:none; 
+											color: #16A8E2; 
+											font-weight: bold;"
+								ajax="false" target="_blank">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</h:commandLink>
+						</div>
+					</p:column>
+					<p:column filterBy="#{informe.index}" style="text-align: center;"
+						filterStyle="width: 40px;" filterMatchMode="contains">
+						<f:facet name="header">
+							<div style="text-align: center;">Número</div>
+						</f:facet>
+						<h:outputText value=" #{informe.index}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Información" />
+							<br />
+							<h:outputText value="general" />
+						</f:facet>
+						<h:outputText value="Tipo informe: " style="font-weight: bold;" />
+						<h:outputText value="#{informe.tipoInforme.nombre}" />
+						<br />
+						<h:outputText value="Estado: " style="font-weight: bold;" />
+						<h:outputText value="#{informe.estadoInforme.nombreEstado}"
+							style="color: #FF8000;" />
+						<h:outputText value=" PARA REVISIÓN EN COORDINACIÓN DE FACULTAD O SEDE"
+							style="color: #FF8000;" rendered="#{informe.tipoInforme.id == '2' and informe.estadoInforme.id == 2}"/>
+						<h:outputText value=" PARA REVISIÓN POR COORDINADOR DE SEGUIMIENTO"
+							style="color: #FF8000;" rendered="#{(informe.tipoInforme.id == '1' and informe.estadoInforme.id == 2)}"/>
+						<h:outputText value=" PENDIENTE REVISIÓN POR COORDINADOR DE SEGUIMIENTO"
+							style="color: #FF8000;" rendered="#{(informe.tipoInforme.id == '2' and informe.estadoInforme.id == 4)}"/>
+						<br />
+						<h:outputText value="Responsable revisión: " style="font-weight: bold;" rendered="#{informe.estadoInforme.id == 2 or informe.estadoInforme.id == 4}" />
+						<h:outputText value=" #{manejadorPrincipalInforme.coordinadorSeguimientoProyecto.nombreCompleto}" rendered="#{informe.tipoInforme.id == '1' and informe.estadoInforme.id == 2}"/>
+						<h:outputText value=" Coordinación de facultad o sede" rendered="#{informe.tipoInforme.id == '2' and informe.estadoInforme.id == 2}"/>
+						<h:outputText value=" #{manejadorPrincipalInforme.coordinadorSeguimientoProyecto.nombreCompleto}" rendered="#{informe.tipoInforme.id == '2' and informe.estadoInforme.id == 4}"/>
+						<br />
+						<h:outputText value="Fecha: " style="font-weight: bold;" />
+						<h:outputText value=" #{informe.fechaGeneracion}" />
+						<br />
+						<br />
+						<h:outputText value=" #{informe.nombreEstudiante} " />
+						<br />
+						<h:outputText
+							style="margin-top: 10px;color:#FF0000; font-weight: bold; text-align: center;"
+							value="Este informe aún NO ha sido enviado para revisión, el director del proyecto es responsable de esta acción."
+							rendered="#{(informe.estadoInforme.id &lt; 2 or informe.estadoInforme.id == 5 )}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<div style="text-align: center;">
+								Cuadro de<br /> resultados
+							</div>
+						</f:facet>
+						<p:commandButton
+							action="#{manejadorPrincipalInforme.descargarCuadroResultados}"
+							value="ver" rendered="#{informe.mostrarCuadro}" ajax="false">
+							<f:setPropertyActionListener value="#{informe}"
+								target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios" />
+						</f:facet>
+						<t:div
+							rendered="#{!manejadorPrincipalInforme.esJornadaDocente and !manejadorPrincipalInforme.esPermisoMarco}">
+							<h:outputText value="Comentarios facultad:"
+								style="font-weight: bold;" />
+							<h:outputText value=" #{informe.noAprobacion}" />
+							<br />
+							<h:outputText value="Comentarios coordinador:"
+								style="font-weight: bold;" />
+							<h:outputText value=" #{informe.noLectura}" />
+						</t:div>
+						<t:div rendered="#{manejadorPrincipalInforme.esPermisoMarco}">
+							<h:outputText value="Comentarios coordinador:"
+								style="font-weight: bold;" />
+							<h:outputText value=" #{informe.noAprobacion}" />
+						</t:div>
+					</p:column>
+				</p:dataTable>
+			</t:div>
+			<br />
+			<div style="margin: auto; text-align: center; width: 660px;">
+				<p:commandButton value="Crear informe de avance"
+					rendered="#{((((manejadorPrincipalInforme.esInvestigadorPrincipal or manejadorPrincipalInforme.esTutor) and manejadorPrincipalInforme.permitirInformeTutor) or
+								 !(manejadorPrincipalInforme.esInvestigadorPrincipal or manejadorPrincipalInforme.esTutor)) and !manejadorPrincipalInforme.esConsultaJovenesInv)}"
+					action="#{manejadorPrincipalInforme.ingresardetalleInformeAvanceNuevo}"
+					ajax="false" />
+
+				<p:commandButton value="Crear informe final"
+					rendered="#{((((manejadorPrincipalInforme.esInvestigadorPrincipal or manejadorPrincipalInforme.esTutor) and manejadorPrincipalInforme.permitirInformeTutor) or
+								 !(manejadorPrincipalInforme.esInvestigadorPrincipal or manejadorPrincipalInforme.esTutor)) and !manejadorPrincipalInforme.esConsultaJovenesInv) or manejadorPrincipalInforme.esPryContrapartida}"
+					action="#{manejadorPrincipalInforme.ingresardetalleInformeFinalNuevo}"
+					ajax="false" />
+				<p:commandButton value="Volver"
+					action="#{manejadorPrincipalInforme.accionVolver}" ajax="false" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

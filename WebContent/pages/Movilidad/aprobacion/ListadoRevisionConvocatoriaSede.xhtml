@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-aprobacion-movilidades" />
+			<h:panelGrid align="center" columns="1"
+				styleClass="estilo-panelgrid-sinbordes"
+				rendered="#{ManejadorAprobacionMovilidadConvocatoriaSede.facultadTieneConvocatoria}">
+
+				<p:dataTable var="movilidadModUno"
+					value="#{ManejadorAprobacionMovilidadConvocatoriaSede.listaMovilidadesModUno}"
+					emptyMessage="No existen solicitudes vigentes"
+					style="width: 670px;">
+					<f:facet name="header">
+						<h:outputText value="Estudiantes" />
+					</f:facet>
+					<p:column>
+						<div class="panel-interno-tabla">
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Evento:" />
+								<h:outputText value="#{movilidadModUno.evento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Fecha inicio:" />
+								<h:outputText value="#{movilidadModUno.fechainicial}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitante:" />
+								<h:outputText value="#{movilidadModUno.personaInv.id.documento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Nombre solicitante: " />
+								<h:outputText
+									value="#{movilidadModUno.personaInv.nombre1} #{movilidadModUno.personaInv.apellido1} #{movilidadModUno.personaInv.apellido2}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitud:" />
+								<h:outputText value="#{movilidadModUno.fechasolicitud}"
+									style="font-weight: bold;" />
+
+								<h:outputText value="Solicitud número: " />
+								<h:outputText value="#{movilidadModUno.id}"
+									style="font-weight: bold;" />
+
+								<h:outputText value="Valor aprobado por la sede: " />
+								<t:inputText forceId="true"
+									value="#{movilidadModUno.valorAprobadoFacultad}">
+								</t:inputText>
+
+								<h:outputText value="Comentarios sede: " />
+								<t:inputTextarea forceId="true"
+									value="#{movilidadModUno.comentariosFac}" rows="3" cols="50">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</t:inputTextarea>
+							</p:panelGrid>
+						</div>
+						<br />
+						<p:dataTable var="archivoResumen4" style="width: 650px;"
+							value="#{movilidadModUno.listaArchivo}">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo"
+										style='font-style: normal' />
+								</f:facet>
+								<h:outputText value="#{archivoResumen4.tipoArchivo.nombre}"
+									styleClass="normal" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Archivo Cargado" />
+								</f:facet>
+								<h:commandLink
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.descargarDocumentoEstPosgrado}"
+									value="#{archivoResumen4.nombre}" ajax="false">
+									<f:param name="archivoResumen4" value="#{archivoResumen4.id}" />
+									<f:param name="movilidadModUno" value="#{movilidadModUno.id}" />
+								</h:commandLink>
+							</p:column>
+						</p:dataTable>
+						<br />
+						<div style="width: 100%; text-align: center;">
+							<p:commandButton
+								action="#{ManejadorAprobacionMovilidadConvocatoriaSede.imprimirMovilidadPosgrado}"
+								value="Imprimir" ajax="false">
+								<f:param name="idMovilidad" value="#{movilidadModUno.id}" />
+								<f:setPropertyActionListener value="#{movilidadModUno}"
+									target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModUnoSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="No aprobar" update="@form"
+								action="#{ManejadorAprobacionMovilidadConvocatoriaSede.noAprobarMovilidadPosgrado}"
+								onclick="if(!confirm('¿Está seguro(a) de negar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false">
+								<f:param name="idMovilidad" value="#{movilidadModUno.id}" />
+								<f:setPropertyActionListener value="#{movilidadModUno}"
+									target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModUnoSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton value="Aprobar" update="@form"
+								action="#{ManejadorAprobacionMovilidadConvocatoriaSede.aprobarMovilidadPosgrado}"
+								onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false">
+								<f:param name="idMovilidad" value="#{movilidadModUno.id}" />
+								<f:setPropertyActionListener value="#{movilidadModUno}"
+									target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModUnoSeleccionada}" />
+							</p:commandButton>
+						</div>
+						<br />
+					</p:column>
+				</p:dataTable>
+				<br />
+				<p:dataTable var="movilidadModDos"
+					value="#{ManejadorAprobacionMovilidadConvocatoriaSede.listaMovilidadesModDos}"
+					emptyMessage="No existen solicitudes vigentes"
+					style="width: 670px;">
+					<f:facet name="header">
+						<h:outputText value="Docentes" />
+					</f:facet>
+					<p:column>
+						<div class="panel-interno-tabla">
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Evento: " />
+								<h:outputText value="#{movilidadModDos.evento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Fecha inicio: " />
+								<h:outputText value="#{movilidadModDos.fechainicial}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitante: " />
+								<h:outputText value="#{movilidadModDos.personaInv.id.documento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Nombre solicitante: " />
+								<h:outputText
+									value="#{movilidadModDos.personaInv.nombre1} #{movilidadModDos.personaInv.apellido1} #{movilidadModDos.personaInv.apellido2}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitud: " />
+								<h:outputText value="#{movilidadModDos.fechasolicitud}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitud número: " />
+								<h:outputText value="#{movilidadModDos.id}"
+									style="font-weight: bold;" />
+								<h:outputText value="Valor aprobado por la sede: " />
+								<t:inputText forceId="true"
+									value="#{movilidadModDos.valorAprobadoFacultad}" />
+								<h:outputText value="Comentarios sede: " />
+								<p:inputTextarea forceId="true" id="comFac4"
+									value="#{movilidadModDos.comentariosFac}"
+									style="font-weight: bold;" rows="3" cols="50">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:panelGrid>
+							<br />
+							<p:dataTable var="archivoResumen0"
+								value="#{movilidadModDos.listaArchivo}" style="width: 650px;">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText value="#{archivoResumen0.tipoArchivo.nombre}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Archivo Cargado" />
+									</f:facet>
+									<h:commandLink
+										action="#{ManejadorAprobacionMovilidadConvocatoriaSede.descargarDocumentoEvento}"
+										value="#{archivoResumen0.nombre}" ajax="false">
+										<f:param name="archivoResumen" value="#{archivoResumen0.id}" />
+										<f:param name="movilidadModDos" value="#{movilidadModDos.id}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+							<br />
+							<div style="width: 100%; text-align: center;">
+								<p:commandButton
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.imprimirMovilidadEvento}"
+									value="Imprimir" ajax="false">
+									<f:param name="idMovilidad" value="#{movilidadModDos.id}" />
+									<f:setPropertyActionListener value="#{movilidadModDos}"
+										target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModDosSeleccionada}" />
+								</p:commandButton>
+
+								<p:commandButton value="No aprobar"
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.noAprobarMovilidadEvento}"
+									onclick="if(!confirm('¿Está seguro(a) de negar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false">
+									<f:param name="idMovilidad" value="#{movilidadModDos.id}" />
+									<f:setPropertyActionListener value="#{movilidadModDos}"
+										target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModDosSeleccionada}" />
+								</p:commandButton>
+
+								<p:commandButton value="Aprobar"
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.aprobarMovilidadEventos}"
+									onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false">
+									<f:setPropertyActionListener value="#{movilidadModDos}"
+										target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModDosSeleccionada}" />
+									<f:param name="idMovilidad" value="#{movilidadModDos.id}" />
+								</p:commandButton>
+							</div>
+							<br />
+						</div>
+					</p:column>
+
+				</p:dataTable>
+				<br />
+				<p:dataTable var="movilidadModCuatro"
+					value="#{ManejadorAprobacionMovilidadConvocatoriaSede.listaMovilidadesModCuatro}"
+					emptyMessage="No existen solicitudes vigentes"
+					style="width: 670px;">
+					<f:facet name="header">
+						<h:outputText value="Profesionales" />
+					</f:facet>
+					<p:column>
+						<div class="panel-interno-tabla">
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Evento: " />
+								<h:outputText value="#{movilidadModCuatro.evento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Fecha inicio: " />
+								<h:outputText value="#{movilidadModCuatro.fechainicial}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitante: " />
+								<h:outputText value="#{movilidadModCuatro.personaInv.id.documento}"
+									style="font-weight: bold;" />
+								<h:outputText value="Nombre solicitante: " />
+								<h:outputText
+									value="#{movilidadModCuatro.personaInv.nombre1} #{movilidadModCuatro.personaInv.apellido1} #{movilidadModCuatro.personaInv.apellido2}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitud: " />
+								<h:outputText value="#{movilidadModCuatro.fechasolicitud}"
+									style="font-weight: bold;" />
+								<h:outputText value="Solicitud número: " />
+								<h:outputText value="#{movilidadModCuatro.id}"
+									style="font-weight: bold;" />
+								<h:outputText value="Valor aprobado por la sede: " />
+								<t:inputText forceId="true"
+									value="#{movilidadModCuatro.valorAprobadoFacultad}" />
+								<h:outputText value="Comentarios sede: " />
+								<p:inputTextarea forceId="true" id="comFac4"
+									value="#{movilidadModCuatro.comentariosFac}"
+									style="font-weight: bold;" rows="3" cols="50">
+									<f:validateLength
+										minimum="#{valores.sizemin_campo_default_mov}" />
+								</p:inputTextarea>
+							</p:panelGrid>
+							<br />
+							<p:dataTable var="archivoResumen3"
+								value="#{movilidadModCuatro.listaArchivo}" style="width: 650px;">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Tipo" />
+									</f:facet>
+									<h:outputText value="#{archivoResumen3.tipoArchivo.nombre}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Archivo Cargado" />
+									</f:facet>
+									<h:commandLink
+										action="#{ManejadorAprobacionMovilidadConvocatoriaSede.descargarDocumentoEventoEsp}"
+										value="#{archivoResumen3.nombre}" ajax="false">
+										<f:param name="archivoResumen3" value="#{archivoResumen3.id}" />
+										<f:param name="movilidadModCuatro" value="#{movilidadModCuatro.id}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+							<br />
+							<div style="width: 100%; text-align: center;">
+								<p:commandButton
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.imprimirMovilidadEventoEsp}"
+									value="Imprimir" ajax="false">
+									<f:param name="idMovilidad" value="#{movilidadModCuatro.id}" />
+									<f:setPropertyActionListener value="#{movilidadModCuatro}"
+										target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModCuatroSeleccionada}" />
+								</p:commandButton>
+
+								<p:commandButton value="No aprobar"
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.noAprobarMovilidadEventoEsp}"
+									onclick="if(!confirm('¿Está seguro(a) de negar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false">
+									<f:param name="idMovilidad" value="#{movilidadModCuatro.id}" />
+									<f:setPropertyActionListener value="#{movilidadModCuatro}"
+										target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModCuatroSeleccionada}" />
+								</p:commandButton>
+
+								<p:commandButton value="Aprobar"
+									action="#{ManejadorAprobacionMovilidadConvocatoriaSede.aprobarMovilidadEventosEsp}"
+									onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud de movilidad?. Si es así, por favor oprima aceptar.'))return false">
+									<f:setPropertyActionListener value="#{movilidadModCuatro}"
+										target="#{ManejadorAprobacionMovilidadConvocatoriaSede.movilidadModCuatroSeleccionada}" />
+									<f:param name="idMovilidad" value="#{movilidadModCuatro.id}" />
+								</p:commandButton>
+							</div>
+							<br />
+						</div>
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+			<br />
+			<h:panelGrid align="center" columns="1"
+				styleClass="estilo-panelgrid-sinbordes"
+				rendered="#{!ManejadorAprobacionMovilidadConvocatoriaSede.facultadTieneConvocatoria}">
+				<p:messages id="msgForm" autoUpdate="true" closable="false"
+					showSummary="true" showDetail="true" />
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

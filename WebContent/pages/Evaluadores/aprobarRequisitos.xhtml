@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Aprobación requisitos</t:div>
+			<p:panel id="panelInformacionLaboratorio">
+				<p:panelGrid columns="2"  styleClass="estilo-panelgrid-sinbordes" style="border-collapse: separate; ">
+					<h:outputText value="Código: "/>
+					<h:outputText
+						value="#{manejadorRevisarRequisitos.proyectoActual.id}"
+						style=' font-weight: bold' />
+					<h:outputText value="Nombre proyecto: "/>
+					<h:outputText value="#{manejadorRevisarRequisitos.proyectoActual.nombre}"
+						style=' font-weight: bold;' />
+					<h:outputText value=""/>
+					<h:commandLink target="popupWindow" value="Ver reporte" 
+						action="#{manejadorRevisarRequisitos.imprimirReporteProyecto}" 
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;">
+					</h:commandLink>
+					<h:outputText value=""
+						rendered="#{!empty manejadorRevisarRequisitos.proyectoActual.codigoDib}"/>
+					<h:outputText value="Este propuesta esta asociada a otro proyecto de investigacion"
+						rendered="#{!empty manejadorRevisarRequisitos.proyectoActual.codigoDib}"/>
+					<h:outputText value="" rendered="#{!empty manejadorRevisarRequisitos.proyectoActual.codigoDib and manejadorRevisarRequisitos.checkProyectoAsociado}"/>
+					<h:commandLink target="popupWindow" value="Ver reporte de proyecto asociado" 
+						action="#{manejadorRevisarRequisitos.imprimirProyectoAsociado}" 
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;"
+						rendered="#{!empty manejadorRevisarRequisitos.proyectoActual.codigoDib}">
+					</h:commandLink>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:dataTable var="archivoResumen" style="width: 100%;" id = "ArchivosProyecto"
+				value="#{manejadorRevisarRequisitos.listaArchivos}" emptyMessage="No existen archivos asociados">
+				<f:facet name="header">
+					<h:outputText value="Archivos Adjuntos" />
+				</f:facet>
+				<p:column style="width: 5%;">
+					<f:facet name="header">
+						<h:outputText value="Id" />
+					</f:facet>
+					<h:outputText value=" #{archivoResumen.id}"
+						styleClass="normal" />
+				</p:column>
+				<p:column style="width: 85%;">
+					<f:facet name="header">
+						<h:outputText value="Nombre del archivo" />
+					</f:facet>
+					<t:div style="width:400px;">
+					<h:outputText value=" #{archivoResumen.nombre}"
+						styleClass="normal" />
+					</t:div>
+				</p:column>
+				<p:column style="text-align: center; width: 10%;">
+
+					<f:facet name="header">
+						<h:outputText value="Descargar" />
+					</f:facet>
+
+					<h:commandLink target="popupWindow" value="Descargar" 
+						action="#{manejadorRevisarRequisitos.descargarArchivo}" 
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;">
+						<f:param name="archivoResumen" value="#{archivoResumen.id}" />
+					</h:commandLink>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:fileUpload
+					fileUploadListener="#{manejadorRevisarRequisitos.insertarArchivo}"
+					id="uploadArchivoProyecto" mode="advanced" auto="true"
+					update="ArchivosProyecto" multiple="true" sizeLimit="5000000"
+					label="Subir archivo" />
+						<h:outputText
+							value="#{manejadorRevisarRequisitos.mensajeSubidaArchivo }" />
+			<br />
+			<div class="panelgrid-interno-sinbordes">
+				<h:outputText value="#{manejadorRevisarRequisitos.mensajeRequisito}" />
+				<p:dataTable var="requisito3"
+					value="#{manejadorRevisarRequisitos.listaRequisito}" emptyMessage="No se han asignado requisitos">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Cumplió"   style="font-size: 12px;" />
+						</f:facet>
+						<t:div style="width: 100%; text-align: center;">
+							<p:selectBooleanCheckbox value="#{requisito3.cumplidoCheckbox}" 
+							>
+								<p:ajax update="@form" process="@form" listener="#{manejadorRevisarRequisitos.noMostrarBotones}"/>
+							</p:selectBooleanCheckbox> 
+						</t:div>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Requisito"   style="font-size: 12px;" />
+						</f:facet>
+						<table style="width: 230px;">
+							<tr>
+								<td style="border: 1px solid #FFFFFF;">
+									<h:outputText value="#{requisito3.requisito.nombre}" />
+								</td>
+							</tr>
+						</table>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Observaciones"   style="font-size: 12px;" />
+						</f:facet>
+						<p:inputTextarea value="#{requisito3.comentario}" rows="3" cols="40"/>
+					</p:column>
+				</p:dataTable>
+			</div>
+			<br />
+			<t:div style="width: 100%; text-align: center;">
+				<p:commandButton
+					value="Estoy seguro de hacer la revisión de requisitos"
+					action="#{manejadorRevisarRequisitos.mostrarBotones}"
+					rendered="#{manejadorRevisarRequisitos.mostrarEstoySeguro}"
+					ajax="false">
+				</p:commandButton>
+			</t:div>
+			<t:div style="width: 100%; text-align: center;" rendered="#{manejadorRevisarRequisitos.mostrarBotonesAp}">
+				<p:commandButton value="Aprobar requisitos"  ajax="false"
+						rendered="#{manejadorRevisarRequisitos.activarAprobacion}"
+						action="#{manejadorRevisarRequisitos.aprobarRequisitos}"
+						onclick="if(!confirm('Esta seguro de aprobar estos requisitos?'))return false" />
+				<p:commandButton value="Rechazar proyecto" ajax="false"
+						rendered="#{!manejadorRevisarRequisitos.activarAprobacion}"
+						action="#{manejadorRevisarRequisitos.rechazarProyecto}"
+						onclick="if(!confirm('Esta seguro de rechazar este proyecto?'))return false" />
+			</t:div>
+			<t:div style="width: 100%; text-align: center;">
+				<p:commandButton value="Guardar y continuar después" ajax="false"
+					action="#{manejadorRevisarRequisitos.guardarProyecto}"
+					onclick="if(!confirm('Esta seguro de guardar la evaluación?'))return false" />
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

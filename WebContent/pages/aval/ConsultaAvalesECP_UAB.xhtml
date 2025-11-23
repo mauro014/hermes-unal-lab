@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">Avales Otorgados</ui:define>
+	<ui:define name="content">
+		<h:form>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Avales Otorgados</t:div>
+			<br />
+
+			<p:dataTable var="aval"
+				value="#{ManejadorAprobacionAvalUAB.listaAvalesOtorgados}"
+				emptyMessage="No Hay avales otorgados." paginator="true" rows="15"
+				paginatorPosition="bottom">
+				<f:facet name="header">Avales Otorgados</f:facet>
+
+				<p:column style="text-align: center;" headerText="Código">
+					<h:outputText value="#{aval.aviId}" />
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Título">
+					<h:outputText value="#{aval.aviTitulo}" />
+				</p:column>
+
+				<p:column style="text-align: center;"
+					headerText="Profesor solicitante">
+					<h:outputText value="#{aval.nombreInvestigador}" />
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Fecha Aprobación">
+					<h:outputText value="#{aval.aviFechaAvalFac}" rendered="#{aval.aviFechaAvalUab == null}">
+						<f:convertDateTime type="both" dateStyle="short" />
+					</h:outputText>
+					<h:outputText value="#{aval.aviFechaAvalUab}" rendered="#{aval.aviFechaAvalUab != null}">
+						<f:convertDateTime type="both" dateStyle="short" />
+					</h:outputText>
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="Consultar Aval">
+					<h:commandLink action="#{ManejadorAvalMenu.editarMovilidadAval}"
+						value="Ver"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+						<f:param name="idAvalConsulta" value="#{aval.aviId}" />
+					</h:commandLink>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{ManejadorAprobacionAvalUAB.tamannioListaOtorgados} avales</f:facet>
+
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

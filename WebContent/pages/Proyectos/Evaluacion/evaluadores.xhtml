@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Evaluación y Selección</t:div>
+			<p:panel id="panelInformacionLaboratorio">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate; width: 530px;">
+					<h:outputText value="Código: " />
+					<h:outputText
+						value="#{manejadorConsultaEvaluadores.proyectoActual.id}"
+						style=' font-weight: bold' />
+					<h:outputText value="Nombre proyecto: " />
+					<h:outputText
+						value="#{manejadorConsultaEvaluadores.proyectoActual.nombre}"
+						style=' font-weight: bold;' />
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:dataTable var="proyectoEvaluador"
+				value="#{manejadorConsultaEvaluadores.listaProyectoEvaluador}"
+				emptyMessage="No hay evaluadores asignados">
+
+				<f:facet name="header">
+					<h:outputText value="Evaluadores del proyecto" />
+				</f:facet>
+				<p:column>
+					<h:outputText
+						value="#{proyectoEvaluador.banderaSeleccion ?  'COMITÉ DE SELECCIÓN ' : (proyectoEvaluador.evaluador.id.documento == 'MESATRABAJO' ? 
+                'COMITÉ DE EVALUACIÓN ' : 'Evaluador ') }#{proyectoEvaluador.id}" />
+				</p:column>
+
+				<p:column>
+					<h:commandLink action="#{manejadorConsultaEvaluadores.reporte}"
+						value="Reporte"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+						target="_blank">
+						<f:setPropertyActionListener value="#{proyectoEvaluador}"
+							target="#{manejadorConsultaEvaluadores.proyectoEvaluadorSeleccionado}" />
+					</h:commandLink>
+				</p:column>
+
+				<p:column>
+					<h:commandLink
+						action="#{manejadorConsultaEvaluadores.descargarDocumentoEvaluacion}"
+						value="Ver documento anexo de evaluación cargado"
+						rendered="#{!empty proyectoEvaluador.documentoEvaluador}"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+						target="_blank">
+						<f:setPropertyActionListener value="#{proyectoEvaluador}"
+							target="#{manejadorConsultaEvaluadores.proyectoEvaluadorSeleccionado}" />
+					</h:commandLink>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:panel header="Concepto final"
+				rendered="#{manejadorConsultaEvaluadores.conceptoFinal != '' }">
+				<h:outputText value="#{manejadorConsultaEvaluadores.conceptoFinal}" />
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

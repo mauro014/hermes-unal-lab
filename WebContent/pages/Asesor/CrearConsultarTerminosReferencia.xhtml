@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Crear / Consultar términos de referencia</t:div>
+			<t:div style="padding:15px;">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelConvocatoria">
+					<p:row rendered="#{manejadorAdministrarConvocatoriasExternas.esConsultaTerminos}">
+						<p:column>
+							<h:outputText value="Id:" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorAdministrarConvocatoriasExternas.terminosSeleccionados.id}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="Texto:" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:editor id="editor" widgetVar="editorWidget" value="#{manejadorAdministrarConvocatoriasExternas.terminosSeleccionados.descripcion}" width="640" 
+							disabled="true"
+							rendered="#{manejadorAdministrarConvocatoriasExternas.esConsultaTerminos}"/>
+							<p:editor id="editor" widgetVar="editorWidget" value="#{manejadorAdministrarConvocatoriasExternas.terminosReferencia.descripcion}" width="640" 
+							rendered="#{!manejadorAdministrarConvocatoriasExternas.esConsultaTerminos}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<br />
+							<p:commandButton
+								action="#{manejadorAdministrarConvocatoriasExternas.guardarTerminosReferencia}"
+								rendered="#{!manejadorAdministrarConvocatoriasExternas.esConsultaTerminos}"
+								value="Guardar" icon="ui-icon-disk" update="@form"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								onclick="if(!confirm('¿Está seguro(a) de la información que va guardar?'))return false" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorAdministrarConvocatoriasExternas.esConsultaTerminos}">
+						<p:column style="width:40px;">
+							<h:outputText value="Vigencia: " />
+						</p:column>
+						<p:column>
+							<p:graphicImage value="/images/check.png"
+								rendered="#{manejadorAdministrarConvocatoriasExternas.terminosSeleccionados.estado == 'A'}" style="width: 25px;" />
+							<p:graphicImage value="/images/cancel.png"
+								rendered="#{manejadorAdministrarConvocatoriasExternas.terminosSeleccionados.estado == 'I'}" style="width: 20px;" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			<p:messages id="msgs" autoUpdate="true" showDetail="true"
+				closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

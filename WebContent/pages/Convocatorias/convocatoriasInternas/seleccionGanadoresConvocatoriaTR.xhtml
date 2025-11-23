@@ -1,0 +1,932 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Selección ganadores</t:div>
+			<p:menubar>
+				<p:menuitem value="Información general"
+					action="crearTerminiosReferenciaConvocatoria" icon="pi pi-times" />
+				<p:menuitem value="Modalidades" action="modalidadesConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Información financiera"
+					action="informacionFinancieraConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Requisitos" action="requisitosConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Documentación"
+					action="documentacionConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Selección ganadores"
+					action="seleccionGanadoresConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Compromisos" action="compromisosConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Productos esperados"
+					action="productosEsperadosConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Icompatibilidades"
+					action="incompatibilidadesConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Calendario" action="calendarioConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Consideraciones"
+					action="consideracionesConvocatoriaTR" icon="pi pi-times" />
+			</p:menubar>
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<br />
+			<p:panel id="panelCreacionConvocatoria"
+				header="Proceso de evaluación/selección">
+				<p:outputPanel id="opProcesoSeleccion" align="center">
+					<h:panelGrid columns="3" align="center" cellpadding="5"
+						cellspacing="5" id="hpgTipoSel">
+						<h:outputText
+							value="Dependencia responsable de la verificación de requisitos: "
+							styleClass="labels_proyecto2" />
+						<p:inputTextarea rows="5" cols="80" id="responsableVeriRequisitos"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.dependeciaVerificacionRequisito}"
+							requiredMessage="La dependencia responsable de la verificación de requisitos es obligatoria"
+							validatorMessage="La dependencia responsable de la verificación de requisitos debe ser de máximo 2000 caracteres"
+							maxlength="2000" counter="counterResponsableVeriRequisitos"
+							counterTemplate="{0} caracteres restantes">
+							<f:validateLength minimum="2" maximum="2000" />
+						</p:inputTextarea>
+						<p:message for="responsableVeriRequisitos" />
+
+						<h:outputText />
+						<h:outputText id="counterResponsableVeriRequisitos" />
+						<h:outputText />
+
+						<h:outputText
+							value="Tipo de proceso de evaluación y/o selección: "
+							styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="tipoSeleccion"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoEvaluacion}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItem itemLabel="Evaluación" itemValue="E" />
+							<f:selectItem itemLabel="Evaluación y selección" itemValue="ES" />
+							<f:selectItem itemLabel="Selección" itemValue="S" />
+							<p:ajax
+								update="opProcesoSeleccion, opProcesoEvaluacionCompleto, opProcesoSeleccionEvaluacionCompleto, opProcesoSeleccionCompleto"
+								process="opProcesoSeleccion, opProcesoEvaluacionCompleto, opProcesoSeleccionEvaluacionCompleto, opProcesoSeleccionCompleto" />
+						</p:selectOneMenu>
+						<p:message for="tipoSeleccion" />
+					</h:panelGrid>
+					<br />
+					<p:outputPanel id="opProcesoEvaluacionCompleto" align="center"
+						header="Proceso de evaluación"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoEvaluacion == 'E'}">
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEva">
+							<h:outputText value="Responsable del proceso de evaluación: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80"
+								id="responsableProcesoEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.responsableProcesoEvaluacion}"
+								requiredMessage="El responsable del proceso de evaluación es obligatoria"
+								validatorMessage="El responsable del proceso de evaluación debe ser de máximo 1000 caracteres"
+								maxlength="1000" counter="counterResponsableProcesoEvaluacion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="1000" />
+							</p:inputTextarea>
+							<p:message for="responsableProcesoEvaluacion" />
+
+							<h:outputText />
+							<h:outputText id="counterResponsableProcesoEvaluacion" />
+							<h:outputText />
+
+							<h:outputText
+								value="El proceso de evaluación se realizará a través de: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="tipoEvaluadores"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.subtipoEvaluacion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Pares expertos" itemValue="E" />
+								<f:selectItem itemLabel="Comité de evaluación" itemValue="C" />
+							</p:selectOneMenu>
+							<p:message for="tipoEvaluadores" />
+							
+							<h:outputText value="Proceso de evaluación: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80"
+								id="descripProcesoEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.descripcionProcesoEvaluacion}"
+								requiredMessage="La descripción del proceso de evaluación es obligatoria"
+								validatorMessage="La descripción del proceso de evaluación debe ser de máximo 1000 caracteres"
+								maxlength="1000" counter="counterDescProcesoEvaluacion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="1000" />
+							</p:inputTextarea>
+							<p:message for="descripProcesoEvaluacion" />
+
+							<h:outputText />
+							<h:outputText id="counterDescProcesoEvaluacion" />
+							<h:outputText />
+
+							<h:outputText value="Tipo de puntaje: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="tipoPuntaje"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoPuntajeEvaluacion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Suma" itemValue="S" />
+								<f:selectItem itemLabel="Ponderación" itemValue="P" />
+							</p:selectOneMenu>
+							<p:message for="tipoPuntaje" />
+
+							<h:outputText value="Puntaje mínimo (de 10 a 100): "
+								styleClass="labels_proyecto2" />
+							<p:spinner id="puntajeMin"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.puntajeMinimoEvaluacion}"
+								min="10" max="100" />
+							<p:message for="puntajeMin" />
+
+							<h:outputText
+								value="Se conformará una lista de propuestas financiables: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="selListaFin"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.propuestasFinanciables}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Si" itemValue="S" />
+								<f:selectItem itemLabel="No" itemValue="N" />
+							</p:selectOneMenu>
+							<p:message for="selListaFin" />
+						</h:panelGrid>
+
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="Criterios de evaluación"
+								style="font-weight: bold;" />
+						</t:div>
+
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaCriEva">
+
+							<h:outputText value="Criterio: " styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80" id="criterioEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioEvaluacion.descripcion}"
+								requiredMessage="El criterio de evaluación es obligatoria"
+								validatorMessage="El criterio de evaluación debe ser de máximo 2000 caracteres"
+								maxlength="2000" counter="counterCriterioEvaluacion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="2000" />
+							</p:inputTextarea>
+							<p:message for="criterioEvaluacion" />
+
+							<h:outputText />
+							<h:outputText id="counterCriterioEvaluacion" />
+							<h:outputText />
+
+
+							<h:outputText value="Puntaje mínimo: "
+								styleClass="labels_proyecto2" />
+							<p:spinner id="puntajeCriterioEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioEvaluacion.puntaje}"
+								min="10" max="100" />
+							<p:message for="puntajeCriterioEvaluacion" />
+
+						</h:panelGrid>
+
+						<center>
+							<h:panelGrid columns="1" align="center">
+								<p:commandButton
+									action="#{manejadorTerminosReferenciaConvocatoria.adicionarCriterioEvaluacion}"
+									value="Agregar"
+									update="panelCreacionConvocatoria, tablaCriteriosEvaluacion"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</h:panelGrid>
+						</center>
+
+						<br />
+
+						<p:dataTable
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.listaCriteriosEvaluacionConvocatoriaTR}"
+							id="tablaCriteriosEvaluacion" var="moda" cellpadding="1"
+							cellspacing="15" editable="true" align="center">
+							<p:column headerText="Criterio">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.descripcion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{moda.descripcion}"
+											styleClass="texto" rows="3" cols="40" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Puntaje">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.puntaje}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.puntaje}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Orden">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.orden}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.orden}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column style="width:35px" headerText="Editar">
+								<p:rowEditor />
+							</p:column>
+							<p:column headerText="Eliminar">
+								<center>
+									<p:commandButton
+										action="#{manejadorTerminosReferenciaConvocatoria.eliminarCriterioEvaluacion}"
+										update="@form"
+										onclick="if(!confirm('¿Está seguro(a) de eliminar el criterio?'))return false"
+										id="eliminarCriterio" icon="ui-icon-trash"
+										title="Eliminar criterio">
+
+										<f:setPropertyActionListener value="#{moda}"
+											target="#{manejadorTerminosReferenciaConvocatoria.criterioEvaluacionSeleccionado}" />
+									</p:commandButton>
+								</center>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+					<p:outputPanel id="opProcesoSeleccionEvaluacionCompleto"
+						header="Proceso de evaluación y selección" align="center"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoEvaluacion == 'ES'}">
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="PROCESO DE EVALUACIÓN"
+								style="font-weight: bold;" />
+						</t:div>
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaSelEV">
+							<h:outputText value="Responsable del proceso de evaluación: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80"
+								id="responsableProcesoEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.responsableProcesoEvaluacion}"
+								requiredMessage="El responsable del proceso de evaluación es obligatoria"
+								validatorMessage="El responsable del proceso de evaluación debe ser de máximo 1000 caracteres"
+								maxlength="1000" counter="counterResponsableProcesoEvaluacion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="1000" />
+							</p:inputTextarea>
+							<p:message for="responsableProcesoEvaluacion" />
+
+							<h:outputText />
+							<h:outputText id="counterResponsableProcesoEvaluacion" />
+							<h:outputText />
+
+							<h:outputText
+								value="El proceso de evaluación se realizará a través de: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="tipoEvaluadores"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.subtipoEvaluacion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Pares expertos" itemValue="E" />
+								<f:selectItem itemLabel="Comité de evaluación" itemValue="C" />
+							</p:selectOneMenu>
+							<p:message for="tipoEvaluadores" />
+
+							<h:outputText value="Tipo de puntaje: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="tipoPuntaje"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoPuntajeEvaluacion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Suma" itemValue="S" />
+								<f:selectItem itemLabel="Ponderación" itemValue="P" />
+							</p:selectOneMenu>
+							<p:message for="tipoPuntaje" />
+
+							<h:outputText value="Puntaje mínimo (de 10 a 100): "
+								styleClass="labels_proyecto2" />
+							<p:spinner id="puntajeMin"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.puntajeMinimoEvaluacion}"
+								min="10" max="100" />
+							<p:message for="puntajeMin" />
+
+							<h:outputText
+								value="Se conformará una lista de propuestas financiables: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="selListaFin"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.propuestasFinanciables}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Si" itemValue="S" />
+								<f:selectItem itemLabel="No" itemValue="N" />
+							</p:selectOneMenu>
+							<p:message for="selListaFin" />
+
+						</h:panelGrid>
+
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="Criterios de evaluación"
+								style="font-weight: bold;" />
+						</t:div>
+
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaCriEva">
+
+							<h:outputText value="Criterio: " styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80" id="criterioEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioEvaluacion.descripcion}"
+								requiredMessage="El criterio de evaluación es obligatoria"
+								validatorMessage="El criterio de evaluación debe ser de máximo 2000 caracteres"
+								maxlength="2000" counter="counterCriterioEvaluacion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="2000" />
+							</p:inputTextarea>
+							<p:message for="criterioEvaluacion" />
+
+							<h:outputText />
+							<h:outputText id="counterCriterioEvaluacion" />
+							<h:outputText />
+
+
+							<h:outputText value="Puntaje mínimo: "
+								styleClass="labels_proyecto2" />
+							<p:spinner id="puntajeCriterioEvaluacion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioEvaluacion.puntaje}"
+								min="10" max="100" />
+							<p:message for="puntajeCriterioEvaluacion" />
+
+						</h:panelGrid>
+
+						<center>
+							<h:panelGrid columns="1" align="center">
+								<p:commandButton
+									action="#{manejadorTerminosReferenciaConvocatoria.adicionarCriterioEvaluacion}"
+									value="Agregar"
+									update="panelCreacionConvocatoria, tablaCriteriosEvaluacion"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</h:panelGrid>
+						</center>
+
+						<br />
+
+						<p:dataTable
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.listaCriteriosEvaluacionConvocatoriaTR}"
+							id="tablaCriteriosEvaluacion" var="moda" cellpadding="1"
+							cellspacing="15" editable="true" align="center">
+							<p:column headerText="Criterio">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.descripcion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{moda.descripcion}"
+											styleClass="texto" rows="3" cols="40" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Puntaje">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.puntaje}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.puntaje}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Orden">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.orden}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.orden}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column style="width:35px" headerText="Editar">
+								<p:rowEditor />
+							</p:column>
+							<p:column headerText="Eliminar">
+								<center>
+									<p:commandButton
+										action="#{manejadorTerminosReferenciaConvocatoria.eliminarCriterioEvaluacion}"
+										update="@form"
+										onclick="if(!confirm('¿Está seguro(a) de eliminar el criterio?'))return false"
+										id="eliminarCriterio" icon="ui-icon-trash"
+										title="Eliminar criterio">
+
+										<f:setPropertyActionListener value="#{moda}"
+											target="#{manejadorTerminosReferenciaConvocatoria.criterioEvaluacionSeleccionado}" />
+									</p:commandButton>
+								</center>
+
+							</p:column>
+						</p:dataTable>
+
+						<p:separator />
+
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="PROCESO DE SELECCIÓN"
+								style="font-weight: bold;" />
+						</t:div>
+
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaSelSE">
+							<h:outputText value="Responsable del proceso de selección: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80"
+								id="responsableProcesoSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.responsableProcesoSeleccion}"
+								requiredMessage="El responsable del proceso de selección es obligatorio"
+								validatorMessage="El responsable del proceso de selección debe ser de máximo 1000 caracteres"
+								maxlength="1000" counter="counterResponsableProcesoSeleccion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="1000" />
+							</p:inputTextarea>
+							<p:message for="responsableProcesoSeleccion" />
+
+							<h:outputText />
+							<h:outputText id="counterResponsableProcesoSeleccion" />
+							<h:outputText />
+
+							<h:outputText />
+							<h:outputText
+								value="Nota: relacionar si se va a nombrar un comité de selección" />
+							<h:outputText />
+
+							<h:outputText value="Proceso de selección: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80" id="textProcesoSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.procesoSelecicon}"
+								requiredMessage="El responsable del proceso de selección es obligatorio"
+								validatorMessage="El responsable del proceso de selección debe ser de máximo 2000 caracteres"
+								maxlength="2000" counter="counterTextProcesoSeleccion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="2000" />
+							</p:inputTextarea>
+							<p:message for="textProcesoSeleccion" />
+
+							<h:outputText />
+							<h:outputText id="counterTextProcesoSeleccion" />
+							<h:outputText />
+
+							<h:outputText value="Tipo de puntaje selección: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="tipoPuntajeSel"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoPuntajeEvaluacion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Suma" itemValue="S" />
+								<f:selectItem itemLabel="Ponderación" itemValue="P" />
+							</p:selectOneMenu>
+							<p:message for="tipoPuntajeSel" />
+
+						</h:panelGrid>
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="Criterios de selección"
+								style="font-weight: bold;" />
+						</t:div>
+
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaCriSel">
+
+							<h:outputText value="Criterio: " styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80" id="criterioSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioSeleccion.descripcion}"
+								requiredMessage="El criterio de selección es obligatoria"
+								validatorMessage="El criterio de selección debe ser de máximo 2000 caracteres"
+								maxlength="2000" counter="counterCriterioSeleccion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="2000" />
+							</p:inputTextarea>
+							<p:message for="criterioSeleccion" />
+
+							<h:outputText />
+							<h:outputText id="counterCriterioSeleccion" />
+							<h:outputText />
+
+
+							<h:outputText value="Puntaje mínimo: "
+								styleClass="labels_proyecto2" />
+							<p:spinner id="puntajeCriterioSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioSeleccion.puntaje}"
+								min="10" max="100" />
+							<p:message for="puntajeCriterioSeleccion" />
+
+						</h:panelGrid>
+
+						<center>
+							<h:panelGrid columns="1" align="center">
+								<p:commandButton
+									action="#{manejadorTerminosReferenciaConvocatoria.adicionarCriterioSeleccion}"
+									value="Agregar"
+									update="panelCreacionConvocatoria, tablaCriteriosSeleccion"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</h:panelGrid>
+						</center>
+
+						<br />
+
+						<p:dataTable
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.listaCriteriosSeleccionConvocatoriaTR}"
+							id="tablaCriteriosSeleccion" var="moda" cellpadding="1"
+							cellspacing="15" editable="true" align="center">
+							<p:column headerText="Criterio">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.descripcion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{moda.descripcion}"
+											styleClass="texto" rows="3" cols="40" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Puntaje">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.puntaje}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.puntaje}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Orden">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.orden}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.orden}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column style="width:35px" headerText="Editar">
+								<p:rowEditor />
+							</p:column>
+							<p:column headerText="Eliminar">
+								<center>
+									<p:commandButton
+										action="#{manejadorTerminosReferenciaConvocatoria.eliminarCriterioSeleccion}"
+										update="@form"
+										onclick="if(!confirm('¿Está seguro(a) de eliminar el criterio?'))return false"
+										id="eliminarCriterio" icon="ui-icon-trash"
+										title="Eliminar criterio">
+
+										<f:setPropertyActionListener value="#{moda}"
+											target="#{manejadorTerminosReferenciaConvocatoria.criterioSeleccionSeleccionado}" />
+									</p:commandButton>
+								</center>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+					<p:outputPanel id="opProcesoSeleccionCompleto" align="center"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoEvaluacion == 'S'}">
+
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaSelSE">
+							<h:outputText value="Responsable del proceso de selección: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80"
+								id="responsableProcesoSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.responsableProcesoSeleccion}"
+								requiredMessage="El responsable del proceso de selección es obligatorio"
+								validatorMessage="El responsable del proceso de selección debe ser de máximo 1000 caracteres"
+								maxlength="1000" counter="counterResponsableProcesoSeleccion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="1000" />
+							</p:inputTextarea>
+							<p:message for="responsableProcesoSeleccion" />
+
+							<h:outputText />
+							<h:outputText id="counterResponsableProcesoSeleccion" />
+							<h:outputText />
+
+							<h:outputText />
+							<h:outputText
+								value="Nota: relacionar si se va a nombrar un comité de selección" />
+							<h:outputText />
+
+							<h:outputText value="Proceso de selección: "
+								styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80" id="textProcesoSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.procesoSelecicon}"
+								requiredMessage="El responsable del proceso de selección es obligatorio"
+								validatorMessage="El responsable del proceso de selección debe ser de máximo 2000 caracteres"
+								maxlength="2000" counter="counterTextProcesoSeleccion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="2000" />
+							</p:inputTextarea>
+							<p:message for="textProcesoSeleccion" />
+
+							<h:outputText />
+							<h:outputText id="counterTextProcesoSeleccion" />
+							<h:outputText />
+
+							<h:outputText value="Tipo de puntaje selección: "
+								styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="tipoPuntajeSel"
+								value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoPuntajeEvaluacion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItem itemLabel="Suma" itemValue="S" />
+								<f:selectItem itemLabel="Ponderación" itemValue="P" />
+							</p:selectOneMenu>
+							<p:message for="tipoPuntajeSel" />
+
+						</h:panelGrid>
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="Criterios de selección"
+								style="font-weight: bold;" />
+						</t:div>
+
+						<h:panelGrid columns="3" align="center" cellpadding="5"
+							cellspacing="5" id="infoEvaCriSel">
+
+							<h:outputText value="Criterio: " styleClass="labels_proyecto2" />
+							<p:inputTextarea rows="5" cols="80" id="criterioSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioSeleccion.descripcion}"
+								requiredMessage="El criterio de selección es obligatoria"
+								validatorMessage="El criterio de selección debe ser de máximo 2000 caracteres"
+								maxlength="2000" counter="counterCriterioSeleccion"
+								counterTemplate="{0} caracteres restantes">
+								<f:validateLength minimum="2" maximum="2000" />
+							</p:inputTextarea>
+							<p:message for="criterioSeleccion" />
+
+							<h:outputText />
+							<h:outputText id="counterCriterioSeleccion" />
+							<h:outputText />
+
+
+							<h:outputText value="Puntaje mínimo: "
+								styleClass="labels_proyecto2" />
+							<p:spinner id="puntajeCriterioSeleccion"
+								value="#{manejadorTerminosReferenciaConvocatoria.criterioSeleccion.puntaje}"
+								min="10" max="100" />
+							<p:message for="puntajeCriterioSeleccion" />
+
+						</h:panelGrid>
+
+						<center>
+							<h:panelGrid columns="1" align="center">
+								<p:commandButton
+									action="#{manejadorTerminosReferenciaConvocatoria.adicionarCriterioSeleccion}"
+									value="Agregar"
+									update="panelCreacionConvocatoria, tablaCriteriosSeleccion"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</h:panelGrid>
+						</center>
+
+						<br />
+
+						<p:dataTable
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.listaCriteriosSeleccionConvocatoriaTR}"
+							id="tablaCriteriosSeleccion" var="moda" cellpadding="1"
+							cellspacing="15" editable="true" align="center">
+							<p:column headerText="Criterio">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.descripcion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea value="#{moda.descripcion}"
+											styleClass="texto" rows="3" cols="40" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Puntaje">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.puntaje}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.puntaje}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Orden">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{moda.orden}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{moda.orden}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column style="width:35px" headerText="Editar">
+								<p:rowEditor />
+							</p:column>
+							<p:column headerText="Eliminar">
+								<center>
+									<p:commandButton
+										action="#{manejadorTerminosReferenciaConvocatoria.eliminarCriterioSeleccion}"
+										update="@form"
+										onclick="if(!confirm('¿Está seguro(a) de eliminar el criterio?'))return false"
+										id="eliminarCriterio" icon="ui-icon-trash"
+										title="Eliminar criterio">
+
+										<f:setPropertyActionListener value="#{moda}"
+											target="#{manejadorTerminosReferenciaConvocatoria.criterioSeleccionSeleccionado}" />
+									</p:commandButton>
+								</center>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+				</p:outputPanel>
+
+			</p:panel>
+
+			<br />
+			<p:panel id="panelReclamacionesConvocatoria"
+				header="Información de desempate, aclaraciones y publicación de ganadores">
+				<h:panelGrid columns="3" align="center" cellpadding="5"
+					cellspacing="5" id="infoAclaraciones">
+
+					<h:outputText value="Criterios de desempate: "
+						styleClass="labels_proyecto2" />
+					<p:inputTextarea rows="5" cols="80" id="criterioDesempate"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.criteriosDesempate}"
+						validatorMessage="El criterio de desempate debe ser de máximo 2000 caracteres"
+						maxlength="2000" counter="counterCriterioDesempate"
+						counterTemplate="{0} caracteres restantes">
+						<f:validateLength minimum="2" maximum="2000" />
+					</p:inputTextarea>
+					<p:message for="criterioDesempate" />
+
+					<h:outputText />
+					<h:outputText id="counterCriterioDesempate" />
+					<h:outputText />
+
+					<h:outputText
+						value="Proceso de reclamación o de solicitud de aclaraciones: "
+						styleClass="labels_proyecto2" />
+					<p:selectOneMenu id="tipoReclamacion"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion}">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItem itemLabel="En verificación de requisitos"
+							itemValue="R" />
+						<f:selectItem itemLabel="En proceso de evaluación y/o selección"
+							itemValue="E" />
+						<f:selectItem
+							itemLabel="En verificación de requisitos y proceso de evaluación y/o selección"
+							itemValue="RE" />
+						<p:ajax update="infoAclaraciones, infoAclaraciones"
+							process="infoAclaraciones, infoAclaraciones" />
+					</p:selectOneMenu>
+					<p:message for="tipoReclamacion" />
+
+					<h:outputText
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="Días hábiles para solicitar las aclaraciones  de requisitos: "
+						styleClass="labels_proyecto2" />
+					<p:spinner id="diasParaSolicitarReclamacionesReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.diasParaSolicitarReclamacionesReq}"
+						min="1" max="30" />
+					<p:message for="diasParaSolicitarReclamacionesReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						value="Dependencia responsable de responder las reclamaciones o aclaraciones de requisitos: "
+						styleClass="labels_proyecto2"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<p:inputTextarea rows="5" cols="80"
+						id="dependenciaResponsableResponderReclamacionReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.dependenciaResponsableResponderReclamacionReq}"
+						validatorMessage="La dependencia responsable de responder las reclamaciones o aclaraciones de requisitos debe ser de máximo 1000 caracteres"
+						maxlength="1000"
+						counter="counterDependenciaResponsableResponderReclamacionReq"
+						counterTemplate="{0} caracteres restantes">
+						<f:validateLength minimum="2" maximum="1000" />
+					</p:inputTextarea>
+					<p:message for="dependenciaResponsableResponderReclamacionReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<h:outputText
+						id="counterDependenciaResponsableResponderReclamacionReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<h:outputText
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						value="Días hábiles para responder la solicitud de aclaraciones de requisitos: "
+						styleClass="labels_proyecto2"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<p:spinner id="diasParaResponderReclamacionesReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.diasParaResponderReclamacionesReq}"
+						min="1" max="30" />
+					<p:message for="diasParaResponderReclamacionesReq"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'R' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="Días hábiles para solicitar las aclaraciones de la evaluación: "
+						styleClass="labels_proyecto2" />
+					<p:spinner id="diasParaSolicitarReclamacionesEva"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.diasParaSolicitarReclamacionesEva}"
+						min="1" max="30" />
+					<p:message for="diasParaSolicitarReclamacionesEva"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						value="Dependencia responsable de responder las reclamaciones o aclaraciones de la evaluación: "
+						styleClass="labels_proyecto2"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<p:inputTextarea rows="5" cols="80"
+						id="dependenciaResponsableResponderReclamacionEva"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.dependenciaResponsableResponderReclamacionEva}"
+						validatorMessage="La dependencia responsable de responder las reclamaciones o aclaraciones de la evaluación debe ser de máximo 1000 caracteres"
+						maxlength="1000"
+						counter="counterDependenciaResponsableResponderReclamacionEva"
+						counterTemplate="{0} caracteres restantes">
+						<f:validateLength minimum="2" maximum="1000" />
+					</p:inputTextarea>
+					<p:message for="dependenciaResponsableResponderReclamacionEva"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<h:outputText
+						id="counterDependenciaResponsableResponderReclamacionEva"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<h:outputText
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText
+						value="Días hábiles para responder la solicitud de aclaraciones de la evaluación: "
+						styleClass="labels_proyecto2"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<p:spinner id="diasParaResponderReclamacionesEva"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.diasParaResponderReclamacionesEva}"
+						min="1" max="30"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+					<p:message for="diasParaResponderReclamacionesEva"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'E' or manejadorTerminosReferenciaConvocatoria.convocatoria.tipoReclamacion == 'RE'}" />
+
+					<h:outputText value="Publicación de ganadores: "
+						styleClass="labels_proyecto2" />
+					<p:inputTextarea rows="5" cols="80" id="ganadores"
+						value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.textoPublicacionGanadores}"
+						validatorMessage="La publicación de ganadores debe ser de máximo 1000 caracteres"
+						maxlength="1000" counter="counterGanadores"
+						counterTemplate="{0} caracteres restantes">
+						<f:validateLength minimum="2" maximum="1000" />
+					</p:inputTextarea>
+					<p:message for="ganadores" />
+
+					<h:outputText />
+					<h:outputText id="counterGanadores" />
+					<h:outputText />
+
+				</h:panelGrid>
+			</p:panel>
+			<br />
+			<center>
+				<h:panelGrid columns="3">
+					<p:commandButton value="Guardar y salir"
+						action="#{manejadorTerminosReferenciaConvocatoria.guardarSeleccionGanadoresSalir}"
+						id="botonGuardarFinalizar1" styleClass="ui-priority-primary"
+						ajax="false" />
+
+					<p:commandButton value="Guardar y continuar"
+						action="#{manejadorTerminosReferenciaConvocatoria.guardarSeleccionGanadores}"
+						id="botonGuardarFinalizar3" styleClass="ui-priority-primary"
+						ajax="false" />
+				</h:panelGrid>
+			</center>
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 </p:dialog>
+	</ui:define>
+</ui:composition>

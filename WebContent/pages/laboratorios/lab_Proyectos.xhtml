@@ -1,0 +1,469 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		
+		<t:div styleClass="contenido-titulo-general-myriad">Proyectos</t:div>
+		
+		<h:form>
+			<p:menubar value="Formularios Laboratorios" model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+		</h:form>
+		
+		<p:spacer height="15" />
+
+		<h:form id="form">
+			
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosProyectos.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosProyectos.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; color: #16A8E2; font-weight: bold;">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="15" />
+			
+			<p:panel id="panelLaboratoriosProyectos"
+				header="#{ManejadorLaboratoriosProyectos.laboratorioActual.nombre} - #{ManejadorLaboratoriosProyectos.laboratorioActual.id}">
+				
+				<p:spacer height="15" />
+				<t:div styleClass="contenido-titulo-general-ancizar-left">Proyectos de investigacion</t:div>
+				<p:spacer height="15" />
+				
+				<p:panel style="width:100%; margin: auto;" styleClass="mypanel">
+					<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText
+							value="Proyectos que se han asociado al laboratorio, mencionando que harán uso de sus servicios. 
+								Cualquier duda comunicarse con el docente responsable de cada proyecto." />
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:spacer height="15" />
+				
+				<p:dataTable
+					id="tabla-labs" var="proyecto" style="width:100%;"
+					value="#{ManejadorLaboratoriosProyectos.listaProyectos}"
+					emptyMessage="No ha sido asociado ningún proyecto en estado aprobado o activo"
+					filteredValue="#{ManejadorLaboratoriosProyectos.listaProyectosFiltrados}">
+					<p:column 
+						style="width: 5%;"
+						sortBy="#{proyecto.id}"
+						filterBy="#{proyecto.id}" 
+						filterMatchMode="contains"
+						filterStyle="width: 80%;">
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value="#{proyecto.id}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 15%;">
+						<f:facet name="header">
+							<h:outputText value="Tipología" />
+						</f:facet>
+						<h:outputText value="#{proyecto.tipologia}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 10%;">
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText value="#{proyecto.estado}" styleClass="pequennio"/>
+					</p:column>
+					<p:column 
+						style="width: 60%;"
+						sortBy="#{proyecto.nombre}"
+						filterBy="#{proyecto.nombre}"
+						filterMatchMode="contains"
+						filterStyle="width: 80%;">
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText value="#{proyecto.nombre}" styleClass="pequennio"/>
+					</p:column>
+					<p:column style="width: 5%;">
+						<t:div style="text-align: center;">
+							<p:commandButton
+								title="Ver información detallada"
+								icon="ui-icon-search"
+								oncomplete="proyectoDialogIn.show()"
+								update="@form">
+								<f:setPropertyActionListener value="#{proyecto}"
+									target="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel}" />
+							</p:commandButton>
+						</t:div>
+					</p:column>
+					<p:column style="width: 5%;">
+						<t:div style="text-align: center;">
+							<p:commandButton
+								title="Agregar o eliminar equipos del laboratorio al proyecto"
+								action="#{ManejadorLaboratoriosProyectos.equiposProyectoInvestigacion}"
+								icon="ui-icon-gear"
+								onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide(),dialogEquipos.show()"
+								update="@form">
+								<f:setPropertyActionListener value="#{proyecto}"
+									target="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel}" />
+							</p:commandButton>
+						</t:div>
+					</p:column>
+				</p:dataTable>
+				
+				<p:spacer height="20" />
+			
+				<center>
+					<p:panelGrid columns="3" rendered="#{!ManejadorLaboratoriosProyectos.soloLectura}" styleClass="estilo-panelgrid-sinbordes">
+						<p:commandButton
+							action="#{ManejadorLaboratoriosProyectos.volverSolicitud}"
+							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+							value="Volver a la solicitud" 
+							immediate="true" 
+							rendered="#{ManejadorLaboratoriosProyectos.esSolicitudLab}"/>
+						
+						<p:commandButton
+							action="#{ManejadorLaboratoriosProyectos.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" 
+							rendered="#{!ManejadorLaboratoriosProyectos.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosProyectos.salirGuardar}"
+							value="Guardar y continuar después" 
+							rendered="#{!ManejadorLaboratoriosProyectos.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosProyectos.siguiente}"
+							value="Guardar y avanzar" />
+					</p:panelGrid>
+				</center>
+				
+			</p:panel>
+			
+			<p:dialog header="EQUIPOS DEL LABORATORIO ASOCIADOS AL PROYECTO SELECCIONADO" widgetVar="dialogEquipos"
+				modal="true" resizable="false" width="800">
+				<t:div styleClass="panel-interno-tabla" id="dialogEquiposDiv" style="max-height:800px; overflow: auto;">
+					<p:panel style="width:100%; margin: auto;" styleClass="mypanel">
+						<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText
+								value="Esta es la lista de equipos asociados al laboratorio que han sidos marcados como 'En uso', 
+									en el formulario de información básica. En la siguiente tabla es posible 
+									marcar cuales de estos equipos son usados en el desarrollo del proyecto seleccionado. 
+									No olvide hacer clic en el boton 'Guardar' al final de esta ventana." />
+						</h:panelGrid>
+					</p:panel>
+					<p:spacer height="15" />
+					<p:dataTable var="equipo" id="tablaEquiposLabPry"
+						value="#{ManejadorLaboratoriosProyectos.listaEquiposProyectoVista}"
+						emptyMessage="No hay equipos asociados al laboratorio" cellpadding="1"
+						cellspacing="8" align="center" border="1" style="width:100%"
+						filteredValue="#{ManejadorLaboratoriosProyectos.listaEquiposFiltrados}"
+						sortBy="#{equipo.equipo.equipo}"
+						sortOrder="ascending"
+						rows="15" paginator="true" paginatorPosition="bottom"
+						pageLinks="5" paginatorAlwaysVisible="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({startRecord} - {endRecord} de {totalRecords} Equipos, Pagina: {currentPage}/{totalPages})">
+						<p:column headerText="Asociar"
+							style="width:5%; text-align:center;">
+							<p:selectBooleanCheckbox value="#{equipo.asociado}" />
+						</p:column>
+						<p:column 
+							headerText="Placa" 
+							style="width:15%;"
+							filterBy="#{equipo.equipo.placa}" 
+							filterMatchMode="contains"
+							filterStyle="width: 80%;">
+							<h:outputText value=" #{equipo.equipo.placa}" />
+						</p:column>
+						<p:column 
+							headerText="Nombre" 
+							style="width:35%;"
+							sortBy="#{equipo.equipo.equipo}"
+							filterBy="#{equipo.equipo.equipo}"
+							filterMatchMode="contains"
+							filterStyle="width: 80%;">
+							<h:outputText value=" #{equipo.equipo.equipo}" />
+						</p:column>
+						<p:column headerText="Marca" style="width:15%;">
+							<h:outputText value=" #{equipo.equipo.marca}" />
+						</p:column>
+						<p:column headerText="Responsable" style="width:30%;">
+							<h:outputText value=" #{equipo.equipo.responsable}" />
+						</p:column>
+					</p:dataTable>
+					<p:spacer height="15" />
+					<center>
+						<p:panelGrid columns="2" rendered="#{!ManejadorLaboratoriosProyectos.soloLectura}" styleClass="estilo-panelgrid-sinbordes">
+							<p:commandButton
+								id="btnGuardarEquiposProyecto"
+								action="#{ManejadorLaboratoriosProyectos.guardarEquiposProyectoSeleccionado}"
+								value="Guardar" 
+								update="@form"/>
+							<p:commandButton value="Cancelar" onclick="dialogEquipos.hide()" update="@form"/>
+						</p:panelGrid>
+					</center>
+					<p:growl id="growlEquiposPry" for="btnGuardarEquiposProyecto" life="15000" severity="info"/>
+				</t:div>
+			</p:dialog>
+			
+			<p:dialog header="DETALLES DEL PROYECTO SELECCIONADO"
+				widgetVar="proyectoDialogIn" modal="true" resizable="false" width="700">
+			
+				<t:div styleClass="panel-interno-tabla" id="proyectoSeleccionadoDetalleDiv" style="max-height:700px; overflow: auto;">	
+					<p:panelGrid style="width:100%;" cellpadding="5" cellspacing="5">
+						<p:row>
+							<p:column style="width: 20%;">
+								<h:outputText value="Código:" style="font-weight: bold;" />
+							</p:column>
+							<p:column style="width: 80%;">														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Nombre:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipología:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.tipologia}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Director:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.director}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Sede:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.sede}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.facultad}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.tipoConvocatoria}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.convocatoria}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.modalidad}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Estado:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.estado}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha inicio:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.fechaInicio}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Fecha fin:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.fechaFin}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Grupos de investigación:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.grupos}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Área OCDE principal:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.areaOCDEPrincipal}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Áreas OCDE secundarias:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.areasOCDESecundarias}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Estudiantes Pregrado:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.estudiantesPregrado}" />
+							</p:column>
+						</p:row> 
+						<p:row>
+							<p:column>
+								<h:outputText value="Estudiantes Posgrado:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.estudiantesPosgrado}" />
+							</p:column>
+						</p:row>	
+						<p:row>
+							<p:column>
+								<h:outputText value="Estudiantes Lideres:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.estudiantesLideres}" />
+							</p:column>
+						</p:row>	
+						<p:row>
+							<p:column>
+								<h:outputText value="Estudiantes Visitantes:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.estudiantesVisitantes}" />
+							</p:column>
+						</p:row>	
+						<p:row>
+							<p:column>
+								<h:outputText value="Docentes:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.docentes}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Egresados:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.egresados}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Contratistas:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.contratistas}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Administrativos:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.administrativos}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Externos:" style="font-weight: bold;" />
+							</p:column>
+							<p:column>														
+								<h:outputText
+									value="#{ManejadorLaboratoriosProyectos.proyectoInvestigacionSel.externos}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>				
+			</p:dialog>
+			
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+				closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+					Por favor espere...
+			</p:dialog>
+			
+			<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+							header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosProyectos.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

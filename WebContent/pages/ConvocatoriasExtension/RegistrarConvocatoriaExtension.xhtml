@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formRegistrarConvocatoriaExtension"
+			enctype="multipart/form-data" styleClass="estilo-panelgrid-sinbordes">
+			<p:panel
+				header="Registro de Convocatorias Externas - Dirección Nacional de Extensión">
+
+				<p:panelGrid columns="2"
+					rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRender[0]}">
+					<p:outputLabel value="Nombre convocatoria" for="nombreConvocatoria"
+						styleClass="labels_proyecto" />
+					<p:inputTextarea id="nombreConvocatoria" rows="3" cols="65"
+						autoResize="false" required="true" maxlength="2000"
+						counterTemplate="{0} caracteres restantes."
+						counter="contadorNombre"
+						value="#{ManejadorCrearConvocatoriaExternaExtension.convExt.nombre}" />
+					<h:outputText />
+					<h:outputText id="contadorNombre" styleClass="pequennio" />
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[3]}" />
+					<h:outputText
+						value="#{ManejadorCrearConvocatoriaExternaExtension.errores[3]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[3]}" />
+
+					<p:outputLabel value="Entidad convocante" for="entidadConvocante"
+						styleClass="labels_proyecto" />
+					<p:inputTextarea id="entidadConvocante" rows="2" cols="65"
+						autoResize="false" required="true" maxlength="2000"
+						counterTemplate="{0} caracteres restantes."
+						counter="contadorEntidad"
+						value="#{ManejadorCrearConvocatoriaExternaExtension.convExt.entidad}" />
+					<h:outputText />
+					<h:outputText id="contadorEntidad" styleClass="pequennio" />
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[4]}" />
+					<h:outputText
+						value="#{ManejadorCrearConvocatoriaExternaExtension.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[4]}" />
+
+					<p:outputLabel value="Fecha de cierre" for="FechaCierre"
+						styleClass="labels_proyecto" />
+					<p:calendar id="FechaCierre" pages="2" locale="es"
+						readonlyInput="true" pattern="dd/MM/yyyy" required="true"
+						value="#{ManejadorCrearConvocatoriaExternaExtension.convExt.fechaCierre}"
+						mindate="#{ManejadorCrearConvocatoriaExternaExtension.fechaMinimaCierre}" />
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[2]}" />
+					<h:outputText
+						value="#{ManejadorCrearConvocatoriaExternaExtension.errores[2]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[2]}" />
+
+					<p:outputLabel value="Objeto" for="objeto"
+						styleClass="labels_proyecto" />
+					<p:inputTextarea id="objeto" required="true" rows="5" cols="65"
+						autoResize="false" maxlength="2000"
+						counterTemplate="{0} caracteres restantes."
+						counter="contadorObjeto"
+						value="#{ManejadorCrearConvocatoriaExternaExtension.convExt.objeto}" />
+					<h:outputText />
+					<h:outputText id="contadorObjeto" styleClass="pequennio" />
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[5]}" />
+					<h:outputText
+						value="#{ManejadorCrearConvocatoriaExternaExtension.errores[5]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[5]}" />
+
+					<h:outputText styleClass="labels_proyecto"
+						value="Términos de referencia y/o invitación (en caso de ser necesarios varios archivos, favor comprimir en uno solo):" />
+
+					<p:dataTable var="archivoAdjuntoTable" id="archivoAdjuntoTable"
+						value="#{ManejadorCrearConvocatoriaExternaExtension.listaArchivosObligatoriosSel}"
+						emptyMessage="No existen archivos.">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Archivo Cargado" />
+							</f:facet>
+							<h:outputText
+								value="#{archivoAdjuntoTable.nombreTerminosReferencia}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton icon="ui-icon-trash"
+								action="#{ManejadorCrearConvocatoriaExternaExtension.eliminarArchivoObligatorio}"
+								update="archivoAdjuntoTable"
+								onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+								<f:setPropertyActionListener value="#{archivoAdjuntoTable}"
+									target="#{ManejadorCrearConvocatoriaExternaExtension.convocatoriasExtensionSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+					<h:outputText />
+
+					<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+						mode="advanced" showButtons="false"
+						update="archivoAdjuntoTable"
+						fileUploadListener="#{ManejadorCrearConvocatoriaExternaExtension.guardarArchivoObligatorio}"
+						disabled="#{!ManejadorCrearConvocatoriaExternaExtension.puedeSubirArchivos}">
+					</p:fileUpload>
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[11]}" />
+					<h:outputText
+						value="#{ManejadorCrearConvocatoriaExternaExtension.errores[11]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRenderError[11]}" />
+					<h:outputText value="" styleClass="labels_proyecto" />
+
+				</p:panelGrid>
+
+				<p:messages autoUpdate="true" closable="true" showDetail="true"
+					showSummary="false" redisplay="false" />
+
+				<p:dialog header="Por favor espere..." widgetVar="dialogEspere"
+					resizable="false" closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+				</p:dialog>
+
+				<center>
+					<p:commandButton value="Guardar" icon="ui-icon-check"
+						action="#{ManejadorCrearConvocatoriaExternaExtension.guardar}"
+						onclick="if(!confirm('Está seguro(a) de registrar esta Convocatoria?'))return false"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRender[0]}"
+						update="formRegistrarConvocatoriaExtension" />
+				</center>
+
+				<p:panelGrid columns="1"
+					rendered="#{ManejadorCrearConvocatoriaExternaExtension.panelRender[1]}">
+					<p:commandButton
+						action="#{ManejadorCrearConvocatoriaExternaExtension.regresarInicio}"
+						value="Regresar al inicio" />
+				</p:panelGrid>
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

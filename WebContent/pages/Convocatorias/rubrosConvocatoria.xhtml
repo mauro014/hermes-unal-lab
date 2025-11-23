@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Rubros</t:div>
+			<br />
+			<p:menubar>
+				<p:menuitem value="Generalidades"
+					action="irGeneralidadesConvocatoria" icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarGeneralidades}" />
+				<p:menuitem value="Requisitos" action="irRequisitosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRequisitos}" />
+				<p:menuitem value="Rubros" action="irRubrosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRubros}" />
+				<p:menuitem value="Compromisos" action="irCompromisosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCompromisos}" />
+				<p:menuitem value="Productos" action="irProductosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarProductos}" />
+				<p:menuitem value="Criterios de evaluación"
+					action="irCriteriosEvaluacionConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCriterios}" />
+				<p:menuitem value="Información específica"
+					action="irDetallesInformacionEspecifica"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarInfoEspecifica}" />
+			</p:menubar>
+			<br />
+			<h:outputText
+				value="#{manejadorInsercionConvocatorias.avisoFormulario}"
+				styleClass="mensajeerror" />
+			<h:outputText
+				value="#{manejadorInsercionConvocatorias.avisoRequisitos}"
+				styleClass="mensajeerror" />
+			<h:outputText value="#{manejadorInsercionConvocatorias.avisoRubros}"
+				styleClass="mensajeerror" />
+			<h:outputText
+				value="#{manejadorInsercionConvocatorias.avisoCompromisos}"
+				styleClass="mensajeerror" />
+			<h:outputText
+				value="#{manejadorInsercionConvocatorias.avisoProductos}"
+				styleClass="mensajeerror" />
+			<h:outputText
+				value="#{manejadorInsercionConvocatorias.avisoCriterios}"
+				styleClass="mensajeerror" />
+
+			<br />
+
+			<p:panel header="Rubros de la convocatoria" id="rubrosConvocatoria">
+
+				<h:panelGrid columns="2" align="center" cellpadding="0"
+					cellspacing="1" rendered="true" width="100%">
+					<h:outputText value="Cuenta:" />
+					<p:selectOneMenu id="rubroPadre" style="width: 500px" panelStyle="width: 500px"
+						value="#{manejadorInsercionConvocatorias.rubroFinanciableActual.tipoRubro.id}"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItems
+							value="#{manejadorInsercionConvocatorias.listaRubroPadres}"
+							var="rubroPadres" 
+							itemLabel="#{rubroPadres.nombre}"
+							itemValue="#{rubroPadres.id}" />
+						<p:ajax
+							listener="#{manejadorInsercionConvocatorias.cargarListaRubrosHijos}"
+							update="@form" process="@form" />
+					</p:selectOneMenu>
+					<h:outputText value="Objeto:"
+						rendered="#{manejadorInsercionConvocatorias.rubroFinanciableActual.tipoRubro.id ne 53}" />
+					<p:selectOneMenu style="width: 500px" panelStyle="width: 500px"
+						value="#{manejadorInsercionConvocatorias.rubroFinanciableActualHijo.tipoRubro.id}"
+						rendered="#{manejadorInsercionConvocatorias.rubroFinanciableActual.tipoRubro.id ne 53}"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItems
+							value="#{manejadorInsercionConvocatorias.listaRubroHijos}"
+							var="rubroHijo" itemLabel="#{rubroHijo.nombre}"
+							itemValue="#{rubroHijo.id}" />
+						<p:ajax
+							listener="#{manejadorInsercionConvocatorias.cargarListaRubrosNivel3}"
+							update="@form" process="@form" />
+					</p:selectOneMenu>
+					<h:outputText value="Subordinal" />
+					<p:selectOneMenu style="width: 500px" panelStyle="width: 500px"
+						value="#{manejadorInsercionConvocatorias.rubroFinanciableActualNivel3.tipoRubro.id}"
+						filter="true"
+						filterMatchMode="contains">
+						<f:selectItems
+							value="#{manejadorInsercionConvocatorias.listaRubroNivel3}"
+							var="rubroHijo" itemLabel="#{rubroHijo.nombre}"
+							itemValue="#{rubroHijo.id}" />
+					</p:selectOneMenu>
+					<h:outputText value="Porcentaje: " />
+					<p:inputText id="cantidad" disabled="true"
+						value="#{manejadorInsercionConvocatorias.rubroFinanciableActual.porcentajeMaximo}" />
+				</h:panelGrid>
+
+				<center>
+					<br />
+
+					<p:commandButton
+						action="#{manejadorInsercionConvocatorias.agregarRubroFinanciable}"
+						value="Agregar rubro" update="@form" />
+
+				</center>
+				<br />
+
+				<p:dataTable var="rubro" id="tablaRubros"
+					value="#{manejadorInsercionConvocatorias.convocatoriaActual.listaRubrosFinanciables}">
+					<p:column headerText="Rubro">
+						<h:outputText value="#{rubro.tipoRubro.nombre}" />
+					</p:column>>
+					<p:column headerText="%">
+						<h:outputText value="#{rubro.porcentajeMaximo}" />
+					</p:column>
+					<p:column>
+
+						<p:commandButton
+							action="#{manejadorInsercionConvocatorias.eliminarRubroFinanciable}"
+							update="tablaRubros"
+							onclick="if(!confirm('¿Está seguro(a) de eliminar el rubro?'))return false"
+							id="eliminarRubro" icon="ui-icon-trash" title="Eliminar rubro">
+
+							<f:setPropertyActionListener value="#{rubro}"
+								target="#{manejadorInsercionConvocatorias.rubroSeleccionado}" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<center>
+				<h:panelGrid columns="3">
+					<p:commandButton styleClass="btnedicion"
+						rendered="#{manejadorInsercionConvocatorias.mostrarGuardarAvanzar}"
+						action="#{manejadorInsercionConvocatorias.siguiente}"
+						value="Guardar y avanzar" update="@form">
+						<f:param name="action" value="3"></f:param>
+					</p:commandButton>
+
+					<p:commandButton styleClass="btnguardar" rendered="false"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						immediate="false" value="Guardar y continuar después" />
+
+					<p:commandButton value="Guardar Convocatoria"
+						rendered="#{manejadorInsercionConvocatorias.activarGuardar}"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						update="@form" />
+
+
+				</h:panelGrid>
+
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

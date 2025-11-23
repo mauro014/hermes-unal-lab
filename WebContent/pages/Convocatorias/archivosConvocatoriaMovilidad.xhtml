@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Archivos movilidad</t:div>
+			<br />
+			<p:menubar>
+				<p:menuitem value="Generalidades"
+					action="irGeneralidadesConvocatoria" icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarGeneralidades}" />
+				<p:menuitem value="Requisitos" action="irRequisitosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRequisitos}" />
+				<p:menuitem value="Archivos"
+					action="irArchivosConvocatoriaMovilidad"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarArchivosMovilidad}" />
+			</p:menubar>
+			<br />
+
+			<center>
+				<br />
+				<h:outputText
+					value="#{manejadorInsercionConvocatorias.avisoArchivosMovilidad}"
+					styleClass="mensajeerror" />
+			</center>
+
+			<br />
+
+			<p:panel header="Crear tipo de archivo" id="archivosMovilidad">
+
+				<h:panelGrid columns="2" id="pgArchivos">
+
+					<h:outputText value="Nombre del tipo de archivo" />
+					<p:inputTextarea rows="5" cols="70"
+						value="#{manejadorInsercionConvocatorias.nombreTipoArchivoMovilidad}" />
+
+				</h:panelGrid>
+
+				<center>
+					<h:panelGrid columns="1">
+
+
+						<p:commandButton
+							action="#{manejadorInsercionConvocatorias.crearTipoArchivoMovilidad}"
+							value="Agregar tipo de archivo"
+							update="archivosMovilidad, panAsociarArchivosMovilidad">
+						</p:commandButton>
+
+
+					</h:panelGrid>
+
+				</center>
+
+			</p:panel>
+			<br />
+			<p:panel header="Asociar archivos a la modalidad"
+				id="panAsociarArchivosMovilidad">
+
+				<h:panelGrid columns="2" id="pgArchivos">
+
+					<h:outputText value="Tipo de archivo" />
+					<p:selectOneMenu id="tipArc"
+						value="#{manejadorInsercionConvocatorias.idTipoMovilidadArchivo}">
+						<f:selectItems
+							value="#{manejadorInsercionConvocatorias.listaTipoArchivoMovilidad}"
+							var="tipoArchivo" itemLabel="#{tipoArchivo.nombre}"
+							itemValue="#{tipoArchivo.id}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="El tipo de archivo es obligatorio" />
+					<p:selectOneMenu id="selArOb"
+						value="#{manejadorInsercionConvocatorias.esArchivoObligatorioMovilidad}">
+						<f:selectItem itemLabel="Si" itemValue="1" />
+						<f:selectItem itemLabel="No" itemValue="0" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<center>
+					<h:panelGrid columns="1">
+						<p:commandButton
+							action="#{manejadorInsercionConvocatorias.agregarMovilidadArchivo}"
+							value="Vincular tipo de archivo a la modalidad"
+							update="tablaArchivoModalidad">
+						</p:commandButton>
+					</h:panelGrid>
+				</center>
+				<br />
+				<p:dataTable id= "tablaArchivoModalidad" var="arc" value="#{manejadorInsercionConvocatorias.listaMovilidadArchivo}">
+					<p:column headerText="Tipo de archivo">
+						<h:outputText value="#{arc.tipoArchivo.nombre}" />
+					</p:column>
+
+					<p:column headerText="Obligatorio">
+					<h:outputText
+							value="#{arc.esObligatorio == '1' ? 'Si':'No'}"/>
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panel>
+
+			<center>
+				<h:panelGrid columns="3">
+
+
+					<p:commandButton styleClass="btnedicion"
+						rendered="#{manejadorInsercionConvocatorias.mostrarGuardarAvanzar}"
+						action="#{manejadorInsercionConvocatorias.siguienteMovilidades}"
+						value="Guardar y avanzar" update="@form">
+						<f:param name="action" value="7"></f:param>
+					</p:commandButton>
+
+					<p:commandButton styleClass="btnguardar" rendered="false"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						immediate="false" value="Guardar y continuar después" />
+
+					<p:commandButton value="Guardar Convocatoria"
+						rendered="#{manejadorInsercionConvocatorias.activarGuardar}"
+						action="#{manejadorInsercionConvocatorias.insertarConvocatoriaMovilidad}"
+						update="@form" />
+
+
+				</h:panelGrid>
+
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

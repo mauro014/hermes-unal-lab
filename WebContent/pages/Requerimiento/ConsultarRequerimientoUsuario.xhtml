@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="content" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Consulta de la solicitud</t:div>
+			<p:panel header="Mejora al sistema HERMES" align="center"
+				id="requerimiento">
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelReq">
+					<h:outputText value="Identificador de la solicitud:" id="idReq"
+						styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorEditarRequerimiento.requerimiento.id}" />
+					<h:outputText value="Documento del Solicitante:" for="idPersona"
+						rendered="false" styleClass="negrilla" />
+					<p:inputText id="idPersona" maxlength="256" size="50"
+						required="true" rendered="false"
+						requiredMessage="Indique el número de documento del solicitante."
+						value="#{ManejadorEditarRequerimiento.requerimiento.idPersona}">
+					</p:inputText>
+					<h:outputText value="Responsable de la propuesta:" for="personaReq"
+						styleClass="negrilla" />
+					<h:outputText id="personaReq"
+						value="#{ManejadorEditarRequerimiento.requerimiento.personaRequerimiento}" />
+					<h:outputText value="Dependencia del responsable:"
+						styleClass="negrilla" />
+					<h:outputText id="personaDep"
+						value="#{ManejadorEditarRequerimiento.requerimiento.idDependencia.nombre}" />
+					<h:outputText value="Módulo al que corresponde la propuesta:"
+						for="modulo" styleClass="negrilla" />
+					<p:selectOneMenu disabled="true"
+						value="#{ManejadorEditarRequerimiento.requerimiento.modulo}"
+						id="modulo" style="width:300px">
+						<f:selectItems value="#{ManejadorEditarRequerimiento.moduloItems}" />
+					</p:selectOneMenu>
+					<h:outputText value="Proceso:" for="submodulo"
+						styleClass="negrilla" />
+					<p:selectOneMenu disabled="true"
+						value="#{ManejadorEditarRequerimiento.requerimiento.subModulo}"
+						id="submodulo" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorEditarRequerimiento.subModuloItems}" />
+					</p:selectOneMenu>
+					<h:outputText value="Fecha de Solicitud:" styleClass="negrilla" />
+					<h:outputText id="fechaSol"
+						value="#{ManejadorEditarRequerimiento.requerimiento.fechaSolicitud}" />
+					<h:outputText value="Fecha Inicio de Trámite:"
+						styleClass="negrilla" />
+					<h:outputText id="fechaSol"
+						value="#{ManejadorEditarRequerimiento.requerimiento.fechaTramite}" />
+					<h:outputText value="Fecha Estimada de Entrega:"
+						styleClass="negrilla" />
+					<h:outputText
+						value="#{ManejadorEditarRequerimiento.requerimiento.fechaEstimada}" />
+					<h:outputText value="Sprint Asignado:" for="sprint"
+						styleClass="negrilla" />
+					<h:outputText id="sprint"
+						value="#{ManejadorEditarRequerimiento.requerimiento.sprint}" />
+					<h:outputText value="Fecha de Solución:" styleClass="negrilla" />
+					<h:outputText id="fechaEntrega"
+						value="#{ManejadorEditarRequerimiento.requerimiento.fechaEntrega}" />
+					<h:outputText value="Estado:" styleClass="negrilla" />
+					<h:outputText id="estSelRequerimiento"
+						value="#{ManejadorEditarRequerimiento.requerimiento.estSelRequerimiento}" />
+					<h:outputText value="Descripción de la propuesta de mejora:"
+						styleClass="negrilla" />
+					<t:div style="white-space: pre-wrap;width:400px;">
+						<h:outputText
+							value="#{ManejadorEditarRequerimiento.requerimiento.descripcionSolic}"
+							id="descripcion" />
+					</t:div>
+					<h:outputText value="Comentarios al usuario:" for="comentarios"
+						styleClass="negrilla" />
+					<t:div style="white-space: pre-wrap;width:400px;">
+						<h:outputText id="comentarios"
+							value="#{ManejadorEditarRequerimiento.requerimiento.comentarios}" />
+					</t:div>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel header="Documentos">
+				<br></br>
+				<center>
+					<h:outputText value="Documentos adicionados:" styleClass="negrilla" />
+					<br></br> <br></br>
+					<p:dataTable
+						value="#{ManejadorEditarRequerimiento.requerimiento.listaDocumentos}"
+						var="archivo" emptyMessage="No hay archivos asociados"
+						id="tabla-archivo" style="width:400px">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo documento" />
+							</f:facet>
+							<h:outputText value="#{archivo.tipoArchivoReq}"
+								style="text-align: left; width: 500px; text-transform:uppercase; padding-bottom: 10px;" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{archivo.nombre}"
+								style="text-align: left; width: 500px; text-transform:uppercase; padding-bottom: 10px;" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<p:commandButton
+								action="#{ManejadorEditarRequerimiento.descargarArchivo}"
+								icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+								styleClass="botonGrupo" update="tabla-archivo" ajax="false">
+								<f:setPropertyActionListener value="#{archivo}"
+									target="#{ManejadorEditarRequerimiento.archivoSeleccionadoLeg}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</center>
+				<br></br>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

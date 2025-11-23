@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core_rt"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorValidacionModalidades.convocatoriaActual.esParaGrupos and !manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}">Grupos posibles para la modalidad</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorValidacionModalidades.convocatoriaActual.esParaGrupos and manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}">Grupos y semilleros posibles para la modalidad</t:div>
+
+			<t:div
+				rendered="#{manejadorValidacionModalidades.convocatoriaActual.padre.esConvocatoriaProyectos2022_4}">
+					De acuerdo con los términos de referencia, en el caso de las sedes andinas es obligatorio asociar un semillero.
+					En el caso de las sedes de presencia nacional que no cuenten con semilleros podrán vincular estudiantes que estén matriculados en un programa académico de pregrado (Admisión regular, PAES o PEAMA),
+					los cuales deberán ser registrados en la sección "Equipo de trabajo" de la propuesta. 
+					En el caso del grupo es opcional su vinculación y puede dar clic en siguiente y registrar la propuesta sin asociar un grupo.
+					<br />
+					<br />
+			</t:div>
+
+			<p:fieldset legend="Grupos"
+				rendered="#{manejadorValidacionModalidades.convocatoriaActual.esParaGrupos}">
+				<p:panel
+					rendered="#{manejadorValidacionModalidades.convocatoriaActual.esParaGrupos}">
+					<h:panelGrid columns="1" cellpadding="3" align="center"
+						cellspacing="3"
+						rendered="#{manejadorValidacionModalidades.noTieneGrupos}">
+
+						<h:outputText
+							value="#{manejadorValidacionModalidades.mensajeValidacion}"
+							styleClass="mensajeerror" />
+						<h:panelGrid columns="2" align="center">
+							<p:commandButton value="Consultar convocatorias"
+								action="consultarConvocatorias" ajax="false" />
+							<p:commandButton value="Ir a grupos de investigación"
+								action="consultaGruposPrincipal" ajax="false" />
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<p:panel id="basic" header="NOTA"
+						rendered="#{manejadorValidacionModalidades.mostrarMsjConvManMed}">
+						<h:panelGrid columns="1" cellpadding="10">
+							<h:outputText
+								value="Para poder participar en esta convocatoria se requiere actualizar la información del grupo de investigación." />
+						</h:panelGrid>
+					</p:panel>
+
+
+
+					<h:panelGrid columns="1" cellpadding="3" align="center"
+						cellspacing="3"
+						rendered="#{manejadorValidacionModalidades.tieneGrupos and !manejadorValidacionModalidades.esConvocatoriaAlianzas2018 and !manejadorValidacionModalidades.esConvocatoriaMultigrupo}">
+
+						<h:outputText
+							value="Seleccione el grupo de investigación para asociar a la convocatoria" />
+
+						<p:selectOneMenu id="grupoEscogido"
+							value="#{manejadorValidacionModalidades.grupoEscogido.id}"
+							panelStyle="width:600px;" style="width:400px">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{manejadorValidacionModalidades.gruposItem}" />
+						</p:selectOneMenu>
+						<h:outputText
+							value="#{manejadorValidacionModalidades.mensajeValidacion2}"
+							styleClass="mensajeerror" />
+
+					</h:panelGrid>
+
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="panelGruposAlianzas" style="width:100%"
+						rendered="#{manejadorValidacionModalidades.tieneGrupos and (manejadorValidacionModalidades.esConvocatoriaAlianzas2018 or manejadorValidacionModalidades.esConvocatoriaMultigrupo)}">
+						<p:row
+							rendered="#{!manejadorValidacionModalidades.esConvocatoriaAlianzas2019 and !manejadorValidacionModalidades.esConvocatoriaAlianzas2018}">
+							<p:column colspan="2">
+								<h:outputText
+									value="Seleccione los grupos de investigación que participan del proyecto: " />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorValidacionModalidades.esConvocatoriaAlianzas2018 or manejadorValidacionModalidades.esConvocatoriaAlianzas2019}">
+							<p:column colspan="2">
+								<h:outputText
+									value="Seleccione los grupos de investigación que conforman la alianza: " />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:40%">
+								<h:outputText value="Grupo de Investigación: " />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorValidacionModalidades.grupoEscogido.id}"
+									id="idGrupoInvConvMed" panelStyle="width:550px;"
+									style="width:400px" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+									<f:selectItems
+										value="#{manejadorValidacionModalidades.gruposInvItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<center>
+									<p:commandButton
+										action="#{manejadorValidacionModalidades.adicionarGrupoInv}"
+										value="Adicionar grupo" icon="ui-icon-plus"
+										update="panelGruposAlianzas, tablaGruposInvMed" />
+									<br />
+								</center>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<center>
+									<p:dataTable
+										value="#{manejadorValidacionModalidades.listaGruposAlianzas}"
+										var="gru" emptyMessage="No hay grupos adicionados"
+										id="tablaGruposInvMed" width="100%;">
+
+										<p:column headerText="Grupo" style="width: 30%;">
+											<h:outputText value="#{gru.nombre}"
+												style="text-align: left; width: 50%; padding-bottom: 10px;" />
+										</p:column>
+										<p:column headerText="Líder" style="width: 30%;">
+											<h:outputText
+												value="#{gru.responsable.nombre1} #{gru.responsable.nombre2} #{gru.responsable.apellido1} #{gru.responsable.apellido2}"
+												style="text-align: left; width: 50%; padding-bottom: 10px;" />
+										</p:column>
+										<p:column headerText="Facultad" style="width: 20%;">
+											<h:outputText value="#{gru.dependencia.facultad.nombre}"
+												style="text-align: left; width: 50%; padding-bottom: 10px;" />
+										</p:column>
+										<p:column headerText="Sede" style="width: 15%;">
+											<h:outputText value="#{gru.dependencia.sede.nombre}"
+												style="text-align: left; width: 50%; padding-bottom: 10px;" />
+										</p:column>
+
+										<p:column headerText="(-)" style="width: 5%;">
+											<p:commandButton id="eliminarGrupo"
+												update="tablaGruposInvMed" icon="ui-icon-trash"
+												action="#{manejadorValidacionModalidades.eliminarGrupoInv}"
+												title="Eliminar Grupo">
+												<f:setPropertyActionListener value="#{gru}"
+													target="#{manejadorValidacionModalidades.grupoSeleccionado}" />
+											</p:commandButton>
+										</p:column>
+									</p:dataTable>
+								</center>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+
+
+					<h:panelGrid columns="1" cellpadding="3" align="center"
+						cellspacing="3"
+						rendered="#{manejadorValidacionModalidades.faltanDatos}">
+
+						<h:outputText
+							value="#{manejadorValidacionModalidades.mensajeValidacion}"
+							styleClass="mensajeerror" />
+						<h:panelGrid columns="2" align="center">
+
+							<h:outputLink value="ConsultarConvocatorias.jsf"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+								<h:outputText value="Consultar convocatorias" />
+							</h:outputLink>
+
+							<h:outputLink value="../Grupos/gruposInvestigador.jsf"
+								style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+								<h:outputText value="Actualizar grupo" />
+							</h:outputLink>
+
+						</h:panelGrid>
+						<h:outputText
+							value="Recuerde que despues de actualizar la información del grupo debe volver a convocatorias para continuar con su diligenciamiento" />
+					</h:panelGrid>
+					<br />
+					<br />
+					<p:messages id="messages" showDetail="false" autoUpdate="true"
+						closable="true" />
+					<center>
+						<p:commandButton
+							rendered="#{manejadorValidacionModalidades.tieneGrupos and not manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}"
+							action="#{manejadorValidacionModalidades.siguiente}"
+							value="Siguiente" ajax="false" />
+					</center>
+				</p:panel>
+			</p:fieldset>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros and !manejadorValidacionModalidades.convocatoriaActual.esParaGrupos}">Semilleros a vincular a propuesta</t:div>
+			<p:messages id="msgs"
+				rendered="#{manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}" />
+			<br />
+			<p:fieldset legend="Semilleros"
+				rendered="#{!manejadorValidacionModalidades.errorSemilleros and manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}">
+				<p:panel
+					rendered="#{!manejadorValidacionModalidades.errorSemilleros and manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="panelSemilleros" style="width:100%">
+						<p:row>
+							<p:column style="width:40%;">
+								<h:outputText
+									value="Seleccione el semillero a vincular a su propuesta:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu panelStyle="width:550px;" style="width:100%"
+									value="#{manejadorValidacionModalidades.idSemillero}">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{manejadorValidacionModalidades.semillerosItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+			</p:fieldset>
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+				style="width:100%"
+				rendered="#{!manejadorValidacionModalidades.errorSemilleros and manejadorValidacionModalidades.convocatoriaActual.esParaSemilleros}">
+				<p:row>
+					<p:column colspan="2" style="text-align:center;">
+						<center>
+							<br />
+							<p:commandButton
+								action="#{manejadorValidacionModalidades.siguiente}"
+								value="Siguiente" update="@form" />
+						</center>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

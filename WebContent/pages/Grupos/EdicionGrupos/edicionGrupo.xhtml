@@ -1,0 +1,857 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Datos básicos grupo</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" action="editarGrupo"
+						icon="ui-icon-right" />
+					<p:menuitem value="Integrantes" action="irEdicionIntegrantes"
+						icon="ui-icon-right"
+						disabled="#{!manejadorMenuFormularioGrupos.opcionIntegrantes}" />
+					<p:menuitem value="Áreas y lineas de investigación"
+						action="lineasGrupo" icon="ui-icon-right"
+						disabled="#{!manejadorMenuFormularioGrupos.opcionLineas}" />
+					<p:menuitem value="Información específica"
+						action="irVisionPrioridadesPerspectiva" icon="ui-icon-right"
+						disabled="#{!manejadorMenuFormularioGrupos.opcionEspecifica}" />
+				</p:menubar>
+			</h:form>
+			<h:form>
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					columnClasses="columnaEtiquetasGrupos,columnaValoresGrupos">
+					<h:outputText value="Id:" />
+					<h:outputText value="#{manejadorEdicionGrupo.grupoActual.id}"
+						rendered="#{!empty manejadorEdicionGrupo.grupoActual.id}"
+						style="font-weight: bold;" />
+					<h:outputText value="No ha sido asignado"
+						rendered="#{empty manejadorEdicionGrupo.grupoActual.id}"
+						style="font-weight: bold;" />
+					<h:outputText value="Nombre grupo(*):" />
+					<p:inputTextarea id="nombreGrupo" styleClass="textAreaGrupo"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						value="#{manejadorEdicionGrupo.grupoActual.nombre}" cols="55"
+						rows="3" required="true"
+						requiredMessage="Campo requerido: Nombre grupo" maxlength="200"
+						counter="counterGrupoNombre"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{manejadorEdicionGrupo.lider or manejadorEdicionGrupo.grupoNuevo}" />
+					<h:outputText value="#{manejadorEdicionGrupo.grupoActual.nombre}"
+						rendered="#{!manejadorEdicionGrupo.lider and !manejadorEdicionGrupo.grupoNuevo}" />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoNombre" />
+					<h:outputText value="Presentación del Grupo(*):" />
+					<p:inputTextarea cols="55" rows="5" id="presentacionGrupo"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						value="#{manejadorEdicionGrupo.grupoActual.presentacion}"
+						required="true" requiredMessage="Campo requerido: Presentación"
+						maxlength="4000" counter="counterGrupoPresentacion"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{manejadorEdicionGrupo.lider or manejadorEdicionGrupo.grupoNuevo}" />
+					<h:outputText
+						value="#{manejadorEdicionGrupo.grupoActual.presentacion}"
+						rendered="#{!manejadorEdicionGrupo.lider and !manejadorEdicionGrupo.grupoNuevo}" />
+					<h:outputText value="" />
+					<h:outputText id="counterGrupoPresentacion" />
+					<t:div style="width: 185px;">
+						<h:outputText value="Estado en Universidad Nacional:" />
+					</t:div>
+					<h:outputText
+						value="#{manejadorEdicionGrupo.grupoActual.estadoGrupo.nombre}"
+						style="font-weight: bold;" />
+					<h:outputText value="Estado en Scienti:" />
+					<h:outputText
+						value="#{manejadorEdicionGrupo.grupoActual.estadoGrupoColciencias.nombre}"
+						style="font-weight: bold;" />
+					<h:outputText value="Categoría ScienTI:" />
+					<h:outputText
+						value="#{manejadorEdicionGrupo.grupoActual.categoria.nombre}"
+						style="font-weight: bold;" />
+					<h:outputText value="Código colombiano de registro:" />
+					<h:outputText
+						value="#{manejadorEdicionGrupo.grupoActual.idColciencias}"
+						style="font-weight: bold;"
+						rendered="#{!empty manejadorEdicionGrupo.grupoActual.idColciencias}" />
+					<h:outputText value="No ha sido asignado"
+						style="font-weight: bold;"
+						rendered="#{empty manejadorEdicionGrupo.grupoActual.idColciencias}" />
+					<h:outputText value="Enlace Gruplac:"
+						rendered="#{!empty manejadorEdicionGrupo.grupoActual.enlaceGruplac}" />
+					<h:outputLink styleClass="cvlac"
+						value="#{manejadorEdicionGrupo.grupoActual.enlaceGruplac}"
+						target="_blank"
+						rendered="#{!empty manejadorEdicionGrupo.grupoActual.enlaceGruplac}"
+						style="text-decoration:none; color: #16A8E2;">
+						<h:outputText
+							value="#{manejadorEdicionGrupo.grupoActual.enlaceGruplac}" />
+					</h:outputLink>
+					<h:outputText value="Enlace Hermes:"
+						rendered="#{!empty manejadorEdicionGrupo.enlaceHermes 
+						and manejadorEdicionGrupo.grupoActual.estadoGrupo.id != 'I'}" />
+					<h:outputLink styleClass="cvlac"
+						value="#{manejadorEdicionGrupo.enlaceHermes}" target="_blank"
+						rendered="#{!empty manejadorEdicionGrupo.enlaceHermes 
+						and manejadorEdicionGrupo.grupoActual.estadoGrupo.id != 'I'}"
+						style="text-decoration:none; color: #16A8E2;">
+						<h:outputText value="#{manejadorEdicionGrupo.enlaceHermes}" />
+					</h:outputLink>
+					<h:outputText value="Fecha de creación:" />
+					<p:calendar
+						value="#{manejadorEdicionGrupo.grupoActual.fechaCreacion}"
+						id="popupCal2" locale="es" pattern="dd/MM/yyyy" required="true"
+						mode="popup" navigator="true" mindate="01/01/1900" maxdate="today"
+						readonlyInput="true"
+						disabled="#{manejadorMenuFormularioGrupos.esConsulta}"
+						requiredMessage="Campo requerido: Fecha de creación" />
+					<h:outputText value="Correo electrónico del Líder de Grupo:" />
+					<h:outputText
+						value="#{manejadorEdicionGrupo.grupoActual.lider.investigador.email}" />
+					<h:outputText value="Correo electrónico del Grupo(*):" />
+					<p:inputText id="emailGrupo"
+						value="#{manejadorEdicionGrupo.grupoActual.email}" required="true"
+						requiredMessage="Campo requerido: E-mail" size="40"
+						validatorMessage="Dirección de E-mail no válida"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}">
+						<f:validateRegex
+							pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+					</p:inputText>
+					<h:outputText value="Dirección" />
+					<p:inputText id="direccionGrupo" required="true"
+						requiredMessage="Campo requerido: Dirección"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						value="#{manejadorEdicionGrupo.grupoActual.direccion}"
+						maxlength="250" size="40" />
+					<h:outputText value="Teléfono:" />
+					<p:inputText id="telefonoGrupo"
+						value="#{manejadorEdicionGrupo.grupoActual.telefono}"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						maxlength="20" />
+					<h:outputText value="Extensión:" />
+					<p:inputText id="extensionGrupo"
+						value="#{manejadorEdicionGrupo.grupoActual.telExtension}"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}"
+						maxlength="10" />
+					<h:outputText value="Fax:" />
+					<p:inputText id="faxGrupo"
+						value="#{manejadorEdicionGrupo.grupoActual.fax}" maxlength="10"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}" />
+					<h:outputText value="Pagina Web:" />
+					<p:inputText id="pagina_web"
+						value="#{manejadorEdicionGrupo.grupoActual.url}" maxlength="256"
+						readonly="#{manejadorMenuFormularioGrupos.esConsulta}" size="40" />
+					<h:outputText value="Sede principal(*):" />
+					<p:selectOneMenu styleClass="selectGrupo" style="width: 100px;"
+						id="sedeGrupo"
+						value="#{manejadorEdicionGrupo.grupoActual.sede.id}"
+						panelStyle="width: 400px;" filter="true"
+						disabled="true"
+						filterMatchMode="contains" required="true"
+						requiredMessage="Campo requerido: Sede principal">
+						<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+						<f:selectItems value="#{manejadorEdicionGrupo.sedeItem}" />
+						<p:ajax update="dependenciaGrupo"
+							listener="#{manejadorEdicionGrupo.actualizarDependencia}" />
+					</p:selectOneMenu>
+					<h:outputText value="Facultad principal(*):" />
+					<p:selectOneMenu styleClass="selectGrupo" style="width: 400px;"
+						id="dependenciaGrupo"
+						disabled="true"
+						value="#{manejadorEdicionGrupo.grupoActual.dependencia.id}"
+						panelStyle="width: 400px;" filter="true" required="true"
+						requiredMessage="Campo requerido: Facultad principal"
+						filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione una dependencia" itemValue="" />
+						<f:selectItems value="#{manejadorEdicionGrupo.dependenciaItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="¿El grupo es intersede?:" />
+					<p:selectOneMenu styleClass="selectGrupo" style="width: 50px;"
+						id="esInteresede" value="#{manejadorEdicionGrupo.esIntersedes}"
+						panelStyle="width: 50px;"
+						disabled="#{manejadorMenuFormularioGrupos.esConsulta}">
+						<f:selectItem itemLabel="NO" itemValue="N" />
+						<f:selectItem itemLabel="SI" itemValue="S" />
+						<p:ajax update="@form" process="@form" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<p:panel header="Sedes del grupo"
+					style="margin-top: 10px;
+					 margin-bottom: 20px;"
+					rendered="#{manejadorEdicionGrupo.esIntersedes == 'S'}"
+					id="agregarSedes">
+					<h:panelGrid columns="3" align="center" style="margin-top: 10px;"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<h:outputText value="Agregar sede:" />
+						<p:selectOneMenu styleClass="selectGrupo" style="width: 350px;"
+							id="sedeNuevaGrupo" value="#{manejadorEdicionGrupo.sedeNueva}"
+							filter="true" filterMatchMode="contains"
+							panelStyle="width: 330px;">
+							<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+							<f:selectItems value="#{manejadorEdicionGrupo.sedeItem}" />
+						</p:selectOneMenu>
+						<p:commandButton action="#{manejadorEdicionGrupo.adicionarSede}"
+							icon="ui-icon-plus" value="Agregar"
+							update="tabla-sedes,msgs,agregarSedes"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</h:panelGrid>
+					<p:dataTable value="#{manejadorEdicionGrupo.listaSedes}"
+						id="tabla-sedes" var="grupoSede"
+						emptyMessage="No ha sido asociada ninguna dependencia aliada">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Sede asociada" />
+							</f:facet>
+							<h:outputText value="#{grupoSede.sede.nombre}" />
+						</p:column>
+						<p:column style="width: 50px;"
+							rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+							<t:div style="text-align: center;"
+								rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+								<p:commandButton
+									onclick="if(!confirm('Esta seguro que desea eliminar esta sede'))return false"
+									action="#{manejadorEdicionGrupo.eliminarSede}"
+									icon="ui-icon-trash" update="tabla-sedes"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									<f:setPropertyActionListener value="#{grupoSede}"
+										target="#{manejadorEdicionGrupo.intesedeSeleccionada}" />
+								</p:commandButton>
+							</t:div>
+						</p:column>
+					</p:dataTable>
+					<center>
+
+						<p:commandButton icon="ui-icon-clock"
+							oncomplete="dialogHistoricoSedes.show();" update="@form"
+							value="Historico Sedes"
+							action="#{manejadorEdicionGrupo.cargarHistoricoSedes}">
+						</p:commandButton>
+					</center>
+
+				</p:panel>
+				<p:panelGrid columns="2" style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					columnClasses="columnaEtiquetasGrupos,columnaValoresGrupos">
+					<t:div style="width: 200px;">
+						<h:outputText value="¿El grupo es interfacultad?:" />
+					</t:div>
+					<t:div style="width: 450px;">
+						<p:selectOneMenu styleClass="selectGrupo" style="width: 50px;"
+							id="esInterfacultad"
+							disabled="#{manejadorMenuFormularioGrupos.esConsulta}"
+							value="#{manejadorEdicionGrupo.esInterfacultades}"
+							panelStyle="width: 50px;">
+							<f:selectItem itemLabel="NO" itemValue="N" />
+							<f:selectItem itemLabel="SI" itemValue="S" />
+							<p:ajax update="@form" process="@form" />
+						</p:selectOneMenu>
+					</t:div>
+				</p:panelGrid>
+				<p:panel header="Dependencias del grupo" style="margin-top: 10px;"
+					id="agregarDependencias"
+					rendered="#{manejadorEdicionGrupo.esInterfacultades == 'S'}">
+					<h:panelGrid columns="3" align="center" style="margin-top: 10px;"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<h:outputText value="Agregar dependencia:" />
+						<p:selectOneMenu styleClass="selectGrupo" style="width: 350px;"
+							id="dependenciaNuevaGrupo"
+							value="#{manejadorEdicionGrupo.dependenciaNueva}" filter="true"
+							filterMatchMode="contains" panelStyle="width: 330px;">
+							<f:selectItem itemLabel="Seleccione una dependencia" itemValue="" />
+							<f:selectItems
+								value="#{manejadorEdicionGrupo.dependenciaAliadaItem}" />
+						</p:selectOneMenu>
+						<p:commandButton
+							action="#{manejadorEdicionGrupo.adicionarDependencia}"
+							icon="ui-icon-plus" value="Agregar"
+							update="tabla-dependencias,msgs,agregarDependencias"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</h:panelGrid>
+					<p:dataTable
+						value="#{manejadorEdicionGrupo.grupoActual.listaDependencias}"
+						id="tabla-dependencias" var="dependencia"
+						emptyMessage="No ha sido asociada ninguna dependencia aliada">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Dependencias aliadas" />
+							</f:facet>
+							<h:outputText value="#{dependencia.nombre}" />
+						</p:column>
+						<p:column style="width: 50px;"
+							rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+							<t:div style="text-align: center;"
+								rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+								<p:commandButton
+									onclick="if(!confirm('Esta seguro que desea eliminar esta dependencia'))return false"
+									action="#{manejadorEdicionGrupo.eliminarDependencia}"
+									icon="ui-icon-trash" update="tabla-dependencias"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									<f:setPropertyActionListener value="#{dependencia}"
+										target="#{manejadorEdicionGrupo.dependenciaSeleccionada}" />
+								</p:commandButton>
+							</t:div>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+				<p:panelGrid style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					columnClasses="columnaEtiquetasGrupos,columnaValoresGrupos">
+					<p:row>
+						<p:column style="width:50%">
+							<h:outputText
+								value=" ¿El grupo cuenta con aval de otra institución? - es de carácter interinstitucional" />
+						</p:column>
+						<p:column style="width:50%">
+							<p:selectOneMenu styleClass="selectGrupo" style="width: 50px;"
+								id="esInterInstotucion" panelStyle="width: 50px;"
+								value="#{manejadorEdicionGrupo.grupoActual.interinstitucion}"
+								disabled="#{manejadorMenuFormularioGrupos.esConsulta}">
+								<f:selectItem itemLabel="NO" itemValue="N" />
+								<f:selectItem itemLabel="SI" itemValue="S" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorEdicionGrupo.grupoActual.interinstitucion == 'S'}">
+						<p:column colspan="2">
+							<p:panel header="* Instituciones asociadas"
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarSedes">
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column style="width: 33%">
+											<h:outputText value="Institución:" />
+										</p:column>
+										<p:column style="width: 33%">
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 350px;" id="selNuevaInstitucion" filter="true"
+												value="#{manejadorEdicionGrupo.institucionSeleccionada}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una institución"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorEdicionGrupo.fuentesExternasItem}" />
+											</p:selectOneMenu>
+										</p:column>
+										<p:column style="width: 33%">
+											<p:commandButton icon="ui-icon-plus" value="Agregar"
+												action="#{manejadorEdicionGrupo.adicionarInstitucion}"
+												update="tabla-instituciones" onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable id="tabla-instituciones" var="institucion"
+												emptyMessage="No ha sido asociada ninguna institución."
+												value="#{manejadorEdicionGrupo.grupoActual.listaInstituciones}"
+												style="width: 100%">
+												<p:column style="width: 75%;">
+													<f:facet name="header">
+														<h:outputText value="Institución" />
+													</f:facet>
+													<h:outputText
+														value="#{institucion.institucion.descripcion}" />
+												</p:column>
+												<p:column style="width: 25%;"
+													rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															onclick="if(!confirm('¿Esta seguro que desea eliminar esta institución?'))return false"
+															action="#{manejadorEdicionGrupo.eliminarInstitucion}"
+															icon="ui-icon-trash" update="tabla-instituciones"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{institucion}"
+																target="#{manejadorEdicionGrupo.institucionEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<p:panel header="Planes de estudio asociados"
+					style="margin-top: 10px;" id="planesEstudio">
+					<h:panelGrid columns="3" align="center" style="margin-top: 10px;"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+						<h:outputText value="Agregar plan de estudios:" />
+						<p:selectOneMenu styleClass="selectGrupo" style="width: 370px;"
+							id="planNuevoGrupo" value="#{manejadorEdicionGrupo.planNuevo}"
+							filter="true" filterMatchMode="contains"
+							panelStyle="width: 330px;">
+							<f:selectItem itemLabel="Seleccione un plan de estudios"
+								itemValue="" />
+							<f:selectItems value="#{manejadorEdicionGrupo.planesItem}" />
+						</p:selectOneMenu>
+						<p:commandButton action="#{manejadorEdicionGrupo.adicionarPlan}"
+							icon="ui-icon-plus" value="Agregar"
+							update="tabla-planes,msgs,planesEstudio"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</h:panelGrid>
+					<p:dataTable
+						value="#{manejadorEdicionGrupo.grupoActual.listaPlanes}"
+						id="tabla-planes" var="plan"
+						emptyMessage="No ha sido asociado ningún plan de estudios">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Planes de estudios asociados" />
+							</f:facet>
+							<h:outputText value="#{plan.nombre}" />
+						</p:column>
+						<p:column style="width: 50px;"
+							rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+							<t:div style="text-align: center;">
+								<p:commandButton
+									onclick="if(!confirm('Esta seguro que desea eliminar este plan de estudios'))return false"
+									action="#{manejadorEdicionGrupo.eliminarPlan}"
+									icon="ui-icon-trash" update="tabla-planes" title="Eliminar"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+									<f:setPropertyActionListener value="#{plan}"
+										target="#{manejadorEdicionGrupo.planEstudiosSeleccionado}" />
+								</p:commandButton>
+							</t:div>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+				<p:panel header="Semilleros asociados al grupo"
+					style="margin-top: 10px;" id="semillerosGrupo">
+					<t:div style="color:#464646; text-align:justify;">
+					Los semilleros que aparecen asociados por defecto son los que han vinculado el grupo en el formulario del semillero. En caso de que usted los elimine también serán eliminados del formulario del semillero.
+						</t:div>
+					<br />
+					<p:panelGrid id="panelAgregarSem"
+						styleClass="estilo-panelgrid-sinbordes" style="width: 650px;">
+						<p:row>
+							<p:column style="width: 100%;">
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column>
+											<h:outputText value="Sede:" />
+										</p:column>
+										<p:column colspan="2">
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorEdicionGrupo.sedeSemilleros}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+												<f:selectItems value="#{manejadorEdicionGrupo.sedeItem}" />
+												<p:ajax listener="#{manejadorEdicionGrupo.cambiarSedeSem}"
+													update="panelAgregarSem" process="panelAgregarSem"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column>
+											<h:outputText value="Dependencia:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{manejadorEdicionGrupo.facultadSelSem}"
+												filter="true" filterMatchMode="contains" id="facultadUNSem"
+												style="width:330px" panelStyle="380px">
+												<f:selectItem itemLabel="Seleccione una facultad"
+													itemValue="" />
+												<f:selectItems
+													value="#{manejadorEdicionGrupo.facultadItemSem}" />
+												<p:ajax
+													listener="#{manejadorEdicionGrupo.actualizarSemilleros}"
+													update="panelAgregarSem" process="panelAgregarSem"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column>
+											<h:outputText value="Semillero a añadir:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorEdicionGrupo.semSeleccionado}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione un semillero"
+													itemValue="" />
+												<f:selectItems value="#{manejadorEdicionGrupo.semItem}" />
+											</p:selectOneMenu>
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus" value="Agregar"
+												action="#{manejadorEdicionGrupo.agregarSem}"
+												update="panelAgregarSem" process="panelAgregarSem" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column colspan="3">
+											<p:messages id="msgsModal" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable value="#{manejadorEdicionGrupo.listaSemilleros}"
+												id="tabla-semilleros" var="sem"
+												emptyMessage="Ningún SEMILLERO HA ASOCIADO el grupo">
+												<p:column>
+													<f:facet name="header">
+														<h:outputText value="Semilleros asociados" />
+													</f:facet>
+													<h:outputText value="#{sem.semillero.nombre}" />
+												</p:column>
+												<p:column style="width: 75px;"
+													rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+													<t:div style="text-align: center;">
+														<p:commandButton icon="ui-icon-print"
+															action="#{manejadorEdicionGrupo.reporteSemillero}"
+															ajax="false">
+															<f:setPropertyActionListener value="#{sem.semillero.id}"
+																target="#{manejadorEdicionGrupo.semilleroSeleccionado}" />
+														</p:commandButton>
+														<t:div style="text-align: center;">
+															<p:commandButton
+																action="#{manejadorEdicionGrupo.eliminarSemillero}"
+																onclick="if(!confirm('¿Esta seguro que desea eliminar este semillero?'))return false"
+																icon="ui-icon-trash" update="tabla-semilleros"
+																onstart="dialogEspere.show()"
+																oncomplete="dialogEspere.hide()">
+																<f:setPropertyActionListener value="#{sem}"
+																	target="#{manejadorEdicionGrupo.semEliminar}" />
+															</p:commandButton>
+														</t:div>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3" style="text-align:center;">
+											<p:commandButton icon="ui-icon-clock"
+												oncomplete="dialogHistorico.show();" update="@form"
+												value="Historico Semilleros"
+												action="#{manejadorEdicionGrupo.cargarHistoricoSemilleros}">
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+				<p:panelGrid style="width: 100%;"
+					styleClass="estilo-panelgrid-sinbordes"
+					columnClasses="columnaEtiquetasGrupos,columnaValoresGrupos">
+					<p:row>
+						<p:column colspan="2" style="font-weight: bold;">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="agregarLabs">
+								<f:facet name="header">
+									<p:commandButton id="infLabs" icon="ui-icon-info"
+										rendered="#{!manejadorMenuFormularioGrupos.esConsulta}" />
+									<p:tooltip for="infLabs" styleClass="tooltip-mesage"
+										rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Relacione los laboratorios con los que planea trabajar de manera articulada.</t:div>
+									</p:tooltip>
+									<h:outputText value="Laboratorios" />
+								</f:facet>
+								<p:panelGrid align="center" style="width: 100%;">
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column>
+											<h:outputText value="Sede:" />
+										</p:column>
+										<p:column colspan="2">
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorEdicionGrupo.sedeFiltroLabs}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione una sede" itemValue="" />
+												<f:selectItems value="#{manejadorEdicionGrupo.sedeItem}" />
+												<p:ajax listener="#{manejadorEdicionGrupo.actualizarLabs}"
+													update="agregarLabs" process="agregarLabs"
+													onstart="dialogEspere.show()"
+													oncomplete="dialogEspere.hide()" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorMenuFormularioGrupos.esConsulta}">
+										<p:column>
+											<h:outputText value="Laboratorio a añadir:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu styleClass="selectGrupo"
+												style="width: 330px;" filter="true"
+												value="#{manejadorEdicionGrupo.labSeleccionado}"
+												filterMatchMode="contains" panelStyle="width: 330px;">
+												<f:selectItem itemLabel="Seleccione un laboratorio"
+													itemValue="" />
+												<f:selectItems value="#{manejadorEdicionGrupo.labsItem}" />
+											</p:selectOneMenu>
+											<p:messages id="msgsModal" />
+										</p:column>
+										<p:column>
+											<p:commandButton icon="ui-icon-plus"
+												value="Agregar Laboratorio"
+												action="#{manejadorEdicionGrupo.adicionarLab}"
+												update="agregarLabs" process="agregarLabs" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3">
+											<p:dataTable id="tabla-labs" var="laboratorio"
+												value="#{manejadorEdicionGrupo.grupoActual.listaLaboratorios}"
+												emptyMessage="No ha sido asociada ningún laboratorio a este grupo.">
+												<p:column rendered="#{laboratorio.fechaBorrado == null}">
+													<f:facet name="header">
+														<h:outputText value="Sede" />
+													</f:facet>
+													<h:outputText
+														value="#{laboratorio.laboratorio.sede.nombre}" />
+												</p:column>
+												<p:column rendered="#{laboratorio.fechaBorrado == null}">
+													<f:facet name="header">
+														<h:outputText value="Laboratorio asociado" />
+													</f:facet>
+													<h:outputText value="#{laboratorio.laboratorio.nombre}" />
+												</p:column>
+												<p:column style="width: 50px;"
+													rendered="#{!manejadorMenuFormularioGrupos.esConsulta and laboratorio.fechaBorrado == null}">
+													<t:div style="text-align: center;">
+														<p:commandButton
+															action="#{manejadorEdicionGrupo.eliminarlab}"
+															onclick="if(!confirm('¿Esta seguro que desea eliminar este laboratorio?'))return false"
+															icon="ui-icon-trash" update="tabla-labs"
+															onstart="dialogEspere.show()"
+															oncomplete="dialogEspere.hide()">
+															<f:setPropertyActionListener value="#{laboratorio}"
+																target="#{manejadorEdicionGrupo.labEliminar}" />
+														</p:commandButton>
+													</t:div>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="3" style="text-align:center;">
+											<p:commandButton icon="ui-icon-clock"
+												oncomplete="dialogHistoricoLab.show();" update="@form"
+												value="Historico Laboratorios">
+											</p:commandButton>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+				<p:messages id="msgs" />
+				<p:panel header="Imagen del Grupo" id="imagenGrupo"
+					style="margin-top: 10px;">
+					<center>
+						<font color="FF8000"><b>Solo son permitidos archivos en
+								formato JPG con un tamaño minimo de 210 X 210 pixeles.</b></font>
+						<h:panelGrid columns="1" id="localCroppedImage">
+
+							<p:graphicImage id="localCroppedImage1"
+								value="/images/#{manejadorEdicionGrupo.nombreImagen}.jpg"
+								rendered="#{manejadorEdicionGrupo.imagenRecortada}" />
+
+							<p:graphicImage id="localCroppedImage2"
+								value="#{manejadorEdicionGrupo.imagen}"
+								rendered="#{manejadorEdicionGrupo.archivoExiste &amp;&amp; !manejadorEdicionGrupo.imagenRecortada}" />
+
+							<p:graphicImage id="localCroppedImage3"
+								value="/images/imagen_grupos_hermes.png"
+								rendered="#{!manejadorEdicionGrupo.archivoExiste &amp;&amp; !manejadorEdicionGrupo.imagenRecortada}" />
+
+							<p:fileUpload label="Seleccionar imagen" update="@parent,msgs"
+								style="max-width:666px;"
+								fileUploadListener="#{manejadorEdicionGrupo.subirArchivo}"
+								auto="true" mode="advanced" allowTypes="/(\.|\/)(jpg|jpeg)$/"
+								rendered="#{!manejadorEdicionGrupo.archivoYaSeleccionado 
+								and !manejadorMenuFormularioGrupos.esConsulta}" />
+
+							<p:panel
+								rendered="#{manejadorEdicionGrupo.archivoYaSeleccionado}"
+								id="panelfoto" closable="true"
+								style="max-width:666px;overflow:scroll;">
+								<p:imageCropper value="#{manejadorEdicionGrupo.croppedImage}"
+									image="/images/#{manejadorEdicionGrupo.nombreArchivoTemporal}"
+									initialCoords="0,0,210,210" minSize="210,210" aspectRatio="1" />
+
+								<p:commandButton value="Fijar Imagen"
+									action="#{manejadorEdicionGrupo.crop}" update="@form"
+									process="@form" />
+
+								<p:commandButton value="Cerrar"
+									action="#{manejadorEdicionGrupo.cerrarCrop}" update="@form" />
+							</p:panel>
+						</h:panelGrid>
+					</center>
+				</p:panel>
+				<div style="width: 100%; text-align: center;">
+					<br />
+					<p:commandButton action="#{manejadorEdicionGrupo.guardarGrupo}"
+						value="Guardar y continuar después" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}" />
+					<p:commandButton action="#{manejadorEdicionGrupo.guardaryAvanza}"
+						rendered="#{!manejadorMenuFormularioGrupos.esConsulta}"
+						value="Guardar y avanzar" ajax="false" />
+					<p:commandButton action="#{manejadorEdicionGrupo.siguiente}"
+						rendered="#{manejadorMenuFormularioGrupos.esConsulta 
+							and manejadorMenuFormularioGrupos.opcionIntegrantes}"
+						value="Siguiente" ajax="false" />
+				</div>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true" header="Acción en proceso">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+								Por favor espere
+				</p:dialog>
+				<p:dialog header="Histórico de Semilleros"
+					widgetVar="dialogHistorico" modal="true" resizable="false"
+					width="800">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histGrupoSemillero" var="historico"
+						value="#{manejadorEdicionGrupo.listaSemillerosHistorico}"
+						emptyMessage="No hay un histórico de semilleros para este grupo"
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Código" />
+							</f:facet>
+							<h:outputText value="#{historico.semillero.id}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.semillero.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Responsable retiro" />
+							</f:facet>
+							<h:outputText
+								value="#{historico.responsable.nombreCompletoMinusculas}">
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+				<p:dialog header="Histórico de Laboratorios"
+					widgetVar="dialogHistoricoLab" modal="true" resizable="false"
+					width="800">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histGrupoLab" var="historico"
+						value="#{manejadorEdicionGrupo.grupoActual.listaLaboratorios}"
+						emptyMessage="No hay un histórico de laboratorios para este grupo"
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Código" />
+							</f:facet>
+							<h:outputText value="#{historico.laboratorio.id}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.laboratorio.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+				<p:dialog header="Histórico de Sedes"
+					widgetVar="dialogHistoricoSedes" modal="true" resizable="false"
+					width="800">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histGrupoSede" var="historico"
+						value="#{manejadorEdicionGrupo.listaSedesHistorico}"
+						emptyMessage="No hay un histórico de sedes para este grupo"
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.sede.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Vinculación" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha de Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaBorrado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Responsable retiro" />
+							</f:facet>
+							<h:outputText
+								value="#{historico.responsableRetiro.nombreCompletoMinusculas}">
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

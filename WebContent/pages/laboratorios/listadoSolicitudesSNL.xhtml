@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitudes al SNL</t:div>
+
+			<p:panel>
+
+				<p:dataTable var="solicitud" id="dtSols"
+					value="#{manejadorSolicitudSNL.listaSolicitudes}" rows="10"
+					paginator="true" paginatorPosition="bottom" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} Solicitudes, Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No se han registrado solicitudes.">
+
+					<f:facet name="header">
+						<h:outputText value="Solicitudes registradas" />
+					</f:facet>
+
+					<p:column sortBy="#{solicitud.id}">
+						<f:facet name="header">
+							<h:outputText value="Id" />
+						</f:facet>
+						<h:outputText value="#{solicitud.id}" styleClass="pequennio"
+							title="Número que identifica a la solicitud en el sistema." />
+					</p:column>
+					<p:column headerText="Fecha">
+						<h:outputText value="#{solicitud.fecha}" styleClass="pequennio" />
+					</p:column>
+					<p:column headerText="Estado">
+						<h:outputText value="#{solicitud.estadoSolicitud.nombre}" />
+					</p:column>
+					<p:column headerText="Tipo">
+						<h:outputText value="#{solicitud.tipoSolicitud.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column headerText="Solicitante">
+						<h:outputText value="#{solicitud.persona.nombreCompleto}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column style="width:14%">
+						<f:facet name="header">
+							<h:outputText value="Acción" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-search"
+								action="#{manejadorSolicitudSNL.consultarSolicitud}"
+								title="Consultar solicitud #{solicitud.id}">
+								<f:setPropertyActionListener value="#{solicitud}"
+									target="#{manejadorSolicitudSNL.solicitudSeleccionada}" />
+							</p:commandButton>
+
+							<p:commandButton icon="ui-icon-pencil"
+								rendered="#{not solicitud.esFinalizada}"
+								action="#{manejadorSolicitudSNL.editarSolicitud}"
+								title="Editar solicitud #{solicitud.id}">
+								<f:setPropertyActionListener value="#{solicitud}"
+									target="#{manejadorSolicitudSNL.solicitudSeleccionada}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+
+			</p:panel>
+
+			<p:spacer height="15" />
+
+			<p:messages id="messages" autoUpdate="true" closable="true"
+				showDetail="true" showSummary="false" redisplay="false" />
+
+			<p:spacer height="15" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

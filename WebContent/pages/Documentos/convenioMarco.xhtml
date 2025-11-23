@@ -1,0 +1,632 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Autorizaciones de biodiversidad<br />
+			</t:div>
+			En esta sección puede realizar la solicitud de autorizaciones ambientales (permisos - contratos).<br />
+			Por favor tener en cuenta el <a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=326"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a> 
+			para permiso marco de recolección y el <a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=119"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a> para el contrato de acceso a recurso genético y/o producto derivado.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form id="form">
+				<style type="text/css">
+.selection .ui-state-default, .selection .ui-widget-content .ui-state-default,
+	.selection .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate; width: 100%; margin-bottom: 20px;">
+					<h:outputText value="Seleccione tipo de autorización ambiental:"
+						style="font-weight: bold;" />
+					<p:selectOneMenu style="width: 350px;"
+						value="#{manejadorConvenioMarco.idTipoPermiso}">
+						<f:selectItems value="#{manejadorConvenioMarco.tiposPermiso}" />
+						<p:ajax update="@form" process="@form"
+							listener="#{manejadorConvenioMarco.cargarOpciones}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<p:panel id="info" styleClass="confirmaEdicion"
+					rendered="#{manejadorConvenioMarco.idTipoPermiso == manejadorConvenioMarco.tipoRecoleccionEspecimenes and manejadorConvenioMarco.sinPermisoVigente}"
+					style="color:#464646; text-align:justify;">
+					<t:div style="color:#464646; text-align:justify;">
+										La Universidad Nacional de Colombia <b>NO cuenta con un
+							permiso marco de recoleccción de especímenes vigente</b>.  
+										En cuanto cuente con una resolución de permiso vigente podrá realizar los trámites correspondientes en el Sistema Hermes. 
+										
+									</t:div>
+				</p:panel>
+				<p:panel
+					rendered="#{manejadorConvenioMarco.idTipoPermiso == manejadorConvenioMarco.tipoRecoleccionEspecimenes and !manejadorConvenioMarco.sinPermisoVigente}">
+					<f:facet name="header">
+						<h:outputText
+							rendered="#{!manejadorAutenticacion.mostrarOpcionesPermisoMarco}"
+							value="Inclusión permiso recolección" />
+						<h:outputText
+							rendered="#{manejadorAutenticacion.mostrarOpcionesPermisoMarco}"
+							value="Modificación permiso de recolección" />
+					</f:facet>
+					<t:div
+						rendered="#{manejadorAutenticacion.mostrarOpcionesPermisoMarco}"
+						style="text-align: justify; padding: 0px; 
+							padding-bottom: 20px; width: 100%;">
+						<p:panel style="width: 100%; font-weight: normal !important;">
+							Usted <font color="FF8000"><b>YA SE ENCUENTRA INCLUIDO</b></font> en el 
+							<h:outputText id="especimen"
+								value="#{manejadorConvenioMarco.permisoVigente.nombrePermiso}" /> y puede incluir un proyecto o asignatura, 
+							bajo las cuales tiene planteadas las actividades de recolección.
+							<p:tooltip for="especimen" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Especimen: Todo organismo de diversidad biológica vivo o muerto o <br/>
+								       cualquiera de sus productos partes o derivados (Decreto 1375 de 2013).
+									</t:div>
+							</p:tooltip>
+							<br />
+							<br />
+							Recuerde que para solicitar asociación del proyecto o asignatura, debe encontrarse a paz y salvo con los compromisos 
+							adquiridos en el permiso marco, correspondiente a la presentación de informes de avance y final de proyectos de 
+							asignaturas  incluidos por usted según el caso.
+							<br />
+							<br />
+							Para realizar la solicitud de inclusión de un proyecto de investigación en el permiso haga clic en el siguiente botón:  
+							<p:commandButton value="ASOCIAR PROYECTO"
+								action="#{manejadorAutenticacion.cargarConvocatoriaPermisoMarco}"
+								update="@form" ajax="false" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+							<br />
+							<br />
+							 Si usted planea realizar recolección de especímenes en el marco de prácticas docentes, por favor  de clic en el siguiente botón: 
+							<p:commandButton value="ASOCIAR ASIGNATURA"
+								action="#{manejadorAutenticacion.cargarConvocatoriaPermisoMarcoAsignatura}"
+								update="@form" ajax="false" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+							<br />
+							<t:div rendered="#{manejadorConvenioMarco.solicitudPendiente}"
+								style="text-align:center !important;">
+								<br />
+								Usted tiene en trámite una solicitud de	<h:outputText
+									style="color:#FF8000;"
+									value=" #{manejadorConvenioMarco.tipoSolicitud}, " />
+								hasta que no sea atendida no podrá ingresar nuevas solicitudes.
+							</t:div>
+						</p:panel>
+					</t:div>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!manejadorAutenticacion.mostrarOpcionesPermisoMarco}">
+						<p:row>
+							<p:column>
+								<p:panel id="info" styleClass="confirmaEdicion"
+									style="color:#464646; text-align:justify;">
+									<t:div style="color:#464646; text-align:justify;">
+										<b>Si usted NO se encuentra incluido, puede solicitar</b> aceptando los términos de la resolución del permiso marco 
+										concedido a la Universidad Nacional. Luego debe indicar el grupo de investigación reconocido o categorizado en el 
+										Sistema Nacional de Ciencias y Tecnología y las actividades de recolección que realiza el grupo. Tenga en cuenta que 
+										sólo aparecerán los grupos de investigación en los que se encuentra como integrante y que se encuentren en 
+										estado "reconocido" o "categorizado" en el sistema Hermes.
+									</t:div>
+								</p:panel>
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:panel id="confirmaEdicion" styleClass="confirmaEdicion"
+									style="color:#464646; text-align:justify;">
+									<t:div style="color:#464646; text-align:justify;">
+										<h:outputText
+											value="Permiso vigente: #{manejadorConvenioMarco.permisoVigente.nombrePermiso}"
+											escape="false" />
+									</t:div>
+									<br />
+									<t:div style="color:#464646; text-align:justify;">
+										<h:outputText
+											value="#{manejadorConvenioMarco.permisoVigente.mensajeInclusionPermiso}"
+											escape="false" />
+									</t:div>
+									<br />
+									<table>
+										<tr>
+											<td><h:outputText
+													value="He leído y acepto las condiciones de la Resolución " />
+											</td>
+
+											<td style="vertical-align: middle;"><p:selectOneButton
+													value="#{manejadorConvenioMarco.aceptaResolucion}"
+													disabled="#{manejadorConvenioMarco.solicitudPendiente}">
+													<f:selectItem itemLabel="Si" itemValue="true" />
+													<f:selectItem itemLabel="No" itemValue="false" />
+													<p:ajax update="@form" process="@form" />
+												</p:selectOneButton></td>
+										</tr>
+									</table>
+									<t:div rendered="#{manejadorConvenioMarco.solicitudPendiente}"
+										style="text-align:center;">
+										<br />
+										Usted tiene en trámite una solicitud de	<h:outputText
+											style="color:#FF8000;"
+											value=" #{manejadorConvenioMarco.tipoSolicitud}, " />
+										hasta que no sea atendida no podrá ingresar nuevas solicitudes.
+									</t:div>
+								</p:panel>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<t:div>
+						<p:messages id="msgs" />
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+							rendered="#{manejadorConvenioMarco.aceptaResolucion}"
+							style="width: 100%;">
+							<p:row>
+								<p:column style="width: 30%; font-weight: bold;">
+									<h:outputText value="Solicitante: " />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorConvenioMarco.investigadorActual.nombreCompletoMinusculas}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 30%; font-weight: bold;">
+									<h:outputText value="Dependencia: " />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{manejadorConvenioMarco.investigadorActual.dependencia.nombre}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:panel id="info" styleClass="confirmaEdicion"
+										style="color:#464646; text-align:justify;">
+										<t:div style="color:#464646; text-align:justify;">
+															Si el grupo que desea asociar no está en la lista, revise que el estado del <b>grupo en Hermes para Scienti sea "reconocido o categorizado"</b> y 
+															que usted sea integrante del grupo 
+										</t:div>
+									</p:panel>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="width: 30%; font-weight: bold;">
+									<h:outputText value="Grupo reconocido o categorizado: " />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="grupoEscogidoRecoleccion"
+										value="#{manejadorConvenioMarco.grupoEscogido.id}"
+										style="width: 480px;" panelStyle="width: 480px;"
+										disabled="#{manejadorAutenticacion.mostrarOpcionesPermisoMarco or manejadorConvenioMarco.solicitudPendiente}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{manejadorConvenioMarco.gruposItem}" />
+										<p:ajax update="@form" process="@form"
+											listener="#{manejadorConvenioMarco.buscarGrupoIncluido}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{manejadorConvenioMarco.grupoIncluidoPermiso}">
+								<p:column colspan="2">
+									<h:outputText value="El grupo asociado ya está incluido y por lo tanto al enviar la solicitud será revisada su inclusión en el #{manejadorConvenioMarco.permisoVigente.nombrePermiso}" />
+								</p:column>
+							</p:row>
+							<p:row rendered="#{!manejadorConvenioMarco.grupoIncluidoPermiso}">
+								<p:column style="width: 30%; font-weight: bold;">
+									<h:outputText
+										value="Actividades de recolección que realizará el grupo: " />
+								</p:column>
+								<p:column>
+									<p:inputTextarea id="actividades-recolecta"
+										value="#{manejadorConvenioMarco.actividadesRecolecta}"
+										rows="2" style="width:100%;" cols="100"
+										validatorMessage="La descripción de las actividades debe estar entre 1 - 800 caracteres"
+										maxlength="800"
+										rendered="#{!manejadorAutenticacion.mostrarOpcionesPermisoMarco and !manejadorConvenioMarco.solicitudPendiente}">
+									</p:inputTextarea>
+									<h:outputText
+										rendered="#{manejadorAutenticacion.mostrarOpcionesPermisoMarco or manejadorConvenioMarco.solicitudPendiente}"
+										value="#{manejadorConvenioMarco.actividadesRecolecta}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="" />
+								</p:column>
+								<p:column>
+									<h:outputText id="actividades-recolecta-descripcion"
+										value="Tamaño máximo 800 caracteres." />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:panel id="advertencia" styleClass="confirmaEdicion"
+										style="color:#464646; text-align:justify;">
+										<t:div style="color:#464646; text-align:justify;">
+										Una vez enviada la solicitud de inclusión del permiso marco en la Vicerrectoría de Investigación la tramitará 
+										y la decisión le será comunicada mediante correo electrónico, tenga en cuenta que los tiempos de trámite no sólo dependen 
+										de la Vicerrectoría, sino también de la Autoridad Nacional de Licencias Ambientales - ANLA, 
+										que es quien otorga el permiso, mediante una modificación a la resolución. 
+									</t:div>
+									</p:panel>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:panel
+							style="width: 100%; margin-top: 20px; text-align:justify; color:#464646;"
+							rendered="#{manejadorConvenioMarco.aceptaResolucion}">
+							<t:div style="color:#464646; text-align:justify;">
+								<h:outputText
+									value="#{manejadorConvenioMarco.permisoVigente.mensajeInfoAdicional}"
+									escape="false" />
+							</t:div>
+							<br />
+						</p:panel>
+						<t:div rendered="#{!manejadorConvenioMarco.solicitudPendiente}"
+							style="width: 100%; text-align: center; 
+									margin-top: 20px;">
+							<p:commandButton value="Guardar solicitud de inclusión"
+								action="#{manejadorConvenioMarco.guardarSolicitudInclusionRecoleccion}"
+								rendered="#{!manejadorAutenticacion.mostrarOpcionesPermisoMarco and manejadorConvenioMarco.aceptaResolucion}"
+								update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+						</t:div>
+					</t:div>
+				</p:panel>
+				<p:dataTable var="solicitud"
+					emptyMessage="0 solicitudes encontradas"
+					rendered="#{(manejadorConvenioMarco.idTipoPermiso == manejadorConvenioMarco.tipoAccesoRecurso) and not empty manejadorConvenioMarco.listaSolicitudesConceptoPendientes}"
+					value="#{manejadorConvenioMarco.listaSolicitudesConceptoPendientes}"
+					paginator="true" rows="5" paginatorPosition="top"
+					style="width:100%; margin-bottom:25px;">
+					<f:facet name="header">  
+				            Solicitudes guardadas parcialmente
+				        	</f:facet>
+					<p:column headerText="Cód. solicitud"
+						style="width: 2%; text-align:center;">
+						<h:outputText id="idAvalLink" value="#{solicitud.id}" />
+					</p:column>
+					<p:column headerText="Estado solicitud"
+						style="width: 2%; text-align:center;">
+						<h:outputText id="estado" value="#{solicitud.nombreEstado}" />
+					</p:column>
+					<p:column headerText="Proyecto" style="width: 93%;">
+						<h:outputText value="#{solicitud.proyecto.nombre}" />
+					</p:column>
+					<p:column headerText="Editar" style="width: 5%;">
+						<p:commandButton
+							action="#{manejadorConvenioMarco.editarSolicitudConcepto}"
+							icon="ui-icon-pencil" title="Editar" ajax="false">
+							<f:setPropertyActionListener value="#{solicitud.id}"
+								target="#{manejadorConvenioMarco.idSolicitudConcepto}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:panel
+					rendered="#{manejadorConvenioMarco.idTipoPermiso == manejadorConvenioMarco.tipoAccesoRecurso}">
+					<f:facet name="header">
+						<h:outputText
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.id==null}"
+							value="Nueva solicitud de concepto para contrato de acceso a recurso genético." />
+						<h:outputText
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.id!=null}"
+							value="Edición de solicitud de concepto para contrato de acceso a recurso genético." />
+					</f:facet>
+					<p:messages id="msgs" />
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="paneltipoContrato">
+						<p:row
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.id!=null}">
+							<p:column style="width: 30%; font-weight: bold;">
+								<h:outputText value="Código de la solicitud:" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorConvenioMarco.proyectoConcepto.id}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 30%; font-weight: bold;">
+								<h:outputText value="Modalidad de suscripción de contrato:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									disabled="#{manejadorConvenioMarco.proyectoConcepto.estado == 'E'}"
+									value="#{manejadorConvenioMarco.proyectoConcepto.modalidad.id}"
+									style="width: 450px;" id="modalidad">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{manejadorConvenioMarco.tiposContrato}" />
+									<p:ajax update="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()"
+										listener="#{manejadorConvenioMarco.cargarProyectosPosibles}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{!empty manejadorConvenioMarco.proyectoConcepto.modalidad.id and manejadorConvenioMarco.proyectoConcepto.modalidad.id!=0}">
+							<p:column colspan="2">
+								<p:panel
+									rendered="#{!empty manejadorConvenioMarco.proyectoConcepto.modalidad.id and manejadorConvenioMarco.proyectoConcepto.modalidad.id!=0}">
+									<t:div
+										rendered="#{manejadorConvenioMarco.proyectoConcepto.modalidad.id == manejadorConvenioMarco.tipoContratoIndividual}"
+										style="color:#464646; text-align:justify;">
+										La solicitud de <strong style="color: #FF0000;">CONTRATO
+											INDIVIDUAL DE ACCESO</strong> aplica para 
+										la suscripción de contratos para investigaciones <u>con
+											fines comerciales</u> o aquellos que se 
+										acogen al <p:commandLink id="ajax" onstart="ley.show()">
+											<h:outputText value="artículo 252 de la Ley 1753/2015" />
+										</p:commandLink> 
+										.
+									</t:div>
+
+									<p:dialog header="Artículo 252 de la Ley 1753/2015" id="ley"
+										widgetVar="ley" modal="true" resizable="false" width="600">
+										<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+											style="width: 100%;">
+											<p:row>
+												<p:column style="text-align:justify;">
+													<h:outputText style="text-align:justify;"
+														value="Artículo 252°. Contratos de acceso a recursos genéticos y/o sus productos derivados. 
+												Las personas naturales o jurídicas, nacionales o extranjeras, que a la entrada en vigencia de la presente 
+												ley hayan realizado o se encuentren realizando actividades de investigación científica no comercial, actividades 
+												de investigación con fines de prospección biológica, o actividades con fines comerciales o industriales, que 
+												configuren acceso a recursos genéticos y/o sus productos sin contar con la autorización del Ministerio de Ambiente 
+												y Desarrollo Sostenible, tendrán dos (2) años a partir de la entrada en vigencia de la presente ley para solicitar 
+												el contrato de acceso a recursos genéticos y sus productos derivados.
+												Las solicitudes que estén en trámite y que hayan realizado o se encuentren realizando acceso a recursos genéticos y/o 
+												sus productos derivados, en las condiciones descritas en el inciso anterior deberán informarlo al Ministerio. Desde 
+												la radicación de la solicitud y hasta la celebración y perfeccionamiento del contrato de acceso a recursos genéticos 
+												y/o sus productos derivados o hasta la denegación del trámite, el solicitante podrá continuar accediendo al recurso genético 
+												y/o sus productos derivados.
+												Aquellas colecciones biológicas existentes a 25 de febrero de 2000, que no puedan acreditar el material obtenido en 
+												el marco de actividades de recolección, de proyectos de investigación científica y/o prácticas docentes universitarias 
+												finalizadas, podrán registrar por única vez dicho material ante el Instituto de Investigación Alexander von Humboldt, 
+												dentro del año siguiente a la publicación de la presente ley y de conformidad con los parámetros previstos en las normas 
+												que regulan la materia." />
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:dialog>
+
+									<t:div
+										rendered="#{manejadorConvenioMarco.proyectoConcepto.modalidad.id == manejadorConvenioMarco.tipoContratoMarco}"
+										style="color:#464646; text-align:justify;">
+										La solicitud de <strong style="color: #FF0000;">CONTRATO
+											MARCO DE ACCESO</strong> aplica para la 
+										suscripción de otrosí para investigaciones <u>sin fines
+											comerciales</u> y que no hayan iniciado 
+										actividades de acceso a recurso genético. Consulte en el siguiente link el <a
+											target="_blank"
+											style="text-decoration: underline; color: #16A8E2; font-weight: bold;"
+											href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=118">CONTRATO
+											MARCO N° 121.</a>
+									</t:div>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 30%; font-weight: bold;">
+								<h:outputText value="Proyecto a incluir:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									disabled="#{manejadorConvenioMarco.proyectoConcepto.id!=null or manejadorConvenioMarco.proyectoConcepto.estado == 'E'}"
+									value="#{manejadorConvenioMarco.proyectoConcepto.proyecto.id}"
+									style="width: 450px;" id="proyecto" panelStyle="width: 380px;">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorConvenioMarco.listaProyectosItem}" />
+									<p:ajax update="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2"
+								style="font-weight: bold; text-align:justify;">
+								<h:outputText
+									value="Las actividades que configuran acceso a recurso genético y/o productos derivados, 
+										según la Resolución 1348 de 2014 del Ministerio de Ambiente son aquellas que se realicen con especies nativas, bien sea
+										en sus formas silvestre, domesticada, cultivada o escapada de domesticación que se encuentren en el territorio nacional o fuera de este, incluyendo microorganismos,
+										virus, viroides y similares, que se encuentren en el territorio nacional y son las siguientes: " />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<t:div styleClass="selection">
+									<p:selectManyCheckbox id="grid2" layout="grid"
+										disabled="#{manejadorConvenioMarco.proyectoConcepto.estado == 'E'}"
+										value="#{manejadorConvenioMarco.selectedActividades}"
+										columns="2">
+										<f:selectItems layout="pageDirection"
+											value="#{manejadorConvenioMarco.listaActividadesItem}" />
+									</p:selectManyCheckbox>
+								</t:div>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 30%; font-weight: bold;">
+								<h:outputText
+									value="Descripción de las actividades de acceso a recurso genético: " />
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="observaciones-recurso-genetico"
+									value="#{manejadorConvenioMarco.proyectoConcepto.descripcionActividad}"
+									rows="4" style="width:100%;" cols="100"
+									validatorMessage="La descripción de las actividades debe estar entre 1 - 2000 caracteres"
+									maxlength="2000"
+									disabled="#{manejadorConvenioMarco.proyectoConcepto.estado == 'E'}">
+								</p:inputTextarea>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="" />
+							</p:column>
+							<p:column>
+								<h:outputText id="actividades-descripcion"
+									value="Tamaño máximo 2000 caracteres." />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText style="font-weight: bold;"
+									value="Si el proyecto involucra otras entidades además de la Universidad Nacional, por favor agréguelas:" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.estado != 'E'}">
+							<p:column>
+								<h:outputText style="font-weight: bold;"
+									value="Entidad externa:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="entidadConvocante"
+									value="#{manejadorConvenioMarco.entidadExterna}"
+									style="width:470px" panelStyle="width: 450px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorConvenioMarco.listaEntidadesExternas}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.estado != 'E'}">
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Agregar entidad" icon="ui-icon-plus"
+									actionListener="#{manejadorConvenioMarco.agregarEntidad}"
+									update="@form">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="entidades" var="entidad"
+									value="#{manejadorConvenioMarco.proyectoConcepto.listaEntidades}"
+									align="center" emptyMessage="No se han agregado entidades">
+
+									<p:column headerText="Entidad">
+										<h:outputText value="#{entidad.descripcion}" />
+									</p:column>
+
+									<p:column style="width:25px;" headerText="Eliminar"
+										rendered="#{manejadorConvenioMarco.proyectoConcepto.estado != 'E'}">
+										<p:commandButton update="@form"
+											action="#{manejadorConvenioMarco.eliminarEntidad}"
+											icon="ui-icon-trash" title="Eliminar Entidad">
+											<f:setPropertyActionListener value="#{entidad}"
+												target="#{manejadorConvenioMarco.entidadSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText style="font-weight: bold;"
+									value="Adjunte los documentos que considere necesarios." />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<center>
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+										style="width:100%">
+										<p:row>
+											<p:column>
+												<p:fileUpload
+													fileUploadListener="#{manejadorConvenioMarco.adjuntarArchivo}"
+													mode="advanced" auto="true" update="tabla-archivo"
+													multiple="true" sizeLimit="3072000"
+													label="Seleccionar archivo"
+													disabled="#{manejadorConvenioMarco.proyectoConcepto.estado == 'E'}" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<p:dataTable value="#{manejadorConvenioMarco.listaArchivos}"
+													width="100%" var="archivo"
+													emptyMessage="No hay archivos asociados" id="tabla-archivo">
+
+													<p:column headerText="Id" style="width:3%">
+														<div>
+															<h:outputText value="#{archivo.id}"
+																style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+														</div>
+													</p:column>
+													<p:column headerText="Documentos adjuntos" tyle="width:90%">
+														<div style="width: 450px; font-size: 11px;">
+															<h:outputText value="#{archivo.nombre}"
+																style="text-align: left; width: 500px; text-transform:uppercase; padding-bottom: 10px;" />
+														</div>
+													</p:column>
+													<p:column headerText="Descargar"
+														style="width:3%; text-align:center;">
+														<p:commandButton id="descargar"
+															action="#{manejadorConvenioMarco.descargarArchivo}"
+															icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+															ajax="false">
+															<f:setPropertyActionListener value="#{archivo}"
+																target="#{manejadorConvenioMarco.archivoSeleccionado}" />
+														</p:commandButton>
+													</p:column>
+													<p:column style="width:3%; text-align:center;"
+														headerText="(-)"
+														rendered="#{manejadorConvenioMarco.proyectoConcepto.estado != 'E'}">
+														<p:commandButton id="selectButton" update="tabla-archivo"
+															icon="ui-icon-trash"
+															action="#{manejadorConvenioMarco.eliminarArchivo}"
+															title="Eliminar archivo">
+															<f:setPropertyActionListener value="#{archivo}"
+																target="#{manejadorConvenioMarco.archivoSeleccionado}" />
+														</p:commandButton>
+													</p:column>
+												</p:dataTable>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</center>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<t:div style="width: 95%; text-align: center; margin-top: 20px;">
+						<p:commandButton value="Guardar parcialmente"
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.estado != 'E'}"
+							action="#{manejadorConvenioMarco.guardarSolicitudConceptoAccesoParcialmente}"
+							update="@form" ajax="false" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+						<p:commandButton value="Guardar y enviar"
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.estado != 'E'}"
+							action="#{manejadorConvenioMarco.guardarSolicitudConceptoAcceso}"
+							update="@form" ajax="false" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+						<p:commandButton value="Ingresar nueva solicitud"
+							action="#{manejadorConvenioMarco.nuevaSolicitudAcceso}"
+							rendered="#{manejadorConvenioMarco.proyectoConcepto.id!=null}"
+							update="@form" ajax="false" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()" />
+					</t:div>
+
+				</p:panel>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+				</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

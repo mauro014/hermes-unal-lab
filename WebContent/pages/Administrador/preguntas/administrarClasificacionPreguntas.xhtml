@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Clasificaciones de preguntas frecuentes</t:div>
+				<div
+					style="width: 100%; text-align: right; padding-top: 5px; padding-bottom: 5px;">
+					<p:commandButton value="Agregar nueva clasificación"
+						icon="ui-icon-circle-plus" update="@form" ajax="false"
+						action="#{manejadorAdministrarClasificacionPreguntas.crearClasificacionPregunta}" />
+				</div>
+			<br />
+			<p:dataTable var="clasificacion" style="width:100%"
+				value="#{manejadorAdministrarClasificacionPreguntas.listaClasificacionPreguntas}"
+				emptyMessage="No se encontraron clasificaciones para las preguntas frecuentes."
+				paginator="true" rows="20" paginatorPosition="bottom">
+				<f:facet name="header">Clasificación preguntas frecuentes</f:facet>
+				<p:column style="text-align: center; width:10%;">
+					<f:facet name="header">
+						<h:outputText value="Usada?" />
+					</f:facet>
+					<p:graphicImage value="/images/check.png"
+						rendered="#{clasificacion.estado == 'A'}" style="width: 25px;" />
+					<p:graphicImage value="/images/cancel.png"
+						rendered="#{clasificacion.estado == 'I'}" style="width: 20px;" />
+				</p:column>
+				<p:column style="width:85%;" filterBy="#{clasificacion.nombre}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nombre" />
+					</f:facet>
+					<h:outputText value="#{clasificacion.nombre}" />
+				</p:column>
+
+				<p:column style="text-align: center; width:5%;" headerText="-">
+					<p:commandButton
+						action="#{manejadorAdministrarClasificacionPreguntas.editarClasificacionPregunta}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{clasificacion.id}"
+							target="#{manejadorAdministrarClasificacionPreguntas.clasificacionSeleccionada}" />
+
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

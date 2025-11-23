@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+
+		<style>
+.ui-datatable.border-bottom tbody tr {
+	border-bottom: 4px solid #829fb3 !important;
+}
+</style>
+
+
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Evaluar proyectos<br />
+			</t:div>
+			En esta sección puede realizar la evaluación de un proyecto asignado de las Convocatorias internas del Sistema de Información de la Investigación
+			Hermes.<br />
+			Por favor tener en cuenta el <a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=7"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a> 
+			para el rol de Evaluador.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<p:panel rendered="#{!manejadorProyectosEvaluador.BFormatos}">
+				<h:outputText
+					value="En el momento no existen proyectos asignados para evaluación." />
+			</p:panel>
+
+			<p:dataTable var="proyectoEvaluador" id="tabla-proyectos"
+				styleClass="bottom-border"
+				rendered="#{manejadorProyectosEvaluador.BFormatos}"
+				value="#{manejadorProyectosEvaluador.evaluador.listaProyectosEvaluador}">
+				<p:column style="width: 75%;">
+					<f:facet name="header">
+						<h:outputText value="Proyectos" />
+					</f:facet>
+					<div class="panel-interno-tabla">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							style="border-collapse: separate;">
+							<h:outputText value="Titulo:" style="font-weight: bold;" />
+							<h:outputText value="#{proyectoEvaluador.proyecto.nombre}"
+								style="font-weight: bold; font-size:large;" />
+							<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+							<h:outputText value="#{proyectoEvaluador.nombreConvocatoria}" />
+							<h:outputText value="Modalidad:" style="font-weight: bold;" />
+							<h:outputText value="#{proyectoEvaluador.nombreModalidad}" />
+							<h:outputText value="Reporte:"
+								rendered="#{proyectoEvaluador.mostrarEvaluacion}"
+								style="font-weight: bold;" />
+							<h:commandLink
+								action="#{manejadorProyectosEvaluador.imprimirReporteLista}"
+								value="Ver información proyecto"
+								rendered="#{proyectoEvaluador.mostrarEvaluacion}"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;"
+								target="_blank">
+								<f:setPropertyActionListener value="#{proyectoEvaluador}"
+									target="#{manejadorProyectosEvaluador.proyetoSeleccionado}" />
+							</h:commandLink>
+						</p:panelGrid>
+					</div>
+					<t:div rendered="#{!empty proyectoEvaluador.proyecto.codigoDib}"
+						style="padding:15px; text-align: center; color: #00AA00;">
+							Este propuesta esta asociada a otro proyecto de investigacion<br />
+						<h:commandLink
+							action="#{manejadorProyectosEvaluador.imprimirProyectoAsociado}"
+							value="Descargar reporte proyecto asociado"
+							style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+							target="_blank">
+							<f:setPropertyActionListener value="#{proyectoEvaluador}"
+								target="#{manejadorProyectosEvaluador.proyetoSeleccionado}" />
+						</h:commandLink>
+					</t:div>
+
+				<p:panel rendered="#{!empty proyectoEvaluador.documentoEvaluador}"
+					style="margin-top: 20px; text-align: center;">
+					<h:commandLink
+						action="#{manejadorProyectosEvaluador.descargarDocumentoEvaluacion}"
+						value="Ver documento evaluación"
+						rendered="#{!empty proyectoEvaluador.documentoEvaluador}"
+						style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;"
+						target="_blank">
+						<f:setPropertyActionListener value="#{proyectoEvaluador}"
+							target="#{manejadorProyectosEvaluador.proyetoSeleccionado}" />
+					</h:commandLink>
+				</p:panel>
+				<p:dataTable var="archivoResumen"
+					style="width: 100%; margin-top: 20px;"
+					rendered="#{proyectoEvaluador.mostrarArchivosEvaluador}"
+					value="#{proyectoEvaluador.listaArchivos}"
+					emptyMessage="No existen archivos asociados">
+					<f:facet name="header">
+						<h:outputText value="Archivos adjuntos" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="width: 430px;">
+							<h:outputText value=" #{archivoResumen.nombre}"
+								styleClass="normal" />
+						</t:div>
+					</p:column>
+
+					<p:column style="text-align: center;">
+
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+
+						<h:commandLink target="popupWindow" value="Descargar"
+							action="#{manejadorProyectosEvaluador.descargarArchivo}"
+							style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							<f:param name="archivoResumen" value="#{archivoResumen.id}" />
+							<f:param name="proyectoEval"
+								value="#{proyectoEvaluador.proyecto.id}" />
+						</h:commandLink>
+					</p:column>
+				</p:dataTable>
+				<p:dataTable var="archivoResumen"
+					style="width: 100%; padding-top: 20px;"
+					value="#{proyectoEvaluador.listaArchivosConvocatoriaPadre}"
+					emptyMessage="No existen archivos asociados">
+					<f:facet name="header">
+						<h:outputText value="Archivos de apoyo para la evaluación" />
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<t:div style="width: 430px;">
+							<h:outputText value=" #{archivoResumen.nombre}"
+								styleClass="normal" />
+						</t:div>
+					</p:column>
+
+					<p:column style="text-align: center;">
+
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+
+						<h:commandLink target="popupWindow" value="Descargar"
+							action="#{manejadorProyectosEvaluador.descargarArchivoConvocatoriaPadre}"
+							style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							<f:param name="archivoConvocatoria" value="#{archivoResumen.id}" />
+							<f:param name="archivoNombreConvocatoria"
+								value="#{archivoResumen.nombre}" />
+							<f:param name="archivoIdConvocatoria"
+								value="#{archivoResumen.convocatoriaPadre}" />
+						</h:commandLink>
+					</p:column>
+				</p:dataTable>
+				<br />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Estado evaluación" />
+					</f:facet>
+					<h:outputText
+						value="#{proyectoEvaluador.estado == 'S' ? 'La evaluación se guardó correctamente.':'Sin evaluar.'}"
+						style="font-size: 13px; font-style: normal; font-weight: bold; color:red;" />
+					<br />
+					<t:div style="padding:15px; text-align: left;">
+						<p:commandLink
+							action="#{manejadorProyectosEvaluador.evaluarProyectoLista}"
+							value="Evaluar proyecto"
+							rendered="#{proyectoEvaluador.mostrarEvaluacion and proyectoEvaluador.estado != 'S'}"
+							style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+							ajax="false">
+							<f:setPropertyActionListener value="#{proyectoEvaluador}"
+								target="#{manejadorProyectosEvaluador.proyetoSeleccionado}" />
+						</p:commandLink>
+					</t:div>
+				</p:column>
+			</p:dataTable>
+			<h:panelGroup rendered="#{!manejadorMensajes2.vacio}">
+				<script language="JavaScript" type="text/javascript"
+					charset="iso-8859-1">
+						alert(" <h:outputText value=" #{manejadorMensajes2.mensaje} "/>  ");
+					</script>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

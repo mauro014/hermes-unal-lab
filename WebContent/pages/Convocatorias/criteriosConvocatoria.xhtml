@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Criterios de evaluación</t:div>
+			<br />
+			<p:menubar>
+				<p:menuitem value="Generalidades"
+					action="irGeneralidadesConvocatoria" icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarGeneralidades}" />
+				<p:menuitem value="Requisitos" action="irRequisitosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRequisitos}" />
+				<p:menuitem value="Rubros" action="irRubrosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarRubros}" />
+				<p:menuitem value="Compromisos" action="irCompromisosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCompromisos}" />
+				<p:menuitem value="Productos" action="irProductosConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarProductos}" />
+				<p:menuitem value="Criterios de evaluación"
+					action="irCriteriosEvaluacionConvocatoria"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarCriterios}" />
+				<p:menuitem value="Información específica"
+					action="irDetallesInformacionEspecifica"
+					icon="ui-icon-triangle-1-e"
+					disabled="#{!manejadorInsercionConvocatorias.activarInfoEspecifica}" />
+			</p:menubar>
+			<br />
+
+			<center>
+				<br />
+				<h:outputText
+					value="#{manejadorInsercionConvocatorias.avisoCriterios}"
+					styleClass="mensajeerror" />
+			</center>
+
+			<br />
+			<p:panel header="Crear criterio de evaluación" value="true"
+				id="nuevoCriterio" toggleable="true" toggleSpeed="500">
+
+				<center>
+					<h:panelGrid columns="2">
+						<h:outputText value="Criterio:" />
+						<p:inputTextarea
+							value="#{manejadorInsercionConvocatorias.nombreCriterio}"
+							rows="3" cols="60" />
+
+						<h:outputText value="Peso (%):" />
+						<p:inputText
+							value="#{manejadorInsercionConvocatorias.pesoCriterio}" size="5" />
+
+						<h:outputText value="Descripción " />
+						<p:inputTextarea
+							value="#{manejadorInsercionConvocatorias.descripcionCriterio}"
+							rows="3" cols="60" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" align="center">
+						<p:commandButton
+							action="#{manejadorInsercionConvocatorias.agregarCriterioEvaluacion}"
+							value="Agregar" update="@form" />
+					</h:panelGrid>
+				</center>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel header="Criterios de evaluación" id="criteriosConvocatoria">
+
+				<h:panelGrid columns="1" align="center">
+					<h:outputText
+						value="Seleccione los criterios asociados a esta convocatoria. " />
+				</h:panelGrid>
+
+				<br />
+
+				<p:dataTable var="mtpc"
+					value="#{manejadorInsercionConvocatorias.listaCriteriosTipoPregunta}"
+					forceIdIndexFormula="#{mtcp.idCriterio}">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="CRITERIO" styleClass="labels_proyecto" />
+						</f:facet>
+						<p:selectManyCheckbox value="#{mtpc.criterioSeleccionado}"
+							layout="pageDirection">
+							<f:selectItems value="#{mtpc.criterio}" />
+						</p:selectManyCheckbox>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="DESCRIPCIÓN" styleClass="labels_proyecto" />
+						</f:facet>
+						
+					</p:column>
+					
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="TIPO EVALUACIÓN"
+								styleClass="labels_proyecto" />
+						</f:facet>
+						<p:selectOneMenu value="#{mtpc.idTipoPregunta}" styleClass="texto">
+							<f:selectItems
+								value="#{manejadorInsercionConvocatorias.listaTipoPregunta}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<center>
+				<h:panelGrid columns="3">
+
+
+					<p:commandButton styleClass="btnedicion"
+						rendered="#{manejadorInsercionConvocatorias.mostrarGuardarAvanzar}"
+						action="#{manejadorInsercionConvocatorias.siguiente}"
+						value="Guardar y avanzar" update="@form" >
+						<f:param name="action" value="6"></f:param>
+					</p:commandButton>
+
+					<p:commandButton styleClass="btnguardar" rendered="false"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						immediate="false" value="Guardar y continuar después" />
+
+					<p:commandButton value="Guardar Convocatoria"
+						rendered="#{manejadorInsercionConvocatorias.activarGuardar}"
+						action="#{manejadorInsercionConvocatorias.InsertarConvocatoria}"
+						update="@form"/>
+
+
+				</h:panelGrid>
+
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

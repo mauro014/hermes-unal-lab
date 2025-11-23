@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Calendario</t:div>
+			<p:menubar>
+				<p:menuitem value="Información general"
+					action="crearTerminiosReferenciaConvocatoria" icon="pi pi-times" />
+				<p:menuitem value="Modalidades" action="modalidadesConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Información financiera"
+					action="informacionFinancieraConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Requisitos" action="requisitosConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Documentación"
+					action="documentacionConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Selección ganadores"
+					action="seleccionGanadoresConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Compromisos" action="compromisosConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Productos esperados"
+					action="productosEsperadosConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Icompatibilidades"
+					action="incompatibilidadesConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Calendario" action="calendarioConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Consideraciones"
+					action="consideracionesConvocatoriaTR" icon="pi pi-times" />
+			</p:menubar>
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<br />
+			<p:panel id="panelCreacionConvocatoria">
+				<p:outputPanel id="opPCalGen" align="center">
+					<h:panelGrid columns="3" align="center" cellpadding="5"
+						cellspacing="5" id="hpgTipoSel">
+						<h:outputText value="Tipo de calendario: "
+							styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="tipoCalendario"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoCalendario}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItem itemLabel="Por cortes" itemValue="C" />
+							<f:selectItem itemLabel="Sin cortes" itemValue="S" />
+							<p:ajax
+								update="opPCalGen, hpgCortes, hpgNoCortes, panelCreacionConvocatoria"
+								process="opPCalGen, hpgCortes, hpgNoCortes, panelCreacionConvocatoria" />
+						</p:selectOneMenu>
+						<p:message for="tipoCalendario" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" align="center" cellpadding="5"
+						cellspacing="5" id="hpgCortes"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoCalendario == 'C'}">
+						<h:outputText value="Cronograma: " styleClass="labels_proyecto2" />
+						<p:inputTextarea rows="15" cols="80" id="cronograma"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.cronogramaCortes}"
+							requiredMessage="El cronograma es obligatorio"
+							validatorMessage="El cronograma debe ser de máximo 4000 caracteres"
+							maxlength="4000" counter="counterCronograma"
+							counterTemplate="{0} caracteres restantes">
+							<f:validateLength minimum="2" maximum="4000" />
+						</p:inputTextarea>
+						<p:message for="cronograma" />
+
+						<h:outputText />
+						<h:outputText id="counterCronograma" />
+						<h:outputText />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						cellspacing="5" id="hpgNoCortes"
+						rendered="#{manejadorTerminosReferenciaConvocatoria.convocatoria.tipoCalendario == 'S'}">
+						<h:outputText value="Lanzamiento de la convocatoria: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaLanzamientoConvocatoria"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaLanzamientoConvocatoria}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+						<h:outputText value="Apertura de la convocatoria en el Sistema HERMES: " styleClass="labels_proyecto2" />
+						<p:calendar id="fechaInicioInscripciones"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaInicioInscripciones}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+						<h:outputText value="Cierre de inscripciones en el Sistema HERMES: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaFinInscripciones"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaFinInscripciones}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Publicación de propuestas que cumplen requisitos: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaPublicacionResultados"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaPublicacionResultados}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+						<h:outputText value="Fecha inicio de aclaraciones o reclamaciones de requisitos: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaInicioReclamacionesRequisitos"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaInicioReclamacionesRequisitos}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Fecha fin de aclaraciones o reclamaciones de requisitos: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaFinReclamacionesRequisitos"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaFinReclamacionesRequisitos}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Respuesta a aclaraciones o reclamaciones requisitos: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaRespuestaReclamacionRequisitos"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaRespuestaReclamacionRequisitos}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+						<h:outputText value="Fecha inicio de evaluación y/o selección: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaInicioEvaluacion"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaInicioEvaluacion}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Fecha fin de evaluación y/o selección: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaFinEvaluacion"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaFinEvaluacion}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+						<h:outputText value="Publicación de propuestas seleccionadas: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaPublicacionPropuestasSeleccionadas"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaPublicacionPropuestasSeleccionadas}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+						<h:outputText value="Fecha inicio aclaraciones o reclamaciones: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaInicioReclamacionesEvaluacion"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaInicioReclamacionesEvaluacion}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Fecha fin aclaraciones o reclamaciones: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaFinReclamacionesEvaluacion"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaFinReclamacionesEvaluacion}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Respuesta a aclaraciones o reclamaciones: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaRespuestaReclamacionesEvaluacion"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaRespuestaReclamacionesEvaluacion}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+						
+						<h:outputText value="Publicación definitiva de propuestas seleccionadas: "
+							styleClass="labels_proyecto2" />
+						<p:calendar id="fechaPublicacionGanadores"
+							value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.fechaPublicacionGanadores}"
+							required="false" pattern="dd/MM/yyyy HH:mm:ss">
+						</p:calendar>
+
+					</h:panelGrid>
+
+				</p:outputPanel>
+			</p:panel>
+			<br />
+			<center>
+				<h:panelGrid columns="3">
+					<p:commandButton value="Guardar y salir"
+						action="#{manejadorTerminosReferenciaConvocatoria.guardarCalendarioSalir}"
+						id="botonGuardarFinalizar1" styleClass="ui-priority-primary"
+						ajax="false" />
+
+					<p:commandButton value="Guardar y continuar"
+						action="#{manejadorTerminosReferenciaConvocatoria.guardarCalendario}"
+						id="botonGuardarFinalizar3" styleClass="ui-priority-primary"
+						ajax="false" />
+				</h:panelGrid>
+			</center>
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 </p:dialog>
+	</ui:define>
+</ui:composition>

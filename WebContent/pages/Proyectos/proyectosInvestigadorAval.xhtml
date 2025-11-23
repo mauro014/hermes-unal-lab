@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">Avales registrados</ui:define>
+
+	<ui:define name="content">
+		<h:form id="content">
+			<!--	<t:div styleClass="contenido-titulo-avales-registrados" />-->
+			<t:div styleClass="contenido-titulo-general-myriad">Avales registrados</t:div>
+			<p:growl id="growl" showDetail="true" sticky="true" />
+			
+			Lo invitamos a diligenciar la 
+			<a href="https://docs.google.com/forms/d/e/1FAIpQLSdVtNHo3fKcgcj1bHg3ppRaPdkHIk2OGxTaEaK_PX2bBo1hcA/viewform"
+						target="_blank" style="color: #16A8E2; font-weight: bold;">
+				encuesta de satisfacción del proceso de gestión de investigación y creación artística
+			</a> 
+			<br />
+			<br />
+			
+			<p:dataTable var="avalVisitante" emptyMessage="0 avales encontrados"
+				value="#{ManejadorAvalMenu.listaAvalesInvestigador}"
+				paginator="true" rows="15" paginatorPosition="top"
+				style="width:100%;">
+
+				<f:facet name="header">  
+	            Avales Registrados
+	        	</f:facet>
+
+				<p:column style="width: 5%; text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Código" /><br />
+						<h:outputText value="Tipo" />
+					</f:facet>
+					
+					<h:outputText id="idAvalLink" value="#{avalVisitante.aviId}" style='font-weight: bold;'/><br />
+					<h:outputText value="#{avalVisitante.nombreTipo}" style="font-size:13px;"/>
+				</p:column>
+
+				<p:column headerText="Título" style="width: 30%;">
+					<t:div style="width:200px;">
+						<h:outputText value="#{avalVisitante.aviTitulo}"
+							style="font-size:13px;" />
+					</t:div>
+				</p:column>
+
+				<p:column headerText="Estado" style="width:8%;">
+					<h:outputText value="#{avalVisitante.nombreEstado}" style="font-size:13px;" />
+				</p:column>
+
+				<p:column style="width:10%;">
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+						<br />
+						<h:outputText value="Solicitud" />
+					</f:facet>
+					<h:outputText value="#{avalVisitante.fechaUltimoEnvio}" />
+				</p:column>
+
+				<p:column style="width:10%;">
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+						<br />
+						<h:outputText value="Revisión" />
+					</f:facet>
+					<h:outputText value="#{avalVisitante.aviFechaAvalUab}"
+						rendered="#{avalVisitante.aviEstado == 'U'}" />
+					<h:outputText value="#{avalVisitante.aviFechaAvalFac}"
+						rendered="#{avalVisitante.aviEstado == 'F'}" />
+					<h:outputText value="#{avalVisitante.aviFechaAvalCoor}"
+						rendered="#{avalVisitante.aviEstado == 'D'}" />
+					<h:outputText value="#{avalVisitante.aviFechaAvalVice}"
+						rendered="#{avalVisitante.aviEstado == 'V'}" />
+					<h:outputText value="#{avalVisitante.fechaAvalDRE}"
+						rendered="#{avalVisitante.aviEstado == 'RD'}" />
+					<h:outputText value="#{avalVisitante.fechaAvalRectoria}"
+						rendered="#{avalVisitante.aviEstado == 'RR'}" />
+				</p:column>
+
+				<p:column headerText="" style="width:5%;">
+					<p:commandButton
+						rendered="#{avalVisitante.editarAval and avalVisitante.aviId > '4855'}"
+						action="#{ManejadorAvalMenu.editarAval}" icon="ui-icon-pencil"
+						title="Editar" ajax="false">
+						<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+					</p:commandButton>
+					<p:commandButton action="#{ManejadorAvalMenu.editarMovilidadAval}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+					</p:commandButton>
+					<p:commandButton action="#{ManejadorAvalMenu.interponerRecursoAval}"
+						icon="ui-icon-transfer-e-w" rendered="#{avalVisitante.tipo == 'ETICO' and avalVisitante.aviEstado == 'NP'}" title="Interponer recurso">
+						<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+					</p:commandButton>
+					<p:commandButton action="#{ManejadorAvalMenu.interponerQuejaAval}"
+						icon="ui-icon-comment" title="Interponer queja" 
+						rendered="#{avalVisitante.tipo == 'ETICO' 
+								and avalVisitante.aviEstado == 'NP'
+								and avalVisitante.avalTieneRecurso == 'SI'
+								and avalVisitante.tipoRecursoAvalEtico.id == 7687
+								and avalVisitante.avalCEPIRecurso == 'N'}" >
+						<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-document" oncomplete="dialogSolicitudSoporteConv.show();"
+						rendered="#{(avalVisitante.aviEstado == 'D' or avalVisitante.aviEstado == 'V') and avalVisitante.tieneArchivosSoporteParticipacionConvocatoria != 'S'}" title="Adjuntar soporte de participación en la convocatoria" update="@form" process="@form">
+						<f:setPropertyActionListener value="#{avalVisitante.aviId}"
+							target="#{ManejadorAvalMenu.idAval}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="dialogSolicitud.show();"
+						rendered="#{avalVisitante.aviEstado == 'P'}" title="Eliminar"
+						update="@form" process="@form">
+						<f:setPropertyActionListener value="#{avalVisitante.aviId}"
+							target="#{ManejadorAvalMenu.idAval}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+			<p:dialog header="Eliminar solicitud de aval"
+				widgetVar="dialogSolicitud" modal="true" resizable="false"
+				width="500">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="width:5%;">
+							<p:graphicImage value="/images/cancel.png" style="width: 20px;" />
+						</p:column>
+						<p:column style="width:95%;">
+							<h:outputText
+								value=" Si está seguro de eliminar la solicitud de aval #{ManejadorAvalMenu.idAval}, haga clic en 'Eliminar'. "
+								style="font-weight: bold;" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<p:commandButton value="Eliminar" update="@form"
+								action="#{ManejadorAvalMenu.eliminarSolicitudAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Adjuntar soporte de participación en la convocatoria externa"
+				widgetVar="dialogSolicitudSoporteConv" modal="true">
+				<h:outputText value="Por favor adjunte el soporte de postulación a la convocatoria externa para la cual solicitó el aval." />
+					<br/>
+					<p:panelGrid columns="1" style="width:100%"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:fileUpload
+							fileUploadListener="#{ManejadorAvalMenu.adjuntarArchivo}"
+							mode="advanced" auto="true" update="tabla-archivo"
+							multiple="true" sizeLimit="3072000" label="Seleccionar archivo"
+							invalidSizeMessage="El tamaño máximo por archivo es de 3MB.">
+							</p:fileUpload>
+
+						<p:dataTable value="#{ManejadorAvalMenu.listaArchivosSoporteConv}"
+							width="500px" var="archivo"
+							emptyMessage="No hay archivos asociados" id="tabla-archivo">
+
+							<p:column headerText="Id" style="width: 2%;">
+								<h:outputText value="#{archivo.id}"
+									style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+							</p:column>
+							<p:column headerText="Documentos adjuntos" style="width: 92%;">
+								<t:div style="width:430px;">
+									<h:outputText value="#{archivo.nombre}"
+										style="text-align: left; width: 500px; text-transform:uppercase; padding-bottom: 10px;" />
+								</t:div>
+							</p:column>
+							<p:column headerText="Descargar"
+								style="text-align:center; width: 3%;">
+								<p:commandButton id="descargar"
+									action="#{ManejadorAvalMenu.descargarArchivo}"
+									icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+									ajax="false">
+									<f:setPropertyActionListener value="#{archivo}"
+										target="#{ManejadorAvalMenu.archivoAvalSoporteConv}" />
+								</p:commandButton>
+							</p:column>
+							<p:column style="width:3%; text-align:center;" headerText="(-)">
+								<p:commandButton id="selectButton" update="tabla-archivo"
+									icon="ui-icon-trash"
+									action="#{ManejadorAvalMenu.eliminarArchivo}"
+									title="Eliminar archivo">
+									<f:setPropertyActionListener value="#{archivo}"
+										target="#{ManejadorAvalMenu.archivoAvalSoporteConv}" />
+								</p:commandButton>
+							</p:column>
+
+
+						</p:dataTable>
+						
+						<br/>
+						<center>
+						<p:commandButton value="Guardar"
+							action="#{ManejadorAvalMenu.cerrarVentanaSoporteParticipacionConvocatoria}" 
+							ajax="false" update="@form" process="@form"/>
+						</center>
+						
+					</p:panelGrid>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

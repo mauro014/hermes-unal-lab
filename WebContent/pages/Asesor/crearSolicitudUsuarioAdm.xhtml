@@ -1,0 +1,382 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitud de Roles a Usuarios Hermes</t:div>
+
+			<p:panel header="Buscar Usuarios" align="center"
+				id="solicUsuario">
+
+				<p:messages id="msgs" />
+				<br />
+			 	<h:outputLink
+					value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=4"
+					target="_blank"
+					style="text-decoration:none; 
+						color: #16A8E2;
+						font-weight: bold;">
+					<h:outputText value="Instructivo lineamiento de roles" />
+				</h:outputLink>
+				<br />
+				
+				
+				<br />
+				<h:outputText value="Por favor busque el usuario ingresando alguno de los siguientes campos. Puede buscar por documento, por nombre o por apellido. No es necesario ingresar todos los campos." />
+				<br /><br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelSolu" >
+					
+					<h:outputText value="Tipo de documento:" styleClass="negrilla"
+						for="usuarioTipoDocumento" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearSolicitudUsuario.solicitudUsuario.usuarioTipoDocumento}"
+						id="usuarioTipoDocumento">
+						 <f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+						<f:selectItems
+							value="#{ManejadorCrearSolicitudUsuario.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Documento:" for="usuarioDocumento"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioDocumento" maxlength="256" size="30"
+						value="#{ManejadorCrearSolicitudUsuario.solicitudUsuario.usuarioDocumento}">
+					</p:inputText>
+					
+					
+					<h:outputText value="Primer nombre:" for="usuarioNombre"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioNombre" maxlength="256" size="60"
+						value="#{ManejadorCrearSolicitudUsuario.solicitudUsuario.nombre1}">
+					</p:inputText>
+					
+					<h:outputText value="Primer apellido:" for="usuarioApellido"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioApellido" maxlength="256" size="60"
+						value="#{ManejadorCrearSolicitudUsuario.solicitudUsuario.apellido1}">
+					</p:inputText>
+					
+				</p:panelGrid>
+				<center>
+					<p:commandButton value="Buscar Usuario"
+					action="#{ManejadorCrearSolicitudUsuario.buscarUsuario}"
+					update="msgs" icon="ui-icon-search" ajax="false" />
+					
+					<p:commandButton value="Limpiar búsqueda"
+					action="#{ManejadorCrearSolicitudUsuario.cargarValoresIniciales}"
+					update="msgs" icon="ui-icon-search" ajax="false" />
+				</center>
+	
+			</p:panel>
+
+			<br />
+			<p:panel  header="Usuarios encontrados" rendered="#{ManejadorCrearSolicitudUsuario.panelRender[3]}">
+				
+				<center>
+   					 <p:dataTable id="usuariosTabla" var="usuario"
+   						 value="#{ManejadorCrearSolicitudUsuario.listaPersonas}"
+   						 emptyMessage="No se han encontrado usuarios" style="width:80%">
+
+   						 <p:column headerText="Nombre">
+   							 <h:outputText
+   								 value="#{usuario.nombre1} #{usuario.nombre2} #{usuario.apellido1} #{usuario.apellido2}" />
+   						 </p:column>
+   						 <p:column headerText="Documento">
+   							 <h:outputText
+   								 value="#{usuario.id.tipoDocumento} #{usuario.id.documento}" />
+   						 </p:column>
+   						 <p:column headerText="Editar" style="text-align: center;">
+							<p:commandButton
+								action="#{ManejadorCrearSolicitudUsuario.editarUsuario}"
+								icon="ui-icon-pencil" ajax="false">
+								<f:setPropertyActionListener value="#{usuario}"
+									target="#{ManejadorCrearSolicitudUsuario.usuarioSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+
+   					</p:dataTable>
+				</center>
+				
+			</p:panel>
+
+			<br/>
+			<p:panel header="Información del usuario"
+				id="formUsuario"
+				rendered="#{ManejadorCrearSolicitudUsuario.panelRender[4]}">
+
+				<p:outputPanel id="panelUsuario">
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="datosUsuario" cellspacing="5">
+
+						<h:outputText value="Tipo de documento:"/>
+	   					<p:selectOneMenu
+							value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.id.tipoDocumento}"
+							id="perTipoDocumento">
+							<f:selectItems
+								value="#{ManejadorCrearSolicitudUsuario.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+   						 
+   						 <h:outputText
+   								 value="Documento:" />
+   						 <h:outputText
+   								 value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.id.documento}" />
+   						    						 
+						<p:outputLabel value="Primer Nombre"
+							for="primerNombreInvestigador" />
+						<p:inputText id="primerNombreInvestigador" 
+							value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.nombre1}"
+							size="38" readonly="true">
+						</p:inputText>
+
+						<p:outputLabel value="Segundo Nombre" for="segundoNombreInv" />
+						<p:inputText id="segundoNombreInv"
+							value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.nombre2}"
+							size="38" readonly="true">
+						</p:inputText>
+
+						<p:outputLabel value="Primer Apellido"
+							for="primerApellidoInvestigador" />
+						<p:inputText id="primerApellidoInvestigador"
+							value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.apellido1}"
+							size="38" readonly="true">
+						</p:inputText>
+
+						<p:outputLabel value="Segundo Apellido" for="segundoApellidoInv" />
+						<p:inputText id="segundoApellidoInv"
+							value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.apellido2}"
+							size="38" readonly="true">
+						</p:inputText>
+
+						<p:outputLabel value="Correo electrónico" for="correo" />
+						<p:inputText id="correo"
+							value="#{ManejadorCrearSolicitudUsuario.usuarioHermes.email}"
+							size="38" readonly="true">
+						</p:inputText>
+
+						<h:outputText value="Dependencia principal:" 
+							rendered="#{ManejadorCrearSolicitudUsuario.verDependencia}"/>
+						<h:outputText value="#{ManejadorCrearSolicitudUsuario.dependenciaUsuario}" 
+							rendered="#{ManejadorCrearSolicitudUsuario.verDependencia}"/>
+						
+						<h:outputText value="Dependencia secundaria*:" 
+							rendered="#{ManejadorCrearSolicitudUsuario.verDependencia}"/>
+						<p:selectOneMenu filter="true" filterMatchMode="contains"
+							rendered="#{ManejadorCrearSolicitudUsuario.verDependencia}"
+							value="#{ManejadorCrearSolicitudUsuario.dependenciaUsuario2}"
+							id="dependenciasUN_2" style="width:300px">
+							<f:selectItems
+								value="#{ManejadorCrearSolicitudUsuario.dependenciaItem}" />
+						</p:selectOneMenu>	
+								
+						<h:outputText value="" />
+						<p:commandButton value="Continuar diligenciando la solicitud"
+						id="guardarInfo" update="msgs"
+						actionListener="#{ManejadorCrearSolicitudUsuario.guardarInformacionUsuario}"
+						icon="ui-icon-disk" ajax="false"/> 
+						<h:outputText value=""  />
+						
+					</h:panelGrid>
+					
+				</p:outputPanel>
+
+			</p:panel>
+			
+			<p:panel header="Crear usuario"
+				id="formUsuarioNuevo"
+				rendered="#{ManejadorCrearSolicitudUsuario.panelRender[5]}">
+				
+				<p:panelGrid columns="2"
+					styleClass="estilo-panelgrid-sinbordes"
+					id="panelCorreo">
+					<h:outputText value="¿El usuario tiene correo electrónico de la Universidad Nacional?" />
+					<p:selectOneMenu style="width:190px"
+						value="#{ManejadorCrearSolicitudUsuario.tieneCorreoUN}"
+						id="tieneEmail" >
+						<p:ajax 
+							update="formUsuarioNuevo, @form, msgs" process="formUsuarioNuevo" />
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+						<f:selectItems
+							value="#{ManejadorCrearSolicitudUsuario.tieneCorreoItems}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				
+				<h:outputText value="Para la creación de un usuario en el sistema, es necesario que este cuente con 
+					un correo institucional." 
+					rendered="#{ManejadorCrearSolicitudUsuario.tieneCorreoUN eq 'NO'}"/>
+				
+				<p:outputPanel rendered="#{ManejadorCrearSolicitudUsuario.tieneCorreoUN eq 'SI'}">
+				<br />	
+				<h:outputText value="A continuación ingrese la información solicitada en cada campo:" />
+				<br />	<br />
+				<p:panelGrid columns="3"
+					styleClass="estilo-panelgrid-sinbordes"
+					id="registroinvGeneral">
+
+					<h:outputText value="Tipo documento:" />
+					<p:selectOneMenu style="width:190px"
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.id.tipoDocumento}"
+						id="tipodoecv2">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+						<f:selectItems
+							value="#{ManejadorCrearSolicitudUsuario.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					<p:message for="tipodoecv2" display="icon" />
+
+					<h:outputText value="Documento de identidad *:" />
+					<p:inputText
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.id.documento}"
+						id="documentov2" />
+					<p:message for="documentov2" display="icon" />
+
+					<h:outputText value="Primer Nombre *:"  />
+					<p:inputText id="primerNombreInvestigador"						 
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.nombre1}"
+						size="38" requiredMessage="El Primer Nombre es obligatorio">
+						<f:validateLength maximum="20" />
+					</p:inputText>
+					<p:message id="errorPrimerNombreInvestigador"
+						for="primerNombreInvestigador"/>
+
+					<h:outputText value="Segundo Nombre:" />
+					<p:inputText id="segundoNombreInv"
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.nombre2}"
+						size="38"  >
+						<f:validateLength maximum="20" />
+					</p:inputText>
+					<p:message id="errorSegundoNombreInv" for="segundoNombreInv"  />
+
+					<h:outputText value="Primer Apellido *:"	  />
+					<p:inputText id="primerApellidoInvestigador"						 
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.apellido1}"
+						size="38" requiredMessage="El Primer Apellido es obligatorio">
+						<f:validateLength maximum="20" />
+					</p:inputText>
+					<p:message id="errorPrimerApellidoInvestigador"						 
+						for="primerApellidoInvestigador" />
+
+					<h:outputText value="Segundo Apellido:" />
+					<p:inputText id="segundoApellidoInv"						 
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.apellido2}"
+						size="38">
+						<f:validateLength maximum="20" />
+					</p:inputText>
+					<p:message id="errorSegundoApellidoInv"
+						for="segundoApellidoInv"  />
+				
+					<h:outputText value="Género:"  />
+					<p:selectOneMenu style="width:50px"						 
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.genero}"
+						id="idGenero">
+						<f:selectItems value="#{ManejadorCrearSolicitudUsuario.generoItem}" />
+					</p:selectOneMenu>
+					<h:outputText value=""  />
+					
+					<h:outputText value="Correo electrónico de la UN *:"  />
+					<p:inputText id="correoExt"
+						value="#{ManejadorCrearSolicitudUsuario.investigadorExterno.email}"
+						 size="38">
+					</p:inputText>
+					<h:outputText value=""  />
+					
+					<h:outputText value="Dependencia *:" />
+					<p:selectOneMenu filter="true" filterMatchMode="contains"
+						value="#{ManejadorCrearSolicitudUsuario.facultadSelec1}" 
+						id="dependenciasUN1" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorCrearSolicitudUsuario.dependenciaItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					
+					<h:outputText value="" />
+					<p:commandButton id="buscarPer2" update="msgParticip, registroinvGeneral, panRol, @form"
+						process="@form"
+						styleClass="ui-priority-primary"
+						binding="#{ManejadorCrearSolicitudUsuario.buscarPer2}"
+						action="#{ManejadorCrearSolicitudUsuario.agregarNuevoUsuario}"
+						 value="Crear nuevo usuario"
+						 rendered="#{!ManejadorCrearSolicitudUsuario.mostrarForm}">
+					</p:commandButton>
+					<p:message id="msgParticip" for="buscarPer2" />
+
+				</p:panelGrid>	
+				
+			  </p:outputPanel>
+					
+			</p:panel>
+
+			<br />
+			<p:panel id="panRol" header="Roles a Solicitar en el Sistema"
+				rendered="#{ManejadorCrearSolicitudUsuario.mostrarForm}">
+
+				<h:panelGrid columns="4">
+					<h:selectManyCheckbox id="rolesList" layout="pageDirection"
+						value="#{ManejadorCrearSolicitudUsuario.rolesSeleccionadosArray}"
+						styleClass="labels_proyecto2">
+						<f:selectItems
+							value="#{ManejadorCrearSolicitudUsuario.rolesItemArray}" />
+					</h:selectManyCheckbox>
+				</h:panelGrid>
+
+			</p:panel>
+
+			<br />
+			<p:panel id="observ" header="Justificación de la Solicitud"
+				rendered="#{ManejadorCrearSolicitudUsuario.mostrarForm}">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+					id="panelOb">
+					<h:outputText
+						value="Justificación de la Solicitud - Comentarios Adicionales:" />
+					<p:inputTextarea rows="5" cols="80" maxlength="200"
+						counterTemplate="{0} characters remaining." autoResize="false"
+						value="#{ManejadorCrearSolicitudUsuario.solicitudUsuario.observaciones}" />
+				</p:panelGrid>
+				
+				<br />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelOb">
+					<h:outputText
+						value="Vigencia de los roles solicitados (*):" />
+					<p:calendar 
+						value="#{ManejadorCrearSolicitudUsuario.solicitudUsuario.fechaFin}"
+						required="true" id="fechaSolicitud"
+						requiredMessage="Escoja la fecha de vigencia de los roles."
+						pattern="dd/MM/yyyy" />
+				</p:panelGrid>
+
+			</p:panel>
+
+			<br />
+			<center><p:commandButton value="Guardar Solicitud"
+				rendered="false"
+				id="guardar" title="Al dar clic en Guardar Solicitud, puede editar la solicitud en el menú Consultar Solicitudes Usuario" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+				actionListener="#{ManejadorCrearSolicitudUsuario.guardarSolicitud}"
+				icon="ui-icon-disk" ajax="false"/> 
+				<p:commandButton
+				value="Enviar Solicitud Para Revisión"
+				rendered="#{ManejadorCrearSolicitudUsuario.mostrarForm}"
+				id="guardarEnviar" title="Al dar clic en Enviar Solicitud para Revisión, la solicitud no será editable y será enviada para evaluación" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+				actionListener="#{ManejadorCrearSolicitudUsuario.guardarEnviarSolicitud}"
+				icon="ui-icon-check" ajax="false" /></center>
+
+
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+			
+			<br />
+			<p:messages id="msgs" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

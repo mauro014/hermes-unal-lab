@@ -1,0 +1,460 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+	<ui:define name="title">FORMULARIO DE PREINSCRIPCIÓN</ui:define>
+
+	<ui:define name="content">
+
+		<img
+			src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+			style="padding-bottom: 10px;" />
+
+		<h:form>
+
+			<t:div styleClass="contenido-informacion">
+				<t:div styleClass="cabezote-informacion-pagina-buscador">
+					<h:outputText
+						value="CIENCIA PARA LAS REGIONES - Formulación de Proyectos Regionales en Ciencia, Tecnología e Innovación" />
+				</t:div>
+				<t:div styleClass="contenedor-informacion">
+
+					<h:panelGrid columns="1" style="width: 100%; align: center;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/her-ext-ecp/proyectos-regionales-ciencia/banner-diplomado-proy-ciencia-2.png"
+							style="padding-bottom: 5px;" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" style="width: 100%">
+
+						<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+
+						<p:messages id="msgForm" for="msgForm" autoUpdate="true"
+							closable="true" showSummary="true" showDetail="true" />
+
+					</h:panelGrid>
+
+					<!-- 1. PANEL INFORMACION DOCUMENTO DE IDENTIFICACION -->
+					<p:panel header="Documento de identificación" id="panel1">
+
+						<h:panelGrid columns="3" align="center" cellspacing="5">
+
+							<h:outputText value="Tipo de Documento" for="tipo_doc" />
+							<p:selectOneMenu value="#{ManejadorMatriculaECP.tipo_doc}"
+								effect="fade" id="tipo_doc">
+								<f:selectItems
+									value="#{ManejadorMatriculaECP.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Número de Documento" />
+							<p:inputText id="documento"
+								value="#{ManejadorMatriculaECP.documento}" maxlength="25"
+								required="true" requiredMessage="Campo obligatorio"
+								validateMessage="Sólo puede tener números"
+								readonly="#{ManejadorMatriculaECP.habilita_doc}"
+								converter="#{Number}">
+								<f:validateLongRange minimum="0" maximum="999999999999" />
+								<p:tooltip for="documento" showEvent="focus" hideEvent="blur"
+									showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+										<h:outputText
+											value="Ingrese su número de documento para realizar la preinscripcion. 
+	                									 Si ya hizo este procedimiento previamente, puede actualizar los datos." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:inputText>
+							<p:message for="documento" />
+
+							<h:outputText value="" />
+							<h:outputText value="" />
+							<h:outputText value="" />
+
+						</h:panelGrid>
+
+						<br />
+
+						<h:panelGrid columns="2" align="center">
+
+							<p:commandButton value="Continuar" id="continuar"
+								action="#{ManejadorMatriculaECP.buscarPreinscripcion}"
+								icon="ui-icon-triangle-1-e" styleClass="ui-priority-primary"
+								update="@form" />
+
+							<p:commandButton id="volver" value="Salir"
+								styleClass="ui-priority-primary"
+								action="#{ManejadorMatriculaECP.volver}" immediate="true" />
+
+						</h:panelGrid>
+
+					</p:panel>
+					<br />
+
+					<p:panel id="panelWizard" columns="1"
+						rendered="#{ManejadorMatriculaECP.ins_act != 'N'}">
+						<!-- 2. PANEL INFORMACION GENERAL -->
+
+						<p:panel header="Información general" id="panel2"
+							rendered="#{ManejadorMatriculaECP.ins_act != 'N'}">
+
+							<h:panelGrid columns="3" id="panelInfoInicial" cellspacing="8">
+
+								<h:outputText value="Primer nombre" for="primer_nombre" />
+								<p:inputText id="primer_nombre"
+									value="#{ManejadorMatriculaECP.primer_nombre}"
+									maxlength="80" required="true"
+									requiredMessage="El nombre es un campo obligatorio"
+									readonly="#{ManejadorMatriculaECP.ins_act == 'A'}"
+									size="30" />
+								<p:message for="primer_nombre" styleClass="texto" />
+
+								<h:outputText value="Segundo nombre" for="segundo_nombre" />
+								<p:inputText id="segundo_nombre"
+									value="#{ManejadorMatriculaECP.segundo_nombre}"
+									maxlength="80"
+									readonly="#{ManejadorMatriculaECP.ins_act == 'A'}"
+									size="30" />
+								<p:message for="segundo_nombre" styleClass="texto" />
+
+								<h:outputText value="Primer Apellido" for="primer_apellido" />
+								<p:inputText id="primer_apellido"
+									value="#{ManejadorMatriculaECP.primer_apellido}"
+									maxlength="50" required="true"
+									requiredMessage="El primer apellido es un campo obligatorio"
+									readonly="#{ManejadorMatriculaECP.ins_act == 'A'}"
+									size="30" />
+								<p:message for="primer_apellido" />
+
+								<h:outputText value="Segundo Apellido" for="segundo_apellido" />
+								<p:inputText id="segundo_apellido"
+									value="#{ManejadorMatriculaECP.segundo_apellido}"
+									maxlength="50" required="true"
+									requiredMessage="El segundo apellido es un campo obligaorio"
+									readonly="#{ManejadorMatriculaECP.ins_act == 'A'}"
+									size="30" />
+								<p:message for="segundo_apellido" />
+
+								<h:outputText value="Correo Electrónico"
+									for="correo_electronico" />
+								<p:inputText id="correo_electronico"
+									value="#{ManejadorMatriculaECP.correo_electronico}"
+									maxlength="80" required="true"
+									requiredMessage="El correo es un campo obligatorio"
+									validatorMessage="Correo inválido" size="30">
+									<f:validateRegex
+										pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+								</p:inputText>
+								<p:message for="correo_electronico" />
+
+
+								<h:outputText value="Teléfono fijo" for="tel_fijo" />
+								<p:inputText id="tel_fijo"
+									value="#{ManejadorMatriculaECP.tel_fijo}" maxlength="20">
+									<f:validateLength minimum="7" />
+								</p:inputText>
+								<p:message for="tel_fijo" />
+
+								<h:outputText value="Teléfono móvil" for="tel_movil" />
+								<p:inputText id="tel_movil"
+									value="#{ManejadorMatriculaECP.tel_movil}" maxlength="20"
+									required="true"
+									requiredMessage="El teléfono móvil es un campo obligatorio"
+									validateMessage="El teléfono móvil sólo puede tener números">
+									<f:validateLength minimum="10" />
+								</p:inputText>
+								<p:message for="tel_movil" />
+
+								<h:outputText value="Dirección" for="direccion" />
+								<p:inputText id="direccion" required="true"
+									requiredMessage="La Dirección es un campo obligatorio"
+									value="#{ManejadorMatriculaECP.direccion}" maxlength="80"
+									size="30" />
+								<p:message for="direccion" />
+
+								<h:outputText value="País origen" id="paisText" />
+								<p:selectOneMenu value="#{ManejadorMatriculaECP.pais}"
+									effect="fade" id="pais" filter="true" required="true"
+									validatorMessage="Por favor seleccione un país">
+									<f:selectItems value="#{ManejadorMatriculaECP.paisItem}" />
+									<f:validateRegex pattern="[A-Z][A-Z]" />
+
+									<p:ajax event="change"
+										update="departamento, deptoText, ciudad, panelDeptoCiud"
+										listener="#{ManejadorMatriculaECP.cargarDepto}" />
+								</p:selectOneMenu>
+								<p:message for="pais" />
+
+							</h:panelGrid>
+
+							<h:panelGrid id="panelDeptoCiud" columns="3">
+								<h:outputText value="Departamento:" id="deptoText"
+									rendered="#{ManejadorMatriculaECP.pais == 'CO'}" />
+								<p:spacer width="40"
+									rendered="#{ManejadorMatriculaECP.pais == 'CO'}" />
+								<p:selectOneMenu
+									value="#{ManejadorMatriculaECP.departamento}"
+									effect="fade" id="departamento" filter="true"
+									rendered="#{ManejadorMatriculaECP.pais == 'CO'}">
+									<f:selectItems
+										value="#{ManejadorMatriculaECP.departamentoItemList}" />
+									<p:ajax update="ciudad, ciudText" event="change"
+										listener="#{ManejadorMatriculaECP.cargarCiudad}" />
+								</p:selectOneMenu>
+
+
+								<h:outputText value="Ciudad:" id="ciudText"
+									rendered="#{ManejadorMatriculaECP.pais == 'CO'}" />
+								<p:spacer width="40"
+									rendered="#{ManejadorMatriculaECP.pais == 'CO'}" />
+								<p:selectOneMenu value="#{ManejadorMatriculaECP.ciudad}"
+									effect="fade" id="ciudad" filter="true"
+									rendered="#{ManejadorMatriculaECP.pais == 'CO'}">
+									<f:selectItems
+										value="#{ManejadorMatriculaECP.ciudadItemList}" />
+								</p:selectOneMenu>
+
+							</h:panelGrid>
+
+							<h:panelGrid id="panelInfoLaboral" columns="3" cellspacing="8">
+								<h:outputText value="Empresa Postulante" for="empresa" />
+								<p:inputText id="empresa" required="true"
+									requiredMessage="La Empresa Postulante es un campo obligatorio"
+									value="#{ManejadorMatriculaECP.empresa}" maxlength="100"
+									size="50" />
+								<p:message for="empresa" />
+							</h:panelGrid>
+
+							<br />
+							<h:panelGrid columns="3" cellspacing="8">
+
+								<h:outputText value="Sede y fecha inicio:" />
+								<h:outputText id="sedeFecha"
+									value="#{ManejadorMatriculaECP.sedeFechaSeleccionada}" readonly="true"/>
+								<p:message for="sedeFecha" />
+
+							</h:panelGrid>
+
+							<br />
+
+
+
+
+						</p:panel>
+
+						<br />
+
+						<p:panel id="archivosSoporte" header="Archivos de Soporte">
+
+
+							<center>
+								<p:fileUpload style="width:50%"
+									fileUploadListener="#{ManejadorMatriculaECP.subirArchivos}"
+									mode="advanced" auto="true" update="tablaArchivo"
+									label="Seleccionar archivo" />
+
+								<br />
+								<p:dataTable style="width:70%"
+									value="#{ManejadorMatriculaECP.listaArchivos}"
+									var="archivo" emptyMessage="No hay archivos asociados"
+									id="tablaArchivo">
+
+									<p:column headerText="Documentos adjuntos" style="width:50%">
+										<h:outputText value="#{archivo.nombreArchivo}" />
+									</p:column>
+
+									<p:column style="width:10%">
+										<center>
+											<p:commandButton id="selectButton" update="tablaArchivo"
+												icon="ui-icon-trash"
+												action="#{ManejadorMatriculaECP.eliminarArchivo}"
+												title="Eliminar Archivo">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{ManejadorMatriculaECP.archivoPre}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+
+
+								</p:dataTable>
+							</center>
+						</p:panel>
+
+						<br />
+
+						<p:panel id="condicionesCertificacion"
+							header="Condiciones de Certificación">
+							<p align="justify">
+								<b>Requisitos para aprobación:</b> Los requisitos para aprobar
+								el diplomado son:
+							</p>
+							<ul>
+								<li>Asistir como mínimo al 80% de las sesiones presenciales
+									del diplomado.</li>
+								<li>Preparar los trabajos y talleres durante el desarrollo
+									del diplomado.</li>
+								<li>Diseñar y formular un proyecto de ciencia, tecnología e
+									innovación.</li>
+								<li>El proyecto tendrá una evaluación y será requisito
+									indispensable para obtener el diploma. Estos proyectos se
+									podrán formular en grupos de trabajo en los cuales haya interés
+									de alianza o trabajo conjunto.</li>
+							</ul>
+							<p align="justify">
+								<b>Compromiso:</b> Con la finalidad de aprovechar al máximo este
+								Diplomado, el cual es financiado por Colciencias y por lo tanto
+								no tendrá costo para los participantes, se estipula una cláusula
+								de compromiso mediante la cual se debe cancelar el costo del
+								Diplomado en caso de retiro sin justa causa por parte de la
+								entidad que postula al participante. El costo a cancelar en este
+								caso es de $2.262.123.
+							</p>
+
+							<p align="justify">
+								<b>Modificación de las Fechas de Inicio y/o horario:</b> La
+								Universidad Nacional de Colombia se reserva el derecho a
+								modificar la fecha y horario programado para el inicio de un
+								evento.
+							</p>
+
+							<p align="justify">
+								<b>Normas Disciplinarias:</b> Las personas matriculadas en el
+								programa están obligadas a cumplir con el régimen disciplinario
+								contemplado en el Reglamento Estudiantil y demás reglamentos que
+								le sean pertinentes.
+							</p>
+						</p:panel>
+						<br />
+
+						<p:panel id="AutorizacionAvisoPrivacidad"
+							header="Autorización y Aviso de Privacidad">
+							<p align="justify">La Universidad Nacional de Colombia, en
+								cumplimiento del artículo 10 del Decreto 1377 de 2013 y la Ley
+								1581 de 2012 le informa que es responsable del tratamiento de
+								datos personales, los cuales han sido obtenidos directamente de
+								las personas y entidades que han tenido cualquier tipo de
+								relación con la Universidad.</p>
+
+							<p align="justify">De acuerdo a lo anterior, solicitamos la
+								autorización de los titulares de los datos personales para
+								continuar con el tratamiento de los mismos, comprometiéndonos a
+								hacer buen uso de su información y basándonos en una política de
+								privacidad y tratamiento de información personal de manera
+								lícita, segura y confiable.</p>
+
+							<p align="justify">
+								Si desea que retiremos sus datos, le solicitamos que nos lo
+								manifieste de manera directa y por escrito, dentro de los 30
+								días hábiles siguientes a la firma de este formulario, al correo
+								electrónico <b>regalias_med@unal.edu.co </b> Omitir este
+								comunicado dentro del tiempo señalado, habilitará
+								automáticamente a la Universidad Nacional de Colombia a
+								continuar con la administración de la información, según lo
+								establecido en el artículo 10 del Decreto 1377 de 2013.
+							</p>
+
+						</p:panel>
+						<br />
+						<p:panel id="aceptarTerminos" header="Aceptación de Términos">
+							<p align="justify">
+								<b>AFIRMO CONOCER LOS TÉRMINOS DEL PROGRAMA COLCIENCIAS -
+									UNIVERSIDAD NACIONAL DE COLOMBIA Y ME COMPROMETO A PARTICIPAR Y
+									A CUMPLIR CON LAS CONDICIONES ESTABLECIDAS. EN CASO DE
+									INCUMPLIMIENTO DE MI PARTE, AUTORIZO A LA UNIVERSIDAD NACIONAL
+									DE COLOMBIA PARA REALIZAR EL COBRO CORRESPONDIENTE A LA EMPRESA
+									POSTULANTE POR UN VALOR DE $2.262.123. </b>
+							</p>
+
+							<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+								align="center">
+
+								<p:selectOneRadio id="opcionesTerminos"
+									value="#{ManejadorMatriculaECP.opcionesTerminos}" required="true" requiredMessage="Debe aceptar los términos para guardar la información registrada">
+									<f:selectItem itemLabel="Si" itemValue="Si" />
+									<f:selectItem itemLabel="No" itemValue="No" />
+									<p:ajax event="change" update="panelGuardar"
+										listener="#{ManejadorMatriculaECP.aceptarTerminos}" />
+								</p:selectOneRadio>
+
+							</h:panelGrid>
+							
+							<br />
+						<h:panelGrid id="panelGuardar" columns="3" align="center">
+							<p:commandButton value="Guardar" id="guardar" rendered="#{ManejadorMatriculaECP.mostrarBotonGuardar}"
+								onstart="dlg.show()" oncomplete="dlg.hide()"
+								actionListener="#{ManejadorMatriculaECP.guardarMatriculaCPR}"
+								icon="ui-icon-check" styleClass="ui-priority-primary"
+								update="@form"
+								disabled="#{ManejadorMatriculaECP.habilita_guardar}" />
+
+						</h:panelGrid>
+							
+
+						</p:panel>
+						
+
+
+					</p:panel>
+
+
+
+					<p:dialog header="Enviando Correo" widgetVar="dlg"
+						resizable="false" closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+					</p:dialog>
+
+				</t:div>
+				<t:div styleClass="final-contenedor-informacion" />
+			</t:div>
+
+		</h:form>
+
+		<t:div styleClass="contenido-menu">
+			<t:div styleClass="menu-superior">
+				<t:div styleClass="cabezote-derecho-menu">
+					<h:outputText value="Acerca del curso" />
+				</t:div>
+				<t:div styleClass="menu">
+
+					<ul>
+						<h:panelGrid rendered="false">
+							<li><h:form>
+									<h:outputLink
+										value="#{facesContext.externalContext.requestContextPath}/pages/PEC/CursoInnovacion.xhtml"
+										onclick="submit()">
+										<h:outputText value="Información del curso" />
+									</h:outputLink>
+								</h:form></li>
+						</h:panelGrid>
+
+						<li><h:form>
+								<h:outputLink
+									value="http://www.viceinvestigacion.unal.edu.co/VRI/diplomadoctei/"
+									onclick="submit()">
+									<h:outputText value="Información del curso" />
+								</h:outputLink>
+							</h:form></li>
+
+						<li><h:form>
+								<h:outputLink
+									value="#{facesContext.externalContext.requestContextPath}/pages/principal/Principal.xhtml"
+									onclick="submit()">
+									<h:outputText value="Salir" />
+								</h:outputLink>
+							</h:form></li>
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+
+
+	</ui:define>
+</ui:composition>

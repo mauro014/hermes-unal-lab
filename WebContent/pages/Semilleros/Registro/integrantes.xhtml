@@ -1,0 +1,679 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo_blanco">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">Semillero - Integrantes</t:div>
+				<p:menubar style="margin-bottom: 20px;">
+					<p:menuitem value="Información general" action="irGeneral"
+						icon="ui-icon-down" />
+					<p:menuitem value="Integrantes" icon="ui-icon-down" />
+					<p:menuitem value="Líneas y Áreas de Trabajo"
+						action="irLineasAreas"
+						disabled="#{manejadorSemilleroIntegrantes.semilleroActual.fase lt 2}"
+						icon="ui-icon-down" />
+					<p:menuitem value="Plan de Trabajo" action="irPlanTrabajo"
+						icon="ui-icon-down"
+						disabled="#{manejadorSemilleroIntegrantes.semilleroActual.fase lt 3}" />
+					<p:menuitem value="Cargar Archivos y Enviar"
+						action="irArchivosEnviar"
+						disabled="#{manejadorSemilleroIntegrantes.semilleroActual.fase lt 4}"
+						icon="ui-icon-down" />
+				</p:menubar>
+			</h:form>
+			<h:form>
+				<p:messages id="msgs" />
+				<p:panel id="panelInfo">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+							style="width: 440px;">
+							<t:div style="width: 100px;">
+								<h:outputText value="Id: " />
+							</t:div>
+							<t:div style="width: 350px;">
+								<h:outputText
+									value="#{manejadorSemilleroIntegrantes.semilleroActual.id}"
+									style=' font-weight: bold;' />
+							</t:div>
+							<t:div style="width: 100px;">
+								<h:outputText value="Nombre semillero: " />
+							</t:div>
+							<h:outputText
+								value="#{manejadorSemilleroIntegrantes.semilleroActual.nombre}"
+								style=' font-weight: bold;' />
+						</p:panelGrid>
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							style="width: 170px;"
+							rendered="#{!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5}">
+							<p:commandButton style="width: 100%"
+								action="#{manejadorSemilleroIntegrantes.agregarIntegrante}"
+								icon="ui-icon-plusthick" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" value="Agregar integrante"
+								update="@form" />
+							<p:commandButton style="width: 100%"
+								action="#{manejadorSemilleroIntegrantes.cargarHistorico}"
+								value="Histórico Integrantes" icon="ui-icon-clock"
+								oncomplete="dialogHistorico.show();" update="@form">
+							</p:commandButton>
+						</p:panelGrid>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel header="Agregar nuevo integrante"
+					rendered="#{(!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5) and manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}"
+					id="panel-ingreso-integrantes" style="margin-top: 20px;">
+					<div class="panelgrid-interno-sinbordes">
+						<t:div
+							rendered="#{!manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}"
+							style="color: #FF0000; text-align: center; margin-top: 20px; margin-bottom: 20px; width: 100%;">
+							Nota: Si usted realiza el cambio del director del semillero, no podra realizar cambios luego de guardar.
+				        </t:div>
+						<p:panelGrid columns="2" styleClass="panelPrincipalSemilleros">
+							<h:outputText value="Tipo de asociación a la universidad (*):"
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}" />
+							<p:selectOneMenu
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}"
+								value="#{manejadorSemilleroIntegrantes.tipoIntegrante}">
+								<f:selectItem itemValue="" itemLabel="Seleccione un tipo" />
+								<f:selectItem itemValue="I" itemLabel="Interno" />
+								<f:selectItem itemValue="E" itemLabel="Externo" />
+								<p:ajax update="panel-ingreso-integrantes"
+									process="panel-ingreso-integrantes"
+									listener="#{manejadorSemilleroIntegrantes.crearListaVinculacion}" />
+							</p:selectOneMenu>
+							<h:outputText value="Tipo de integrante (*):"
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}" />
+							<p:selectOneMenu
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}"
+								value="#{manejadorSemilleroIntegrantes.investigadorActual.tipo.id}"
+								id="select-tipo-integrante">
+								<f:selectItem itemValue="" itemLabel="Seleccione un tipo" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.tipoVinculacionItem}" />
+								<p:ajax update="panel-ingreso-integrantes"
+									process="panel-ingreso-integrantes"
+									listener="#{manejadorSemilleroIntegrantes.validarTipoIntegrante}" />
+							</p:selectOneMenu>
+							<h:outputText
+								value="NOTA: Al asignar el rol de estudiante líder, él puede editar la información del semillero. Sin embargo, esta debe ser validada por el director del mismo."
+								style="color: #FF0000; text-align: center; margin-top: 20px; margin-bottom: 20px; width: 100%;"
+								rendered="#{manejadorSemilleroIntegrantes.addEstLider}" />
+							<h:outputText value=""
+								rendered="#{manejadorSemilleroIntegrantes.addEstLider}" />
+							<h:outputText value="Tipo de documento (*):"
+								rendered="#{!(manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false) and (manejadorSemilleroIntegrantes.mostrarAgregarIntegrante)}" />
+							<p:selectOneMenu
+								value="#{manejadorSemilleroIntegrantes.tipoDocumentoInv.id}"
+								rendered="#{!(manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false) and (manejadorSemilleroIntegrantes.mostrarAgregarIntegrante)}">
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="Número de documento (*):"
+								rendered="#{!(manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false) and (manejadorSemilleroIntegrantes.mostrarAgregarIntegrante)}" />
+							<p:inputText id="numdocumento" maxlength="25"
+								value="#{manejadorSemilleroIntegrantes.documento}"
+								rendered="#{!(manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false) and (manejadorSemilleroIntegrantes.mostrarAgregarIntegrante)}" />
+							<h:outputText value="Actividades (*):"
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}" />
+							<p:inputTextarea style="width: 100%;" rows="5"
+								counter="outActividades" maxlength="4000"
+								counterTemplate="{0} caracteres faltantes." autoResize="false"
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}"
+								value="#{manejadorSemilleroIntegrantes.investigadorActual.actividades}" />
+							<h:outputText />
+							<h:outputText id="outActividades"
+								rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}" />
+							<h:outputText value="Tipo de Documento (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:selectOneMenu
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.id.tipoDocumento}"
+								disabled="true"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="Número de Documento (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="documentoInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.id.documento}"
+								disabled="true"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<h:outputText value="Primer Nombre (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="primerNombreInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.nombre1}"
+								maxlength="20"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<h:outputText value="Segundo Nombre:"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="segundoNombreInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.nombre2}"
+								maxlength="20"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<h:outputText value="Primer Apellido (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="primerApellidoInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.apellido1}"
+								maxlength="20"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<h:outputText value="Segundo Apellido:"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="segundoApellidoInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.apellido2}"
+								maxlength="20"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<h:outputText
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								value="Sexo Biológico (*):" />
+							<p:selectOneMenu
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								id="seleccionarGenero"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.genero}">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.generoItem}" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								value="Máximo Nivel de Estudios (*):" />
+							<p:selectOneMenu
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								id="seleccionarTipoFormacion"
+								value="#{manejadorSemilleroIntegrantes.tipoFormacion}">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.maxNivelEstudioItem}" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								value="Estado Civil (*):" />
+							<p:selectOneMenu
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								id="seleccionarEstadoCivil"
+								value="#{manejadorSemilleroIntegrantes.estadoCivil}">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.estadoCivilItem}" />
+							</p:selectOneMenu>
+							<h:outputText
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								value="Fecha Nacimiento (*):" />
+							<p:calendar id="fechaNacimiento" pages="1" locale="es"
+								readonlyInput="true" pattern="dd/MM/yyyy" navigator="true"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.fechaNacimiento}"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+							</p:calendar>
+							<h:outputText value="País de Nacimiento (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:selectOneMenu value="#{manejadorSemilleroIntegrantes.paisSel}"
+								id="selectPais" filter="true" filterMatchMode="contains"
+								style="width: 100%" effect="fade"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.selectItemPaises}" />
+								<p:ajax update="@form" process="@form"
+									listener="#{manejadorSemilleroIntegrantes.revisarPais}" />
+							</p:selectOneMenu>
+							<h:outputText value="Departamento:"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?(manejadorSemilleroIntegrantes.investigadorActualExterno and manejadorSemilleroIntegrantes.paisSel=='CO'):false}" />
+							<p:selectOneMenu
+								value="#{manejadorSemilleroIntegrantes.departamentoActual}"
+								effect="fade" id="depto" filter="true" style="width:200px"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?(manejadorSemilleroIntegrantes.investigadorActualExterno and manejadorSemilleroIntegrantes.paisSel=='CO'):false}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.departamentoItem}" />
+								<p:ajax update="depto,ciuSel" process="depto,ciuSel"
+									listener="#{manejadorSemilleroIntegrantes.cambiarDepartamento}" />
+							</p:selectOneMenu>
+							<h:outputText value="Ciudad de Nacimiento (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:selectOneMenu
+								value="#{manejadorSemilleroIntegrantes.ciudadActual}"
+								effect="fade" id="ciuSel" filter="true"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.ciudadItem}" />
+							</p:selectOneMenu>
+							<h:outputText />
+							<p:tooltip for="ciuSel" showEffect="fade" hideEffect="fade">
+								<h:panelGrid columns="1"
+									style="border-bottom: 0px; padding-bottom: 0px; width: 350px">
+									<h:outputText
+										value="Si la ciudad de nacimiento del investigador no se encuentra en el listado, por favor envíe un correo electrónico a hermes@unal.edu.co, solicitando la inclusión de la misma." />
+								</h:panelGrid>
+							</p:tooltip>
+							<h:outputText value="E-mail (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="emailInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.email}"
+								maxlength="50"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<h:outputText value="Teléfono (*):"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<p:inputText id="telefonoInvestigador"
+								value="#{manejadorSemilleroIntegrantes.investigadorExterno.telefono}"
+								maxlength="15"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							<t:div
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<p:commandButton id="infoInst" icon="ui-icon-info" />
+								<p:tooltip for="infoInst" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Si la institución que va asociar no aparece en la lista,<br />
+								       	por favor comunicarse con el Sistema de Información HERMES - Componente de Investigación<br />
+								       	(ext. 11111 o hermes@unal.edu.co). 
+									</t:div>
+								</p:tooltip>
+								<h:outputText value="Institución (*):"
+									rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							</t:div>
+							<p:selectOneMenu id="cboInst" style="width:400px;"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}"
+								value="#{manejadorSemilleroIntegrantes.institucionEvaluador}"
+								panelStyle="width: 400px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.listaInstitucionesItem}" />
+							</p:selectOneMenu>
+							<t:div
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<p:commandButton id="infoOCDE" icon="ui-icon-info" />
+								<p:tooltip for="infoOCDE" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Por favor asocie el área OCDE asociada con el área de trabajo del participante. 
+									</t:div>
+								</p:tooltip>
+								<h:outputText value="Área OCDE (*):"
+									rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							</t:div>
+							<t:div
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{manejadorSemilleroIntegrantes.areaCienciaInv}"
+									id="areaCienciaInv">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{manejadorSemilleroIntegrantes.areaCienciaItems}" />
+									<p:ajax
+										listener="#{manejadorSemilleroIntegrantes.cambiarAreaInv}"
+										update="subareaCienciaInv" />
+								</p:selectOneMenu>
+								<h:outputLink value="#{manejadorFichaMinimaHome.linkLineas}"
+									target="_blank">
+									<h:graphicImage id="imageeeInv" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="imageeeInv"
+									value="Descargar pdf con la clasificación de las áreas."
+									showEffect="fade" hideEffect="fade" />
+							</t:div>
+							<t:div
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<p:commandButton id="infoOCDE2" icon="ui-icon-info" />
+								<p:tooltip for="infoOCDE2" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+								       	Por favor asocie el sub-área OCDE asociada con el área de trabajo del participante. 
+									</t:div>
+								</p:tooltip>
+								<h:outputText value="Sub-Área OCDE (*):"
+									rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}" />
+							</t:div>
+							<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+								value="#{manejadorSemilleroIntegrantes.subAreaCienciaInv}"
+								id="subareaCienciaInv"
+								rendered="#{manejadorSemilleroIntegrantes.tipoIntegrante=='E'?manejadorSemilleroIntegrantes.investigadorActualExterno:false}">
+								<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+									itemValue="" />
+								<f:selectItems
+									value="#{manejadorSemilleroIntegrantes.subAreaCienciaItems}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panelGrid columns="1" styleClass="panelPrincipalSemilleros">
+							<h:outputText
+								value="El integrante no se encuentra en la base de datos, será adicionado como externo usando los anteriores datos"
+								rendered="#{manejadorSemilleroIntegrantes.investigadorActualExterno}" />
+						</p:panelGrid>
+					</div>
+					<div style="width: 100%; text-align: center;">
+						<br />
+						<p:commandButton onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"
+							rendered="#{manejadorSemilleroIntegrantes.mostrarAgregarIntegrante}"
+							action="#{manejadorSemilleroIntegrantes.adicionarIntegrante}"
+							value="Agregar integrante" update="@form" process="@form" />
+					</div>
+				</p:panel>
+				<br />
+				<p:dataTable var="lider"
+					value="#{manejadorSemilleroIntegrantes.semilleroActual.lider}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Director" />
+						</f:facet>
+						<div class="panel-interno-tabla">
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Nombre: " />
+								<h:outputText value="#{lider.nombreCompleto}" />
+								<h:outputText value="Unidad Académica Básica: " />
+								<h:outputText value="#{lider.dependencia.nombre}" />
+								<h:outputText
+									value="Dedicación al semillero (N° Horas semanales): " />
+								<p:inputText
+									value="#{manejadorSemilleroIntegrantes.horasDedicacionLider}"
+									rendered="#{lider == manejadorSemilleroIntegrantes.personaActual and (!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5)}"
+									style="width: 100%;" />
+								<h:outputText
+									value="#{manejadorSemilleroIntegrantes.horasDedicacionLider}"
+									rendered="#{lider != manejadorSemilleroIntegrantes.personaActual or (manejadorSemilleroIntegrantes.esConsulta and manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id != 5)}"
+									style="width: 100%;" />
+							</p:panelGrid>
+							<p:panel>
+								<t:div style="color:#464646; text-align:justify;">
+									Profesor(a), <strong>le recomendamos comunicarse con la UAB para el registro de estas horas en su plan de trabajo académico</strong>, 
+									ya que se debe analizar si estas horas son por semestre o están contempladas en un proyecto del semillero aprobado.
+									<br/>
+									<br/>
+									Por otro lado, <strong>recuerde que si el semillero es interfacultad o interesede</strong> se recomienda tener al menos un integrante de esa facultad o sede
+								</t:div>
+							</p:panel>
+						</div>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<p:dataTable var="integranteInterno"
+					value="#{manejadorSemilleroIntegrantes.listaInternos}"
+					emptyMessage="No hay integrantes asignados.">
+					<f:facet name="header">
+						<h:outputText value="Integrantes Internos" />
+					</f:facet>
+					<p:column>
+						<div class="panel-interno-tabla">
+							<p:panelGrid style="witdh:100%"
+								styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="width:50%">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column style="width:50%">
+										<h:outputText
+											value="#{integranteInterno.integrante.id.tipoDocumento} - #{integranteInterno.integrante.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="width:50%">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column style="width:50%">
+										<h:outputText
+											value="#{integranteInterno.integrante.nombreCompleto}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tipo: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{integranteInterno.tipo.nombre}" />
+										<h:outputText rendered="#{integranteInterno.tipo.id == 'EL'}"
+											value=" - #{integranteInterno.nivelPlanEstudios}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{not empty integranteInterno.planEstudios}">
+									<p:column>
+										<h:outputText value="Plan de Estudios: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{integranteInterno.planEstudios}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{empty integranteInterno.planEstudios}">
+									<p:column>
+										<h:outputText value="Departamento: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{integranteInterno.integrante.dependencia.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Actividades: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{(empty integranteInterno.actividades) ? 'Sin actividad registrada' : integranteInterno.actividades}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column
+						rendered="#{!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5}">
+
+						<p:commandButton icon="ui-icon-trash" value="Eliminar"
+							action="#{manejadorSemilleroIntegrantes.prepararEliminar}"
+							oncomplete="dialogConfirmacion.show();" update="@form">
+							<f:setPropertyActionListener value="#{integranteInterno}"
+								target="#{manejadorSemilleroIntegrantes.integranteEliminar}" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				<br />
+				<p:dataTable var="integranteExterno"
+					value="#{manejadorSemilleroIntegrantes.listaExternos}"
+					emptyMessage="No hay integrantes asignados.">
+					<f:facet name="header">
+						<h:outputText value="Integrantes Externos" />
+					</f:facet>
+					<p:column>
+						<div class="panel-interno-tabla">
+							<p:panelGrid style="witdh:100%"
+								styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column style="width:50%">
+										<h:outputText value="Documento: " />
+									</p:column>
+									<p:column style="width:50%">
+										<h:outputText
+											value="#{integranteExterno.integrante.id.tipoDocumento} - #{integranteExterno.integrante.id.documento}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column style="width:50%">
+										<h:outputText value="Nombre: " />
+									</p:column>
+									<p:column style="width:50%">
+										<h:outputText
+											value="#{integranteExterno.integrante.nombreCompleto}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Tipo: " />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{integranteExterno.tipo.nombre}" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Actividades: " />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{(empty integranteExterno.actividades) ? 'Sin actividad registrada' : integranteExterno.actividades}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</div>
+					</p:column>
+					<p:column
+						rendered="#{!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5}">
+						<p:commandButton icon="ui-icon-trash" value="Eliminar"
+							action="#{manejadorSemilleroIntegrantes.prepararEliminar}"
+							oncomplete="dialogConfirmacion.show();" update="@form">
+							<f:setPropertyActionListener value="#{integranteExterno}"
+								target="#{manejadorSemilleroIntegrantes.integranteEliminar}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<p:messages id="msgs" />
+				<div style="width: 100%; text-align: center;">
+					<p:commandButton
+						rendered="#{!manejadorSemilleroIntegrantes.esConsulta}"
+						action="#{manejadorSemilleroIntegrantes.guardarParcialmente}"
+						value="Guardar Parcialmente" update="@form"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					<p:commandButton
+						rendered="#{!manejadorSemilleroIntegrantes.esConsulta or manejadorSemilleroIntegrantes.semilleroActual.estadoActual.id eq 5}"
+						action="#{manejadorSemilleroIntegrantes.siguiente}"
+						value="Siguiente" ajax="false" />
+				</div>
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 			</p:dialog>
+				<p:dialog
+					header="Histórico Integrantes de Semillero - ID: #{manejadorSemilleroIntegrantes.semilleroActual.id}"
+					widgetVar="dialogHistorico" modal="true" resizable="false"
+					width="800" height="600">
+					<p:dataTable style="border:none; margin-top: 10px;"
+						id="histIntegrante" var="historico"
+						value="#{manejadorSemilleroIntegrantes.historicoIntegrantes}"
+						emptyMessage="No hay un histórico para este semillero."
+						paginator="true" rows="5" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Documento de Identidad" />
+							</f:facet>
+							<h:outputText value="#{historico.documento}:" />
+							<br />
+							<h:outputText value="#{historico.integrante.id.documento}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText value="#{historico.integrante.nombreCompleto}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo de Integrante" />
+							</f:facet>
+							<h:outputText
+								rendered="#{historico.tipoVinculacionGrupo != 'N/A'}"
+								value="#{historico.tipoVinculacionGrupo} - #{historico.tipo}" />
+							<h:outputText
+								rendered="#{historico.tipoVinculacionGrupo == 'N/A'}"
+								value="N/A" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Datos Adicionales" />
+							</f:facet>
+							<h:outputText
+								rendered="#{historico.tipoVinculacionGrupo == 'Externo' or historico.tipoVinculacionGrupo == 'N/A'}"
+								value="N/A" />
+							<h:outputText rendered="#{!empty historico.dependencia}"
+								style="font-weight: bold;" value="Facultad: " />
+							<h:outputText rendered="#{!empty historico.dependencia}"
+								value="#{historico.dependencia.nombre}" />
+							<ui:fragment rendered="#{!empty historico.dependencia}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.sede}"
+								style="font-weight: bold;" value="Sede: " />
+							<h:outputText rendered="#{!empty historico.sede}"
+								value="#{historico.sede.nombre}" />
+							<ui:fragment rendered="#{!empty historico.sede}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+								style="font-weight: bold;" value="Tipo de Vinculación a la UN: " />
+							<h:outputText rendered="#{!empty historico.tipoVinculacion}"
+								value="#{historico.tipoVinculacion.nombre}" />
+							<ui:fragment rendered="#{!empty historico.tipoVinculacion}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+								style="font-weight: bold;" value="Dedicación: " />
+							<h:outputText rendered="#{!empty historico.tipoDedicacion}"
+								value="#{historico.tipoDedicacion.nombre}" />
+							<ui:fragment rendered="#{!empty historico.tipoDedicacion}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.tipoFormacion}"
+								style="font-weight: bold;" value="Máximo nivel de estudios: " />
+							<h:outputText rendered="#{!empty historico.tipoFormacion}"
+								value="#{historico.tipoFormacion.nombre}" />
+							<ui:fragment rendered="#{!empty historico.tipoFormacion}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.planEstudios}"
+								style="font-weight: bold;" value="Programa Académico: " />
+							<h:outputText rendered="#{!empty historico.planEstudios}"
+								value="#{historico.planEstudios.nombre}" />
+							<ui:fragment rendered="#{!empty historico.planEstudios}">
+								<br />
+							</ui:fragment>
+							<h:outputText rendered="#{!empty historico.semestreActual}"
+								style="font-weight: bold;" value="Semestre: " />
+							<h:outputText rendered="#{!empty historico.semestreActual}"
+								value="#{historico.semestreActual}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Ingreso" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaIngreso}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Retiro" />
+							</f:facet>
+							<h:outputText value="#{historico.fechaRetiro}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+				<!-- Diálogo de Confirmación -->
+				<p:dialog widgetVar="dialogConfirmacion" header="Confirmación"
+					modal="true" resizable="false" closable="false" width="400">
+					<h:outputText
+						value="¿Está seguro de que desea eliminar este integrante? Tenga en cuenta que si el integrante que desea eliminar esta asociado a una actividad vigente del plan de trabajo. La actividad se reasignará al director, en cuyo caso podrá reasignarlo en el formulario de plan de trabajo" />
+					<br />
+					<center>
+					<p:commandButton value="Sí" icon="ui-icon-check"
+						action="#{manejadorSemilleroIntegrantes.eliminarIntegrante}"
+						oncomplete="dialogConfirmacion.hide();" update="@form" />
+
+					<p:commandButton value="No" icon="ui-icon-close"
+						onclick="dialogConfirmacion.hide();" type="button" />
+					</center>
+				</p:dialog>
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

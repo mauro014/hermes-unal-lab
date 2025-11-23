@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+ 
+<s:fieldset legend="Plantillas de correo" style="padding:.5em;border: 1px solid #003366; background-color:#E6EEF7;">
+   
+   <h:panelGrid columns    ="1"
+                align      ="center"
+                cellpadding="6"
+                cellspacing="3">                    
+      
+     <h:outputText value="#{manejadorPlantillaCorreo.mensajeError}" styleClass="mensajeerror"/>
+         
+     <h:panelGroup id="plantillaCorreo">  
+     
+     	
+         
+         <h:panelGrid columns="1" cellpadding="6"
+                cellspacing="3">
+			<s:pprPanelGroup id="pprPlantilla" partialTriggers="nombrePlantilla">
+            <h:panelGroup id="mostrarPlantilla" rendered="#{manejadorPlantillaCorreo.b_mostrarPlantilla}">
+		         <h:panelGrid columns="2" cellpadding="3"
+                				cellspacing="3">
+		         
+		           <h:outputText value="Nombre: " styleClass="legend2"/>
+		           <h:selectOneMenu id="nombrePlantilla" value="#{manejadorPlantillaCorreo.idPlantilla}"
+	                                valueChangeListener="#{manejadorPlantillaCorreo.cambiarPlantillaCorreo}"
+	                                onchange="submit(this)">
+	   	                    <f:selectItems value="#{manejadorPlantillaCorreo.nombresPlantillasItem}"/>   	                
+	   	           </h:selectOneMenu>
+   		               	   	           		           
+		           <h:outputText value="Descripción: " styleClass="legend2"/>
+		           <h:outputText value="#{manejadorPlantillaCorreo.plantillaCorreoActual.descripcion}" />
+		           
+		           <h:outputText value="Asunto: " styleClass="legend2"/>         		           
+		           <h:outputText value="#{manejadorPlantillaCorreo.plantillaCorreoActual.asunto}"/>
+		           
+		           <h:outputText value="Cuerpo: " styleClass="legend2"/>
+		           <h:outputText value="#{manejadorPlantillaCorreo.plantillaCorreoActual.cuerpo}"/>
+		           
+		           <h:outputText value="Adjunto(s): " styleClass="legend2"/>		           
+		           <h:outputText value="#{manejadorPlantillaCorreo.plantillaCorreoActual.nombreAdjunto}"/>
+		           		
+		         </h:panelGrid>
+		         
+		         <center>
+	                <h:commandButton styleClass="btnlimpiar" action="#{manejadorPlantillaCorreo.nuevaPlantilla}" value="Nueva" />            
+	                <h:commandButton styleClass="btnedicion" action="#{manejadorPlantillaCorreo.editarPlantilla}" value="Editar" />            
+	                <h:commandButton styleClass="btnborrar" onclick="if(!confirm('¿Está seguro(a) de querer eliminar esta plantilla de correo?'))return false" 
+	                				action="#{manejadorPlantillaCorreo.eliminarPlantilla}" immediate="true" 
+	                				value="Eliminar" />
+	             </center>
+            </h:panelGroup> 
+            </s:pprPanelGroup>         
+            <h:panelGroup id="editarPlantilla" rendered="#{!manejadorPlantillaCorreo.b_mostrarPlantilla}">
+			
+			   <h:panelGrid columns="1">
+	           	
+		           	<h:panelGrid columns="2">
+			          		         
+	   		           <h:outputText/>
+			           <h:message for="nombre" styleClass="mensajeerror" showDetail="true" showSummary="true" />      	      	   	           		           
+			           <h:outputText value="Nombre:" styleClass="legend2"/>
+			           <h:inputText  id="nombre" value="#{manejadorPlantillaCorreo.plantillaCorreoActual.nombre}" 
+			           					required="true" size="40">
+			           		<f:validateLength maximum="500"/>
+			           </h:inputText>
+			            
+			           <h:outputText/>
+			           <h:message for="descripcion" styleClass="mensajeerror" showDetail="true" showSummary="true" />      	      	   	           		           
+			           <h:outputText value="Descripción: " styleClass="legend2"/>
+			           <h:inputTextarea id="descripcion"  
+			                            value="#{manejadorPlantillaCorreo.plantillaCorreoActual.descripcion}"                            
+			                            cols="40" 
+			                            rows="3" >
+			                            
+			                            <f:validateLength maximum="1000"/>
+			           </h:inputTextarea> 
+			           
+			           <h:outputText/>
+			           <h:message for="asunto" styleClass="mensajeerror" showDetail="true" showSummary="true" />      	      	   	           		           
+			           <h:outputText value="Asunto:" styleClass="legend2"/>
+			           <h:inputText  id="asunto" value="#{manejadorPlantillaCorreo.plantillaCorreoActual.asunto}" 
+			           				required="true" size="40">
+			           		<f:validateLength maximum="500"/>
+			           </h:inputText>
+			           
+			           <h:outputText/>
+			           <h:message for="cuerpo" styleClass="mensajeerror" showDetail="true" showSummary="true" />      	      	   	           		           
+			           <h:outputText value="Cuerpo:" styleClass="legend2"/>
+			           <h:inputTextarea id="cuerpo"  
+			                            value="#{manejadorPlantillaCorreo.plantillaCorreoActual.cuerpo}"                            
+			                            cols="40" 
+			                            rows="5">
+			           </h:inputTextarea>
+			           		            
+			        </h:panelGrid>
+			        		           
+		            <h:panelGrid columns="3" rendered="#{manejadorPlantillaCorreo.tieneAdjunto}">
+		            
+		            	<h:outputText value="Adjunto:   " styleClass="legend2"/>
+		           		
+		           		<h:commandLink value="#{manejadorPlantillaCorreo.plantillaCorreoActual.nombreAdjunto}"
+		           						action="#{manejadorPlantillaCorreo.descargarAdjunto}"/>	           				           		
+				        <h:commandButton styleClass="btnborrar" value="Eliminar"
+				        	onclick="if(!confirm('¿Está seguro(a) de eliminar este adjunto?'))return false" 
+				            action="#{manejadorPlantillaCorreo.eliminarAdjunto}" />
+				            
+		            </h:panelGrid>
+			         
+			        <h:panelGroup id="mostrarCargaAdjunto" rendered="#{!manejadorPlantillaCorreo.tieneAdjunto}">
+		         
+			           <h:outputLabel for="myFileId" value="Archivo:  " styleClass="legend2"/>
+				        
+				        <t:inputFileUpload id="myFileId"
+				            value="#{manejadorPlantillaCorreo.archivo}"
+				            storage="file"/>
+				            
+				        <h:outputText value=""/>
+				            
+				        <h:commandButton styleClass="btnguardar" value="Adjuntar archivo"
+				            action="#{manejadorPlantillaCorreo.insertarArchivo}" />
+				            
+				     </h:panelGroup>
+		           
+		       </h:panelGrid>
+		        
+		        <h:panelGroup>
+	             <center><br /><hr />
+	                <h:commandButton styleClass="btnguardar" action="#{manejadorPlantillaCorreo.agregarPlantilla}" value="Guardar" />                            
+	             </center>
+            	</h:panelGroup>   
+		        
+            </h:panelGroup>   
+		        
+		                 
+         </h:panelGrid>       
+       
+        
+     </h:panelGroup>         
+     
+   </h:panelGrid>
+</s:fieldset>
+
+	<!--  
+  <center><br /> 
+    <h:panelGrid columns="1">       	   	             
+	   <h:commandButton action="#{manejadorPlantillaCorreo.siguiente}" value="Siguiente"/>		     
+    </h:panelGrid>
+  </center><br />
+    -->
+
+            
+
+            
+            </h:form>
+</ui:define>
+</ui:composition>

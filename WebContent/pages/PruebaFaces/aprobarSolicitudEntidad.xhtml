@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+	
+<ui:define name="title">APROBAR/RECHAZAR ENTIDAD</ui:define>
+
+<ui:define name="content">
+<h:form id="Entidades">  
+ 	<p:panel id="panel1" header="Datos de la Entidad" toggleable="false" toggleSpeed="500" widgetVar="panel1">  
+ 		<p:messages id="msg_upd"/>  
+ 
+      	<h:panelGrid columns="2">  
+			<h:outputLabel for="descripcion" value="Nombre o Descripción: " />
+			<p:inputText id="descripcion" value="#{ManejadorAdministrarSolicitudEntidad.descripcion}" required="false" label="descripcion" readonly="true"/>    
+	        
+	        <h:outputLabel for="nit" value="NIT: " />  
+        	<p:inputText id="nit" value="#{ManejadorAdministrarSolicitudEntidad.nit}" label="nit" required="false" readonly="true"/>  
+        	
+        	<h:outputLabel for="direccion" value="Dirección: " />
+			<p:inputText id="direccion"
+				value="#{ManejadorAdministrarSolicitudEntidad.direccion}"
+				required="false" label="direccion"
+				readonly="#{!ManejadorAdministrarSolicitudEntidad.verEditarEntidades}" />
+
+			<h:outputLabel for="telefono" value="Teléfono: " />
+			<p:inputText id="telefono"
+				value="#{ManejadorAdministrarSolicitudEntidad.telefono}"
+				required="false" label="telefono"
+				readonly="#{!ManejadorAdministrarSolicitudEntidad.verEditarEntidades}" />
+
+			<h:outputLabel for="fax" value="Fax: " />
+			<p:inputText id="fax"
+				value="#{ManejadorAdministrarSolicitudEntidad.fax}"
+				required="false" label="fax"
+				readonly="#{!ManejadorAdministrarSolicitudEntidad.verEditarEntidades}" />
+        	
+        	<h:outputText value="Pais:"/>
+			<p:inputText id="pais"
+				value="#{ManejadorAdministrarSolicitudEntidad.pais}"
+				required="true" label="pais" readonly="true"/>
+					
+			<h:outputText value="Departamento:" id="deptoText" rendered="#{ManejadorAdministrarSolicitudEntidad.pais == 'Colombia'}"/>
+			<p:inputText id="departamento" required="false"
+				label="departamento" readonly="true"
+				rendered="#{ManejadorAdministrarSolicitudEntidad.pais == 'Colombia'}"
+				value="#{ManejadorAdministrarSolicitudEntidad.departamento}" />
+		
+			<h:outputText value="Ciudad:" rendered="#{ManejadorAdministrarSolicitudEntidad.pais == 'Colombia'}"/>
+			<p:inputText id="ciudad"
+				value="#{ManejadorAdministrarSolicitudEntidad.ciudad}"
+				required="false" label="ciudad" readonly="true"
+				rendered="#{ManejadorAdministrarSolicitudEntidad.pais == 'Colombia'}" />
+		            			              
+			<h:outputLabel for="pagweb" value="Página Web: " />
+ 			<p:inputText id="pagweb" value="#{ManejadorAdministrarSolicitudEntidad.pagweb}" required="false" label="pagweb"  readonly="#{!ManejadorAdministrarSolicitudEntidad.verEditarEntidades}"/>  
+           	        
+	    </h:panelGrid>
+    </p:panel>
+    
+    <p:panel id="panel2" header="Tipo de Entidad" toggleable="false" toggleSpeed="500" widgetVar="panel2">    
+   		<h:panelGrid columns="2">    			            
+        	<h:outputText value="Naturaleza:"/>
+			<p:inputText id="naturaleza"
+				value="#{ManejadorAdministrarSolicitudEntidad.naturaleza}"
+				required="false" label="naturaleza" readonly="true"/>
+						
+			<h:outputText value="Sector:"/>
+			<p:inputText id="sector"
+				value="#{ManejadorAdministrarSolicitudEntidad.sector}"
+				required="false" label="sector" readonly="true"/>
+
+			<h:outputText value="Nivel Territorial:" rendered="#{ManejadorAdministrarSolicitudEntidad.naturaleza == 'Pública'}"/>
+			<p:inputText id="nvlterritorial"
+				value="#{ManejadorAdministrarSolicitudEntidad.nvlterritorial}"
+				required="false" label="nvlterritorial" readonly="true"
+				rendered="#{ManejadorAdministrarSolicitudEntidad.naturaleza == 'Pública'}"/>					
+        </h:panelGrid>
+    </p:panel>            
+    
+    <p:panel id="panel4" header="Datos del Registro" toggleable="false" toggleSpeed="500" widgetVar="panel4">
+        <h:panelGrid columns="2">    
+        	<h:outputText id="observaciones" value="Observaciones" />
+			<p:inputTextarea rows="5" cols="40" autoResize="false"
+				value="#{ManejadorAdministrarSolicitudEntidad.observaciones}"
+				readonly="true" />
+		</h:panelGrid>
+    </p:panel>
+    
+    <p:panel id="panel5" header="Aprobación del Registro" toggleable="false" toggleSpeed="500" widgetVar="panel4">
+        <h:panelGrid columns="2" align="center">
+			<p:selectOneRadio id="aprobar_rechazar" value="#{ManejadorAdministrarSolicitudEntidad.aprobar_rechazar}" 
+							  required="#{ManejadorAdministrarSolicitudEntidad.banderaVolver}" requiredMessage="Tiene que seleccionar un valor entre Aprobar y Rechazar">
+				<f:selectItem id="aprobaR" itemLabel="Aprobar" itemValue="aprobar" />
+				<f:selectItem id="rechazaR" itemLabel="Rechazar" itemValue="rechazar"/>
+				<p:ajax update="motivoRechazo, msg_upd"/>
+			</p:selectOneRadio>									
+		</h:panelGrid>
+		
+		<h:panelGrid columns="2" id="motivoRechazo">
+			<h:outputText id="obsRechazoText" value="Motivo del rechazo: " rendered="#{ManejadorAdministrarSolicitudEntidad.aprobar_rechazar == 'rechazar'}"/>
+			<p:inputTextarea rows="5" cols="40" counter="counter" rendered="#{ManejadorAdministrarSolicitudEntidad.aprobar_rechazar == 'rechazar'}"
+							 maxlength="1000" counterTemplate="{0} caracteres restantes." id="obsRechazo"
+							 autoResize="false" value="#{ManejadorAdministrarSolicitudEntidad.obsRechazo}" />
+			<h:outputText value=""/>
+			<h:outputText id="counter"/>
+		</h:panelGrid>		
+		
+				
+    </p:panel>  		
+	 
+	 
+	<h:panelGrid columns="2" align="center">
+		<p:commandButton value="Guardar" id="guardar"
+			actionListener="#{ManejadorAdministrarSolicitudEntidad.guardar}"
+			styleClass="ui-priority-primary"
+			disabled="#{ManejadorAdministrarSolicitudEntidad.aprobar_rechazar == 'guardado'}"
+			update="msg_upd, guardar"/>
+			
+		<p:commandButton value="Volver" id="volver"
+			action="#{ManejadorAdministrarSolicitudEntidad.volver}"
+			styleClass="ui-priority-primary"
+			immediate="true"/>
+  	</h:panelGrid>
+  	
+  	
+</h:form> 
+
+</ui:define>
+
+</ui:composition>

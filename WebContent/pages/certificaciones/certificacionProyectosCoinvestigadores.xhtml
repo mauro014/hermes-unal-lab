@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formEDS" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Certificaciones Estudiantes/Coinvestigadores</t:div>
+
+			<br />
+
+			<p:panel id="panelRegistro" header="Información del Investigador">
+
+				<h:panelGrid columns="3" cellpadding="10">
+
+					<h:outputText value="Tipo de documento: " style="font-weight: bold" />
+					<h:outputText id="tipoDocInvesti"
+						value="#{ManejadorCertificaciones.ii.id.tipoDocumento}" />
+					<p:message for="tipoDocInvesti" />
+
+					<h:outputText value="Documento de identidad: "
+						style="font-weight: bold" />
+					<h:outputText id="docIdentidadInv"
+						value="#{ManejadorCertificaciones.ii.id.documento}" />
+					<p:message for="docIdentidadInv" />
+
+					<h:outputText value="Nombre completo: " style="font-weight: bold" />
+					<h:outputText id="primerNombreInvestigador"
+						value="#{ManejadorCertificaciones.nombreCompletoPersona}" />
+					<p:message for="primerNombreInvestigador" />
+
+					<h:outputText value="Correo electrónico: "
+						style="font-weight: bold" />
+					<h:outputText id="email"
+						value="#{ManejadorCertificaciones.ii.email}" />
+					<p:message for="email" />
+
+					<h:outputText value="Sede: " style="font-weight: bold" />
+					<h:outputText id="sede"
+						value="#{ManejadorCertificaciones.ii.dependencia.sede.nombre}" />
+					<p:message for="sede" />
+
+					<h:outputText value="Facultad: " style="font-weight: bold" />
+					<h:outputText id="facultad"
+						value="#{ManejadorCertificaciones.ii.dependencia.facultad.nombre}" />
+					<p:message for="facultad" />
+
+					<h:outputText value="Dependencia: " style="font-weight: bold" />
+					<h:outputText id="dep"
+						value="#{ManejadorCertificaciones.ii.dependencia.nombre}" />
+					<p:message for="dep" />
+
+				</h:panelGrid>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="panelCertificaciones" header="Certificaciones">
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+					align="center">
+					<h:outputText
+						value="Por favor ingrese los datos del estudiante/coinvestigador del que desea generar el reporte de participación en proyectos, grupos o semilleros de investigación: " />
+				</h:panelGrid>
+
+				<br />
+
+				<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+					align="center">
+
+					<h:outputText value="Tipo de documento" />
+					<p:selectOneMenu
+						value="#{ManejadorCertificaciones.tipoDocumento.id}">
+						<f:selectItems
+							value="#{ManejadorCertificaciones.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Número de documento" />
+					<p:inputText id="Numero"
+						value="#{ManejadorCertificaciones.documento}" size="20">
+					</p:inputText>
+
+					<h:outputText />
+					<p:commandButton value="Continuar" icon="ui-icon-search"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						action="#{ManejadorCertificaciones.buscarPersona}"
+						update="panelCertificadoParticipacion, panelCertificadoParticipacionNoVin, panelCertificadoParticipacionSem, panelCertificadoParticipacionGru" />
+
+				</h:panelGrid>
+
+				<br />
+
+				<p:outputPanel id="panelCertificadoParticipacion"
+					rendered="#{ManejadorCertificaciones.mostrarCertParticipacionCoinvestigador}">
+
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los proyectos en estado finalizado, por favor seleccione el proyecto del cual desea generar el certificado de participación: " />
+
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaProyectosFinalizadosCoinvestigador}"
+						id="tablaProyectosFinalizados" var="proy" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{proy.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{proy.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionCoinvestigadores}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{proy}"
+										target="#{ManejadorCertificaciones.proyectoSeleccionado}" />
+								</h:commandLink>
+
+							</center>
+
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:outputPanel>
+				<br />
+				<p:outputPanel id="panelCertificadoParticipacionNoVin"
+					rendered="#{ManejadorCertificaciones.mostrarCertParticipacionCoinvestigadorNiVin}">
+
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los proyectos en estado finalizado en los que el estudiante/coinvestigador estuvo vinculado, por favor seleccione el proyecto del cual desea generar el certificado de participación: " />
+
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaProyectosFinalizadosNoVinculadoActualmente}"
+						id="tablaProyectosFinalizadosNoVin" var="proy" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{proy.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{proy.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionCoinvestigadoresNoVin}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{proy}"
+										target="#{ManejadorCertificaciones.proyectoSeleccionado}" />
+								</h:commandLink>
+
+							</center>
+
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:outputPanel>
+				<br />
+				<p:outputPanel id="panelCertificadoParticipacionSem"
+					rendered="#{ManejadorCertificaciones.mostrarCertParticipacionCoinvestigadorSenm}">
+
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los semilleros que aparecen activos en los cuales el estudiante/coinvestigador se encuentra vinculado, por favor seleccione el semillero del cual desea generar el certificado de participación: " />
+
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaSemillerosActivos}"
+						id="tablaSemillerosParticipante" var="sem" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{sem.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{sem.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionSemillero}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{sem}"
+										target="#{ManejadorCertificaciones.semilleroSeleccionado}" />
+								</h:commandLink>
+
+							</center>
+
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:outputPanel>
+				<br />
+				<p:outputPanel id="panelCertificadoParticipacionGru"
+					rendered="#{ManejadorCertificaciones.mostrarCertParticipacionCoinvestigadorGru}">
+
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los grupos de investigación que aparecen activos en los cuales el estudiante/coinvestigador se encuentra vinculado, por favor seleccione el grupo del cual desea generar el certificado de participación: " />
+
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaGruposActivos}"
+						id="tablaGruposParticipante" var="gru" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{gru.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{gru.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionGrupo}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{gru}"
+										target="#{ManejadorCertificaciones.grupoSeleccionado}" />
+								</h:commandLink>
+
+							</center>
+
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:outputPanel>
+				<br />
+				<p:outputPanel id="panelCertificadoParticipacionDes"
+					rendered="#{ManejadorCertificaciones.mostrarCertParticipacionCoinvestigadorGru}">
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						align="center">
+						<h:outputText
+							value="A continuación se presentan los grupos en estado Activo en los que estuvo vinculado el investigador por favor seleccione el grupo del cual desea generar el certificado de participación: " />
+					</h:panelGrid>
+					<br />
+					<p:dataTable
+						value="#{ManejadorCertificaciones.listaGruposActivosNoVinculados}"
+						id="tablaGruposNoVinculados" var="gru" cellpadding="1"
+						cellspacing="15" align="center">
+						<p:column headerText="Código">
+							<h:outputText value="#{gru.id}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Nombre">
+							<h:outputText value="#{gru.nombre}"></h:outputText>
+						</p:column>
+
+						<p:column headerText="Generar certificado">
+							<center>
+								<h:commandLink value="Generar certificado" target="_blank"
+									action="#{ManejadorCertificaciones.generarCertificadoParticipacionGrupoNoVinc}"
+									styleClass="ui-icon ui-icon-circle-triangle-e"
+									style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+									<f:setPropertyActionListener value="#{gru}"
+										target="#{ManejadorCertificaciones.grupoSeleccionado}" />
+								</h:commandLink>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+			</p:panel>
+
+			<br />
+
+			<center>
+				<h:panelGrid columns="1" id="panelSalir">
+
+					<p:commandButton value="Ir al inicio" id="botonInicio"
+						action="#{ManejadorCertificaciones.irInicio}"
+						styleClass="ui-priority-primary" />
+
+				</h:panelGrid>
+			</center>
+
+			<br />
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<br />
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

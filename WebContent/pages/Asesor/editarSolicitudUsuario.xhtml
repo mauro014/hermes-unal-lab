@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+
+			<!-- -->
+
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitud Creación de Usuarios Hermes</t:div>
+
+			<br />
+			<p:panel header="Información del usuario" align="center"
+				id="solicUsuario">
+
+				<p:messages id="msgs" />
+
+				<p:panelGrid columns="2"
+					styleClass="estilo-panelgrid-sinbordes" id="panelSolu">
+
+					
+					<h:outputLabel value=" Tipo Documento:" for="usuarioTipoDocumento"
+						rendered="true"  />
+					<p:inputText id="usuarioTipoDocumento" maxlength="256" size="50"
+						required="true" rendered="true" 
+						requiredMessage="Indica el tipo de documento del usuario."
+						value="#{ManejadorEditarSolicitudUsuario.tdoc}">
+					</p:inputText>
+					
+					<h:outputLabel value="Documento:" for="usuarioDocumento"
+						rendered="true"  />
+					<p:inputText id="usuarioDocumento" maxlength="256" size="50"
+						required="true" rendered="true" 
+						requiredMessage="Indica el número de documento del usuario."
+						value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.usuarioDocumento}">
+					</p:inputText>
+					
+
+						<p:outputLabel value="Primer nombre:"
+							for="primerNombreInvestigador" />
+						<p:inputText id="primerNombreInvestigador" required="true"
+							requiredMessage="Indica el primer nombre del usuario."
+							value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.nombre1}"
+							size="38" >
+
+						</p:inputText>
+
+						<p:outputLabel value="Segundo nombre:" for="segundoNombreInv" />
+						<p:inputText id="segundoNombreInv" 
+							value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.nombre2}"
+							size="38">
+						</p:inputText>
+
+						<p:outputLabel value="Primer apellido:"
+							for="primerApellidoInvestigador" />
+						<p:inputText id="primerApellidoInvestigador" required="true"
+							requiredMessage="Indica el primer apellido del usuario."
+							value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.apellido1}"
+							size="38" >
+						</p:inputText>
+
+						<p:outputLabel value="Segundo Apellido:" for="segundoApellidoInv" />
+						<p:inputText id="segundoApellidoInv" 
+							value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.apellido2}"
+							size="38">
+						</p:inputText>
+
+						<p:outputLabel value="Correo electrónico:" for="correo" />
+						<p:inputText id="correo" required="true"
+							requiredMessage="Indica el correo del usuario."
+							value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.email}"
+							size="38" >
+						</p:inputText>
+
+						<h:outputLabel value="Dependencia:" for="dependencia"
+							rendered="true"  />
+						<p:selectOneMenu filter="true" filterMatchMode="contains"
+						value="#{ManejadorEditarSolicitudUsuario.depId}" required="true"
+						requiredMessage="La dependencia es obligatoria"
+						id="dependenciasUN1" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorEditarSolicitudUsuario.dependenciaItem}" />
+					</p:selectOneMenu>
+
+
+					</p:panelGrid>
+
+			</p:panel>
+
+			<br />
+			<p:panel id="panRol" header="Roles solicitados en el Sistema">
+
+				<h:panelGroup id="roles">
+
+					<h:panelGrid columns="1">
+						<h:selectManyCheckbox id="rolesList" layout="pageDirection"
+							value="#{ManejadorEditarSolicitudUsuario.rolesSeleccionadosArray}"
+							styleClass="labels_proyecto2">
+							<f:selectItems 
+								value="#{ManejadorEditarSolicitudUsuario.rolesItemArray}" />
+						</h:selectManyCheckbox>
+					</h:panelGrid>
+
+				</h:panelGroup>
+
+			</p:panel>
+
+			<br />
+			<p:panel id="observ" header="Justificación de la Solicitud">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelOb">
+					<h:outputText
+						value="Justificación de la Solicitud - Comentarios Adicionales:" />
+					<p:inputTextarea rows="5" cols="80" maxlength="200" 
+						counterTemplate="{0} characters remaining." autoResize="false"
+						value="#{ManejadorEditarSolicitudUsuario.solicitudUsuarioEdit.observaciones}" />
+				</p:panelGrid>
+
+			</p:panel>
+		
+			<br />
+			<center><p:commandButton value="Guardar Solicitud"
+				id="guardar" title="Al dar clic en Guardar Solicitud, puede editar la solicitud en el menú Consultar Solicitudes Usuario" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+				actionListener="#{ManejadorEditarSolicitudUsuario.guardarSolicitud}"
+				icon="ui-icon-disk" ajax="false"/> 
+				<p:commandButton
+				value="Enviar Solicitud Para Revisión"
+				id="guardarEnviar" title="Al dar clic en Enviar Solicitud para Revisión, la solicitud no será editable y será enviada para evaluación" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+				actionListener="#{ManejadorEditarSolicitudUsuario.guardarEnviarSolicitud}"
+				icon="ui-icon-check" ajax="false" /></center>
+
+
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		
+			<br />
+			<p:messages id="msgs" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

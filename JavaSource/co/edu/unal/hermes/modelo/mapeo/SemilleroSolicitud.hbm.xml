@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="SemilleroSolicitud" table="HER_SEMILLERO_SOLICITUD">
+		<id name="id" column="SSO_ID" type="integer">
+			<generator class="sequence">
+				<param name="sequence">SEQ_SEMILLERO_SOLICITUD</param>
+			</generator>
+		</id>
+		<many-to-one name="semillero" class="Semillero"
+			column="SEM_ID" not-null="true" lazy="false" />
+		<property name="fechaSolicitud" column="SSO_FECHASOLICITUD"
+			type="date" />
+		<many-to-one name="tipo" class="SemilleroSolicitudTipo"
+			not-null="true" lazy="false">
+			<column name="SST_ID" />
+		</many-to-one>
+		<property name="fechaRespuestaUAB"
+			column="SSO_FECHARESPUESTA_UAB" type="date" />
+		<property name="idResponsableUAB" column="INV_ID_UAB" />
+		<property name="tipoDocResponsableUAB" column="TDO_ID_UAB" />
+		<property name="comentariosUAB" column="SSO_COMENTARIOS_UAB" />
+		<many-to-one name="respuestaUAB"
+			class="SemilleroSolicitudRespuesta" not-null="true" lazy="false">
+			<column name="SSR_ID_UAB" />
+		</many-to-one>
+		<set name="archivos" table="HER_SEMILLERO_SOL_ARCHIVO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SSO_ID" />
+			<one-to-many class="SemilleroSolicitudArchivo" />
+		</set>
+		<set name="revisionRequisitos" table="HER_SEMILLERO_REV_REQUISITO"
+			inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="SSO_ID" />
+			<one-to-many class="SemilleroRevisionRequisito" />
+		</set>
+		<property name="fechaRespuestaVifDi"
+			column="SSO_FECHARESPUESTA_VIF_DI" type="date" />
+		<property name="comentariosVifDi"
+			column="SSO_COMENTARIOS_VIF_DI" />
+		<many-to-one name="respuestaVifDi"
+			class="SemilleroSolicitudRespuesta" not-null="true" lazy="false">
+			<column name="SSR_ID_VIF_DI" />
+		</many-to-one>
+		<property name="idResponsableVifDi" column="INV_ID_VIF_DI" />
+		<property name="tipoDocResponsableVifDi"
+			column="TDO_ID_VIF_DI" />
+		<property name="justificacion" column="SSO_JUSTIFICACION" />
+		<property name="detalle" column="SSO_DETALLE" />
+		<many-to-one name="respuestaCoordinador"
+			class="SemilleroSolicitudRespuesta" not-null="true" lazy="false">
+			<column name="SSR_ID_COORDINADOR" />
+		</many-to-one>
+		<property name="fechaRespuestaCoordinador"
+			column="SSO_FECHARESPUESTA_COORD" type="date" />
+		<property name="comentariosCoordinador"
+			column="SSO_COMENTARIOS_COORD" />
+		<many-to-one name="coordinador"
+			class="Persona" lazy="false">
+			<column name = "INV_ID_COORD" />
+			<column name = "TDO_ID_COORD" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

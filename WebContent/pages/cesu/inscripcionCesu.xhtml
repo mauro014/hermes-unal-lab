@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formEDS" styleClass="estilo-panelgrid-sinbordes"
+			enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Inscripción CESU</t:div>
+
+			<p:panel id="panelEnlace"
+				header="Proceso selección representante de la UN ante el CESU ">
+
+				<br />
+
+				<t:div styleClass="informacion-subtexto">
+					<h:outputLink
+						value="http://www.investigacion.unal.edu.co/index.php/boletininvestigaun/nota/3853-20150122-cesu"
+						target="_blank">
+						<h:outputText
+							value="[+] Proceso selección representante de la UN ante el CESU" />
+					</h:outputLink>
+
+				</t:div>
+
+				<t:div styleClass="informacion-subtexto">
+					<h:outputLink
+						value="http://www.investigacion.unal.edu.co/images/stories/boletin/20150122-cesu.pdf"
+						target="_blank">
+						<h:outputText value="[+] Ir al comunicado" />
+					</h:outputLink>
+				</t:div>
+
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="panelRegistro" header="Información del profesor"
+				rendered="#{ManejadorInscripcionCesu.mostrarPanel}">
+
+				<h:panelGrid columns="3" cellpadding="10">
+
+					<h:outputText value="Tipo de documento: " style="font-weight: bold" />
+					<h:outputText id="tipoDocInvesti"
+						value="#{ManejadorInscripcionCesu.ii.id.tipoDocumento}" />
+					<p:message for="tipoDocInvesti" />
+
+					<h:outputText value="Documento de identidad: "
+						style="font-weight: bold" />
+					<h:outputText id="docIdentidadInv"
+						value="#{ManejadorInscripcionCesu.ii.id.documento}" />
+					<p:message for="docIdentidadInv" />
+
+					<h:outputText value="Nombre completo: " style="font-weight: bold" />
+					<h:outputText id="primerNombreInvestigador"
+						value="#{ManejadorInscripcionCesu.nombreCompletoPersona}" />
+					<p:message for="primerNombreInvestigador" />
+
+					<h:outputText value="Correo electrónico: "
+						style="font-weight: bold" />
+					<h:outputText id="email"
+						value="#{ManejadorInscripcionCesu.ii.email}" />
+					<p:message for="email" />
+
+					<h:outputText value="Sede: " style="font-weight: bold" />
+					<h:outputText id="sede"
+						value="#{ManejadorInscripcionCesu.ii.dependencia.sede.nombre}" />
+					<p:message for="sede" />
+
+					<h:outputText value="Facultad: " style="font-weight: bold" />
+					<h:outputText id="facultad"
+						value="#{ManejadorInscripcionCesu.ii.dependencia.facultad.nombre}" />
+					<p:message for="facultad" />
+
+					<h:outputText value="Dependencia: " style="font-weight: bold" />
+					<h:outputText id="dep"
+						value="#{ManejadorInscripcionCesu.ii.dependencia.nombre}" />
+					<p:message for="dep" />
+
+				</h:panelGrid>
+
+			</p:panel>
+
+			<br />
+
+			<p:panel id="panelArchivos" header="Hoja de vida del profesor"
+				rendered="#{ManejadorInscripcionCesu.mostrarPanel}">
+
+				<p:fileUpload
+					fileUploadListener="#{ManejadorInscripcionCesu.obtenerArchivo}"
+					mode="advanced" auto="true" multiple="true" sizeLimit="3000000"
+					label="Seleccionar archivo" update="panelArchivos, pgNomAr" />
+
+				<h:panelGrid columns="2" cellpadding="10" id="pgNomAr">
+					<h:outputText value="Nombre del archivo seleccionado: "
+						style="font-weight: bold" />
+					<h:outputText id="nombreArchivo"
+						value="#{ManejadorInscripcionCesu.nombreArchivoHojaVida}" />
+				</h:panelGrid>
+
+			</p:panel>
+
+			<center>
+				<h:panelGrid columns="1" id="panelGuardar"
+					rendered="#{ManejadorInscripcionCesu.mostrarPanel}">
+
+					<p:commandButton value="Inscribirse" id="botonContinuar"
+						update="@form" rendered="#{ManejadorInscripcionCesu.mostrarPanel}"
+						action="#{ManejadorInscripcionCesu.guardarGeneral}"
+						styleClass="ui-priority-primary" />
+
+				</h:panelGrid>
+
+			</center>
+
+			<center>
+				<h:panelGrid columns="1" id="panelSalir"
+					rendered="#{!ManejadorInscripcionCesu.mostrarPanel}">
+
+					<p:commandButton value="Ir al inicio" id="botonInicio"
+						action="#{ManejadorInscripcionCesu.irInicio}"
+						styleClass="ui-priority-primary" />
+
+				</h:panelGrid>
+
+			</center>
+
+
+			<br />
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<br />
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+
+			<p:panel id="panelCreacionConvocatoria" header="Convocatoria">
+				<p:outputPanel id="opGen">
+					<h:panelGrid columns="3" align="center" cellpadding="5"
+						cellspacing="5">
+
+						<h:outputText value="Titulo: " styleClass="labels_proyecto2" />
+						<p:inputTextarea rows="5" cols="50" id="tituloConv"
+							value="#{manejadorConvocatoriaPadre.convocatoriaPadreActual.titulo}"
+							required="true"
+							requiredMessage="El título de la convocatoria es obligatorio"
+							validatorMessage="El título debe ser de máximo 500 caracteres"
+							maxlength="500" counter="counterTitulo"
+							counterTemplate="{0} caracteres restantes">
+							<f:validateLength minimum="2" maximum="500" />
+						</p:inputTextarea>
+						<p:message for="tituloConv" />
+
+						<h:outputText />
+						<h:outputText id="counterTitulo" />
+						<h:outputText />
+
+						<h:outputText value="Año: " styleClass="labels_proyecto2" />
+						<p:inputText id="annio"
+							value="#{manejadorConvocatoriaPadre.convocatoriaPadreActual.ano}"
+							required="true"
+							requiredMessage="El año de la convocatoria es obligatorio"
+							validatorMessage="El año de la convocatoria no es valido">
+							<f:validateRegex pattern="^\d+$" />
+						</p:inputText>
+						<p:message for="annio" />
+
+						<h:outputText value="Permanente: " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="per"
+							value="#{manejadorConvocatoriaPadre.convocatoriaPadreActual.esPermanente}">
+							<f:selectItem itemLabel="Si" itemValue="Y" />
+							<f:selectItem itemLabel="No" itemValue="N" />
+						</p:selectOneMenu>
+						<p:message for="per" />
+						
+						<h:outputText value="¿Mostrar propiedad intelectual?: " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="prIn"
+							value="#{manejadorConvocatoriaPadre.mostrarPropiedadIntelectual}">
+							<f:selectItem itemLabel="Si" itemValue="S" />
+							<f:selectItem itemLabel="No" itemValue="N" />
+						</p:selectOneMenu>
+						<p:message for="prIn" />
+						
+						<h:outputText value="Tipo de convocatoria: " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="tipoConv"
+							value="#{manejadorConvocatoriaPadre.convocatoriaPadreActual.tipoConvocatoria}">
+							<f:selectItems
+								value="#{manejadorConvocatoriaPadre.tipoConvocatoriaItem}" />
+						</p:selectOneMenu>
+						<p:message for="tipoConv" />
+
+						<h:outputText value="Categoria: " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="cate"
+							value="#{manejadorConvocatoriaPadre.convocatoriaPadreActual.categoria}">
+							<f:selectItems
+								value="#{manejadorConvocatoriaPadre.listaCategoriaConvocatoria}" />
+						</p:selectOneMenu>
+						<p:message for="cate" />
+
+						<h:outputText value="Estado: " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="est"
+							value="#{manejadorConvocatoriaPadre.estadoConvocatoria.id}">
+							<f:selectItems
+								value="#{manejadorConvocatoriaPadre.listaEstadosConvocatoria}"
+								var="estadosConvocatoria"
+								itemLabel="#{estadosConvocatoria.nombre}"
+								itemValue="#{estadosConvocatoria.id}" />
+						</p:selectOneMenu>
+						<p:message for="est" />
+
+						<h:outputText value="Nivel: " styleClass="labels_proyecto2" />
+						<p:selectOneMenu id="nivelConvocatoria"
+							value="#{manejadorConvocatoriaPadre.nivelConvocatoria}"
+							styleClass="labels_proyecto2">
+							<f:selectItems
+								value="#{manejadorConvocatoriaPadre.listaNivelConvocatoria}" />
+							<p:ajax update="opNivel, nivel,facultad "
+								listener="#{manejadorConvocatoriaPadre.cambiarSedeConvocatoria}" />
+						</p:selectOneMenu>
+						<p:message for="nivelConvocatoria" />
+
+					</h:panelGrid>
+
+					<p:outputPanel id="opNivel">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							cellspacing="5" style="width: 234px" id="nivel"
+							rendered="#{manejadorConvocatoriaPadre.panelRender[1]}">
+							<h:outputText value="Sede: " styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="nivelSedeConvocatoria"
+								value="#{manejadorConvocatoriaPadre.nivelSedeConvocatoria}"
+								styleClass="labels_proyecto2">
+								<f:selectItems
+									value="#{manejadorConvocatoriaPadre.sedeConvocatoriaItem}" />
+								<p:ajax update="facultad "
+									listener="#{manejadorConvocatoriaPadre.cambiarFacConvocatoria}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							cellspacing="5" style="width: 234px" id="facultad"
+							rendered="#{manejadorConvocatoriaPadre.panelRender[2]}">
+							<h:outputText value="Facultad: " styleClass="labels_proyecto2" />
+							<p:selectOneMenu id="nivelFacConvocatoria"
+								value="#{manejadorConvocatoriaPadre.nivelFacConvocatoria}"
+								styleClass="labels_proyecto2">
+								<f:selectItems
+									value="#{manejadorConvocatoriaPadre.facConvocatoriaItem}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+				</p:outputPanel>
+
+				<br />
+				<center>
+					<h:panelGrid columns="1" cellpadding="3" align="center">
+						<p:commandButton action="#{manejadorConvocatoriaPadre.guardar}"
+							update="opGen" value="Guardar" />
+					</h:panelGrid>
+				</center>
+			</p:panel>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

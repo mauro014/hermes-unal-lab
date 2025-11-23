@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo.seguimiento">
+	<class name="SolicitudAdicionPresupuestal" table="HER_SOLICITUD_ADICION">
+		<id name="id" column="SAP_ID" type="long">
+			<generator class="sequence">
+    			<param name="sequence">SEQ_SOLICITUD_ADICION</param>
+   			</generator>
+		</id>
+		
+		<property name="valorAdicionSolicitud" column="SAP_VALOR" type="long"/>
+		
+		<many-to-one name="solicitud" class="Solicitud" column="SOL_ID" not-null="true" lazy="false"/>
+		<many-to-one name="financiacion" class="co.edu.unal.hermes.modelo.Financiacion" column="FIN_ID" not-null="true" lazy="false"/>
+		 
+        <set name="detalleAdicionPresupuesto" table="HER_DETALLE_ADICION"
+            inverse="true" cascade="all-delete-orphan" lazy="false">
+            <key column="SAP_ID" />
+            <one-to-many class="DetalleAdicionPresupuesto" />
+        </set>
+        
+	</class>
+</hibernate-mapping>

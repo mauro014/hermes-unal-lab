@@ -1,0 +1,2774 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Propiedad intelectual</t:div>
+			<p:panel
+				rendered="#{manejadorPropiedadIntelectual.propiedad.id!=null}">
+				<h:outputText
+					style="font-size:16px; font-weight:bold; color: #646464;"
+					value="Código registro: "></h:outputText>
+				<h:outputText
+					style="font-size:18px; color: #646464;"
+					value="#{manejadorPropiedadIntelectual.propiedad.id}"></h:outputText>
+				<br />
+			</p:panel>
+			<t:div rendered="#{manejadorPropiedadIntelectual.propiedad.id!=null}"></t:div>
+			<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+			<p:panel id="regPropiedad">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPropiedad" style="width:100%">
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTipo" icon="ui-icon-info" />
+							<p:tooltip for="infoTipo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione el tipo de propiedad intelectual que desea registrar. 
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:30%;">
+							<h:outputText value="Tipo de propiedad:" />
+						</p:column>
+						<p:column style="width:49%;">
+							<p:selectOneMenu
+								value="#{manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id}"
+								style="width: 300px;" id="tipo"
+								disabled="#{manejadorPropiedadIntelectual.propiedad.id!=null}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.tiposPropiedadIntelectualItem}" />
+								<p:ajax
+									listener="#{manejadorPropiedadIntelectual.subTiposPropiedadIntelectual}"
+									update="@form" process="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column style="width:20%; text-align:center;"
+							rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+							<h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=135"
+								target="_blank"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+								<h:outputText
+									value="Instructivo para registro de propiedad intelectual" />
+							</h:outputLink>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:panel
+								rendered="#{!empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id != 0}">
+								<t:div
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}"
+									style="color:#464646; text-align:justify;">
+									La modalidad de  <strong style="color: #FF0000;">PROPIEDAD
+										INDUSTRIAL</strong> se refiere a la protección y conjunto de derechos sobre las creaciones y bienes inmateriales que tienen 
+										aplicación en la industria, entendiéndose por industria cualquier actividad productiva, comercial o de servicios.
+									<br />
+									<br />
+									Antes de diligenciar el formulario, tenga en cuenta que está diseñado para productos y procedimientos protegidos a través de la 
+									propiedad intelectual, es decir, las <strong
+										style="color: #FF0000;">PATENTES DE INVENCIÓN</strong> (procedimientos y productos), 
+									<strong style="color: #FF0000;">PATENTES DE MODELO DE
+										UTILIDAD</strong>  (productos),<strong style="color: #FF0000;">
+										DISEÑOS INDUSTRIALES y ESQUEMAS DE TRAZADO</strong>.
+								</t:div>
+								<t:div
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor}"
+									style="color:#464646; text-align:justify;">
+									La modalidad de <strong style="color: #FF0000;">DERECHOS
+										DE AUTOR</strong> está referida al derecho que se ejerce sobre las creaciones científicas, literarias, artísticas, técnicas, 
+										científico-literarias, programas de computador y bases de datos, siempre y cuando se plasmen mediante un lenguaje o una 
+										representación física, cualquiera sea el modo o forma de expresión.
+									<br />
+									<br />
+									Antes de diligenciar el formulario tenga en cuenta que está diseñado para obras protegidas a través del derecho de autor, es decir, 
+									<strong style="color: #FF0000;">las obras literarias,
+										las obras artísticas o musicales, obras audiovisuales,
+										fonogramas y software </strong>.
+								</t:div>
+								<t:div
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosObtentor}"
+									style="color:#464646; text-align:justify;">
+									La modalidad de <strong style="color: #FF0000;">DERECHOS
+										DE OBTENTOR</strong> se encuentra en construcción para su trámite a través del Sistema Hermes.
+									<br />
+								</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoCat" icon="ui-icon-info" />
+							<p:tooltip for="infoCat" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la categoría específica de propiedad intelectual que desea registrar, <br />
+								       	para desplegar el formulario correspondiente. (En el caso de propiedad industrial, <br />
+								       	la dependencia responsable del trámite podrá cambiar de categoría si es necesario).
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Categoría de la propiedad:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorPropiedadIntelectual.propiedad.subTipo.id}"
+								style="width: 300px;" id="categoria"
+								disabled="#{manejadorPropiedadIntelectual.propiedad.id!=null}"
+								panelStyle="width: 280px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.categoriasPropiedadIntelectualItem}" />
+								<p:ajax update="@form" process="@form"
+									listener="#{manejadorPropiedadIntelectual.cargarTiposPersona}"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column style="text-align:center;">
+							<p:commandLink id="ajax" onstart="defPropiedadIndustrial.show()"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+								<h:outputText value="Ver definiciones" />
+							</p:commandLink>
+							<p:commandLink id="ajax" onstart="defDerechosAutor.show()"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor}">
+								<h:outputText value="Ver definiciones" />
+							</p:commandLink>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDpnNivel" icon="ui-icon-info" />
+							<p:tooltip for="infoDpnNivel" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione el nivel de la dependencia responsable.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Nivel / sede solicitante:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="dpnNivel"
+								value="#{manejadorPropiedadIntelectual.propiedad.dependenciaSolicitante.sede.id}"
+								style="width:470px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 450px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItem itemLabel="Nivel nacional" itemValue="1" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.sedesItem}" />
+								<p:ajax
+									listener="#{manejadorPropiedadIntelectual.cargarDependencias}"
+									update="@form" process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDpn" icon="ui-icon-info" />
+							<p:tooltip for="infoDpn" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la dependencia solicitante.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Dependencia solicitante:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="dpn"
+								value="#{manejadorPropiedadIntelectual.propiedad.dependenciaSolicitante.id}"
+								style="width:470px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.dependenciasItem}" />
+								<p:ajax
+									listener="#{manejadorPropiedadIntelectual.consultarOpcionesAdicionales}"
+									update="@form" process="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.dependenciaSolicitante.esEditorial and manejadorPropiedadIntelectual.propiedad.esObraLiteraria}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoSolicitudIsbn" icon="ui-icon-info" />
+							<p:tooltip for="infoSolicitudIsbn" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Si selecciona la solicitud de un registro isbn, <br />
+								       	se precargará la información en común con la solicitud <br />
+								       	de protección de la propidad intelectual.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Solicitud de ISBN:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="solIsbn"
+								value="#{manejadorPropiedadIntelectual.propiedad.solicitudIsbn}"
+								style="width:470px"
+								rendered="#{!manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.solicitudesISBNItem}" />
+								<p:ajax
+									listener="#{manejadorPropiedadIntelectual.consultarSolicitudIsbn}"
+									update="@form" process="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+							
+							<h:outputText value="#{manejadorPropiedadIntelectual.propiedad.solicitudIsbn}" 
+								rendered="#{manejadorPropiedadIntelectual.esConsulta}"/>
+							
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma}">
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma}"
+						style="margin-botton:0px; padding-bottom:0px;">
+						<p:column colspan="4" style="font-weight:bold; text-align:center;">
+							<h:outputText value="OBRAS FIJADAS EN EL FONOGRAMA" />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esFonograma}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoNombreObra" icon="ui-icon-info" />
+							<p:tooltip for="infoNombreObra" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Ingrese el nombre de cada obra fijada en el fonograma y haga clic en el botón <br />
+								       	agregar.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Nombre de la obra:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;"
+								value="#{manejadorPropiedadIntelectual.obraFonograma}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esFonograma}">
+						<p:column colspan="4" style="text-align:center;">
+							<p:commandButton value="Agregar" update="@form"
+								actionListener="#{manejadorPropiedadIntelectual.agregarObraFonograma}"
+								process="@form" id="agregarObraFonograma" icon="ui-icon-plus" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma}">
+						<p:column colspan="4">
+							<p:dataTable id="obrasFonograma" var="obra" style="width:100%"
+								value="#{manejadorPropiedadIntelectual.propiedad.listaObrasFonograma}"
+								align="center" emptyMessage="No se han agregado obras">
+
+								<p:column headerText="Obra" style="width:95%;">
+									<h:outputText value="#{obra.nombreObra}" />
+								</p:column>
+
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorPropiedadIntelectual.eliminarObraFonograma}"
+										icon="ui-icon-trash" title="Eliminar obra">
+										<f:setPropertyActionListener value="#{obra}"
+											target="#{manejadorPropiedadIntelectual.obraFonogramaEliminar}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column colspan="4" style="font-weight:bold; text-align:center;">
+							<h:outputText value="AUTORES"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor}" />
+							<h:outputText value="INVENTORES / DISEÑADORES"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}" />
+							<h:outputText value="OBTENTORES"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosObtentor}" />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta 
+									and not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id 
+									and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 
+									and !manejadorPropiedadIntelectual.propiedad.esMarca
+									and false}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTipoPer" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoPer" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el tipo de participación de la persona con la propiedad <br />
+								       	intelectual.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo de participación:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu style="width:100%;" id="tipoPersonal"
+								value="#{manejadorPropiedadIntelectual.tipoPersona}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.tiposPersonaItem}" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoCalidadPer" icon="ui-icon-info" />
+							<p:tooltip for="infoCalidadPer" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el tipo de vinculación de la persona con la Universidad Nacional <br />
+								       	(Profesor(a), Estudiante, Administrativo(a) o Exteno).  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Vinculación:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu style="width:100%;" id="calidadPersonal"
+								value="#{manejadorPropiedadIntelectual.calidad}">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.tiposVinculacionItem}" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTipoDoc" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoDoc" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el tipo de documento de identificación <br /> 
+								       	de la persona.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo de documento:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu style="width:100%;" id="tipoDocumentoP"
+								value="#{manejadorPropiedadIntelectual.tipoDocumento}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaTiposDocItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column>
+							<p:commandButton id="infoDoc" icon="ui-icon-info" />
+							<p:tooltip for="infoDoc" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique número del documento de identificación <br /> 
+								       	de la persona.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Número de documento:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;" id="documento"
+								value="#{manejadorPropiedadIntelectual.documento}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.calidad =='4'}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoEntidadPersona" icon="ui-icon-info" />
+							<p:tooltip for="infoEntidadPersona" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique la entidad a la que pertenece <br /> 
+								       	la persona externa.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Entidad externa:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="entidadPersonaExterna"
+								value="#{manejadorPropiedadIntelectual.entidadPersonaExterna}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItem itemLabel="SIN ENTIDAD" itemValue="0" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.entidadesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and (manejadorPropiedadIntelectual.tipoPersona =='9' or manejadorPropiedadIntelectual.tipoPersona =='10')}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoAutorObra" icon="ui-icon-info" />
+							<p:tooltip for="infoAutorObra" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione la obra fijada en el fonograma para <br /> 
+								       	el autor que está agregando.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Obra fijada:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="obraFijadaPersonaPersona"
+								value="#{manejadorPropiedadIntelectual.obraFijada}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.obrasFijadasItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoPaisParticipante" icon="ui-icon-info" />
+							<p:tooltip for="infoPaisParticipante" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione el país de residencia de la persona.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="País:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="paisPersona"
+								value="#{manejadorPropiedadIntelectual.paisPersona}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{manejadorPropiedadIntelectual.paisesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoCiudadParticipante" icon="ui-icon-info" />
+							<p:tooltip for="infoCiudadParticipante"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Ingrese la ciudad de la persona.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Ciudad:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="ciudadPersona"
+								value="#{manejadorPropiedadIntelectual.ciudadPersona}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{manejadorPropiedadIntelectual.ciudadItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.tipoPersona =='13' }">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoWebSite" icon="ui-icon-info" />
+							<p:tooltip for="infoWebSite" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Sitio web del productor audiovisual.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Sitio web:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;" id="web"
+								value="#{manejadorPropiedadIntelectual.sitioWeb}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column colspan="4" style="text-align:center;">
+							<p:commandButton value="Agregar" update="@form"
+								actionListener="#{manejadorPropiedadIntelectual.agregarPersonaPropiedad}"
+								process="@form" id="agregar" icon="ui-icon-plus" />
+							<p:commandButton
+								rendered="#{manejadorPropiedadIntelectual.datosExterno}"
+								value="Ingresar datos" update="@form"
+								oncomplete="dialogPersonaNueva.show();" />
+						</p:column>
+					</p:row>
+					<p:row id="personalPropiedad"
+						rendered="#{not empty manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id and manejadorPropiedadIntelectual.propiedad.subTipo.tipo.id!=0 and !manejadorPropiedadIntelectual.propiedad.esMarca}">
+						<p:column colspan="4">
+							<p:dataTable var="persona" style="width:100%"
+								value="#{manejadorPropiedadIntelectual.propiedad.listaPersonas}"
+								id="tabla-personal" emptyMessage="No se han agregado personas">
+								<p:column headerText="Documento" style="width:15%">
+									<h:outputText value="#{persona.persona.id.tipoDocumento} - " />
+									<h:outputText value="#{persona.persona.id.documento}" />
+								</p:column>
+								<p:column headerText="Nombres" style="width:45%">
+									<h:outputText
+										value="#{persona.persona.nombreCompletoMinusculas}" />
+									<t:div rendered="#{persona.tipoPersona.esAutorObraFijada}">
+										<h:outputText
+											value="Obra: #{persona.obraFijadaFonograma.nombreObra}" />
+									</t:div>
+								</p:column>
+								<p:column headerText="Rol" style="width:15%" rendered="false">
+									<h:outputText value="#{persona.tipoPersona.nombre}" />
+								</p:column>
+								<p:column headerText="Vinculación" style="width:15%">
+									<h:outputText value="Administrativo"
+										rendered="#{persona.esAdministrativo}" />
+									<h:outputText value="Docente" rendered="#{persona.esDocente}" />
+									<h:outputText value="Estudiante"
+										rendered="#{persona.esEstudiante}" />
+									<h:outputText value="Externo" rendered="#{persona.esExterno}" />
+								</p:column>
+								<p:column headerText="Dependencia/Entidad" style="width:20%">
+									<h:outputText value="#{persona.persona.dependencia.nombre}"
+										rendered="#{!persona.esExterno}" />
+									<h:outputText value="#{persona.entidad.descripcion}"
+										rendered="#{persona.esExterno}" />
+								</p:column>
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorPropiedadIntelectual.eliminarPersonaPropiedad}"
+										icon="ui-icon-trash" title="Eliminar Entidad">
+										<f:setPropertyActionListener value="#{persona}"
+											target="#{manejadorPropiedadIntelectual.personaEliminar}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4" style="font-weight:bold; text-align:center;">
+							<h:outputText value="PROYECTOS RELACIONADOS" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoNat" icon="ui-icon-info" />
+							<p:tooltip for="infoNat" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	En caso de que la propiedad intelectual esté relacionada con un proyecto. <br /> 
+								       	Seleccione la naturaleza del proyecto con el cual se relaciona la propiedad intelectual.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Naturaleza del proyecto (si aplica):" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="natPry"
+								value="#{manejadorPropiedadIntelectual.tipoProyecto}"
+								style="width:470px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 450px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.tiposNaturalezaProyecto}" />
+								<p:ajax
+									listener="#{manejadorPropiedadIntelectual.consultarProyectos}"
+									update="@form" onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.tipoProyecto == 1}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoPry" icon="ui-icon-info" />
+							<p:tooltip for="infoPry" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								        En caso de que aplique, seleccione el proyecto con el cual está relacionada la propiedad intelectual. <br />
+								        Tenga en cuenta que sólo se listarán proyectos en estado ACTIVO o FINALIZADO.<br />
+								        Además para que los proyectos sean desplegados debe agregar al menos un autor, inventor u obtentor <br />
+								        de acuerdo al tipo de propiedad intelectual.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Proyecto (si aplica): " />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="proyecto"
+								value="#{manejadorPropiedadIntelectual.proyectoAgregar}"
+								style="width:470px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.proyectosItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.tipoProyecto == 2}">
+						<p:column>
+							<p:commandButton id="infoPryExt" icon="ui-icon-info" />
+							<p:tooltip for="infoPryExt" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								        En caso de que aplique, ingrese el código con el cual se identifica <br />
+								        el proyecto de extensión.<br />
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Código del proyecto (si aplica): " />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:20%;" columns="10"
+								value="#{manejadorPropiedadIntelectual.codigoProyectoExtension}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.tipoProyecto == 2}">
+						<p:column>
+							<p:commandButton id="infoPryExtNombre" icon="ui-icon-info" />
+							<p:tooltip for="infoPryExtNombre" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								        En caso de que aplique, ingrese el nombre con el cual se identifica <br />
+								        el proyecto de extensión.<br />
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Nombre del proyecto (si aplica): " />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="2" cols="50"
+								style="width:100%; height:40px; overflow:auto;"
+								id="nombrePryExtension"
+								value="#{manejadorPropiedadIntelectual.nombreProyectoExtension}"
+								maxlength="3000">
+								<f:validateLength minimum="0" maximum="3000"
+									for="nombrePryExtension"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column colspan="4" style="text-align:center;">
+							<p:commandButton value="Agregar proyecto" icon="ui-icon-plus"
+								actionListener="#{manejadorPropiedadIntelectual.agregarProyecto}"
+								update="@form">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:dataTable id="proyectos" var="proyecto" style="width:100%"
+								value="#{manejadorPropiedadIntelectual.propiedad.listaProyectos}"
+								align="center" emptyMessage="No se han agregado proyectos"
+								sortBy="#{proyecto.proyecto.id}" sortOrder="ascending">
+
+								<p:column headerText="Id" style="width:5%;">
+									<h:outputText value="#{proyecto.proyecto.id}"
+										rendered="#{proyecto.tipoProyecto == 1}" />
+									<h:outputText value="#{proyecto.idProyectoExtension}"
+										rendered="#{proyecto.tipoProyecto == 2}" />
+								</p:column>
+
+								<p:column headerText="Tipo" style="width:10%;">
+									<h:outputText value="Investigación o Laboratorios"
+										rendered="#{proyecto.tipoProyecto == 1}" />
+									<h:outputText value="Extensión"
+										rendered="#{proyecto.tipoProyecto == 2}" />
+								</p:column>
+
+								<p:column headerText="Nombre" style="width:80%;">
+									<h:outputText value="#{proyecto.nombreProyecto}"
+										rendered="#{proyecto.tipoProyecto == 1}" />
+									<h:outputText value="#{proyecto.nombreProyectoExtension}"
+										rendered="#{proyecto.tipoProyecto == 2}" />
+								</p:column>
+
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorPropiedadIntelectual.eliminarProyecto}"
+										icon="ui-icon-trash" title="Eliminar proyecto">
+										<f:setPropertyActionListener value="#{proyecto}"
+											target="#{manejadorPropiedadIntelectual.proyectoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4" style="font-weight:bold; text-align:center;">
+							<h:outputText value="GRUPOS DE INVESTIGACIÓN RELACIONADOS" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoGrupo" icon="ui-icon-info" />
+							<p:tooltip for="infoGrupo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	En caso de que aplique, seleccione el grupo de investigación en el que <br />
+								       	se origina la propiedad intelectual o está relacionado. Para que los grupos <br />
+								       	sean desplegados debe agregar al autor o investigador principal en <br />
+								        el listado del personal relacionado.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Grupo de Investigación (si aplica):" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="grupo"
+								value="#{manejadorPropiedadIntelectual.grupoAgregar}"
+								style="width:470px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 450px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.gruposItem}" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column colspan="4" style="text-align:center;">
+							<p:commandButton value="Agregar grupo" icon="ui-icon-plus"
+								actionListener="#{manejadorPropiedadIntelectual.agregarGrupo}"
+								update="@form">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:dataTable id="grupos" var="grupo" style="width:100%"
+								value="#{manejadorPropiedadIntelectual.propiedad.listaGrupos}"
+								align="center" emptyMessage="No se han agregado grupos"
+								sortBy="#{grupo.id}" sortOrder="ascending">
+
+								<p:column headerText="Id" style="width:5%;">
+									<h:outputText value="#{grupo.id}" />
+								</p:column>
+
+								<p:column headerText="Nombre" style="width:90%;">
+									<h:outputText value="#{grupo.nombre}" />
+								</p:column>
+
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorPropiedadIntelectual.eliminarGrupo}"
+										icon="ui-icon-trash" title="Eliminar grupo">
+										<f:setPropertyActionListener value="#{grupo}"
+											target="#{manejadorPropiedadIntelectual.grupoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4" style="font-weight:bold; text-align:center;">
+							<h:outputText value="TITULARIDAD" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoCotitular" icon="ui-icon-info" />
+							<p:tooltip for="infoCotitular" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	En caso de que aplique, seleccione la(s) entidad(es) con las cuales <br />
+								       	se comparte titularidad (verifique la información de nit, dirección y teléfono) <br />
+								       	si es necesario ajustar por favor enviar correo electrónico con los datos al e-mail <br />
+								       	hermes@unal.edu.co.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Entidad:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="entidadExterna"
+								value="#{manejadorPropiedadIntelectual.entidadExterna}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.entidadesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoPorcentCotitular" icon="ui-icon-info" />
+							<p:tooltip for="infoPorcentCotitular" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indicar el porcentaje de participación de la entidad.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Porcentaje:" />
+						</p:column>
+						<p:column>
+							<p:inputText value="#{manejadorPropiedadIntelectual.porcentaje}"
+								style="width:50px;"
+								validatorMessage="Si no se ha definido el porcentaje de participación de la entidad ingrese 0.0. El valor no puede exceder el 100%"
+								converterMessage="El valor debe ser un número válido, en caso de ser necesario emplear punto (.) decimal. Por ejemplo: 12.5">
+								<f:validateDoubleRange minimum="0.0" maximum="100.0" />
+							</p:inputText>
+							<h:outputText value=" %" />
+						</p:column>
+					</p:row>	
+					<p:row rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+						<p:column colspan="4" style="text-align:center;">
+							<p:commandButton value="Agregar entidad" icon="ui-icon-plus"
+								actionListener="#{manejadorPropiedadIntelectual.agregarCotitular}"
+								update="@form">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:dataTable id="entidades" var="entidad" style="width:100%"
+								value="#{manejadorPropiedadIntelectual.propiedad.listaCotitulares}"
+								align="center" emptyMessage="No se han agregado cotitulares"
+								sortBy="#{entidad.entidad.descripcion}" sortOrder="ascending">
+
+								<p:column headerText="Entidad" style="width:50%;">
+									<h:outputText value="#{entidad.entidad.descripcion}" />
+								</p:column>
+
+								<p:column headerText="NIT" style="width:15%;">
+									<h:outputText value="#{entidad.entidad.nit}" />
+								</p:column>
+
+								<p:column headerText="Dirección" style="width:20%;">
+									<h:outputText value="#{entidad.entidad.direccion}" />
+								</p:column>
+
+								<p:column headerText="Teléfono" style="width:10%;">
+									<h:outputText value="#{entidad.entidad.telefono}" />
+								</p:column>
+
+								<p:column headerText="%" style="width:10%;">
+									<h:outputText value="#{entidad.porcentaje}%" />
+								</p:column>
+
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorPropiedadIntelectual.eliminarEntidad}"
+										icon="ui-icon-trash" title="Eliminar Entidad">
+										<f:setPropertyActionListener value="#{entidad}"
+											target="#{manejadorPropiedadIntelectual.entidadSeleccionada}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<t:div style="color:#464646; text-align:justify;">
+							<br />
+								* Si requiere vincular otra entidad y no se encuentra en la lista, por favor comunicarse con el Sistema Hermes ext. 11111 opción 1.
+							</t:div>
+						</p:column>
+					</p:row>		
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="4" style="font-weight:bold; text-align:center;">
+							<h:outputText value="RESULTADOS" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoResultados" icon="ui-icon-info" />
+							<p:tooltip for="infoResultados" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Se debe indicar la clase de resultado que se considera se logró, <br />
+								       	en caso de la opción 'otro' se debe indicar en que consiste.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo de resultado:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="resultadoPI"
+								value="#{manejadorPropiedadIntelectual.resultado}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaResultadoItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDescripcionResultado"
+								icon="ui-icon-info" />
+							<p:tooltip for="infoDescripcionResultado"
+								styleClass="tooltip-mesage" showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Descripción breve del tipo de resultado.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Descripción breve:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="3" cols="50"
+								style="width:100%; height:50px; overflow:auto;"
+								id="descripcionResultado"
+								value="#{manejadorPropiedadIntelectual.descripcionResultado}"
+								maxlength="2000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="2000"
+									for="descripcionResultado"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterDescripcionResultado"
+								value="Tamaño máximo 2000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.esConsulta and manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="4" style="text-align:center;">
+							<p:commandButton value="Agregar tipo de resultado"
+								icon="ui-icon-plus"
+								actionListener="#{manejadorPropiedadIntelectual.agregarResultado}"
+								update="@form">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="4">
+							<p:dataTable id="resultados" var="resultado" style="width:100%"
+								value="#{manejadorPropiedadIntelectual.propiedad.listaResultados}"
+								align="center" emptyMessage="No se han agregado resultados">
+
+								<p:column headerText="Resultado" style="width:20%;">
+									<h:outputText value="#{resultado.resultado.descripcion}" />
+								</p:column>
+
+								<p:column headerText="Descripcion" style="width:75%;">
+									<h:outputText value="#{resultado.descripcion}" />
+								</p:column>
+
+								<p:column style="width:5%; text-align:center;" headerText="-"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+									<p:commandButton update="@form"
+										action="#{manejadorPropiedadIntelectual.eliminarResultado}"
+										icon="ui-icon-trash" title="Eliminar resultado">
+										<f:setPropertyActionListener value="#{resultado}"
+											target="#{manejadorPropiedadIntelectual.resultadoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<br />
+							<p:separator />
+							<br />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTitle" icon="ui-icon-info" />
+							<p:tooltip for="infoTitle" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el título de la propiedad intelectual <br />
+								       	(investigación/obra/fonograma/etc.).  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Título:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;" columns="70"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.titulo}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTitleSpanish" icon="ui-icon-info" />
+							<p:tooltip for="infoTitleSpanish" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el título de la obra en español.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Título en español:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;" columns="70"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.tituloEspanol}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoEstadoDllo" icon="ui-icon-info" />
+							<p:tooltip for="infoEstadoDllo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione el estado de desarrollo de la propiedad industrial.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Estado de desarrollo:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="estadoPI"
+								value="#{manejadorPropiedadIntelectual.propiedad.estadoDesarrollo}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains" disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaEstadoDesarrolloItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoSector" icon="ui-icon-info" />
+							<p:tooltip for="infoSector" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Seleccione el campo del sector tecnológico, el <br />
+								       	listado está basado en la clasificación de la SIC.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Sector tecnológico:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu id="sectorPI"
+								value="#{manejadorPropiedadIntelectual.propiedad.sectorTecnologico}"
+								style="width:470px" panelStyle="width: 450px;" filter="true"
+								filterMatchMode="contains" converter="ConvertidorTipos"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaSectorTecnologicoItem}" />
+								<p:ajax update="@form" process="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{(manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial and not empty manejadorPropiedadIntelectual.propiedad.otroSector) or (not empty manejadorPropiedadIntelectual.propiedad.sectorTecnologico and manejadorPropiedadIntelectual.propiedad.sectorTecnologico.id == '649')}">
+						<p:column style="width:20px;">
+
+						</p:column>
+						<p:column>
+							<h:outputText value="Otro:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.otroSector}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoAno" icon="ui-icon-info" />
+							<p:tooltip for="infoAno" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el año de terminación o fijación de la obra. (AAAA)  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Año de creación:"
+								rendered="#{!manejadorPropiedadIntelectual.propiedad.esFonograma}" />
+							<h:outputText value="Año de fijación:"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma}" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:25%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.anoTerminacion}"
+								converterMessage="Debe ingresar un número entero para el año." />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDuracion" icon="ui-icon-info" />
+							<p:tooltip for="infoDuracion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique la duración de la obra en minutos, puede utilizar punto decimal (1.5).  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Duración:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:25%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.duracion}"
+								converterMessage="Debe ingresar un número válido para la duración." />
+							<h:outputText value=" (minutos)" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor and !manejadorPropiedadIntelectual.propiedad.esFonograma and !manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoCaracter" icon="ui-icon-info" />
+							<p:tooltip for="infoCaracter" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Se debe indicar el carácter de la obra, si tiene dudas<br />
+								       	haga clic sobre 'Ver definiciones'.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Carácter de la obra:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:commandLink id="ajax" onstart="defCaracterObra.show()"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+								<h:outputText value="Ver definiciones" />
+							</p:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor and !manejadorPropiedadIntelectual.propiedad.esFonograma and !manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column colspan="4">
+							<t:selectManyCheckbox id="grid"
+								style="margin-left:30px; width:100%;"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.selectedCaracter}"
+								layout="pageDirection" layoutWidth="5">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaCaracterItem}" />
+							</t:selectManyCheckbox>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor and !manejadorPropiedadIntelectual.propiedad.esFonograma and !manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+
+						</p:column>
+						<p:column>
+							<h:outputText value="Otro:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.otroCaracter}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoAmbito" icon="ui-icon-info" />
+							<p:tooltip for="infoAmbito" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Se debe indicar el ámbito literario al que pertenece la obra.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Ámbito literario de la obra:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:commandLink id="ajax" onstart="defAmbitoObra.show()"
+								style="text-decoration:none; 
+									color: #16A8E2;
+									font-weight: bold;">
+								<h:outputText value="Ver definiciones" />
+							</p:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria}">
+						<p:column colspan="4">
+							<t:selectManyCheckbox id="gridAmbito"
+								style="margin-left:30px; width:100%;"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.selectedAmbito}"
+								layout="pageDirection" layoutWidth="5">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaAmbitoItem}" />
+							</t:selectManyCheckbox>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria}">
+						<p:column style="width:20px;">
+						</p:column>
+						<p:column>
+							<h:outputText value="Otro:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.otroAmbito}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraArtistica}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoClase" icon="ui-icon-info" />
+							<p:tooltip for="infoClase" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Se debe indicar la clase a la que pertenece la obra.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column colspan="3" style="text-align:left;">
+							<h:outputText value="Clase de obra:" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraArtistica}">
+						<p:column colspan="4">
+							<t:selectManyCheckbox id="gridClase"
+								style="margin-left:30px; width:100%;"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.selectedClase}"
+								layout="pageDirection" layoutWidth="5">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaClaseItem}" />
+							</t:selectManyCheckbox>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraArtistica}">
+						<p:column style="width:20px;">
+						</p:column>
+						<p:column>
+							<h:outputText value="Otra:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.otraClase}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraMusical}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoGenero" icon="ui-icon-info" />
+							<p:tooltip for="infoGenero" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Cada una de las distintas categorías en que se pueden ordenar <br />
+								       	las obras musicales según rasgos comunes de forma o de contenido. <br />
+								       	(rock, salsa, vallenato, cumbia, etc.)
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Género:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu
+								value="#{manejadorPropiedadIntelectual.propiedad.genero}"
+								style="width: 300px;" id="generoMusical"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.generosMusicalesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraMusical}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoRitmo" icon="ui-icon-info" />
+							<p:tooltip for="infoRitmo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								Modo de expresar un estilo propio de un género que debe adecuarse <br /> 
+								a su finalidad estética. Cualquiera de los géneros puede expresarse <br />
+								por un estilo propio de acuerdo a su finalidad.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Ritmo:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:70%;" columns="50"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.ritmo}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma or manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoFormato" icon="ui-icon-info" />
+							<p:tooltip for="infoFormato" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el formato en el cual se encuentra el fonograma <br />
+								       	o al obra audiovisual.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo de formato:" />
+						</p:column>
+						<p:column colspan="2">
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma or manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column colspan="4">
+							<t:selectManyCheckbox style="margin-left:30px; width:100%;"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.selectedFormato}"
+								layout="pageDirection" layoutWidth="5">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaFormatoItem}" />
+							</t:selectManyCheckbox>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma or manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+						</p:column>
+						<p:column>
+							<h:outputText value="Otro:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.otroFormato}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoClasificacion" icon="ui-icon-info" />
+							<p:tooltip for="infoClasificacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Hace referencia al público que va dirigida (a todos, a mayores de 12 o 18, etc.)
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Clasificación:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu
+								value="#{manejadorPropiedadIntelectual.propiedad.clasificacion}"
+								style="width: 300px;" id="clasificacionAudiovisual"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.clasificacionObraAudiovisualItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoGeneroCine" icon="ui-icon-info" />
+							<p:tooltip for="infoGeneroCine" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Temática que trata la obra (Acción, comedia, etc.)
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Género:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneMenu
+								value="#{manejadorPropiedadIntelectual.propiedad.genero}"
+								style="width: 300px;" id="generoCine"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								converter="ConvertidorTipos">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.generosCineItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor and !manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoInedita" icon="ui-icon-info" />
+							<p:tooltip for="infoInedita" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Obra Inédita: Indica que la obra no ha sido dada a conocer al público. <br /> 
+								       	Obra editada: Toda obra puesta al alcance del público.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Estado de la obra:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:selectOneMenu id="estadoObra"
+								value="#{manejadorPropiedadIntelectual.propiedad.estadoObra}"
+								style="width:320px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 300px;">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.estadoObraItem}" />
+								<p:ajax update="@form" process="@form"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoEditor" icon="ui-icon-info" />
+							<p:tooltip for="infoEditor" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el nombre del editor.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Editor:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;" columns="70"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.editor}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoImpresor" icon="ui-icon-info" />
+							<p:tooltip for="infoImpresor" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el nombre del impresor.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Impresor:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText style="width:100%;" columns="70"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.impresor}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTipoEdicion" icon="ui-icon-info" />
+							<p:tooltip for="infoTipoEdicion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique el tipo de edición de la obra.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tipo de edición:" />
+						</p:column>
+						<p:column colspan="2">
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column colspan="4">
+							<t:selectManyCheckbox style="margin-left:30px; width:100%;"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.selectedEdicion}"
+								layout="pageDirection" layoutWidth="5">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaEdicionItem}" />
+							</t:selectManyCheckbox>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+						</p:column>
+						<p:column>
+							<h:outputText value="Otro:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.otroTipoEdicion}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{!manejadorPropiedadIntelectual.propiedad.esObraAudioVisual and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infofechaPublicacion" icon="ui-icon-info" />
+							<p:tooltip for="infofechaPublicacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique la fecha de la publicación.  
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Fecha de publicación:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:calendar id="fechacierra" navigator="true" locale="es"
+								readonlyInput="true"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.fechaPublicacion}"
+								maxdate="#{manejadorPropiedadIntelectual.today}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{(manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada) or manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esFonograma or manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoPais" icon="ui-icon-info" />
+							<p:tooltip for="infoPais" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Indique el país de origen.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="País:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:selectOneMenu id="pais"
+								value="#{manejadorPropiedadIntelectual.propiedad.pais.id}"
+								style="width:320px"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								panelStyle="width: 300px;" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.paisesItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+
+							<p:commandButton id="infoNroEdicion" icon="ui-icon-info" />
+							<p:tooltip for="infoNroEdicion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Indique el número de la edición.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Número de la edición:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:20%;" columns="6"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.numeroEdicion}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoTiraje" icon="ui-icon-info" />
+							<p:tooltip for="infoTiraje" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Indique el tiraje.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Tiraje:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.tiraje}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoNroPag" icon="ui-icon-info" />
+							<p:tooltip for="infoNroPag" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Indique el número de páginas.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Número de páginas:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:20%;" columns="6"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.numeroPaginas}"
+								converterMessage="Debe ingresar un número entero para el número de páginas." />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria and manejadorPropiedadIntelectual.propiedad.esEditada}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoIsbn" icon="ui-icon-info" />
+							<p:tooltip for="infoIsbn" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Indique el número de ISBN.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Número de ISBN:" />
+						</p:column>
+						<p:column colspan="2" style="text-align:left;">
+							<p:inputText style="width:50%;" columns="10"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.isbn}" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoProteccion" icon="ui-icon-info" />
+							<p:tooltip for="infoProteccion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Explique brevemente el objeto de protección: <br />
+								       a. Producto; b. Proceso; c. Diseño
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Objeto de protección:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								style="width:100%; height:70px; overflow:auto;"
+								id="objetoProteccion"
+								value="#{manejadorPropiedadIntelectual.propiedad.objetoProteccion}"
+								maxlength="3000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="3000"
+									for="objetoProteccion"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterObjetoProteccion"
+								value="Tamaño máximo 3000 caracteres " />
+							<p:commandLink id="objetoProt"
+								onstart="objetoProteccionDef.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;">
+								<h:outputText value=" (Ayuda)" />
+							</p:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esObraAudioVisual or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoFunciones" icon="ui-icon-info" />
+							<p:tooltip for="infoFunciones" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware}">
+								       Describa brevemente las funciones del software.
+									</t:div>
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+								       Ingrese brevemente la sinopsis de la obra.
+									</t:div>
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+								       Descripción general de la invención en términos que permitan establecer <br />
+								       el problema técnico que soluciona y como contribuye está a resolverlo.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Funciones:"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware}" />
+							<h:outputText value="Sinopsis:"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}" />
+							<h:outputText value="Problema técnico que resuelve:"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								style="width:100%; height:70px; overflow:auto;" id="descripcion"
+								value="#{manejadorPropiedadIntelectual.propiedad.descripcion}"
+								maxlength="3000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="3000" for="descripcion"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esObraAudioVisual or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterDescripcion"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoOtrosDatos" icon="ui-icon-info" />
+							<p:tooltip for="infoOtrosDatos" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       Indique cualquier otro dato que sea de importancia y que permita identificar la obra perfectamente.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Otros datos:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								style="width:100%; height:70px; overflow:auto;" id="otrosDatos"
+								value="#{manejadorPropiedadIntelectual.propiedad.otrosDatos}"
+								maxlength="3000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="3000" for="otrosDatos"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterOtrosDatos"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoVentajas" icon="ui-icon-info" />
+							<p:tooltip for="infoVentajas" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware}">
+								       Describa brevemente las ventajas que proporciona software.
+									</t:div>
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+								       Determinar las ventajas y diferencias de la invención frente a otras del mismo tipo, <br />
+								       en caso de que no cuente con la información puede indicar que no existen datos al respecto.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Ventajas:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								style="width:100%; height:70px; overflow:auto;" id="VentajasSw"
+								value="#{manejadorPropiedadIntelectual.propiedad.ventajas}"
+								maxlength="3000">
+								<f:validateLength minimum="0" maximum="3000" for="VentajasSw"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterVentajas"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPatenteInvencion 
+									or manejadorPropiedadIntelectual.propiedad.esPatenteModeloUtilidad
+									or manejadorPropiedadIntelectual.propiedad.esSoftware
+									or manejadorPropiedadIntelectual.propiedad.esDisenoIndustrial 
+									or manejadorPropiedadIntelectual.propiedad.esEsquemaDeTrazado}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoImpacto" icon="ui-icon-info" />
+							<p:tooltip for="infoImpacto" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware}">
+								      Describa el impacto del software, cuáles son problemas que soluciona.
+									</t:div>
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+								      Definir como la invención supera los problemas y dificultades <br />
+								      que existen en el estado de la técnica del producto o proceso que se desea proteger, <br />
+								      en caso de que no cuente con la información puede indicar que no existen datos al respecto.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Impacto o solución:"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esPatenteInvencion 
+											or manejadorPropiedadIntelectual.propiedad.esPatenteModeloUtilidad
+											or manejadorPropiedadIntelectual.propiedad.esSoftware}" />
+							<h:outputText value="Aplicación:"
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esDisenoIndustrial or manejadorPropiedadIntelectual.propiedad.esEsquemaDeTrazado}" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								style="width:100%; height:70px; overflow:auto;" id="ImpactoSw"
+								value="#{manejadorPropiedadIntelectual.propiedad.impactoSolucion}"
+								maxlength="3000">
+								<f:validateLength minimum="0" maximum="3000" for="ImpactoSw"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterImpacto"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPatenteInvencion or manejadorPropiedadIntelectual.propiedad.esPatenteModeloUtilidad}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoMonitoreo" icon="ui-icon-info" />
+							<p:tooltip for="infoMonitoreo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Si ha realizado monitoreo tecnológico mencionar los artículos, <br />
+								     patentes o cualquier otro producto que refiera a la invención <br />
+								     que se desea proteger, de lo contrario no es necesario ingresar información, <br />
+								     en caso de que no cuente con la información puede indicar que no existen datos al respecto.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Estado de la técnica:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								style="width:100%; height:70px; overflow:auto;" id="monitoreo"
+								value="#{manejadorPropiedadIntelectual.propiedad.monitoreo}"
+								maxlength="3000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="3000" for="monitoreo"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterMonitoreo"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDifusion" icon="ui-icon-info" />
+							<p:tooltip for="infoDifusion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Si ha realizado publicaciones o divulgaciones de la invención <br />
+								     mencionar cual fue el medio de divulgación (ferias, congresos, seminarios, tesis, artículos, etc.)<br />
+								      y especificar la fecha en la cual se realizó, de lo contrario no es necesario ingresar información, <br />
+								      en caso de que no cuente con la información puede indicar que no existen datos al respecto.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Publicaciones o divulgación:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								style="width:100%; height:70px; overflow:auto;" id="difusion"
+								value="#{manejadorPropiedadIntelectual.propiedad.difusion}"
+								maxlength="3000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="3000" for="difusion"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterDifusion"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoPoblacion" icon="ui-icon-info" />
+							<p:tooltip for="infoPoblacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware}">
+								     Describa el sector o población interesada en el software.
+									</t:div>
+								<t:div style="text-align: left; float:left;"
+									rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+								     En caso de conocer las posibilidades del mercado de la invención indique: <br />
+								     a. Productos o procedimientos similares en el mercado<br />
+								     b. Sectores en los que se podría empelar la invención<br />
+								     c. Entidades comerciales que pueden interesarse en la invención.<br />
+								     Si no cuenta con la información puede indicar que no existen datos al respecto.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Posibilidades de transferencia:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputTextarea rows="6" cols="50"
+								style="width:100%; height:70px; overflow:auto;" id="poblacion"
+								value="#{manejadorPropiedadIntelectual.propiedad.mercadoPoblacion}"
+								maxlength="3000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+								<f:validateLength minimum="0" maximum="3000" for="poblacion"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware or manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+						<p:column colspan="2">
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText id="counterPoblacion"
+								value="Tamaño máximo 3000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorPropiedadIntelectual.propiedad.esPatente}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoRecGenetico" icon="ui-icon-info" />
+							<p:tooltip for="infoRecGenetico" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Indique si para el desarrollo de la invención fue necesario contrato de acceso a recurso genético. 
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Contrato de acceso a recurso genético:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:selectOneRadio
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}"
+								value="#{manejadorPropiedadIntelectual.propiedad.contratoAccesoRecursoGenetico}"
+								layout="grid" columns="2">
+								<f:selectItem itemLabel="Sí" itemValue="S" />
+								<f:selectItem itemLabel="No" itemValue="N" />
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:fieldset legend="DOCUMENTOS DE SOPORTE" id="documentosSoporte">
+				<p:panelGrid style="width:100%"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDocs" icon="ui-icon-info" />
+							<p:tooltip for="infoDocs" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								       	Favor adjunte los documentos necesarios de acuerdo al tipo de solicitud<br />
+								       	Tamaño MAX. por archivo 3 megabytes (MB), si el tamaño del archivo es de mayor tamaño <br />
+								       	debe remitirlo por correo electrónico. Haga clic en "Direcciones e-mail" para <br />
+								       	identificar la dirección de destino.
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column colspan="2">
+							<h:outputText
+								value=" Al cargar los documentos, asegúrese de que el nombre tiene relación con el contenido." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+<!-- 						Req 2433 Se oculta parrafo -->
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esPropiedadIndustrial}">
+							Se debe anexar cualquier documentación relevante para determinar el carácter de la invención y que permita realizar búsqueda internacional del estado de la técnica.<br />
+<!-- 							Recuerde que es obligatorio remitir la documentación sobre la titularidad de los derechos (contratos y cesiones de derechos). En caso de poseer contrato de acceso a recurso genético adjuntarlo. -->
+							</t:div>
+<!-- 						Req 2433 Se oculta parrafo	 -->
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esDerechosAutor}">
+							Se debe anexar cualquier documentación relevante para el registro de la obra.<br />
+<!-- 							Recuerde que es obligatorio remitir la documentación sobre la titularidad de los derechos (contratos y cesiones de derechos). -->
+							</t:div>
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esObraLiteraria}">
+							Documentos que se deben anexar:<br />
+								<ol>
+									<li>Copia de la obra.</li>
+									<li>Declaración de titularidad patrimonial o contrato de
+										cesión de derechos.</li>
+									<li>Acuerdo de cotitularidad en caso que lo hubiere.</li>
+									<li>Cualquier otro documento que considere pertinente.</li>
+								</ol>
+							</t:div>
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esSoftware}">
+							Documentos que se deben anexar:<br />
+								<ol>
+									<li>Manual de auxiliar (manual de usuario o cualquier
+										documento relevante).</li>
+									<li>Programa de computador (código fuente).</li>
+									<li>Descripción de la obra.</li>
+									<li>Declaración de titularidad patrimonial o contrato de
+										cesión de derechos.</li>
+									<li>Acuerdo de cotitularidad en caso que lo hubiere.</li>
+									<li>Cualquier otro documento que considere pertinente.</li>
+								</ol>
+							</t:div>
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esObraArtistica}">
+							Documentos que se deben anexar:<br />
+								<ol>
+									<li>Copia de la obra.</li>
+									<li>Declaración de titularidad patrimonial o contrato de
+										cesión de derechos.</li>
+									<li>Acuerdo de cotitularidad en caso que lo hubiere.</li>
+									<li>Cualquier otro documento que considere pertinente.</li>
+								</ol>
+							</t:div>
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esObraAudioVisual}">
+							Documentos que se deben anexar:<br />
+								<ol>
+									<li>Copia de la obra.</li>
+									<li>Declaración de titularidad patrimonial o contrato de
+										cesión de derechos.</li>
+									<li>Acuerdo de cotitularidad en caso que lo hubiere.</li>
+									<li>Cualquier otro documento que considere pertinente.</li>
+								</ol>
+							</t:div>
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esObraMusical}">
+							Documentos que se deben anexar:<br />
+								<ol>
+									<li>Copia de la obra (partitura, guión musical y letra si
+										la tuviere).</li>
+									<li>Declaración de titularidad patrimonial o contrato de
+										cesión de derechos.</li>
+									<li>Acuerdo de cotitularidad en caso que lo hubiere.</li>
+									<li>Cualquier otro documento que considere pertinente.</li>
+								</ol>
+							</t:div>
+							<t:div
+								rendered="#{manejadorPropiedadIntelectual.propiedad.esFonograma}">
+							Documentos que se deben anexar:<br />
+								<ol>
+									<li>Si se trata de un fonograma de obra musical es
+										necesario anexar la partitura y letra si la tuviere, si es
+										obra artística copia de esta o fotografías que logren su plena
+										identificación.</li>
+									<li>Declaración de titularidad patrimonial o contrato de
+										cesión de derechos.</li>
+									<li>Acuerdo de cotitularidad en caso que lo hubiere.</li>
+									<li>Cualquier otro documento que considere pertinente.</li>
+								</ol>
+							</t:div>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoEmail" icon="ui-icon-info" />
+							<p:tooltip for="infoEmail" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Describa brevemente los documentos que remitirá a través de correo electrónico.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:30%">
+							<h:outputText
+								value="Documentos por correo electrónico (si aplica):" />
+							<p:commandLink id="ajax" onstart="correosElectronicos.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;">
+								<h:outputText value=" (Direcciones e-mail)" />
+							</p:commandLink>
+						</p:column>
+						<p:column style="width:69%">
+							<p:inputTextarea rows="2" cols="50"
+								style="width:100%; height:50px; overflow:auto;"
+								id="emailAdicional"
+								value="#{manejadorPropiedadIntelectual.propiedad.informacionEmail}"
+								maxlength="2000"
+								disabled="#{manejadorPropiedadIntelectual.esConsulta}">
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+						</p:column>
+						<p:column>
+							<h:outputText id="counterEmail"
+								value="Tamaño máximo 2000 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:fileUpload
+								fileUploadListener="#{manejadorPropiedadIntelectual.adjuntarArchivo}"
+								mode="advanced" auto="true" update="tabla-archivo"
+								process="@form" multiple="true" sizeLimit="3072000"
+								label="Seleccionar archivo"
+								rendered="#{!manejadorPropiedadIntelectual.esConsulta}"
+								invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+								style="width:100%;" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="3">
+							<p:dataTable
+								value="#{manejadorPropiedadIntelectual.propiedad.listaArchivos}"
+								width="100%;" var="archivo"
+								emptyMessage="No hay archivos asociados" id="tabla-archivo">
+
+								<p:column headerText="Id" style="width: 2%;"
+									rendered="#{archivo.visibleDocente}">
+									<h:outputText value="#{archivo.id}"
+										style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+								</p:column>
+								<p:column headerText="Tipo" style="width: 10%;"
+									rendered="#{archivo.visibleDocente}">
+									<h:outputText value="Solicitud"
+										rendered="#{archivo.tipo.id == '82'}" />
+									<h:outputText value="Trámite"
+										rendered="#{archivo.tipo.id != '82'}" />
+								</p:column>
+								<p:column headerText="Documentos adjuntos" style="width: 82%;"
+									rendered="#{archivo.visibleDocente}">
+									<t:div style="width:420px;">
+										<h:outputText value="#{archivo.nombre}"
+											style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+									</t:div>
+								</p:column>
+								<p:column headerText="Descargar"
+									rendered="#{archivo.visibleDocente}"
+									style="text-align:center; width: 3%;">
+									<p:commandButton id="descargar"
+										action="#{manejadorPropiedadIntelectual.descargarArchivo}"
+										icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+										ajax="false">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorPropiedadIntelectual.archivoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+								<p:column style="width:3%; text-align:center;" headerText="(-)"
+									rendered="#{!manejadorPropiedadIntelectual.esConsulta and archivo.visibleDocente}">
+									<p:commandButton id="selectButton" update="tabla-archivo"
+										icon="ui-icon-trash" rendered="#{archivo.tipo.id==82}"
+										action="#{manejadorPropiedadIntelectual.eliminarArchivo}"
+										title="Eliminar archivo">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorPropiedadIntelectual.archivoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<t:div rendered="#{!manejadorPropiedadIntelectual.esConsulta}">
+					<center>
+						<p:commandButton
+							action="#{manejadorPropiedadIntelectual.guardarParcialmente}"
+							value="Guardar parcialmente" update="@form" process="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+						<p:commandButton
+							action="#{manejadorPropiedadIntelectual.enviarSolicitud}"
+							value="Guardar y enviar" update="@form"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</center>
+					<br />
+				</t:div>
+			</p:fieldset>
+			<br />
+			<p:messages id="msgs" autoUpdate="true" closable="true" />
+			<p:growl id="growl" sticky="true" />
+			<p:panel id="revision"
+				rendered="#{manejadorPropiedadIntelectual.esConsulta}">
+				<t:div rendered="#{manejadorPropiedadIntelectual.esConsulta}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width:100%;">
+						<p:row>
+							<p:column>
+								<h:outputText value="Estado:" style='font-weight: bold;' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorPropiedadIntelectual.propiedad.subEstado.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Persona responsable del registro:"
+									style='font-weight: bold;' />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="#{manejadorPropiedadIntelectual.propiedad.responsableRegistro.nombreCompletoMinusculas}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:panel>
+
+			<!-- Mensajes con informacion de aclaracion o ayuda -->
+
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+			</p:dialog>
+			<p:dialog header="Definiciones propiedad industrial"
+				id="defPropiedadIndustrial" widgetVar="defPropiedadIndustrial"
+				modal="true" resizable="false" width="600" height="480">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+								<strong style="color: #FF8000;">PROPIEDAD INDUSTRIAL:</strong> Protección y conjunto de derechos sobre las creaciones y bienes inmateriales que tienen aplicación en la industria, entendiéndose por industria cualquier actividad productiva, comercial o de servicios.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">PATENTE:</strong> Es un documento otorgado por el Estado mediante el cual se confiere a su titular el derecho de explotación exclusiva de carácter temporal por la creación de invención.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">INVENCIÓN:</strong> Es el producto o proceso que ofrece una nueva manera de hacer algo o una nueva solución para un problema
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">MODELO DE UTILIDAD:</strong> Se considera modelo de utilidad, a toda nueva forma, configuración o disposición de elementos, de algún artefacto, herramienta, instrumento, mecanismo u otro objeto o de alguna parte del mismo, que permita un mejor o diferente funcionamiento, utilización o fabricación del objeto que le incorpore o que le proporcione alguna utilidad, ventaja o efecto técnico que antes no tenía.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">DISEÑO INDUSTRIAL:</strong> Se considerará como diseño industrial la apariencia particular de un producto que resulte de cualquier reunión de líneas o combinación de colores, o de cualquier forma externa bidimensional o tridimensional, línea, contorno, configuración, textura o material, sin que cambie el destino o finalidad de dicho producto.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">ESQUEMA DE TRAZADO DE
+									CIRCUITOS:</strong> Se define en los siguientes términos:
+						 <strong>a) Circuito integrado:</strong> un producto en su forma final o intermedia, de cuyos componentes al menos uno es un elemento activo y alguna o todas las interconexiones, forman parte integrante del cuerpo o de la superficie de una pieza de material, destinado a realizar una función electrónica;
+						 <strong>b) Esquema de trazado:</strong> la disposición tridimensional, expresada en cualquier forma, de los elementos, siendo al menos uno de éstos activo, e interconexiones de un circuito integrado, así como esa disposición tridimensional preparada para un circuito integrado destinado a ser fabricado.
+							
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Definiciones derechos de autor"
+				id="defDerechosAutor" widgetVar="defDerechosAutor" modal="true"
+				resizable="false" width="600" height="320">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+								<strong style="color: #FF8000;">DERECHOS DE AUTOR:</strong> Es el derecho que se ejerce sobre las creaciones científicas, literarias, artísticas, técnicas, científico-literarias, programas de computador y bases de datos, siempre y cuando se plasmen mediante un lenguaje o una representación física, cualquiera sea el modo o forma de expresión.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA LITERARIA:</strong> Se refiere a la forma en la cual se expresan ideas, plasmadas en un escrito tangible o en cualquier tipo de soporte.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA ARTÍSTICA:</strong> Creación cuya finalidad es apelar al sentido estético de quien la contempla.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA MUSICAL:</strong> Creación que abarca toda clase de combinaciones de sonidos (composición) con o sin texto (letra y guión).
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA AUDIOVISUAL:</strong> Vincula la creación de varios campos del arte, se considera una obra en colaboración, en la cual se presume que el titular de derechos patrimoniales es el productor.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">FONOGRAMA:</strong> Es uno de los medios que la ley reconoce como soporte material de una creación.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">SOFTWARE:</strong> se define como "un conjunto de instrucciones que cuando se incorpora a un soporte legible por máquina, puede hacer que una máquina con capacidad para el tratamiento de la información indique, realice o consiga una función, tarea o resultados determinados"".
+							
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Definiciones carácter de la obra"
+				id="defCaracterObra" widgetVar="defCaracterObra" modal="true"
+				resizable="false" width="600" height="480">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+								<strong style="color: #FF8000;">OBRA INDIVIDUAL:</strong> La que es producida por una sola persona natural.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA EN COLABORACIÓN:</strong> La que es producida conjuntamente, por dos o más personas naturales, cuyos aportes no pueden ser separados.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA COLECTIVA:</strong> La que es producida por un grupo de autores por iniciativa y bajo la orientación de una persona natural o jurídica que la coordina, divulga y publica bajo su nombre.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA POR ENCARGO:</strong> Cuando la obra es creada en desarrollo de un contrato de prestación de servicios, la ley presume que la titularidad de los derechos patrimoniales la tiene el contratante que ha señalado el plan.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA ORIGINARIA:</strong> Aquella que resulta del trabajo intelectual del autor sin basarse en obra preexistente.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA DERIVADA:</strong> Es aquella obra basada en otra ya existente que resulta de la adaptación, traducción u otra transformación de una obra originaria, siempre que constituya una creación autónoma. En este caso especifique qué clase de obra derivada es: traducción, adaptación, entre otras.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA ANÓNIMA:</strong> Es aquella en donde no se menciona el nombre o seudónimo de autor por voluntad del mismo o por ser ignorado.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA PÓSTUMA:</strong> Es aquella que ha sido dada a conocer al público sólo después de la muerte del autor.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OBRA SEUDÓNIMA:</strong> Es aquella en que el autor se oculta bajo un seudónimo o nombre que no lo identifica. 
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">OTRA:</strong> Indicar si se trata de una antología, compilación de obras o bases de datos, que por la selección o disposición de las materias constituyan creaciones personales. Si se trata de cualquier otra categoría de obra diferente a las relacionadas, favor mencionarla. 
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Definiciones ámbito literario" id="defAmbitoObra"
+				widgetVar="defAmbitoObra" modal="true" resizable="false" width="600"
+				height="200">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+								<strong style="color: #FF8000;">INTERÉS GENERAL:</strong> Literatura infantil, juvenil y adulta; artes; deportes y entretenimiento; superación personal y autoayuda; esotéricos, obras de referencia y consulta; enciclopedias y colecciones generales; turismo y guías de turismo; bienestar y salud, culinaria, nutrición y economía del hogar.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">DIDÁCTICO:</strong> Libros de textos escolares (preescolar, primaria, secundaria).
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">CIENTÍFICOS, TÉCNICOS Y
+									PROFESIONALES:</strong> Filosofía, sicología, ciencias sociales, ciencias puras, tecnología, ciencias aplicadas, ecología, geografía e historia (textos no escolares).
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">RELIGIOSO:</strong> Libros religiosos de diversas denominaciones.
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Correos electrónicos" id="correosElectronicos"
+				widgetVar="correosElectronicos" modal="true" resizable="false"
+				width="600" height="220">
+				<p:panelGrid style="width: 100%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="Nivel nacional" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="gestionpi_nal@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Bogotá" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="gestionpi_bog@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Medellín" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="gestionpi_med@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Manizales" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="gestionpi_man@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Palmira" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="gestionpi_pal@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Caribe" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="direccion_san@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Amazonia" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="diramazonia_let@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Orinoquia" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="direccion_ara@unal.edu.co" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Sede Tumaco" style='font-weight: bold;' />
+						</p:column>
+						<p:column>
+							<h:outputText value="sedetumaco@unal.edu.co" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Objeto de protección" id="objetoProteccionDef"
+				widgetVar="objetoProteccionDef" modal="true" resizable="false"
+				width="600" height="180">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column style="text-align:justify;">
+							<t:div>
+								<br />
+								<strong style="color: #FF8000;">PRODUCTO:</strong> aquel que se refiere a entidades físicas, por lo tanto, es necesario indicar cada una de sus partes o elementos, exponiendo cómo funcionan cada una de estas y también el funcionamiento de la invención como un todo. En caso de tener ejemplo o dibujos se debe anexar al finalizar este formulario.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">PROCESO:</strong> es necesario exponer cada una de las etapas y condiciones del proceso y la función de dicho proceso. En caso de tener ejemplo o dibujos anexarlo.
+						 <br />
+								<br />
+								<strong style="color: #FF8000;">DISEÑO:</strong> se deben anexar el diseño o las figuras.
+							</t:div>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+			<p:dialog header="Información persona externa"
+				widgetVar="dialogPersonaNueva" modal="true" resizable="false"
+				width="600">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width: 100%;">
+					<p:row>
+						<p:column colspan="2">
+							<p:panel>
+								<t:div style="color:#464646; text-align:justify;">
+									Después de guardar los datos de la persona externa, agréguela nuevamente en el formulario principal, como mínimo debe indicar el primer nombre y el primer apellido, 
+									de lo contrario no podrá ser guardado.
+								</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo documento:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:200px"
+								value="#{manejadorPropiedadIntelectual.personaExterna.id.tipoDocumento}"
+								id="tipodoc"
+								disabled="#{manejadorPropiedadIntelectual.personaExterna.id.tipoDocumento!=null or !(empty manejadorPropiedadIntelectual.personaExterna.id.tipoDocumento)}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.listaTiposDocItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Documento de identidad:" />
+						</p:column>
+						<p:column>
+							<p:inputText
+								value="#{manejadorPropiedadIntelectual.personaExterna.id.documento}"
+								id="documento" style="width:70%"
+								disabled="#{manejadorPropiedadIntelectual.personaExterna.id.documento!=null or !(empty manejadorPropiedadIntelectual.personaExterna.id.documento)}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Primer Nombre *" />
+						</p:column>
+						<p:column>
+							<p:inputText id="primerNombreInvestigador"
+								value="#{manejadorPropiedadIntelectual.personaExterna.nombre1}"
+								style="width:70%"
+								requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength minimum="2" maximum="30" />
+							</p:inputText>
+							<p:message id="errorPrimerNombreInvestigador"
+								for="primerNombreInvestigador" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Segundo nombre" />
+						</p:column>
+						<p:column>
+							<p:inputText id="segundoNombreInvestigador"
+								value="#{manejadorPropiedadIntelectual.personaExterna.nombre2}"
+								style="width:70%;">
+								<f:validateLength maximum="30" />
+							</p:inputText>
+							<p:message id="errorSegundoNombreInvestigador"
+								for="segundoNombreInvestigador" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Primer Apellido *" />
+						</p:column>
+						<p:column>
+							<p:inputText id="primerApellidoInvestigador"
+								value="#{manejadorPropiedadIntelectual.personaExterna.apellido1}"
+								style="width:70%;"
+								requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength minimum="2" maximum="30" />
+							</p:inputText>
+							<p:message id="errorPrimerApellidoInvestigador"
+								for="primerApellidoInvestigador" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Segundo Apellido" />
+						</p:column>
+						<p:column>
+							<p:inputText id="segundoApellidoInv"
+								value="#{manejadorPropiedadIntelectual.personaExterna.apellido2}"
+								style="width:70%;">
+								<f:validateLength maximum="30" />
+							</p:inputText>
+							<p:message id="errorSegundoApellidoInv" for="segundoApellidoInv" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Género" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:100px"
+								value="#{manejadorPropiedadIntelectual.personaExterna.genero}"
+								id="idGenero">
+								<f:selectItems
+									value="#{manejadorPropiedadIntelectual.generoItem}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Correo electrónico" />
+						</p:column>
+						<p:column>
+							<p:inputText id="email"
+								value="#{manejadorPropiedadIntelectual.personaExterna.email}"
+								style="width:70%;">
+								<f:validateLength maximum="60" />
+							</p:inputText>
+							<p:message id="errorEmail" for="email" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Dirección" />
+						</p:column>
+						<p:column>
+							<p:inputText id="direccion"
+								value="#{manejadorPropiedadIntelectual.personaExterna.direccion}"
+								style="width:70%;">
+								<f:validateLength maximum="150" />
+							</p:inputText>
+							<p:message id="errorDireccion" for="direccion" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<p:commandButton
+								action="#{manejadorPropiedadIntelectual.ingresarActualizarPersona}"
+								value="Guardar" update="@form" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

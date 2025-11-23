@@ -1,0 +1,425 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión aval</t:div>
+		
+			<br />
+							<p:panel rendered="#{manejadorSolicitarAvalVice.convocatoriaExterna.convocatoriaCerrada}">
+			<t:div style="color:#464646; text-align:justify;">
+					La convocatoria asociada a esta solicitud de aval<strong
+					style="color: #FF0000;"> ya se encuentra cerrada ante la entidad externa</strong>, 
+					por lo que es su responsabilidad el proceso aprobar o no la solicitud de aval después de esas fechas y 
+					coordinar con las dependencias responsables.
+			</t:div>
+			<br/>
+			<strong
+					style="color: #000000;">Convocatoria: </strong>
+			<h:outputText style="text-weight:bold;" value="#{manejadorSolicitarAvalVice.convocatoriaExterna.nombre}"></h:outputText>
+			<br />
+			<h:outputText style="text-weight:bold;" value="Fecha de cierre: "></h:outputText>
+			<h:outputText style="text-weight:bold;" value="#{manejadorSolicitarAvalVice.convocatoriaExterna.fechaCierre}"></h:outputText>
+			
+		</p:panel>
+		<t:div rendered="#{manejadorSolicitarAvalVice.convocatoriaExterna.convocatoriaCerrada}">
+		<br/>
+		</t:div>
+			<p:panel id="panelAvalInfo">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelAval"
+					style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Código aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{manejadorSolicitarAvalVice.aval.aviId}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Tipo aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalVice.aval.nombreTipo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Solicitado por: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorSolicitarAvalVice.nombreInvestigador}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Consultar información aval: " />
+						</p:column>
+						<p:column>
+							<h:outputText value="" />
+							<h:commandLink value="Ver reporte específico"
+								action="#{manejadorSolicitarAvalVice.imprimirAval}"
+								target="_popUpWindow1"
+								onclick="javascript: void window.open('', '_popUpWindow1', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI'}">
+						<p:column>
+							<h:outputText
+								value="Consultar información de proyecto relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte de proyecto"
+								target="_popUpWindow2"
+								action="#{manejadorSolicitarAvalVice.imprimirProyecto}"
+								onclick="javascript: void window.open('', '_popUpWindow2', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalVice.aval.tipo == 'GR'}">
+						<p:column>
+							<h:outputText
+								value="Consultar información del grupo relacionado: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Ver reporte grupo" target="_popUpWindow3"
+								action="#{manejadorSolicitarAvalVice.imprimirGrupo}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{manejadorSolicitarAvalVice.aval.aviConvocatoria >= 1}">
+						<p:column>
+							<h:outputText value="Consultar la convocatoria: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Consultar página externa"
+								action="#{manejadorSolicitarAvalVice.consultarPaginaConvocatoriaExterna}"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								target="_popUpWindow"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<f:param name="aviNumeroConvocatoria"
+									value="#{manejadorSolicitarAvalVice.aval.aviConvocatoria}" />
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.aval.avalRelacionado!=null and manejadorSolicitarAvalVice.aval.avalRelacionado!=0}">
+						<p:column>
+							<h:outputText value="Solicitud relacionada con el aval: " />
+						</p:column>
+						<p:column>
+							<h:commandLink
+								value="#{manejadorSolicitarAvalVice.aval.avalRelacionado}"
+								target="_popUpWindow3"
+								action="#{manejadorSolicitarAvalVice.imprimirReporteRelacionado}"
+								onclick="javascript: void window.open('', '_popUpWindow3', 'status=0,toolbar=0,location=0,menubar=0,directories=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.aval.interSedes!=null and manejadorSolicitarAvalVice.aval.interSedes=='S'}">
+						<p:column colspan="2">
+							<h:outputText
+								value="El docente ha indicado que la solicitud de aval involucra más de una sede de la Universidad " />
+						</p:column>
+					</p:row>
+
+				</p:panelGrid>
+				<br />
+
+				<p:dataTable var="documento" id="tablaArchivoDoc"
+					value="#{manejadorSolicitarAvalVice.listaArchivos}"
+					emptyMessage="No hay archivos adjuntos." cellpadding="1"
+					cellspacing="8" align="center" border="1" style="width:100%">
+					<f:facet name="header">Archivos Adjuntos</f:facet>
+
+					<p:column headerText="Id">
+
+						<h:outputText value=" #{documento.id}" />
+					</p:column>
+
+					<p:column headerText="Archivo">
+
+						<h:outputText value=" #{documento.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo de archivo" />
+						</f:facet>
+						<h:outputText value=" #{documento.tipoArchivo.nombre}}"
+							styleClass="normal" />
+					</p:column>
+					<p:column headerText="Descargar">
+						<p:commandButton id="descargar"
+							action="#{manejadorSolicitarAvalVice.descargarArchivo}"
+							icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{manejadorSolicitarAvalVice.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<br />
+			<p:fieldset legend="Aval Vicerrectoría de Investigación"
+				id="panelAvalRevision">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelPrincipal" style="text-align:left">
+					<p:row>
+						<p:column>
+							<h:outputText value="Aval Vicerrectoría:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="somCategoriaGrupos"
+								value="#{manejadorSolicitarAvalVice.selItem}"
+								style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSolicitarAvalVice.categoriaItems}" />
+								<p:ajax update="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.selItem == '2' and manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI' and manejadorSolicitarAvalVice.esAvalInternacional}">
+						<p:column>
+							<h:outputText
+								value="¿Este aval es de caracter internacional, para enviarse a la DRE?:" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu
+								value="#{manejadorSolicitarAvalVice.aval.esAvalParaRevisionDRE}"
+								style="width:200px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems
+									value="#{manejadorSolicitarAvalVice.opcionAvalVRIItems}" />
+								<p:ajax update="@form" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.aval.esAvalParaRevisionDRE eq 'N' and manejadorSolicitarAvalVice.esAvalInternacional}">
+						<p:column colspan="2">
+							<h:outputText style="color: #FF0000; font-weigt: bold"
+								value="Le recomendamos revisar la aprobación, ya que la convocatoria asociada a este aval es de carácter internacional." />
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.selItem == '2' and manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI' and (!manejadorSolicitarAvalVice.esAvalInternacional or manejadorSolicitarAvalVice.aval.esAvalParaRevisionDRE eq 'N')}">
+						<p:column>
+							<h:outputText value="Plantilla aval: " />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="nombrePlantillaFinal1"
+								value="#{manejadorSolicitarAvalVice.avalId}" style="width:500px">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{manejadorSolicitarAvalVice.plantillas}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.selItem == '2' and manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI' and (!manejadorSolicitarAvalVice.esAvalInternacional or manejadorSolicitarAvalVice.aval.esAvalParaRevisionDRE eq 'N')}">
+						<p:column>
+							<h:outputText value="Generar aval: " />
+						</p:column>
+						<p:column>
+							<h:commandLink value="Generar"
+								action="#{manejadorSolicitarAvalVice.reporteAval}"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,directories=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								target="_popUpWindow"
+								style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+								<f:param name="idAvalConsulta" value="#{avalVisitante.aviId}" />
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea cols="70" rows="5" style="width:100%"
+								autoResize="false" id="dev1"
+								value="#{manejadorSolicitarAvalVice.aval.textoVicerrectoria}"
+								maxlength="3800">
+								<f:validateLength minimum="0" maximum="3800" for="dev1"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterDev1"
+								value="Tamaño máximo 3800 caracteres" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText
+								value="NOTA: Recomendamos no usar caracteres especiales como '$', puede haber problemas con el texto, en caso de envío de e-mail."
+								style='font-weight: bold' />
+						</p:column>
+					</p:row>
+					<p:row id="commentsProyecto"
+						rendered="#{manejadorSolicitarAvalVice.selItem == '4' and manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI'}">
+						<p:column colspan="2" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<h:outputText
+								value="Si es necesario hacer cambios en el proyecto y desea habilitarlo para la edición del docente marque la siguiente casilla, 
+									tenga en cuenta que si el proyecto también se encuentra asociado a una convocatoria interna, no se habilitará la edición del mismo:"></h:outputText>
+							<br />
+							<table>
+								<tr>
+									<td><h:outputText
+											value="¿Habilitar edición del proyecto asociado? " /></td>
+									<td style="vertical-align: middle;"><p:selectBooleanCheckbox
+											value="#{manejadorSolicitarAvalVice.edicionProyecto}">
+											<p:ajax update="panelPrincipal" process="panelPrincipal" />
+										</p:selectBooleanCheckbox></td>
+								</tr>
+							</table>
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.selItem == '2' and manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI' and manejadorSolicitarAvalVice.aval.esAvalParaRevisionDRE eq 'N'}">
+						<p:column>
+							<h:outputText value="Adjuntar aval: " />
+						</p:column>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{manejadorSolicitarAvalVice.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+
+						</p:column>
+					</p:row>
+					<p:row
+						rendered="#{manejadorSolicitarAvalVice.selItem == '2' and manejadorSolicitarAvalVice.aval.tipo != 'GR' and manejadorSolicitarAvalVice.aval.tipo != 'INI' and manejadorSolicitarAvalVice.aval.esAvalParaRevisionDRE eq 'N'}">
+						<p:column>
+							<h:outputText value="Archivo aval adjunto:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{manejadorSolicitarAvalVice.aval.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<p:separator id="customSeparator2" />
+				<br />
+				<br />
+				<center>
+					<p:commandButton id="infoDocs" icon="ui-icon-info" />
+					<p:tooltip for="infoDocs" styleClass="tooltip-mesage"
+						showDelay="999">
+						<t:div style="text-align: left; float:left;">
+								       	En caso de ser necesario, por favor adjunte los documentos <br />
+								       	relacionados con la revisión del aval.
+								</t:div>
+					</p:tooltip>
+					<h:outputText value=" DOCUMENTOS DE SOPORTE (Opcional)"
+						style='font-weight: bold;' />
+					<br /> <br />
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+						id="panelArchivoSoporte" style="text-align:left; width:100%;">
+
+						<p:fileUpload
+							fileUploadListener="#{manejadorSolicitarAvalVice.guardarArchivoCoor}"
+							id="archivo1" mode="advanced" update="tablaArchivo" auto="true"
+							multiple="true" sizeLimit="3000000" label="Seleccionar archivo" />
+
+					</p:panelGrid>
+					<br />
+					<p:dataTable var="archivoResumen"
+						value="#{manejadorSolicitarAvalVice.aval.archivosCoorList}"
+						id="tablaArchivo" emptyMessage="No tiene archivos de soporte."
+						style="width:100%">
+						<f:facet name="header">Archivos de Soporte</f:facet>
+						<p:column style="width:95%;" headerText="Archivo">
+							<h:outputText value="#{archivoResumen.nombre}" />
+						</p:column>
+
+						<p:column style="width:5%;" headerText="Eliminar">
+							<p:commandButton
+								onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false"
+								action="#{manejadorSolicitarAvalVice.eliminarArchivoCoor}"
+								value="Eliminar" update="tablaArchivo">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorSolicitarAvalVice.arCoor}" />
+							</p:commandButton>
+						</p:column>
+						<p:column style="text-align: center; width: 3%;">
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<p:commandButton id="descargar"
+								action="#{manejadorSolicitarAvalDRE.descargarArchivo}"
+								icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{manejadorSolicitarAvalDRE.documentoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<br />
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						id="panelGuardar">
+						<p:commandButton
+							action="#{manejadorSolicitarAvalVice.guardarRevision}"
+							value="Guardar revisión aval" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+						<p:commandButton action="#{manejadorSolicitarAvalVice.anterior}"
+							value="Regresar" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</p:panelGrid>
+				</center>
+			</p:fieldset>
+			<p:messages id="msgs" autoUpdate="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

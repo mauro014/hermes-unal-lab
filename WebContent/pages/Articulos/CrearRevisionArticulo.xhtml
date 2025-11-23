@@ -1,0 +1,380 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data" id="formCrearRevisionArticulo"
+			styleClass="estilo-panelgrid-sinbordes">
+
+			<p:panel
+				header="Convocatoria de apoyo a producción académica- Universidad Nacional de Colombia"
+				rendered="#{ManejadorCrearEditarArticulo.panelRenderError[0]}">
+				<p:panelGrid columns="1"
+					rendered="#{ManejadorCrearEditarArticulo.panelRenderError[0]}">
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[0]}"
+						styleClass="labels_proyecto" />
+					<p:commandButton update="@form"
+						value="Regresar a la página principal"
+						action="#{ManejadorCrearEditarArticulo.atras}">
+					</p:commandButton>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:panel header="Datos Personales"
+				rendered="#{ManejadorCrearEditarArticulo.panelRender[1]}">
+
+				<p:panelGrid columns="2">
+					<h:outputText value="Nombre de docente:"
+						styleClass="labels_proyecto" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.nombreDocente}" />
+
+					<h:outputText value="Documento de identidad:"
+						styleClass="labels_proyecto" />
+					<h:outputText
+						value="#{ManejadorCrearEditarArticulo.documentoDocente}" />
+
+					<h:outputText value="Sede:" styleClass="labels_proyecto" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.sede}" />
+
+					<h:outputText value="Facultad o instituto:"
+						styleClass="labels_proyecto" />
+					<h:outputText
+						value="#{ManejadorCrearEditarArticulo.facultadDocente}" />
+
+					<h:outputText value="Departamento:" styleClass="labels_proyecto" />
+					<h:outputText
+						value="#{ManejadorCrearEditarArticulo.departamentoDocente}" />
+
+					<h:outputText value="Correo electrónico:"
+						styleClass="labels_proyecto" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.email}" />
+
+					<h:outputText
+						value="Número de apoyos aprobados en esta convocatoria:"
+						styleClass="labels_proyecto" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.apoyos}" />
+				</p:panelGrid>
+
+				<center>
+					<p:panelGrid columns="1"
+						rendered="#{!ManejadorCrearEditarArticulo.mostrarFormulario}">
+						<p:commandButton update="@form" value="Realizar solicitud"
+							icon="ui-icon-pencil"
+							action="#{ManejadorCrearEditarArticulo.validarApoyo}">
+						</p:commandButton>
+					</p:panelGrid>
+				</center>
+
+				<p:panelGrid columns="1">
+					<h:outputText value="#{ManejadorCrearEditarArticulo.mensajeApoyo}"
+						styleClass="mensajeerror" />
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}" />
+
+			<p:panel header="Datos de Contacto"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}">
+				<p:panelGrid columns="2">
+					<h:outputText value="Correo Personal:" styleClass="labels_proyecto" />
+					<p:inputText id="correoDocente" maxlength="30" size="45"
+						value="#{ManejadorCrearEditarArticulo.conArt.emailDocente}">
+					</p:inputText>
+					<h:outputText value="Teléfono ó extensión:"
+						styleClass="labels_proyecto" />
+					<p:inputText id="telefonoDocente" maxlength="15" size="22"
+						value="#{ManejadorCrearEditarArticulo.conArt.telefonoDocente}">
+					</p:inputText>
+					<h:outputText value="Teléfono Móvil:" styleClass="labels_proyecto" />
+					<p:inputText id="celularDocente" maxlength="15" size="22"
+						value="#{ManejadorCrearEditarArticulo.conArt.celularDocente}">
+					</p:inputText>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}" />
+
+			<p:panel header="Información General"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}">
+				<p:panelGrid columns="2" style="width: 331px">
+					<h:outputText value="Modalidad:" styleClass="labels_proyecto" />
+					<p:selectOneMenu id="tipoModalidad"
+						value="#{ManejadorCrearEditarArticulo.conArt.modalidad}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarArticulo.listaTipoModalidad}" />
+						<p:ajax update="@parent"
+							listener="#{ManejadorCrearEditarArticulo.cambiarForm}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Idioma:" styleClass="labels_proyecto" />
+					<p:selectOneMenu id="idioma"
+						value="#{ManejadorCrearEditarArticulo.idioma}"
+						rendered="#{ManejadorCrearEditarArticulo.panelRender[8]}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarArticulo.listaIdiomas}" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="idioma2"
+						value="#{ManejadorCrearEditarArticulo.idioma}"
+						rendered="#{!ManejadorCrearEditarArticulo.panelRender[8]}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarArticulo.listaIdiomas2}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}" />
+
+			<p:panel header="Información del Artículo"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}">
+				<p:panelGrid columns="2">
+					<h:outputText value=""
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[3]}" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[3]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[3]}" />
+
+					<p:outputLabel value="Título del artículo" for="TituloArticulo"
+						styleClass="labels_proyecto" />
+					<p:inputTextarea id="TituloArticulo" required="true"
+						autoResize="false" maxlength="1000"
+						value="#{ManejadorCrearEditarArticulo.conArt.titulo}" rows="2"
+						cols="60" styleClass="labels_proyecto">
+					</p:inputTextarea>
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[4]}" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[4]}" />
+
+					<p:outputLabel value="Número de palabras" for="Palabras"
+						styleClass="labels_proyecto" />
+					<p:inputText id="Palabras" required="true"
+						value="#{ManejadorCrearEditarArticulo.conArt.palabras}"
+						styleClass="labels_proyecto"
+						validatorMessage="Número de palabras: se espera un entero entre 1 y 100.000.">
+						<f:validateLongRange minimum="1" maximum="100000" />
+					</p:inputText>
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[5]}" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[5]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[5]}" />
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[7]}" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[7]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[7]}" />
+
+					<p:outputLabel value="Resumen artículo" for="Resumen"
+						styleClass="labels_proyecto" />
+					<p:inputTextarea id="Resumen" required="true" autoResize="false"
+						maxlength="4000"
+						value="#{ManejadorCrearEditarArticulo.conArt.resumen}" rows="7"
+						cols="60" styleClass="labels_proyecto">
+					</p:inputTextarea>
+
+					<h:outputText value=""
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[6]}" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[6]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[6]}" />
+
+					<p:outputLabel value="ISSN" styleClass="labels_proyecto" for="ISSN" />
+					<p:inputText id="ISSN" required="true" maxlength="500"
+						value="#{ManejadorCrearEditarArticulo.conArt.issn}">
+					</p:inputText>
+
+					<h:outputText value="Área:" styleClass="labels_proyecto" />
+					<p:selectOneMenu id="area"
+						value="#{ManejadorCrearEditarArticulo.conArt.area}">
+						<f:selectItems value="#{ManejadorCrearEditarArticulo.listaAreas}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}" />
+
+			<p:panel header="Coautores"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}">
+				<p:panelGrid columns="2">
+					<h:outputText value=""
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[10]}" />
+					<h:outputText value="#{ManejadorCrearEditarArticulo.errores[10]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.panelRenderError[10]}" />
+
+					<h:outputText value="Nombre:" styleClass="labels_proyecto" />
+					<p:inputText id="coautor"
+						value="#{ManejadorCrearEditarArticulo.coautor}" maxlength="100"
+						size="45" />
+
+					<h:outputText value="Tipo de Coautor:" styleClass="labels_proyecto" />
+					<p:selectOneMenu id="tipoCoautor"
+						value="#{ManejadorCrearEditarArticulo.tipoCoautor}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarArticulo.listaTipoCoautor}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Institución:" styleClass="labels_proyecto" />
+					<p:inputText id="institucion"
+						value="#{ManejadorCrearEditarArticulo.institucionCoautor}"
+						maxlength="100" size="45" />
+
+					<h:outputText value="" />
+					<p:commandButton update="@form" value="Adicionar"
+						action="#{ManejadorCrearEditarArticulo.adicionarCoautor}" />
+
+					<h:outputText value="" />
+
+					<p:dataTable var="coautor"
+						value="#{ManejadorCrearEditarArticulo.listaCoautores}"
+						emptyMessage="Ninguno.">
+						<f:facet name="header">
+							Coautores Registrados
+						</f:facet>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Coautor" />
+							</f:facet>
+							<h:outputText value="#{coautor.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo" />
+							</f:facet>
+							<h:outputText value="#{coautor.tipoCoautor}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Institución" />
+							</f:facet>
+							<h:outputText value="#{coautor.institucion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton update="@form" icon="ui-icon-trash"
+									onclick="if(!confirm('Esta seguro de eliminar el coautor?'))return false"
+									action="#{ManejadorCrearEditarArticulo.eliminarCoautor}">
+									<f:setPropertyActionListener value="#{coautor}"
+										target="#{ManejadorCrearEditarArticulo.coautorArticuloSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}" />
+
+			<p:panel header="Información Archivos Adjuntos"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}">
+
+				<h:outputText
+					value="De acuerdo con los términos de referencia de la convocatoria si antes le fue aprobada una solicitud,
+		para volver a solicitar apoyo debe anexar el certificado de radicación del artículo en la revista a la cual lo sometió y una copia del artículo a revisar o traducir."
+					styleClass="labels_proyecto" />
+				<h:outputText value="" styleClass="labels_proyecto" />
+				<h:outputText
+					value="Si esta solicitando el apoyo por primera vez por favor adjunte una copia del artículo en formato Word."
+					styleClass="labels_proyecto" />
+
+				<br />
+				<br />
+
+				<p:panelGrid columns="3" id="panelDocumentos">
+					<p:outputLabel value="Tipos de documentos" for="somTiposDocumentos"
+						styleClass="labels_proyecto" />
+					<p:selectOneMenu id="somTiposDocumentos"
+						value="#{ManejadorCrearEditarArticulo.tipoDocumentoSel}">
+						<f:selectItems
+							value="#{ManejadorCrearEditarArticulo.tipoDocumentoSelItem}" />
+						<p:ajax update="panelDocumentos"
+							listener="#{ManejadorCrearEditarArticulo.seleccionarTipoDocumento}" />
+					</p:selectOneMenu>
+					<p:fileUpload label="Adjuntar" id="myFileId11" auto="true"
+						mode="advanced" update="@form" showButtons="false"
+						fileUploadListener="#{ManejadorCrearEditarArticulo.guardarArchivoObligatorio}"
+						disabled="#{!ManejadorCrearEditarArticulo.puedeSubirArchivos}" />
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<h:outputText
+						value="#{ManejadorCrearEditarArticulo.mensajeArchivos[0]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.valArchivos[0]}" />
+
+					<h:outputText
+						value="#{ManejadorCrearEditarArticulo.mensajeArchivos[1]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearEditarArticulo.valArchivos[1]}" />
+
+					<p:dataTable var="archivoAdjunto"
+						value="#{ManejadorCrearEditarArticulo.listaArchivosObligatoriosSel}"
+						emptyMessage="No se han registrado archivos.">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo documento" />
+							</f:facet>
+							<h:outputText value="#{archivoAdjunto.tipoArchivo}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Archivo Cargado" />
+							</f:facet>
+							<h:outputText value="#{archivoAdjunto.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton update="@form" icon="ui-icon-trash"
+									action="#{ManejadorCrearEditarArticulo.eliminarArchivoObligatorio}"
+									onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+									<f:setPropertyActionListener value="#{archivoAdjunto}"
+										target="#{ManejadorCrearEditarArticulo.archivoConvocatoriaSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}" />
+
+			<center>
+				<p:panelGrid columns="1"
+					rendered="#{ManejadorCrearEditarArticulo.mostrarFormulario}">
+					<p:commandButton update="@form" icon="ui-icon-disk"
+						action="#{ManejadorCrearEditarArticulo.guardar}"
+						value="#{ManejadorCrearEditarArticulo.valueGuardar}"
+						rendered="#{!ManejadorCrearEditarArticulo.panelRenderError[0]}" />
+				</p:panelGrid>
+			</center>
+
+			<p:messages id="messages" autoUpdate="true" closable="false"
+				redisplay="true" showDetail="true" showSummary="false" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

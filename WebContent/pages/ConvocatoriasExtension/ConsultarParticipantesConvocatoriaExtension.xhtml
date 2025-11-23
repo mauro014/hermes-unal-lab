@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form styleClass="estilo-panelgrid-sinbordes">
+
+			<p:panel header="Información de la Convocatoria">
+				<center>
+					<p:panelGrid columns="2">
+						<h:outputText value="Convocatoria:" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorAdministrarConvocatoriasExtension.convExt.id}" />
+
+						<h:outputText value="Nombre:" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorAdministrarConvocatoriasExtension.convExt.nombre}" />
+
+						<h:outputText value="Entidad convocante:"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorAdministrarConvocatoriasExtension.convExt.entidad}" />
+
+						<h:outputText value="Fecha de cierre:"
+							styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorAdministrarConvocatoriasExtension.convExt.fechaCierre}" />
+
+						<h:outputText value="Objeto:" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorAdministrarConvocatoriasExtension.convExt.objeto}" />
+
+						<h:outputText value="Estado:" styleClass="labels_proyecto" />
+						<h:outputText
+							value="#{ManejadorAdministrarConvocatoriasExtension.convExt.estadoConvocatoria.nombre}" />
+					</p:panelGrid>
+
+					<p:panelGrid columns="1"
+						rendered="#{ManejadorAdministrarConvocatoriasExtension.mostrarArchivos}">
+						<br />
+						<p:dataTable var="terminosRef"
+							value="#{ManejadorAdministrarConvocatoriasExtension.listaArchivosObligatoriosSel}">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Términos de Referencia de la Convocatoria" />
+								</f:facet>
+								<h:outputText value=" #{terminosRef.nombreTerminosReferencia}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Descargar" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-arrowthickstop-1-s" ajax="false"
+										action="#{ManejadorAdministrarConvocatoriasExtension.descargarArchivo}" />
+								</center>
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</center>
+			</p:panel>
+			<br />
+
+			<p:panel header="Cambiar estado a la convocatoria">
+				<center>
+					<p:panelGrid columns="1">
+						<p:commandButton value="Finalizar convocatoria"
+							rendered="#{!ManejadorAdministrarConvocatoriasExtension.mostrarActivo}"
+							action="#{ManejadorAdministrarConvocatoriasExtension.confirmarParticipacion}"
+							update="@form">
+						</p:commandButton>
+
+						<p:commandButton value="Activar convocatoria"
+							rendered="#{ManejadorAdministrarConvocatoriasExtension.mostrarActivo}"
+							action="#{ManejadorAdministrarConvocatoriasExtension.confirmarParticipacion}"
+							update="@form">
+						</p:commandButton>
+					</p:panelGrid>
+				</center>
+			</p:panel>
+			<br />
+
+			<p:panel header="Dependencias con intención de participar"
+				rendered="#{ManejadorAdministrarConvocatoriasExtension.mostrarParticipacion}">
+
+				<p:dataTable id="tablaParticipantes" var="participantes"
+					value="#{ManejadorAdministrarConvocatoriasExtension.listaParticipantes}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{participantes.stringFechaRegistro}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText
+							value="#{participantes.investigador.nombre1} #{participantes.investigador.nombre2} #{participantes.investigador.apellido1} #{participantes.investigador.apellido2}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Dependencia" />
+						</f:facet>
+						<h:outputText value="#{participantes.dependencia.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentario de intención de participar" />
+						</f:facet>
+						<p:inputTextarea rows="5" cols="50" readonly="true"
+							value="#{participantes.comentarioParticipacion}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+
+			<p:panel header="Dependencias que han consultado la convocatoria">
+				<p:dataTable id="tablaConsultaConv" var="consultaConv"
+					value="#{ManejadorAdministrarConvocatoriasExtension.listaVerConsultaConv}"
+					emptyMessage="No se encontraron registros.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{consultaConv.stringFechaRegistro}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText
+							value="#{consultaConv.investigador.nombre1} #{consultaConv.investigador.nombre2} #{consultaConv.investigador.apellido1} #{consultaConv.investigador.apellido2}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Dependencia" />
+						</f:facet>
+						<h:outputText value="#{consultaConv.dependencia.nombre}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+
+			<p:panel header="Comentarios">
+				<p:dataTable id="comentarios" var="participantes"
+					emptyMessage="No se encontraron registros."
+					value="#{ManejadorAdministrarConvocatoriasExtension.listaComentarios}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value="#{participantes.stringFechaRegistro}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre" />
+						</f:facet>
+						<h:outputText
+							value="#{participantes.investigador.nombre1} #{participantes.investigador.nombre2} #{participantes.investigador.apellido1} #{participantes.investigador.apellido2}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Dependencia" />
+						</f:facet>
+						<h:outputText value="#{participantes.dependencia.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentario" />
+						</f:facet>
+						<p:inputTextarea rows="5" cols="50" readonly="true"
+							value="#{participantes.comentarioParticipacion}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+
+			<center>
+				<p:commandButton value="Regresar a la lista de convocatorias"
+					action="#{ManejadorAdministrarConvocatoriasExtension.atras}">
+				</p:commandButton>
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

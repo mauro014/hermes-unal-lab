@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo-propio">
+			<h:form>
+				<t:div styleClass="contenido-titulo-general-myriad">
+					Detalles estudiantes
+				</t:div>
+				<p:panel header="Participantes proyecto con detalles">
+					<p:dataTable id="participantesTabla" var="coinvestigadorPart"
+						value="#{manejadorAgregarDetalleEstudiante.proyectoActual.listaInvestigadoresProyectoConDatos}"
+						emptyMessage="No se han agregado participantes"
+						style="width:100%">
+						<f:facet name="header">
+							<h:outputText
+								value="Participantes del proyecto a los cuales se les conocen los datos personales" />
+						</f:facet>
+						<p:column headerText="Participante" style="width:20%">
+							<h:outputText
+								value="#{coinvestigadorPart.investigador.nombre1} #{coinvestigadorPart.investigador.apellido1}" />
+							<br />
+							<h:outputText
+								value=" #{coinvestigadorPart.investigador.id.tipoDocumento} - #{coinvestigadorPart.investigador.id.documento}" />
+						</p:column>
+						<p:column headerText="Unidad" style="width:20%">
+							<h:outputText
+								value="#{coinvestigadorPart.investigador.dependencia.nombre}" />
+						</p:column>
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Tipo " />
+								<br />
+								<h:outputText value="vinculación" />
+							</f:facet>
+							<h:outputText value="#{coinvestigadorPart.tipo.nombre}" />
+						</p:column>
+						<p:column headerText="h/s" style="width:5%">
+							<h:outputText
+								value=" #{coinvestigadorPart.dedicacionHorasSemana}" />
+						</p:column>
+						<p:column headerText="m" style="width:5%">
+							<h:outputText
+								value=" #{coinvestigadorPart.totalHorasVinculacion}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+				<br/>
+				<p:panel header="Estudiantes sin detalles">
+					<p:dataTable id="estudiantesNoDetallesTabla"
+						var="estudianteNoDetalle"
+						value="#{manejadorAgregarDetalleEstudiante.listaEstudiantesSinDetalle}"
+						emptyMessage="No se han agregado estudiantes"
+						style="width:100%;">
+						<f:facet name="header">
+							<h:outputText
+								value="Estudiantes de los cuales NO se conocen los datos personales" />
+						</f:facet>
+						<p:column headerText="Tipo de participante"
+							style="width:20%">
+							<h:outputText value="#{estudianteNoDetalle.tipo.nombre}" />
+						</p:column>
+						<p:column headerText="Cantidad" style="width:10%">
+							<h:outputText
+								value=" #{estudianteNoDetalle.dedicacionHorasSemana}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>				
+				<br/>
+				<center>
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="text-align: center;">
+								<p:commandButton action="#{manejadorAgregarDetalleEstudiante.mostrarPanelDetalleEstudiante}"
+									update="@form" id="adicionarEst" icon="ui-icon-plusthick"
+									title="Adicionar estudiante"
+									value="Adicionar estudiante"
+									disabled="#{empty manejadorAgregarDetalleEstudiante.listaEstudiantesSinDetalle}"/>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</center>
+				<br/>
+				<p:panel header="Detalle estudiante"
+					id="panelDetalleEstudiantes"
+					rendered="#{manejadorAgregarDetalleEstudiante.mostrarOpcionesAdicion}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;" id="infoEstudiantes">
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo de vinculación:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorAgregarDetalleEstudiante.tipoVinculacionId}"
+									style="width:280px;" panelStyle="width:280px;">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems id="tpVincItems"
+										value="#{manejadorAgregarDetalleEstudiante.tipoVinculacionItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Tipo documento:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:200px"
+									value="#{manejadorAgregarDetalleEstudiante.tipoDocumentoCoInvEquipo.id}"
+									id="tipodoecv2">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{manejadorAgregarDetalleEstudiante.tipoDocumentoItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Documento de identidad:" />
+							</p:column>
+							<p:column>
+								<p:inputText maxlength="30"
+									value="#{manejadorAgregarDetalleEstudiante.documentoCoinvEquipo}"
+									id="documentov2" style="width:200px" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="Dedicación al proyecto (N° horas semanales) - h/s:"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="horasCoinv2"
+									value="#{manejadorAgregarDetalleEstudiante.horasParticipante}"
+									converterMessage="La dedicación del participante debe ser un valor numérico mayor a cero."
+									maxQueryLength="2"
+									validatorMessage="La dedicación del participante debe tener máximo dos caracteres.">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText
+									value="Vinculación total al proyecto (N° meses) - m:"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="horasCoinv3"
+									value="#{manejadorAgregarDetalleEstudiante.tiempoTotalParticipante}"
+									converterMessage="La vinculación total del participante debe ser un valor numérico mayor a cero."
+									maxQueryLength="2"
+									validatorMessage="La vinculación total del participante debe tener máximo dos caracteres.">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:commandButton value="Agregar Estudiante al Proyecto"
+									id="botonBuscarInvestigador"
+									update="infoEstudiantes" process="@form"
+									onstart="dialogEspere.show()"
+									oncomplete="dialogEspere.hide()"
+									action="#{manejadorAgregarDetalleEstudiante.agregarEstudiante}"
+									styleClass="ui-priority-primary" />
+								<p:messages id="msgs"/>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br/>
+				</p:panel>
+				<t:div style="width: 660px; text-align: center; margin-top: 30px;">
+					<p:commandButton value="Volver"
+						action="#{manejadorAgregarDetalleEstudiante.atras}" ajax="false" />
+				</t:div>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

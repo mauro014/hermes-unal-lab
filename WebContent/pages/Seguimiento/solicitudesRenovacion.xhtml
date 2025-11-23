@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>		
+			<t:div styleClass="contenido-titulo-general-myriad" >Listado de estudiantes solicitantes de renovación</t:div>
+			<t:div styleClass="estilo-propio" id="panelPropio">
+				<p:dataTable var="persona"  value="#{manejadorConsultaRenovaciones.listadoPersonas}" 
+						rows="10" type="none"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+						paginator="true" paginatorPosition="bottom"
+						paginatorAlwaysVisible="false" 
+					emptyMessage="No tiene estudiantes registrados">
+					
+					<f:facet name="header">
+            			Ajax Sorting
+        			</f:facet>
+					
+					<p:column filterBy="#{persona.id.documento}"
+						filterStyle="width: 60px;" filterMatchMode="contains">
+						<f:facet name="header">
+							<div style="width: 100%; margin: auto; text-align: center;">
+								<h:outputText value="Documento"/>
+							</div>
+						</f:facet>
+						<h:outputText value="#{persona.id.documento} - #{persona.id.tipoDocumento}"/>
+					</p:column>
+					<p:column  filterBy="#{persona.nombreCompleto}"
+						filterStyle="width: 150px;" filterMatchMode="contains">
+						<f:facet name="header">	
+							<div style="width: 80%; margin: auto; text-align: center;">
+								<h:outputText value="Nombre"/>
+							</div>
+						</f:facet>
+						<h:outputText value="#{persona.nombreCompleto}"/>
+					</p:column>
+					<p:column filterBy="#{persona.direccion}"
+						filterStyle="width: 60px;" filterMatchMode="contains"> 
+						<f:facet name="header">
+							<h:outputText value="sede"/><br />					
+						</f:facet>
+						<h:outputText value="#{persona.direccion}"/>
+					</p:column>
+					<p:column filterBy="#{persona.email}"
+						filterStyle="width: 80px;" filterMatchMode="contains"> 
+						<f:facet name="header">
+							<h:outputText value="Facultad"/><br />							
+						</f:facet>
+						<h:outputText value="#{persona.email}"/>
+					</p:column>					
+					<p:column> 
+						<f:facet name="header" filterBy="#{persona.edad}"
+						filterStyle="width: 40px;" filterMatchMode="contains">
+							<h:outputText value="Ano"/><br />
+							<h:outputText value="Conv."/> 
+						</f:facet>
+						<h:outputText value="#{persona.edad}"/>
+					</p:column>					
+					<p:column sortBy="#{persona.coorNombreDependencia}"> 
+						<f:facet name="header">
+							<h:outputText value="Estado"/>
+						</f:facet>
+						<h:outputText value="#{persona.coorNombreDependencia}"/>
+					</p:column>
+					<p:column>
+						<div style="text-align:center;">
+							<p:commandButton icon="ui-icon-search"
+								action="#{manejadorConsultaRenovaciones.cargarSolicitudes}" >
+								<f:setPropertyActionListener value="#{persona}" target="#{manejadorConsultaRenovaciones.personaSeleccionada}" ajax="false"  />
+							</p:commandButton>
+						</div>
+					</p:column>
+				</p:dataTable>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Gestión</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />
+		</h:form>
+
+		<h:form id="LaboratoriosGestion">
+
+			<p:panel id="panelPorcentajelab">
+			
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosGestion.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosGestion.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;
+									        ">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="15" />
+
+			<p:panel
+				header="#{ManejadorLaboratoriosGestion.laboratorioActual.nombre} - #{ManejadorLaboratoriosGestion.laboratorioActual.id}"
+				id="panelLaboratoriosGestion">
+
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes">
+
+					<h:outputText value="Acreditación" />
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionAcreditacion}"
+						id="cambia1">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosGestion.acreditacionItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Interesado" rendered="false"/>
+					<p:selectBooleanCheckbox id="cambia2" rendered="false"
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionAcreditacionInteresado}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="Norma" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionAcreditacionNorma}"
+						maxlength="100" size="40" />
+
+					<h:outputText value="Certificación" />
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						id="cambia3"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionCertificacion}">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosGestion.certificacionItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Interesado" rendered="false"/>
+					<p:selectBooleanCheckbox id="cambia4" rendered="false"
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionCertificacionInteresado}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="Norma" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionCertificacionNorma}"
+						maxlength="100" size="40" />
+
+					<h:outputText value="Habilitación" />
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						id="cambia5"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionHabilitacion}">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosGestion.habilitacionItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Requiere" rendered="false"/>
+					<p:selectBooleanCheckbox id="cambia6" rendered="false"
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionHabilitacionRequiere}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="Norma" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionHabilitacionNorma}"
+						maxlength="100" size="40" />
+
+					<h:outputText value="Registro" />
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						id="cambia7"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionRegistroIca}">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosGestion.registroIcaItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Requiere" rendered="false"/>
+					<p:selectBooleanCheckbox id="cambia8" rendered="false"
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionRegistroIcaRequiere}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="Norma" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionRegistroIcaNorma}"
+						maxlength="100" size="40" />
+
+					<h:outputText value="Licencias" />
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						id="cambia9"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionLicencias}">
+						<f:selectItems
+							value="#{ManejadorLaboratoriosGestion.licenciasItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Requiere" rendered="false"/>
+					<p:selectBooleanCheckbox id="cambia10" rendered="false"
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionLicenciasRequiere}">
+					</p:selectBooleanCheckbox>
+					<h:outputText value="¿Cuál?" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionLicenciasCual}"
+						maxlength="100" size="40" />
+				</p:panelGrid>
+				
+				<p:spacer height="15" />
+				
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes">
+				
+					<h:outputText value="Interesado:" styleClass="negrilla"/>
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionInteresado}"
+						id="gestionInteresado">
+						<f:selectItem itemValue="0" itemLabel="" />
+						<f:selectItems value="#{ManejadorLaboratoriosGestion.interesadoNormaItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Norma" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionInteresadoNorma}"
+						maxlength="100" size="40" />
+						
+					
+						
+					<h:outputText value="Requiere:" styleClass="negrilla"/>
+					<p:selectOneMenu
+						disabled="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionRequiere}"
+						id="gestionRequiere">
+						<f:selectItem itemValue="0" itemLabel="" />
+						<f:selectItems value="#{ManejadorLaboratoriosGestion.requiereNormaItem}" />
+					</p:selectOneMenu>
+					<h:outputText value="Norma" />
+					<p:inputText readonly="#{ManejadorLaboratoriosGestion.soloLectura}"
+						value="#{ManejadorLaboratoriosGestion.laboratorioActual.gestionRequiereNorma}"
+						maxlength="100" size="40" />
+
+				</p:panelGrid>
+
+				<p:spacer height="15" />
+				<p:separator />
+				<p:spacer height="15" />
+
+				<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+					value="#{ManejadorLaboratoriosGestion.listaArchivosGestion}"
+					rows="6" paginator="true" paginatorPosition="bottom"
+					paginatorAlwaysVisible="true" pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No existen archivos registrados.">
+					<f:facet name="header">
+						Archivos registrados
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+								Fecha
+								</f:facet>
+						<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+							styleClass="pequennio">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+								Nombre
+								</f:facet>
+						<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+								Tipo
+								</f:facet>
+						<h:outputText value="#{archivoLaboratorio.tipoArchivo.nombre}"
+							styleClass="pequennio" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+								action="#{ManejadorLaboratoriosGestion.descargarArchivo}">
+								<f:setPropertyActionListener value="#{archivoLaboratorio}"
+									target="#{ManejadorLaboratoriosGestion.archivoLaboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<p:column
+						rendered="#{not ManejadorLaboratoriosGestion.soloLectura}">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" styleClass="pequennio" />
+						</f:facet>
+						<center>
+							<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+								action="#{ManejadorLaboratoriosGestion.eliminarArchivo}"
+								onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+								<f:setPropertyActionListener value="#{archivoLaboratorio}"
+									target="#{ManejadorLaboratoriosGestion.archivoLaboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+
+				<center>
+					<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{not ManejadorLaboratoriosGestion.soloLectura}"
+						id="pgDocumentosGestion">
+						<p:panelGrid columns="2" id="panelSubirDocumentos2">
+							<h:outputText value="Tipo de archivo a registrar"
+								styleClass="negrilla" />
+							<t:div
+								title="Para registrar un nuevo archivo, seleccione el Tipo, y luego haga clic en el botón (+)Agregar.">
+								<p:selectOneMenu converter="ConvertidorTipos"
+									style="width:220px;"
+									value="#{ManejadorLaboratoriosGestion.tipoArchivoSeleccionado}"
+									id="somTipoArchivo">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosGestion.siTiposDocumentosGestion}" />
+									<p:ajax
+										listener="#{ManejadorLaboratoriosGestion.seleccionarTipos}" />
+								</p:selectOneMenu>
+							</t:div>
+						</p:panelGrid>
+
+						<p:fileUpload label="Agregar" update="@form"
+							fileUploadListener="#{ManejadorLaboratoriosGestion.subirArchivo}"
+							auto="true" mode="advanced" showButtons="false"
+							sizeLimit="3145728" invalidSizeMessage="Tamaño máximo: 3 MB"
+							allowTypes="/(\.|\/)(pdf)$/"
+							invalidFileMessage="El archivo debe ser de formato PDF." />
+					</p:panelGrid>
+				</center>
+
+				<p:spacer height="15" />
+				<p:separator />
+				<p:spacer height="15" />
+				<br />
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" rendered="#{!ManejadorLaboratoriosGestion.soloLectura}">
+						<p:commandButton
+							action="#{ManejadorLaboratoriosInformacionGeneral.volverSolicitud}"
+							onclick="if(!confirm('Está seguro de Salir?. Será redirigido al formulario de solicitud de creación sin guardar la información en este formulario.'))return false"
+							value="Volver a la solicitud" 
+							immediate="true" 
+							rendered="#{ManejadorLaboratoriosGestion.esSolicitudLab}"/>
+							
+						<p:commandButton action="#{ManejadorLaboratoriosGestion.salir}"
+							onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+							value="Salir" 
+							rendered="#{!ManejadorLaboratoriosGestion.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosGestion.salirGuardar}"
+							value="Guardar y continuar después" 
+							rendered="#{!ManejadorLaboratoriosGestion.esSolicitudLab}"/>
+						<p:commandButton
+							action="#{ManejadorLaboratoriosGestion.siguiente}"
+							value="Guardar y avanzar" />
+					</p:panelGrid>
+				</center>
+			</p:panel>
+			
+			<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+							header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosInformacionGeneral.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

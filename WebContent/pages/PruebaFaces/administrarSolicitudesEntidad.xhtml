@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">ADMINISTRAR SOLICITUDES ENTIDADES</ui:define>
+
+	<ui:define name="content">
+		<h:form id="SolicitudEntidades">
+
+			<p:panel id="panel1" header="Solicitud Entidades" widgetVar="panel1">
+
+				<h:panelGrid columns="2">
+					<h:outputLabel for="descripcion" value="Nombre o Descripción: " />
+					<p:inputText id="descripcion"
+						value="#{ManejadorAdministrarSolicitudEntidad.descripcion_busqueda}"
+						label="descripcion">
+					</p:inputText>
+
+					<h:outputLabel for="nit" value="NIT: " />
+					<p:inputText id="nit"
+						value="#{ManejadorAdministrarSolicitudEntidad.nit_busqueda}" label="nit">
+					</p:inputText>					
+				</h:panelGrid>
+
+				<p:commandButton value="Buscar" id="buscar"
+					actionListener="#{ManejadorAdministrarSolicitudEntidad.buscarEntidad}"
+					styleClass="ui-priority-primary" update="entidades" />
+				<p:commandButton type="reset" value="Limpiar" id="limpiar"
+					styleClass="ui-priority-primary" update="entidades" />
+				
+				<p:separator />
+				
+				<h3>Solicitud de Entidades</h3>
+				<p:dataTable id="entidades" var="fuenteFinanciacion"
+					value="#{ManejadorAdministrarSolicitudEntidad.listaEntidades}" rows="10"
+					align="center" border="1" paginator="#{ManejadorAdministrarSolicitudEntidad.tamlista}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					paginatorPosition="bottom" rowsPerPageTemplate="10,15">
+					<f:facet name="header">  
+	            		Entidades  
+	        		</f:facet>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="NIT" />
+						</f:facet>
+						<h:outputText value="#{fuenteFinanciacion.nit}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre de la Entidad" />
+						</f:facet>
+						<h:outputText value="#{fuenteFinanciacion.descripcion}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Aprobar/Rechazar Solicitud" />
+						</f:facet>
+						<p:commandButton id="aprobar" icon="ui-icon-search"
+							title="Aprobar Solicitud"
+							action="#{ManejadorAdministrarSolicitudEntidad.consultarEntidad}">
+							<f:setPropertyActionListener
+								target="#{ManejadorAdministrarSolicitudEntidad.entidadSeleccionada}"
+								value="#{fuenteFinanciacion}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+				
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

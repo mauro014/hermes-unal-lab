@@ -1,0 +1,354 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">ASOCIAR PROYECTO</ui:define>
+	<ui:define name="content">
+		<h:form id="form" enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{!manejadorAceptarTerminosReferencia.esPermisoMarco and !manejadorAceptarTerminosReferencia.esPermisoMarcoAsignatura}">Asociar proyecto de investigación</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorAceptarTerminosReferencia.esPermisoMarco}">Incluir proyecto de investigación</t:div>
+			<t:div styleClass="contenido-titulo-general-myriad"
+				rendered="#{manejadorAceptarTerminosReferencia.esPermisoMarcoAsignatura}">Incluir asignatura</t:div>
+			<br />
+			<p:panel>
+				<t:div style="text-align: center; width: 100%;"
+					rendered="#{!manejadorAceptarTerminosReferencia.esProyectoObligatorio and !manejadorAceptarTerminosReferencia.esPermisoMarcoAsignatura}">
+					<h:outputText
+						value="¿la solicitud esta relacionada o vinculada a un proyecto inscrito en el Sistema  Hermes?" />
+					<br />
+					<br />
+					<p:selectOneButton
+						value="#{manejadorAceptarTerminosReferencia.usarProyecto}">
+						<f:selectItem itemLabel="Si" itemValue="si" />
+						<f:selectItem itemLabel="No" itemValue="no" />
+						<p:ajax event="change" update="@form" />
+					</p:selectOneButton>
+				</t:div>
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					style="width:100%;"
+					rendered="#{manejadorAceptarTerminosReferencia.esProyectoObligatorio or (!manejadorAceptarTerminosReferencia.esProyectoObligatorio and manejadorAceptarTerminosReferencia.usarProyecto == 'si')}">
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText
+								rendered="#{!manejadorAceptarTerminosReferencia.esPermisoMarco}"
+								value="Para participar en esta convocatoria, de acuerdo a los términos de referencia, debe asociar el proyecto.  "></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:panel
+								rendered="#{manejadorAceptarTerminosReferencia.esPermisoMarco}">
+
+								<t:div style="text-align:justify; color:#FF8000;">
+							Por favor tenga presente que en el proyecto que asociará al permiso marco debe encontrarse aprobado o activo y 
+							deben estar incluidos como integrantes quienes vayan a realizar actividades de recolección bajo responsabilidad del 
+							solicitante de la inclusión del proyecto para que sean autorizadas las actividades de recolección en campo y 
+							sus movilizaciones.
+							<br />
+							Por favor tener en cuenta que cuando solicite el <h:outputText
+										id="certificado" style="text-weight:bold; color:black;"
+										value="certificado de movilización" /> aparecen los integrantes del proyecto 
+							que está asociado al permiso de biodiversidad.
+							<p:tooltip for="certificado" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">
+								       	El certificado de movilización es el documento obligatorio <br /> 
+										que debe ser portado en las salidas de campo junto con la <br />
+										resolución del permiso vigente.
+									</t:div>
+									</p:tooltip>
+								</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								rendered="#{!manejadorAceptarTerminosReferencia.esPermisoMarco}"
+								value="Seleccione el proyecto a vincular: "></h:outputText>
+							<h:outputText
+								rendered="#{manejadorAceptarTerminosReferencia.esPermisoMarco}"
+								value="Seleccione el proyecto a asociar:"></h:outputText>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu style="width:500px"
+								value="#{manejadorAceptarTerminosReferencia.proyectoSeleccionado}"
+								panelStyle="width: 500px;">
+								<f:selectItems
+									value="#{manejadorAceptarTerminosReferencia.proyectosInvestigador}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<p:inputText id="idPry" size="6"
+								value="#{manejadorAceptarTerminosReferencia.codigoProyecto}"
+								rendered="false"></p:inputText>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<t:div style="width: 100%; text-align: center;"
+					rendered="#{manejadorAceptarTerminosReferencia.esProyectoObligatorio or (!manejadorAceptarTerminosReferencia.esProyectoObligatorio and manejadorAceptarTerminosReferencia.usarProyecto == 'si')}">
+
+					<h:outputText
+						value="Si el proyecto a asociar no se encuentra registrado por favor haga clic sobre: "></h:outputText>
+					<h:commandLink action="#{manejadorAutenticacion.cargarFichaMinima}"
+						ajax="false"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;">
+						<h:outputText value=" 'Registro de proyectos' " />
+					</h:commandLink>
+					<br />
+
+					<h:outputText style="color:#FF8000;"
+						rendered="#{!manejadorAceptarTerminosReferencia.esPermisoMarco}"
+						value="Recuerde que después de registrar el proyecto debe nuevamente ingresar a 'Convocatorias internas SIUN' y aplicar a la convocatoria asociando el proyecto que ya registró."></h:outputText>
+
+					<br />
+					<p:commandButton value="Cargar información proyecto"
+						id="botonBuscarProyecto"
+						action="#{manejadorAceptarTerminosReferencia.buscarProyecto}"
+						update="proyectoInfo, messages" ajax="false"
+						styleClass="ui-priority-primary" />
+				</t:div>
+				<t:div style="width: 100%; text-align: center; margin-top: 20px;"
+					rendered="#{!manejadorAceptarTerminosReferencia.esProyectoObligatorio and manejadorAceptarTerminosReferencia.usarProyecto == 'no'}">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;" id="panelTipoAval">
+						<h:outputText value="Nombre del proyecto:" />
+						<p:inputText
+							value="#{manejadorAceptarTerminosReferencia.proyectoUsado}"
+							style="width: 340px;" />
+						<h:outputText value="Entidad financiadora:" />
+						<p:selectOneMenu id="selectEntidad"
+							value="#{manejadorAceptarTerminosReferencia.idEntidadFinanciadora}"
+							style="width:350px" panelStyle="width: 360px;" filter="true">
+							<f:selectItems
+								value="#{manejadorAceptarTerminosReferencia.listaEntidadesParticipantes}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<p:commandButton value="Continuar con el formulario de solicitud"
+						id="botonBuscarProyecto"
+						action="#{manejadorAceptarTerminosReferencia.asociarProyectoNoHermes}"
+						ajax="false" styleClass="ui-priority-primary" />
+
+				</t:div>
+
+				<t:div
+					rendered="#{manejadorAceptarTerminosReferencia.esPermisoMarcoAsignatura}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width: 100%;" id="seccionAsignaturas">
+						<p:row>
+							<p:column>
+								<h:outputText value="Sede:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="sedeAsignatura"
+									value="#{manejadorAceptarTerminosReferencia.sedeUniversidad}"
+									style="width:520px;" panelStyle="width: 500px;">
+									<f:selectItems
+										value="#{manejadorAceptarTerminosReferencia.listaSedesItem}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorAceptarTerminosReferencia.cargarDependencias}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Facultad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="facultadAsignatura"
+									value="#{manejadorAceptarTerminosReferencia.dependenciaUniversidad}"
+									style="width:520px;" panelStyle="width: 500px;">
+									<f:selectItems
+										value="#{manejadorAceptarTerminosReferencia.listaDependenciasItem}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorAceptarTerminosReferencia.cargarDepartamentos}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Unidad académica:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="deptoAsignatura"
+									value="#{manejadorAceptarTerminosReferencia.deptoAsignatura}"
+									style="width:520px;" panelStyle="width: 500px;">
+									<f:selectItems
+										value="#{manejadorAceptarTerminosReferencia.listaDepartamentosItem}" />
+									<p:ajax update="@form" process="@form"
+										listener="#{manejadorAceptarTerminosReferencia.cargarAsignaturas}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorAceptarTerminosReferencia.deptoAsignatura!=null and manejadorAceptarTerminosReferencia.deptoAsignatura!=''}">
+							<p:column>
+								<h:outputText value="Asignatura:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="asignaturaDocente" filter="true"
+									filterMatchMode="contains"
+									value="#{manejadorAceptarTerminosReferencia.asignatura}"
+									style="width:520px;" panelStyle="width: 500px;">
+									<f:selectItems
+										value="#{manejadorAceptarTerminosReferencia.listaAsignaturasDepartamento}" />
+									<p:ajax update="@form" process="@form" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorAceptarTerminosReferencia.asignatura == '0'}">
+							<p:column>
+								<h:outputText value="Nombre de la asignatura:" />
+							</p:column>
+							<p:column>
+								<p:inputText id="nombreOtraAsignatura" size="58"
+									value="#{manejadorAceptarTerminosReferencia.nombreNuevaAsignatura}"
+									maxlength="400"
+									validatorMessage="El nombre de la asignatura debe tener máximo 300 caracteres">
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Programa académico:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="programa" filter="true"
+									filterMatchMode="contains"
+									value="#{manejadorAceptarTerminosReferencia.programaAcademico}"
+									style="width:520px;" panelStyle="width: 500px;">
+									<f:selectItems
+										value="#{manejadorAceptarTerminosReferencia.programas}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:panel>
+									<t:div style="text-align:justify;">
+									Yo <h:outputText
+											value=" #{manejadorAceptarTerminosReferencia.nombrePersona}"
+											style="font-weight: bold;" /> declaro que la salida de campo tiene como propósito la recolección de especímenes con fines docentes y 
+									que se garantizan buenas prácticas en las actividades de colecta, sin afectar las especies y/o ecosistemas que sean intervenidos.
+								</t:div>
+								</p:panel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Aceptar e incluir asignatura"
+									id="botonIncluirAsignatura" update="@form"
+									action="#{manejadorAceptarTerminosReferencia.asociarAsignatura}"
+									styleClass="ui-priority-primary" ajax="false" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</t:div>
+			</p:panel>
+
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<p:panel
+				rendered="#{manejadorAceptarTerminosReferencia.noBioroyecto and manejadorAceptarTerminosReferencia.esPermisoMarco}"
+				style="margin-top: 20px;" header="Información proyecto">
+				<p:panelGrid align="center" id="proyectoInfoPermiso"
+					styleClass="estilo-panelgrid-sinbordes" style="width: 100%;">
+					<p:row>
+						<p:column>
+							<p:panel>
+								<t:div style="color:#464646; text-align:justify;">
+				NOTA: <strong style="color: #FF0000;"> No es posible
+										asociar este proyecto al permiso marco </strong>, porque en el registro del proyecto en la 
+				sección de "Permisos y licencias de investigación (biodiversidad)" no ha seleccionado que hará uso de recursos de la biodiversidad colombiana. 
+				De acuerdo a esto, si el proyecto está aprobado, por favor solicite al coordinador de seguimiento la posibilidad de editar el proyecto y ajustar 
+				dicha sección y si está activo debe hacer una solicitud de cambio de contenido para cambiar las respuesta en la sección de "Permisos y licencias de 
+				investigación (biodiversidad)" <a target="_blank"
+										style="text-decoration: underline; color: #16A8E2; font-weight: bold;"
+										href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=21">
+										(instructivo de solicitud de cambio de contenido)</a>  y volver a solicitar la inclusión del proyecto.
+			</t:div>
+							</p:panel>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel
+				rendered="#{manejadorAceptarTerminosReferencia.mostrarProyecto and !manejadorAceptarTerminosReferencia.noBioroyecto}"
+				style="margin-top: 20px;" header="Información proyecto">
+				<p:panelGrid align="center" id="proyectoInfo"
+					styleClass="estilo-panelgrid-sinbordes" style="width: 100%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="Proyecto:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAceptarTerminosReferencia.proyectoAsociar.nombre}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAceptarTerminosReferencia.nombreConvocatoria}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Modalidad:" style="font-weight: bold;" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{manejadorAceptarTerminosReferencia.nombreModalidad}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="text-align:center;">
+							<p:commandButton value="Asociar este proyecto"
+								id="botonGuardarSalir" update="@form"
+								rendered="#{!manejadorAceptarTerminosReferencia.esPermisoMarco}"
+								action="#{manejadorAceptarTerminosReferencia.asociarProyecto}"
+								styleClass="ui-priority-primary" ajax="false" />
+							<p:commandButton value="Asociar este proyecto"
+								id="botonGuardarSalir2" update="@form"
+								rendered="#{manejadorAceptarTerminosReferencia.esPermisoMarco}"
+								action="#{manejadorAceptarTerminosReferencia.asociarProyecto}"
+								styleClass="ui-priority-primary" ajax="false" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Salir" id="botonAtras"
+							action="#{manejadorAceptarTerminosReferencia.atras}"
+							styleClass="ui-priority-primary" />
+						<p:commandButton value="Continuar sin asociar proyecto"
+							id="botonGuardarSalir2"
+							rendered="#{manejadorAceptarTerminosReferencia.opcionalProyecto}"
+							update="@form"
+							action="#{manejadorAceptarTerminosReferencia.noAsociarProyecto}"
+							styleClass="ui-priority-primary" ajax="false" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

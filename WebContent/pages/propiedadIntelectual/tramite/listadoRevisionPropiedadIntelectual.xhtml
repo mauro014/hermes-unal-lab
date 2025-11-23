@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Solicitudes protección de propiedad intelectual<br />
+			</t:div>
+			En esta sección puede realizar la revisión de las solicitudes de protección de la propiedad intelectual en cualquiera de sus tipologías. 
+			Por favor tener en cuenta el <a
+				href="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/instructivo.xhtml?id=136"
+				target="_blank" style="color: #16A8E2; font-weight: bold;">instructivo</a>.
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form>
+			<br />
+			<p:dataTable var="propiedad" id="tablaPropiedad" style="width:100%;font-size:12px;"
+				value="#{manejadorPropiedadIntelectualListas.listaPropiedades}"
+				emptyMessage="No tiene solicitudes para revisión" paginator="true"
+				rows="15" paginatorPosition="bottom"
+				filteredValue="#{manejadorPropiedadIntelectualListas.filteredPropiedades}">
+				<f:facet name="header">Solicitudes pendientes por revisión</f:facet>
+				<p:column style="text-align: center; width: 3%"
+					filterBy="#{propiedad.id}  #{propiedad.subTipo.nombre}"
+					filterStyle="width: 30px;" filterMatchMode="contains"
+					sortBy="#{propiedad.id}">
+					<f:facet name="header">
+						<h:outputText value="Código" />
+						<br />
+						<h:outputText value="Tipo" />
+					</f:facet>
+					<h:outputText value="#{propiedad.id}" style='font-weight: bold;' />
+					<br />
+					<h:outputText value="#{propiedad.subTipo.nombre}" />
+				</p:column>
+				<p:column style="text-align: center; width: 5%"
+					filterBy="#{propiedad.subEstado.nombre}" filterStyle="width: 70px;"
+					filterMatchMode="contains" sortBy="#{propiedad.subEstado.nombre}">
+					<f:facet name="header">
+						<h:outputText value="Subestado" />
+					</f:facet>
+					<h:outputText value="#{propiedad.subEstado.nombre}" />
+				</p:column>
+				<p:column style="text-align: center; width: 6%"
+					filterBy="#{propiedad.fechaRegistroConFormato}"
+					filterStyle="width: 50px;"
+					sortBy="#{propiedad.fechaRegistroConFormato}"
+					filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Fecha sol." />
+					</f:facet>
+					<h:outputText value="#{propiedad.fechaRegistroConFormato}">
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Título" style="width: 45%;"
+					filterBy="#{propiedad.titulo}" filterStyle="width: 70px;"
+					filterMatchMode="contains" sortBy="#{propiedad.titulo}">
+					<h:outputText value="#{propiedad.titulo}" />
+				</p:column>
+				<p:column style="text-align: center; width: 25%"
+					headerText="Solicitado por"
+					filterBy="#{propiedad.responsableRegistro.nombreCompletoMinusculas}"
+					filterStyle="width: 70px;" filterMatchMode="contains"
+					sortBy="#{propiedad.responsableRegistro.nombreCompletoMinusculas}">
+					<h:outputText
+						value="#{propiedad.responsableRegistro.nombreCompletoMinusculas}" />
+				</p:column>
+				<p:column style="text-align: center; width: 14%"
+					headerText="Dependencia"
+					filterBy="#{propiedad.dependenciaSolicitante.nombre}"
+					filterStyle="width: 70px;" filterMatchMode="contains"
+					sortBy="#{propiedad.dependenciaSolicitante.nombre}">
+					<h:outputText value="#{propiedad.dependenciaSolicitante.nombre}" />
+				</p:column>
+				<p:column>
+					<p:commandButton
+						action="#{manejadorPropiedadIntelectualListas.tramitarPropiedad}"
+						icon="ui-icon-search" ajax="false" title="Consultar">
+						<f:setPropertyActionListener value="#{propiedad.id}"
+							target="#{manejadorPropiedadIntelectualListas.idPropiedad}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="footer">Han sido encontrados #{manejadorPropiedadIntelectualListas.tamanoLista} propiedades</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

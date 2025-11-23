@@ -1,0 +1,456 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+<h:panelGrid columns="1"
+ 		 	 align="center" 
+         	 cellpadding="0"
+         	 cellspacing="1"
+         	 rendered="true">
+    <h:outputText value="#{manejadorConsultaProyectoCoordinador.mensajeTransaccion}"
+						 font-size: 16px;
+						 font-style: normal;
+						 font-weight: bold;
+					     color: RED;"/>	
+</h:panelGrid>
+
+<s:fieldset legend="Consultar proyectos asignados" 
+			style="padding:.5em; 
+			border: 1px solid #003366; 
+			background-color:#E6EEF7;" 
+			styleClass="fieldset_externo"
+			rendered="#{manejadorConsultaProyectoCoordinador.consultar}">
+	<t:panelTabbedPane id="consultaProyecto"
+					   bgcolor="#E6EEF7"
+					   selectedIndex="0"
+					   align="center"
+					   rendered="true"
+					   border="1px solid #003366"
+					   style="width: 550px;
+					   		  length: 550px">	
+		<t:panelTab id="tabDatosBasicos" 
+					label="Datos básicos"
+					style="legend1">
+			<h:panelGrid columns="2"
+					 	 align="center" 
+		   	         	 cellpadding="0"
+		   	         	 cellspacing="1"
+		   	         	 rendered="true">
+				<h:outputLabel for="id" value="Código Hermes: " styleClass="labels_proyecto"/>
+				<h:inputText id="id" 
+			   				 value="#{manejadorConsultaProyectoCoordinador.idProyecto}"/>  
+				
+				<h:outputLabel for="nombre" value="Título proyecto: " styleClass="labels_proyecto"/>
+				<h:inputTextarea id="nombre" 
+			   					 value="#{manejadorConsultaProyectoCoordinador.nombreProyecto}"
+			   					 cols="40"
+			   					 rows="2"/>
+				
+				<h:outputLabel for="codigoDib" value="Código DIB: " styleClass="labels_proyecto"/>
+				<h:inputText id="codigoDib" 
+			   				 value="#{manejadorConsultaProyectoCoordinador.codigoDIBProyecto}"/>
+				
+				<h:outputLabel value="Estado proyecto: "
+							   for="estado"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="estado"
+		 	    				 immediate="true"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.estadoProyecto.id}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.estadosProyectoItem}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel value="Facultad: "
+							   for="facultad"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    
+		 	    <h:selectOneMenu id="facultad"
+		 	    				 immediate="true"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idFacultad}"
+		 	    				 onchange="submit(this)"
+		 	    				 valueChangeListener="#{manejadorConsultaProyectoCoordinador.cargarDepartamentosFacultad}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.facultadesItem}" />
+				</h:selectOneMenu>
+				
+				
+				<h:outputLabel value="Departamento: "
+							   for="departamento"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    			   
+		 	    <s:pprPanelGroup id="pprDepartamento" partialTriggers="facultad departamento">
+		 	    <h:selectOneMenu id="departamento"
+		 	    				 immediate="true"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idDepartamento}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.departamentosItem}" />
+				</h:selectOneMenu>
+				</s:pprPanelGroup>
+				<h:outputLabel value="Convocatoria: "
+							   for="convocatoria"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <s:pprPanelGroup id="pprConvocatoria" partialTriggers="facultad departamento convocatoria">
+		 	    <t:popup styleClass="popup"
+						 closePopupOnExitingElement="true"
+						 closePopupOnExitingPopup="true" 
+						 displayAtDistanceX="-100"							
+						 displayAtDistanceY="10">					
+			 	    <h:selectOneMenu id="convocatoria" 	    				 
+			 	    				 immediate="true"
+			 	    				 onchange="submit(this)"
+			 	    				 valueChangeListener="#{manejadorConsultaProyectoCoordinador.obtenerModalidadesConvocatoria}" 	    				 
+			 	    				 value="#{manejadorConsultaProyectoCoordinador.idConvocatoriaProyecto}" 	    				 							        				 							        				 							        				 							        				 
+			        				 styleClass="textarea">
+						<f:selectItems value="#{manejadorConsultaProyectoCoordinador.convocatoriasItem}"/>			
+					</h:selectOneMenu>
+					
+					<f:facet name="popup">
+						<h:panelGroup>
+							<h:panelGrid columns="1">
+								<h:outputText value="#{manejadorConsultaProyectoCoordinador.nombreConvocatoriaProyecto}" />
+							</h:panelGrid>
+						</h:panelGroup>				
+					</f:facet>
+				</t:popup>
+				
+				</s:pprPanelGroup>
+				
+				<h:outputLabel value="Modalidad: "
+							   for="modalidad"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    
+		 	    <s:pprPanelGroup id="pprModalidad" partialTriggers="facultad departamento convocatoria modalidad">
+		 	    <t:popup styleClass="popup"
+						 closePopupOnExitingElement="true"
+						 closePopupOnExitingPopup="true" 
+						 displayAtDistanceX="-100"							
+						 displayAtDistanceY="10">	   
+			 	    <h:selectOneMenu id="modalidad"
+			 	    				 immediate="true"
+			 	    				 onchange="submit(this)"
+			 	    				 value="#{manejadorConsultaProyectoCoordinador.idModalidadProyecto}"							        				 							        				 							        				 							        				 
+			        				 styleClass="textarea">
+						<f:selectItems value="#{manejadorConsultaProyectoCoordinador.modalidadesConvocatoriaItem}" />
+					</h:selectOneMenu>
+					<f:facet name="popup">
+						<h:panelGroup>
+							<h:panelGrid columns="1">
+								<h:outputText value="#{manejadorConsultaProyectoCoordinador.nombreModalidadProyecto}" />
+							</h:panelGrid>
+						</h:panelGroup>				
+					</f:facet>
+				</t:popup>
+				</s:pprPanelGroup>	
+				
+				<h:outputLabel value="Participante: "
+							   for="participante"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="participante"
+		 	    				 immediate="true"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idParticipanteNombre}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.participantesItem}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel for="palabraClave" value="Palabra clave: " styleClass="labels_proyecto"/>
+				<h:inputText id="palabraClave" 
+			   				 value="#{manejadorConsultaProyectoCoordinador.palabraClave}"/>		
+			   				 
+				<h:outputLabel for="ano" value="Año: " styleClass="labels_proyecto"/>
+				<h:inputText id="ano" 
+			   				 value="#{manejadorConsultaProyectoCoordinador.ano}"/>
+			</h:panelGrid>			
+		</t:panelTab>
+		
+		<t:panelTab id="tabInvestigadorPrincipal" 
+					label="Investigador principal"
+					style="legend1">	
+			<h:panelGrid columns="2"
+					 	 align="center" 
+		   	         	 cellpadding="0"
+		   	         	 cellspacing="1"
+		   	         	 rendered="true">
+				<h:outputLabel value="Nombre: "
+							   for="principal"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="principal"
+		 	    				 immediate="true"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idInvestigadorPrincipalNombre}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.investigadoresPrincipalesItem}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel value="Tipo documento: "
+							   for="tdoPrincipal"							
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="tdoPrincipal"
+		 	    				 immediate="true"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idInvestigadorPrincipalId.tipoDocumento}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.tiposDocumentoItem}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel for="documentoPrincipal" 
+							   value="Número documento: " 
+							   styleClass="labels_proyecto"/>
+				<h:inputText id="documentoPrincipal" 
+			   				 value="#{manejadorConsultaProyectoCoordinador.idInvestigadorPrincipalId.documento}"/>
+			</h:panelGrid>			
+		</t:panelTab>
+		
+		<t:panelTab id="tabEvaluador" 
+					label="Evaluador"
+					style="legend1">	
+			<h:panelGrid columns="2"
+					 	 align="center" 
+		   	         	 cellpadding="0"
+		   	         	 cellspacing="1"
+		   	         	 rendered="true">
+				<h:outputLabel value="Nombre: "
+							   for="evaluador"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="evaluador"
+		 	    				 immediate="true"
+			 	    			 value="#{manejadorConsultaProyectoCoordinador.idEvaluadorNombre}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.evaluadoresItem}" />
+				</h:selectOneMenu>
+				
+		   	    <h:outputLabel value="Tipo documento: "
+							   for="tdoEvaluador"
+		 	    			   styleClass="labels_proyecto"/>
+		 	   	<h:selectOneMenu id="tdoEvaluador"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idEvaluadorId.tipoDocumento}"
+		 	    				 immediate="true"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.tiposDocumentoItem}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel for="documentoEvaluador" 
+							   value="Número documento: " 
+							   styleClass="labels_proyecto"/>
+				<h:inputText id="documentoEvaluador" 
+			   				 value="#{manejadorConsultaProyectoCoordinador.idEvaluadorId.documento}"/>								
+			</h:panelGrid>		
+		</t:panelTab>
+		
+		
+		<t:panelTab id="tabAreaTematica" 
+					label="Area temática"
+					style="legend1">
+			<s:pprPanelGroup id="pprAreas" partialTriggers="area1 area2 area3">	
+			<h:panelGrid columns="2"
+					 	 align="center" 
+		   	         	 cellpadding="0"
+		   	         	 cellspacing="1"
+		   	         	 rendered="true">
+				<h:outputLabel value="Area temática nivel 1: "
+							   for="area1"
+							   rendered="true"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="area1"
+		 	    				 immediate="true"
+		 	    				 onchange="submit(this)"
+		 	    				 valueChangeListener="#{manejadorConsultaProyectoCoordinador.obtenerClasificacionesConocimientoNivel2}"
+			 	    			 value="#{manejadorConsultaProyectoCoordinador.idClasificacionConocimientoNivel1}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.clasificacionConocimientoNivel1Item}" />
+				</h:selectOneMenu>
+				
+				
+				<h:outputLabel value="Area temática nivel 2: "
+							   for="area2"
+							   rendered="#{manejadorConsultaProyectoCoordinador.nivel2}"
+		 	    			   styleClass="labels_proyecto"/>
+		 	   	<h:selectOneMenu id="area2"
+		 	    				 immediate="true"
+		 	    				 onchange="submit(this)"
+		 	    				 rendered="#{manejadorConsultaProyectoCoordinador.nivel2}"
+		 	    				 valueChangeListener="#{manejadorConsultaProyectoCoordinador.obtenerClasificacionesConocimientoNivel3}"
+			 	    			 value="#{manejadorConsultaProyectoCoordinador.idClasificacionConocimientoNivel2}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.clasificacionConocimientoNivel2Item}" />
+				</h:selectOneMenu>
+					   	    								
+				
+				
+				<h:outputLabel value="Area temática nivel 3: "
+							   for="area3"
+							   rendered="#{manejadorConsultaProyectoCoordinador.nivel3}"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="area3"
+		 	    				 immediate="true"
+		 	    				 onchange="submit(this)"
+		 	    				 rendered="#{manejadorConsultaProyectoCoordinador.nivel3}"
+		 	    				 valueChangeListener="#{manejadorConsultaProyectoCoordinador.obtenerClasificacionesConocimientoNivel4}"
+			 	    			 value="#{manejadorConsultaProyectoCoordinador.idClasificacionConocimientoNivel3}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.clasificacionConocimientoNivel3Item}" />
+				</h:selectOneMenu>
+				
+				
+				
+				<h:outputLabel value="Area temática nivel 4: "
+							   for="area4"
+							   rendered="#{manejadorConsultaProyectoCoordinador.nivel4}"
+		 	    			   styleClass="labels_proyecto"/>
+		 	    <h:selectOneMenu id="area4"
+		 	    				 immediate="true"
+		 	    				 rendered="#{manejadorConsultaProyectoCoordinador.nivel4}"
+		 	    				 value="#{manejadorConsultaProyectoCoordinador.idClasificacionConocimientoNivel4}"							        				 							        				 							        				 							        				 
+		        				 styleClass="textarea">
+					<f:selectItems value="#{manejadorConsultaProyectoCoordinador.clasificacionConocimientoNivel4Item}" />
+				</h:selectOneMenu>
+				
+			</h:panelGrid>	
+			</s:pprPanelGroup>	
+		</t:panelTab>
+				
+	</t:panelTabbedPane>
+	
+	<br /><center>
+		<h:panelGrid columns="1" 
+					 cellpadding="3">	
+			<h:commandButton styleClass="btnbuscar" action="#{manejadorConsultaProyectoCoordinador.ejecutarConsultaAsignados}" 
+							 value="Buscar proyectos" />
+		</h:panelGrid>
+	</center>
+</s:fieldset>
+
+<s:fieldset legend="Proyectos Encontrados" 
+			style="padding:.5em; 
+			border: 1px solid #003366; 
+			background-color:#E6EEF7;" 
+			styleClass="fieldset_externo"
+			rendered="#{!manejadorConsultaProyectoCoordinador.consultar}">
+	<h:panelGrid columns="1"
+	 		 	 align="center" 
+ 	         	 cellpadding="0"
+ 	         	 cellspacing="1"
+ 	         	 rendered="true">
+		<h:dataTable id="tablaProyectos"
+					 styleClass="table-background"
+					 var  ="proyecto"
+			         value="#{manejadorConsultaProyectoCoordinador.proyectos}"		                
+			         cellpadding="0"
+					 border="1"
+					 rows="5"
+					 binding="#{manejadorConsultaProyectoCoordinador.tablaProyectos}"
+	   	             rowClasses="table-odd-row,table-even-row"
+	   	             style="width: 500px">   	    	
+	   	    <h:column>
+   	    		<h:panelGrid columns="3"
+				 		 	 cellpadding="0"
+			 	         	 cellspacing="1"
+			 	         	 rendered="true">
+					<h:outputText value="Código hermes : "/>
+			 	    <h:outputText value="#{proyecto.id}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+										
+					<h:outputText value="Código DIB : "/>
+			 	    <h:outputText value="#{proyecto.codigoDib}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+					
+					<h:outputText value="Título proyecto : "/>
+			 	    <h:outputText value="#{proyecto.nombre}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+									  
+					<h:outputText value="Facultad : "/>
+			 	    <h:outputText value="#{proyecto.justificacion}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+									  
+					<h:outputText value="Departamento : "/>
+			 	    <h:outputText value="#{proyecto.codigoQuipu}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+					
+					<h:outputText value="Investigador principal : "/>
+			 	    <h:outputText value="#{proyecto.consideracionesEticas}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+									  
+					<h:outputText value="Estado proyecto : "/>
+			 	    <h:outputText value="#{proyecto.estadoProyecto.nombre}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+									  
+					<h:outputText value="Año proyecto : "/>
+			 	    <h:outputText value="#{proyecto.resumen}"
+									  style="color:#003366; font-weight: normal"/>
+					<br /><br />
+					
+					<h:outputText value="Rol participante : "
+								  rendered="#{proyecto.objetivoGeneral != null}"/>
+			 	    <h:outputText value="#{proyecto.objetivoGeneral}"
+								  style="color:#003366; font-weight: normal"
+								  rendered="#{proyecto.objetivoGeneral != null}"/>
+			 	</h:panelGrid>
+			 	
+			 	<center>
+					<h:panelGrid columns="1"
+								 cellpadding="0"
+					   	         cellspacing="1"
+					   	         rendered="true">
+					   	 <h:commandButton action="#{manejadorConsultaProyectoCoordinador.examinarProyecto}" 
+								 		  image="/imgplantilla/pngtitulos/cen_examinar.png" />			   	         
+					</h:panelGrid>			
+				</center>
+		 	</h:column>
+	 	</h:dataTable> 			
+ 	</h:panelGrid>
+</s:fieldset>
+
+<h:panelGrid columns="1"
+ 		 	 align="center"
+ 		 	 cellpadding="0"									 	         	 	 
+	         cellspacing="3"					 	         	 
+	         rendered="#{!manejadorConsultaProyectoCoordinador.consultar}">
+	<t:dataScroller for="tablaProyectos"
+                       fastStep="5"
+                       pageCountVar="pageCount"
+                       pageIndexVar="pageIndex"
+                       paginator="true"				                        
+                       paginatorMaxPages="5"
+                       paginatorTableClass="paginator"
+                       paginatorActiveColumnStyle="font-weight:bold;">
+		<f:facet name="first">
+			<t:outputText value=" |&ldquo; Primero "/>
+		</f:facet>
+        
+        <f:facet name="previous">
+			<t:outputText  value = " &lt; Anterior "/>
+        </f:facet>
+
+		<f:facet name="next">
+			<t:outputText  value = " Siguiente gt; "/>
+        </f:facet>
+        
+        <f:facet name="last">
+			<t:outputText  value = " Último &rdquo;| "/>
+        </f:facet>						        			
+	</t:dataScroller>
+</h:panelGrid>
+
+<h:panelGrid columns="1"
+ 		 	 align="center"
+ 		 	 cellpadding="0"									 	         	 	 
+	         cellspacing="3"					 	         	 
+	         rendered="#{!manejadorConsultaProyectoCoordinador.consultar}">
+	<h:commandButton action="#{manejadorConsultaProyectoCoordinador.iniciarConsulta}" 
+					 value="Nueva búsqueda" />
+</h:panelGrid></h:form>
+</ui:define>
+</ui:composition>

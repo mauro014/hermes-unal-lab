@@ -1,0 +1,572 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<div class="estilo-propio"><h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Proyectos registrados</t:div>
+			<p:dataTable id="proyectosInvestigador" var="proyectoInvestigador"
+				value="#{ManejadorProyectosInvestigadorEditorial.listaVisibles}"
+				emptyMessage="No tiene proyectos asociados."
+				filteredValue="#{ManejadorProyectosInvestigadorEditorial.filteredProyectos}">
+				<p:column 
+					filterBy="#{proyectoInvestigador.nombre} #{proyectoInvestigador.id} #{proyectoInvestigador.nombreEstadoProyecto}"
+					filterStyleClass="filtro-proyecto-campo"
+					filterStyle="width: 400px;" filterMatchMode="contains">
+					<f:facet name="header">
+						<div style="width: 400px; margin: auto; text-align: center;">
+						<h:outputText value="Buscar proyecto (estado, código o nombre):" /></div>
+					</f:facet>			
+					
+					<div style="padding-bottom: "><h:outputText
+						value="Código:  #{proyectoInvestigador.id}" style='font-weight:bold;' />
+						<br />
+						<b><h:outputText
+						value="Código QUIPU:" 
+							rendered="#{proyectoInvestigador.tieneCodigoQUIPU}"/>	 </b> 
+						<h:outputText
+						value=" #{proyectoInvestigador.codigoQuipu}" 
+							rendered="#{proyectoInvestigador.tieneCodigoQUIPU}"/>	
+							<t:div rendered="#{proyectoInvestigador.tieneCodigoQUIPU}"><br /></t:div>
+						 <h:outputText
+						value="#{proyectoInvestigador.nombre}" style="font-size:14px;"/><br />
+					<br />
+					<b>Convocatoria: </b> <h:outputText
+						value=" #{proyectoInvestigador.convocatoriaPadre}" /> <br />
+					<b>Modalidad: </b> <h:outputText
+						value=" #{proyectoInvestigador.nombreModalidad}" />					
+					<br/>
+					<t:div rendered="#{proyectoInvestigador.esJornadaDocente}"><br/></t:div>
+					
+					<h:outputText style="font-weight:bold;" value="Este proyecto está asociado a su JORNADA DOCENTE." rendered="#{proyectoInvestigador.esJornadaDocente}" />
+					
+					<t:div rendered="#{proyectoInvestigador.esPryContrapartida}"><br/></t:div>
+					
+					<h:outputText style="font-weight:bold;" value="Este proyecto es de contrapartida." rendered="#{proyectoInvestigador.esPryContrapartida}" />
+					</div>
+					<br />
+					
+					<t:div styleClass="estilo-propio-list" rendered="#{!empty proyectoInvestigador.avalesProyecto}">
+						<b><h:outputText value="Avales asociados: " /></b>
+						<p:dataList style="border:none;" id="avalesProyecto" var="avalesProy" value="#{proyectoInvestigador.avalesProyecto}">
+						<h:outputText value="#{avalesProy.aviId} | " style='font-weight:bold;'/>
+						<h:commandLink rendered="#{avalesProy.aviEstado != 'P' and avalesProy.aviEstado != 'C'}"
+							action="#{ManejadorProyectosInvestigadorEditorial.consultarAval}"
+							value="#{avalesProy.nombreTipo} ">
+						<f:param name="idAvalConsulta" value="#{avalesProy.aviId}" />
+						</h:commandLink>
+						<h:commandLink rendered="#{avalesProy.aviEstado == 'P' or avalesProy.aviEstado == 'C'}"
+							action="#{ManejadorProyectosInvestigadorEditorial.editarAvalProyecto}"
+							value="#{avalesProy.nombreTipo} ">
+						<f:param name="idAvalConsulta" value="#{avalesProy.aviId}" />
+						</h:commandLink>
+						<h:outputText value="| #{avalesProy.nombreEstado}" />
+						</p:dataList>
+					</t:div>
+					<t:div rendered="#{proyectoInvestigador.estadoProyecto=='Activo'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Activo.png" /><br />
+							<br />
+						<h:outputText value=" Este proyecto tiene compromisos pendientes relacionados con el registro del informes." style="color: #FF0000; font-weight: bold;"
+						rendered="#{proyectoInvestigador.compromisosPendientes == 'S'}"/>
+						<h:outputText value=" Este proyecto tiene compromisos pendientes relacionados con la revisión del informes por parte de la Facultad o coordinador asignado." style="color: #FF0000; font-weight: bold;"
+						rendered="#{proyectoInvestigador.compromisosPendientes == 'E'}"/>
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Aprobado'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Aprobado.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Aprobado Vicerrectoría'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Aprobado.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Cancelado'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Cancelado.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Elegible'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Elegible.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Finalizado'}"
+						style="text-align:  left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Finalizado.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Por finalizar entidad externa'}"
+						style="text-align:  left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/porFinalizar.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Ingresando Proyecto'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Ingresando.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='No aprobado'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/No_financiado.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='No Aprobado Vicerrectoría'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/No_financiado.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Propuesto'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Propuesto.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='Suspendido'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/Suspendido.png" />
+					</t:div>
+					<t:div
+						rendered="#{proyectoInvestigador.estadoProyecto=='No cumplió requisitos'}"
+						style="text-align: left;">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/estados-proyectos/No_cumplio_requisitos.png" />
+					</t:div>
+					<br />
+					<t:div
+						rendered="#{!proyectoInvestigador.esArticulo &amp;&amp; !proyectoInvestigador.esFichaMinima}">
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.editarProyectoActivo}"
+							value="Consultar"
+							rendered="#{(!proyectoInvestigador.esIngresando &amp;&amp; !proyectoInvestigador.esModalidadAlianzas 
+											&amp;&amp; proyectoInvestigador.proyectoPadre!=0 
+											and !proyectoInvestigador.esContratoAccesoBiodiversidad)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirProyecto}"
+							target="_blank" 
+							value="Descargar reporte PDF"
+							rendered="#{false and (!proyectoInvestigador.esIngresando &amp;&amp; !proyectoInvestigador.esModalidadAlianzas 
+											&amp;&amp; proyectoInvestigador.proyectoPadre!=0 
+											and !proyectoInvestigador.esContratoAccesoBiodiversidad)}">
+							
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText rendered="#{(!proyectoInvestigador.esIngresando &amp;&amp; !proyectoInvestigador.esModalidadAlianzas  &amp;&amp; proyectoInvestigador.proyectoPadre!=0 and !proyectoInvestigador.esContratoAccesoBiodiversidad)}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.editarGenerico}"
+							value="Editar"
+							rendered="#{proyectoInvestigador.editaSoloCreador &amp;&amp; (
+							proyectoInvestigador.esEditable
+							||
+							(proyectoInvestigador.mostrarBotonEditarEliminarProyectoPropuesto &amp;&amp; proyectoInvestigador.esPropuesto  &amp;&amp; !proyectoInvestigador.esConvocatoriaPermanente) ||
+							proyectoInvestigador.esIngresando ||
+							(proyectoInvestigador.esEditable &amp;&amp; proyectoInvestigador.mostrarBotonEditarProyectoAprobado &amp;&amp; proyectoInvestigador.esAprobado)
+							|| proyectoInvestigador.proyectoPadre==0)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.editaSoloCreador &amp;&amp; (
+							proyectoInvestigador.esEditable
+							||
+							(proyectoInvestigador.mostrarBotonEditarEliminarProyectoPropuesto &amp;&amp; proyectoInvestigador.esPropuesto  &amp;&amp; !proyectoInvestigador.esConvocatoriaPermanente) ||
+							proyectoInvestigador.esIngresando ||
+							(proyectoInvestigador.esEditable &amp;&amp; proyectoInvestigador.mostrarBotonEditarProyectoAprobado &amp;&amp; proyectoInvestigador.esAprobado)
+							)}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.editarGenerico}"
+							value="Editar"
+							rendered="#{proyectoInvestigador.editaPrincipal &amp;&amp; (
+							proyectoInvestigador.esEditable
+							||
+							(proyectoInvestigador.mostrarBotonEditarEliminarProyectoPropuesto &amp;&amp; proyectoInvestigador.esPropuesto  &amp;&amp; !proyectoInvestigador.esConvocatoriaPermanente) ||
+							proyectoInvestigador.esIngresando ||
+							(proyectoInvestigador.esEditable &amp;&amp; proyectoInvestigador.mostrarBotonEditarProyectoAprobado &amp;&amp; proyectoInvestigador.esAprobado)
+							|| proyectoInvestigador.proyectoPadre==0)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.editaPrincipal &amp;&amp; (
+							proyectoInvestigador.esEditable
+							||
+							(proyectoInvestigador.mostrarBotonEditarEliminarProyectoPropuesto &amp;&amp; proyectoInvestigador.esPropuesto  &amp;&amp; !proyectoInvestigador.esConvocatoriaPermanente) ||
+							proyectoInvestigador.esIngresando ||
+							(proyectoInvestigador.esEditable &amp;&amp; proyectoInvestigador.mostrarBotonEditarProyectoAprobado &amp;&amp; proyectoInvestigador.esAprobado)
+							)}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.reporteGastosQUIPU}"
+							value="Reporte de gastos QUIPU" target="_blank"
+							rendered="#{proyectoInvestigador.tieneCodigoQUIPU and proyectoInvestigador.esPrincipal}"
+							ajax="false">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.tieneCodigoQUIPU and proyectoInvestigador.esPrincipal}"> | </h:outputText>
+						<h:commandLink value="Solicitudes"
+							action="#{ManejadorProyectosInvestigadorEditorial.listarSolicitudes}"
+							rendered="#{(proyectoInvestigador.mostrarBotonEditarProyectoActivoSolicitud &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esSuspendido)) or (proyectoInvestigador.esElegible and proyectoInvestigador.esContratoAccesoBiodiversidad) or (proyectoInvestigador.esPropuesto and proyectoInvestigador.esPermisoMarcoAsignatura)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{(proyectoInvestigador.mostrarBotonEditarProyectoActivoSolicitud  
+							&amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esSuspendido)) or (proyectoInvestigador.esElegible and proyectoInvestigador.esContratoAccesoBiodiversidad) or (proyectoInvestigador.esPropuesto and proyectoInvestigador.esPermisoMarcoAsignatura)}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.ingresarInforme}"
+							value="Informes"
+							rendered="#{proyectoInvestigador.mostrarBotonInforme &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esFinalizado)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.mostrarBotonInforme &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esFinalizado)}"> | </h:outputText>
+						<h:commandLink
+							onclick="if(!confirm('Esta seguro de eliminar el proyecto?'))return false"
+							action="#{ManejadorProyectosInvestigadorEditorial.borrarPropuesto}"
+							value="Eliminar"
+							rendered="#{proyectoInvestigador.editaSoloCreador &amp;&amp; ((proyectoInvestigador.mostrarBotonEditarEliminarProyectoPropuesto &amp;&amp; proyectoInvestigador.esPropuesto) ||
+								(proyectoInvestigador.mostrarBotonEditarOEliminarProyectoIngresando &amp;&amp; proyectoInvestigador.esIngresando))}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.editaSoloCreador &amp;&amp; ((proyectoInvestigador.mostrarBotonEditarEliminarProyectoPropuesto &amp;&amp; proyectoInvestigador.esPropuesto) ||
+								(proyectoInvestigador.mostrarBotonEditarOEliminarProyectoIngresando &amp;&amp; proyectoInvestigador.esIngresando))}"> | </h:outputText>
+
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.irAEvaluadoresActivo}"
+							value="Evaluación"
+							rendered="#{(
+								(proyectoInvestigador.esActivo) ||
+								(proyectoInvestigador.esAprobado) || 
+								(proyectoInvestigador.esFinalizado) ||
+								(proyectoInvestigador.esNoAprobado) ||
+								(proyectoInvestigador.esCancelado)) and !proyectoInvestigador.esPermisoMarco and !proyectoInvestigador.esContratoAccesoBiodiversidad and !proyectoInvestigador.esPermisoMarcoAsignatura}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{(
+								(proyectoInvestigador.esActivo) ||
+								(proyectoInvestigador.esAprobado) || 
+								(proyectoInvestigador.esFinalizado) ||
+								(proyectoInvestigador.esNoAprobado) ||
+								(proyectoInvestigador.esCancelado)) and !proyectoInvestigador.esPermisoMarco and !proyectoInvestigador.esContratoAccesoBiodiversidad and !proyectoInvestigador.esPermisoMarcoAsignatura}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.reporteRequisitos}"
+							value="Reporte requisitos"
+							rendered="#{(proyectoInvestigador.esRechazado 
+							|| proyectoInvestigador.esElegible ||  proyectoInvestigador.esAprobado
+							||  proyectoInvestigador.esActivo || proyectoInvestigador.esFinalizado) and !proyectoInvestigador.esContratoAccesoBiodiversidad}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText rendered="#{(proyectoInvestigador.esRechazado || proyectoInvestigador.esElegible ||  proyectoInvestigador.esAprobado
+							||  proyectoInvestigador.esActivo || proyectoInvestigador.esFinalizado) and !proyectoInvestigador.esContratoAccesoBiodiversidad}"> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.irReclamacionesProyecto}"
+							value="Aclaración y/o Reclamación"
+							rendered="#{proyectoInvestigador.esRechazado}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.esRechazado}"> | </h:outputText>
+							
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.reporteReclamacionRequisitos}"
+							value="Reporte aclaración y/o reclamación"
+							rendered="#{proyectoInvestigador.esPresentaronReclamacion}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.esPresentaronReclamacion}"> | </h:outputText>
+							
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirCartaInicio}"
+							value="Carta Inicio"
+							rendered="#{proyectoInvestigador.esCartaInicio }" target="_blank" >
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:outputText rendered="#{proyectoInvestigador.esCartaInicio}"> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.cargarCartasProyecto}"
+							value="Información seguimiento"
+							rendered="#{((proyectoInvestigador.esActivo) ||
+									(proyectoInvestigador.esAprobado) || 
+									(proyectoInvestigador.esFinalizado)) or (proyectoInvestigador.esContratoAccesoBiodiversidad)}" target="_blank" >
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:outputText rendered="#{((proyectoInvestigador.esActivo) ||
+									(proyectoInvestigador.esAprobado) || 
+									(proyectoInvestigador.esFinalizado)) or (proyectoInvestigador.esContratoAccesoBiodiversidad)}"> | </h:outputText>
+						
+						<h:commandLink rendered="#{!proyectoInvestigador.esContratoAccesoBiodiversidad}"
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirProyecto}"
+							target="_blank" value="Descargar reporte">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:outputText rendered="#{!proyectoInvestigador.esContratoAccesoBiodiversidad}" > | </h:outputText>
+							
+							
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirProyectoAsociado}"
+							target="_blank" value="Descargar reporte proyecto asociado"
+							rendered="#{!empty proyectoInvestigador.codigoDib}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText							
+							rendered="#{!empty proyectoInvestigador.codigoDib}"> | </h:outputText>
+							
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.reporteFichaQuipu}"
+							target="_blank" value="Información financiera" 
+							rendered="#{false and !proyectoInvestigador.esIngresando and !proyectoInvestigador.esPermisoMarco and !proyectoInvestigador.esContratoAccesoBiodiversidad and !proyectoInvestigador.esPermisoMarcoAsignatura}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.ingresarInforme}"
+							value="Informe de contrapartida"
+							rendered="#{proyectoInvestigador.esPryContrapartida}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.esPryContrapartida}"> | </h:outputText>
+						
+					</t:div>
+					
+					
+					<t:div >
+					
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.consultarFichaMinimaInicial}"
+							value="Consultar proyecto presentado"							
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.proyectoPadre==0}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.proyectoPadre==0}"> | </h:outputText>
+					
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirProyectoHijo}"
+							target="_blank" value="Reporte proyecto presentado"							
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.proyectoPadre==0}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.proyectoPadre==0}"> | </h:outputText>
+					
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.editarFichaMinima}"
+							value="Editar"
+							rendered="#{proyectoInvestigador.esPrincipal &amp;&amp; proyectoInvestigador.proyectoPadre!=0
+							&amp;&amp; proyectoInvestigador.esFichaMinima &amp;&amp; (proyectoInvestigador.esIngresando
+							|| proyectoInvestigador.esEditable)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.esPrincipal &amp;&amp; proyectoInvestigador.esFichaMinima &amp;&amp; (proyectoInvestigador.esIngresando
+							|| proyectoInvestigador.esEditable)}"
+							> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.editarFichaMinima}"
+							value="Editar proyecto aprobado "
+							rendered="#{(proyectoInvestigador.esIngresando &amp;&amp; proyectoInvestigador.proyectoPadre==0
+							            || proyectoInvestigador.esEditable &amp;&amp; proyectoInvestigador.proyectoPadre==0)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{(proyectoInvestigador.esIngresando &amp;&amp; proyectoInvestigador.proyectoPadre==0)}"
+							> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.crearVersionFicha}"
+							value="Crear versión"
+							rendered="false">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="false"
+							> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.consultarFichaMinima}"
+							value="Consultar "
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; (!proyectoInvestigador.esIngresando &amp;&amp; proyectoInvestigador.proyectoPadre!=0) }"
+							>
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.consultarFichaMinima}"
+							value="Consultar proyecto aprobado"
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; (!proyectoInvestigador.esIngresando &amp;&amp; proyectoInvestigador.proyectoPadre==0) }">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:outputText
+							rendered="#{ proyectoInvestigador.esFichaMinima &amp;&amp; (!proyectoInvestigador.esIngresando) }"
+							> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.borrarPropuesto}"
+							value="Eliminar "
+							rendered="#{(proyectoInvestigador.esPrincipal &amp;&amp; proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esIngresando
+							 &amp;&amp; proyectoInvestigador.proyectoPadre!=0)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.esPrincipal &amp;&amp; proyectoInvestigador.esFichaMinima  &amp;&amp; proyectoInvestigador.esIngresando
+							 &amp;&amp; proyectoInvestigador.proyectoPadre!=0}"
+							> | </h:outputText>
+						<h:commandLink value="Solicitudes"
+							action="#{ManejadorProyectosInvestigadorEditorial.listarSolicitudes}"
+							rendered="#{((proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esJornadaDocente) or (proyectoInvestigador.esConvocatoriaExterna)) &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esSuspendido)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{((proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esJornadaDocente) or (proyectoInvestigador.esConvocatoriaExterna)) &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esSuspendido)}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.ingresarInforme}"
+							value="Informes"
+							rendered="#{((proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esJornadaDocente) or (proyectoInvestigador.esConvocatoriaExterna or proyectoInvestigador.esFichaMinima)) &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esFinalizado)}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{((proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esJornadaDocente) or (proyectoInvestigador.esConvocatoriaExterna or proyectoInvestigador.esFichaMinima)) &amp;&amp; (proyectoInvestigador.esActivo or proyectoInvestigador.esFinalizado)}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirProyecto}"
+							value="Descargar reporte"
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.proyectoPadre!=0}"
+							>
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirProyecto}"
+							value="Reporte proyecto aprobado" target="_blank" 
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.proyectoPadre==0}"
+							>
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{ proyectoInvestigador.esFichaMinima }"
+							> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.irProyectoPadre}"
+							value="Versión inicial"
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esIngresando &amp;&amp; proyectoInvestigador.proyectoPadre!=null &amp;&amp; false}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}" target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esIngresando &amp;&amp; proyectoInvestigador.proyectoPadre!=null &amp;&amp; false}"> | </h:outputText>
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirCartaInicio}"
+							value="Carta Inicio"
+							rendered="#{proyectoInvestigador.esCartaInicio and proyectoInvestigador.esJornadaDocente}" target="_blank" >
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.cargarCartasProyecto}"
+							value="Información seguimiento"
+							rendered="#{(proyectoInvestigador.esActivo or
+									proyectoInvestigador.esAprobado or 
+									proyectoInvestigador.esFinalizado or 
+									proyectoInvestigador.esContratoAccesoBiodiversidad) and 
+									proyectoInvestigador.esFichaMinima}" target="_blank" >
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						
+						<h:outputText rendered="#{(proyectoInvestigador.esActivo or
+									proyectoInvestigador.esAprobado or 
+									proyectoInvestigador.esFinalizado or 
+									proyectoInvestigador.esContratoAccesoBiodiversidad) and 
+									proyectoInvestigador.esFichaMinima}"> | </h:outputText>
+						
+						<h:outputText rendered="#{proyectoInvestigador.esCartaInicio and proyectoInvestigador.esJornadaDocente}"> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.imprimirCartaInicio}"
+							value="Carta de compromiso"
+							rendered="#{proyectoInvestigador.esCartaInicio 
+								and !proyectoInvestigador.esJornadaDocente
+								and proyectoInvestigador.esAprobado
+								and proyectoInvestigador.esFichaMinima}" target="_blank" >
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}"/>
+						</h:commandLink>
+						
+						<h:outputText rendered="#{proyectoInvestigador.esCartaInicio and proyectoInvestigador.esJornadaDocente}"> | </h:outputText>
+						
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.ingresarInformeContrapartida}"
+							value="Informe de contrapartida"
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esPryContrapartida}">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+						<h:outputText
+							rendered="#{proyectoInvestigador.esFichaMinima &amp;&amp; proyectoInvestigador.esPryContrapartida}"> | </h:outputText>
+							
+					</t:div>
+
+					<t:div rendered="#{proyectoInvestigador.esArticulo}">
+
+						<h:commandLink
+							action="#{ManejadorProyectosInvestigadorEditorial.consultarConvocatoriaArticulo}"
+							value="Consultar Solicitud Artículo">
+							<f:setPropertyActionListener value="#{proyectoInvestigador}"
+								target="#{ManejadorProyectosInvestigadorEditorial.proyectoSeleccionado}" />
+						</h:commandLink>
+
+					</t:div>
+					
+					
+
+
+				</p:column>
+			</p:dataTable>
+		</h:form></div>			
+	</ui:define>
+
+</ui:composition>

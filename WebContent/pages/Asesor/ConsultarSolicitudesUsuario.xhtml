@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Consultar solicitudes usuario</t:div>
+
+			<p:dataTable var="solicitud"
+				emptyMessage="No existen resultados de la Consulta"
+				style="margin-top: 20px;"
+				value="#{manejadorConsultarSolicitudesUsuario.listaSolicitudes}">
+
+				<p:column headerText="Código">
+					<h:outputText value="#{solicitud.id}" />
+				</p:column>
+
+				<p:column headerText="Nombre Persona Solicitud">
+					<h:outputText value="#{solicitud.nombre1} " />
+					<h:outputText value="#{solicitud.nombre2} " />
+					<h:outputText value="#{solicitud.apellido1} " />
+					<h:outputText value="#{solicitud.apellido2}" />
+				</p:column>
+				<p:column headerText="Fecha" sortBy="#{solicitud.fechaSolicitud}">
+					<h:outputText value="#{solicitud.fechaSolicitud}" />
+				</p:column>
+
+				<p:column headerText="Ver">
+					<p:commandButton ajax="false"
+						action="#{manejadorConsultarSolicitudesUsuario.administrar}"
+						icon="ui-icon-search">
+						<f:param name="idSolicitud" value="#{solicitud.id}" />
+						<f:setPropertyActionListener value="#{solicitud}"
+							target="#{manejadorConsultarSolicitudesUsuario.solicitudSeleccionada}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+			<p:panel
+				rendered="#{manejadorConsultarSolicitudesUsuario.mensajeError}">
+				<p:messages showDetail="true" autoUpdate="true" closable="true" />
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core_rt"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Convocatorias Laboratorios</t:div>
+
+			<p:accordionPanel var="convocatoria"
+				value="#{manejadorConsultaConvocatoriasLaboratorios.listaConvocatoriasPadre}"
+				activeIndex="0">
+				<p:ajax event="tabChange"
+					listener="#{manejadorConsultaConvocatoriasLaboratorios.onTabChange}" />
+				<p:tab title="#{convocatoria.titulo}">
+					<p:dataTable id="modalidades" var="modalidad" border="0"
+						value="#{convocatoria.listaConvocatorias}"
+						styleClass="ocultar-nombres-columnas">
+						<p:column>
+							<div class="panel-interno-tabla">
+								<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+									<h:outputText value="Modalidad" style="font-weight: bold;" />
+									<h:outputText value="#{modalidad.titulo}" />
+									<h:outputText value=" Oferente" style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.oferente}" />
+									<h:outputText value=" Dirigido a" style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.dirigidoA}" />
+									<h:outputText value=" Fecha de inicio para registrar proyectos"
+										style="font-weight: bold;" />
+									<h:outputText value=" #{modalidad.fechaInicio}" />
+								</p:panelGrid>
+							</div>
+							<div style="width: 100%; text-align: center; padding-top: 15px;">
+								<p:commandButton value="Inscribir proyecto"
+									action="#{manejadorConsultaConvocatoriasLaboratorios.AsignarConvocatoriaProyecto}"
+									rendered="true">
+									<f:param name="idModalidad" value="#{modalidad.id}" />
+								</p:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:accordionPanel>
+		</h:form>
+	</ui:define>
+</ui:composition>

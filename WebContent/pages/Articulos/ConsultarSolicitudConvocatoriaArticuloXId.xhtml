@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+
+<s:fieldset legend="Convocatoria Artículos" styleClass="legend1"
+	style='font-size: 12px;'>
+
+	<h:panelGrid columns="1" rendered="#{ManejadorConsultarSolicitudArticuloXId.mostrarBuscar}" align="center">
+		<h:panelGrid columns="2">
+
+			<h:outputText value="Código de la solicitud" styleClass="labels_proyecto"
+				style='font-size: 10px; font-style: normal' />
+			<h:inputText id="Numero" styleClass="texto"
+				style='font-size: 10px; font-style: normal'
+				value="#{ManejadorConsultarSolicitudArticuloXId.sCodigoArticulo}"
+				size="20">
+			</h:inputText>
+		</h:panelGrid>
+		<h:panelGrid columns="2" align="center">
+			<h:commandButton
+				action="#{ManejadorConsultarSolicitudArticuloXId.buscarReporteSolicitudArticulos}"
+				value="Buscar" image="/imgplantilla/pngtitulos/cen_buscar.png" />
+			<h:commandButton action="#{ManejadorConsultarSolicitudArticuloXId.limpiar}"
+				actionListener="#{ManejadorConsultarSolicitudArticuloXId.cancelAction}"
+				value="Limpiar" image="/imgplantilla/pngtitulos/cen_limpiar.png"
+				immediate="true" />
+		</h:panelGrid>
+	</h:panelGrid>
+
+	<h:panelGrid columns="2" align="center"
+		rendered="#{ManejadorConsultarSolicitudArticuloXId.panelRenderError[0]}">
+		<h:outputText value="#{ManejadorConsultarSolicitudArticuloXId.errores[0]}"
+			styleClass="labels_proyecto" />
+	</h:panelGrid>
+
+</s:fieldset>
+
+<center>
+	<h:outputText value="Solicitud Convocatoria artículo número #{ManejadorConsultarSolicitudArticuloXId.sCodigoArticulo}" styleClass="labels_proyecto" rendered="#{!ManejadorConsultarSolicitudArticuloXId.mostrarBuscar}"/>
+</center>
+
+<s:fieldset legend="Archivos Adjuntos"
+	rendered="#{ManejadorConsultarSolicitudArticuloXId.imprimirReporteConvArticulo}"
+	styleClass="legend1" style='font-size: 12px;'>
+	<h:dataTable var="archivoResumen"
+		value="#{ManejadorConsultarSolicitudArticuloXId.listaArchivosConvocatoriaArticulos}"
+		cellpadding="1" cellspacing="8" align="center" border="1"
+		binding="#{ManejadorConsultarSolicitudArticuloXId.tablaArchivosConvocatoriaArticulos}">
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Nombre del archivo" />
+			</f:facet>
+			<h:outputText value=" #{archivoResumen.nombre}" styleClass="normal" />
+		</h:column>
+		
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Tipo de archivo" />
+			</f:facet>
+			<h:outputText value=" #{archivoResumen.tipoArchivo}" styleClass="normal" />
+		</h:column>
+
+		<h:column>
+
+			<f:facet name="header">
+				<h:outputText value="Descargar" />
+			</f:facet>
+
+			<h:commandButton value="Descargar"
+				action="#{ManejadorConsultarSolicitudArticuloXId.descargarArchivoArticulo}"
+				image="/imgplantilla/pngtitulos/cen_descargar.png" />
+
+		</h:column>
+	</h:dataTable>
+</s:fieldset>
+
+<s:fieldset legend="Descargar Reporte"
+	rendered="#{ManejadorConsultarSolicitudArticuloXId.imprimirReporteConvArticulo}"
+	styleClass="legend1" style='font-size: 12px;'>
+
+	<h:panelGrid columns="1" align="center">
+		<p:commandLink target="popupWindow" ajax="false"
+			action="#{ManejadorConsultarSolicitudArticuloXId.imprimirReporteConvocatoriaArticulo}">
+
+			<h:graphicImage
+				value="/imgplantilla/pngtitulos/_formulario_imprimir.png" />
+		</p:commandLink>
+	</h:panelGrid>
+</s:fieldset>
+
+</h:form>
+</ui:define>
+</ui:composition>

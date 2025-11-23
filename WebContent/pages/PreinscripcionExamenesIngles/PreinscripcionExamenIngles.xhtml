@@ -1,0 +1,393 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/her-plantillaBasica.xhtml">
+
+	<ui:define name="title">FORMULARIO DE PREINSCRIPCIÓN EXAMENES DE INGLÉS</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form" enctype="multipart/form-data">
+
+			<img
+				src="#{facesContext.externalContext.requestContextPath}/images/her-paginas/cabezote.png"
+				style="padding-bottom: 10px;" />
+
+			<t:div styleClass="contenido-informacion">
+
+				<t:div styleClass="cabezote-informacion-pagina-buscador">
+					<h:outputText
+						value="Preinscripción examen segundo idioma (Michigan - TOEFL)" />
+				</t:div>
+
+				<t:div styleClass="contenedor-informacion">
+
+					<h:panelGrid columns="1" id="panelMensajes" align="center"
+						style="width: 680px">
+						<p:messages id="mensaje" for="mensaje" autoUpdate="true"
+							closable="false" showSummary="true" showDetail="true" />
+						<p:growl id="mensajeGrowl" showDetail="true" for="mensajeGrowl"
+							effect="fade" />
+					</h:panelGrid>
+					<p:panel id="idPanelInfoCurso" header="Información del Examen"
+						rendered="true">
+
+						<h:panelGrid columns="1">
+							<h:outputText
+								value="Como medida de promoción y apoyo a la investigación y para facilitar la participación de nuestros estudiantes en próximas convocatorias, la Dirección de Investigación sede Bogotá nuevamente brindará apoyo para la realización de los exámenes de inglés Michigan y TOEFL, en colaboración con el Centro Colombo Americano y Fulbright Colombia, respectivamente."
+								style='font-weight: bold' />
+						</h:panelGrid>
+
+
+						<br />
+
+						<center>
+
+							<h:panelGrid id="panelGridInfoExamen" columns="2" cellpadding="5"
+								cellspacing="5" align="center">
+
+								<h:outputText value="Examen: " />
+								<p:selectOneMenu id="SOM_examen"
+									value="#{ManejadorPreinscripcionExamenIngles.idCurso}"
+									style='font-style: normal'
+									disabled="#{ManejadorPreinscripcionExamenIngles.bloquearExamen}">
+									<f:selectItems
+										value="#{ManejadorPreinscripcionExamenIngles.listaExamen}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<br />
+							<h:panelGrid id="panelGridContinuar" columns="2" align="center"
+								rendered="#{!ManejadorPreinscripcionExamenIngles.mostrarBotonSalir}">
+								<p:commandButton
+									action="#{ManejadorPreinscripcionExamenIngles.registro}"
+									value="Continuar" icon="ui-icon-triangle-1-e"
+									update="@form, panelMensajes" />
+
+							</h:panelGrid>
+
+							<h:panelGrid id="panelGridNuevaPre" columns="2" align="center"
+								rendered="#{ManejadorPreinscripcionExamenIngles.mostrarBotonSalir}">
+								<p:commandButton
+									action="#{ManejadorPreinscripcionExamenIngles.limpiar}"
+									value="Nueva preinscripción" icon="ui-icon-triangle-1-e"
+									update="@form, panelMensajes" />
+
+							</h:panelGrid>
+
+						</center>
+
+
+
+						<br />
+					</p:panel>
+					<br />
+					<p:messages id="messages" showDetail="true" autoUpdate="true"
+						closable="true" />
+					<br />
+					<p:panel header="Preinscripción"
+						rendered="#{ManejadorPreinscripcionExamenIngles.mostrarForm}">
+
+						<h:panelGrid columns="3">
+
+							<h:outputText value="Tipo de documento del participante:"
+								style='font-style: normal' />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionExamenIngles.tipoDocumento.id}"
+								style='font-style: normal'>
+								<f:selectItems
+									value="#{ManejadorPreinscripcionExamenIngles.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+							<h:outputText value="" />
+
+							<h:outputText value="Número de documento del participante"
+								style='font-style: normal' />
+							<p:inputText id="Numero" styleClass="texto" required="true"
+								requiredMessage="Campo obligatorio" style='font-style: normal'
+								value="#{ManejadorPreinscripcionExamenIngles.documento}"
+								size="20"
+								disabled="#{ManejadorPreinscripcionExamenIngles.deshabilitaDocumento}">
+							</p:inputText>
+							<p:message for="Numero" />
+
+						</h:panelGrid>
+						<br />
+						<center>
+							<h:panelGrid columns="2" align="center">
+								<p:commandButton
+									action="#{ManejadorPreinscripcionExamenIngles.buscarPersona}"
+									update="@form, SOM_examen,  panelGridInfoExamen"
+									icon="ui-icon-triangle-1-e" value="Continuar" />
+								<p:commandButton
+									action="#{ManejadorPreinscripcionExamenIngles.limpiar}"
+									value="Limpiar" update="@form,Numero, panelMensajes"
+									immediate="true" />
+							</h:panelGrid>
+						</center>
+					</p:panel>
+					<br />
+					<p:panel header="Cancelacion"
+						rendered="#{ManejadorPreinscripcionExamenIngles.mostrarPanelCancelacion}">
+
+						<h:panelGrid columns="1">
+
+							<h:outputText
+								value="#{ManejadorPreinscripcionExamenIngles.mensajeCancelacion}   " />
+
+						</h:panelGrid>
+						<br />
+						<h:panelGrid columns="2" align="center">
+
+							<p:commandButton value="Cancelar" icon="ui-icon-circle-close"
+								immediate="true"
+								action="#{ManejadorPreinscripcionExamenIngles.cancelarCurso}"
+								update="@form" />
+
+							<p:commandButton
+								action="#{ManejadorPreinscripcionExamenIngles.regresarCursos}"
+								value="Volver" immediate="true" icon="iu-icon-triangle-1-w" />
+
+						</h:panelGrid>
+
+					</p:panel>
+
+					<h:panelGroup id="panelNoExiste"
+						rendered="#{ManejadorPreinscripcionExamenIngles.panelRenderError[2]}">
+						<h:panelGrid columns="2" align="center">
+							<h:outputText
+								value="#{ManejadorPreinscripcionExamenIngles.errores[2]}"
+								style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;" />
+						</h:panelGrid>
+					</h:panelGroup>
+					<br />
+
+					<p:panel header="Datos personales" id="panelDatosPersonales"
+						rendered="#{ManejadorPreinscripcionExamenIngles.mostrarDatosPersona}">
+
+						<p:messages id="errores4" for="errores4" autoUpdate="true"
+							closable="true" showSummary="true" showDetail="true" />
+
+						<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+							align="center">
+
+							<h:outputText value="Tipo de Participante: " />
+							<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+								value="#{ManejadorPreinscripcionExamenIngles.tipoParticipacion}">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionExamenIngles.listaTipoParticipacion}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Nombres: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.nombres}" size="40"
+								readonly="true" />
+
+							<h:outputText value="Apellidos: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.apellidos}"
+								size="40" readonly="true" />
+
+							<h:outputText value="Semestre: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.semestre}"
+								size="10" readonly="true" />
+
+							<h:outputText value="Plan de estudios: " />
+							<p:inputTextarea
+								value="#{ManejadorPreinscripcionExamenIngles.carrera}" cols="40"
+								rows="2" readonly="true" />
+
+							<h:outputText value="Facultad: " />
+							<p:inputTextarea
+								value="#{ManejadorPreinscripcionExamenIngles.facultad}"
+								cols="40" rows="2" readonly="true" />
+
+							<h:outputText value="Promedio: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.promedio}"
+								size="10" readonly="true" />
+
+							<h:outputText value="Ciudad: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.ciudad}" size="40"
+								readonly="true" />
+
+							<h:outputText value="Dirección: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.direccion}"
+								size="40" readonly="true" />
+
+							<h:outputText value="Teléfono fijo: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.telefonoFijo}"
+								size="15" readonly="false" />
+
+							<h:outputText value="Teléfono Móvil: " />
+							<p:inputText
+								value="#{ManejadorPreinscripcionExamenIngles.telefonoMovil}"
+								size="15" />
+
+							<h:outputText value="Correo electrónico: " />
+							<p:inputText id="correoEst"
+								value="#{ManejadorPreinscripcionExamenIngles.correo}" size="40"
+								readonly="false" validatorMessage="Correo inválido">
+								<f:validateRegex
+									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+							</p:inputText>
+							
+							<h:outputText />
+							<p:message id="msgsCorreo" for="correoEst" />
+
+							<h:outputText value="Motivación para presentar el examen: " />
+							<p:inputTextarea id="ITA_motivacion"
+								value="#{ManejadorPreinscripcionExamenIngles.motivacion}"
+								required="true" rows="5" cols="50" autoResize="true"
+								maxlength="220" counter="counter2"
+								counterTemplate="{0} caracteres restantes"
+								requiredMessage="Es necesario escribir la motivación de presentar el examen para continuar." />
+
+							<h:outputText />
+							<h:outputText id="counter2" />
+
+							<h:outputText />
+							<p:message id="msgs" for="ITA_motivacion" />
+
+						</h:panelGrid>
+
+					</p:panel>
+
+					<br />
+					<p:panel header="Documentos para adjuntar"
+						id="panelDatosPersonalesArchivos"
+						rendered="#{ManejadorPreinscripcionExamenIngles.mostrarDatosPersona}">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							cellspacing="5">
+
+							<h:outputText value="Documentos:" />
+							<p:selectOneMenu
+								value="#{ManejadorPreinscripcionExamenIngles.tipoDocumentoSel}">
+								<f:selectItems
+									value="#{ManejadorPreinscripcionExamenIngles.tipoDocumentoSelItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Archivo: " />
+							<p:fileUpload
+								value="#{ManejadorPreinscripcionExamenIngles.archivoObligatorio}"
+								mode="simple" />
+
+							<h:outputText />
+							<p:commandButton value="Adjuntar Archivo"
+								action="#{ManejadorPreinscripcionExamenIngles.guardarArchivoObligatorio}"
+								icon="iu-icon-plusthick" ajax="false" />
+
+
+							<h:outputText value=""
+								rendered="#{ManejadorPreinscripcionExamenIngles.panelRenderError[26]}" />
+							<h:outputText
+								value="#{ManejadorPreinscripcionExamenIngles.errores[26]}"
+								style="font-size:xx-small; color:#FF3939; font-weight:bold; text-align:left;"
+								rendered="#{ManejadorPreinscripcionExamenIngles.panelRenderError[26]}" />
+
+							<h:outputText value="Archivos Registrados(*)" />
+
+							<p:dataTable var="archivoAdjunto"
+								value="#{ManejadorPreinscripcionExamenIngles.listaArchivosObligatoriosSel}"
+								cellpadding="1" cellspacing="8" align="center" border="1"
+								emptyMessage=""
+								rendered="#{not empty ManejadorPreinscripcionExamenIngles.listaArchivosObligatoriosSel}"
+								id="tabla-archivo">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre del archivo" />
+									</f:facet>
+									<h:outputText value=" #{archivoAdjunto.soporte1Nombre}"
+										styleClass="normal" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Eliminar" />
+									</f:facet>
+
+									<p:commandButton
+										action="#{ManejadorPreinscripcionExamenIngles.eliminarArchivoObligatorio}"
+										icon="ui-icon-trash" title="Eliminar archivo" update="@form"
+										immediate="true">
+										<f:setPropertyActionListener
+											target="#{ManejadorPreinscripcionExamenIngles.archivoObligatorioSeleccionado2}"
+											value="#{archivoAdjunto}" />
+									</p:commandButton>
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+					</p:panel>
+
+					<br />
+					<p:panel
+						header="Aceptación del beneficio de la financiación del examen"
+						id="panelDatosPersonalesArchivos"
+						rendered="#{ManejadorPreinscripcionExamenIngles.mostrarDatosPersona}">
+
+						<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+							align="center">
+
+							<p:selectBooleanCheckbox id="SBC_acepta"
+								value="#{ManejadorPreinscripcionExamenIngles.aceptaFormulario}"
+								required="true"
+								requiredMessage="Para realizar la preinscripción debe aceptar los términos">
+								<p:ajax update="CB_enviar, PG_enviar, OP_enviar" event="change"
+									listener="#{ManejadorPreinscripcionExamenIngles.cambiaAceptaFormulario}" />
+							</p:selectBooleanCheckbox>
+							<h:outputText
+								value="Al llenar este formato de preinscripción estoy aceptando el beneficio de la financiación del examen de inglés por parte de la Universidad Nacional de Colombia y de ser seleccionado me comprometo a asistir al mismo en la fecha estipulada por la Dirección de Investigación sede Bogotá.  
+        						En caso de dejar el proceso sin finalizar o no asistir al examen acepto pagar el total del costo del mismo." />
+
+						</h:panelGrid>
+
+						<br />
+						<p:outputPanel id="OP_enviar">
+
+							<center>
+								<h:panelGrid id="PG_enviar" columns="1" align="center"
+									rendered="#{ManejadorPreinscripcionExamenIngles.aceptaFormulario}">
+									<p:commandButton id="CB_enviar"
+										action="#{ManejadorPreinscripcionExamenIngles.enviar}"
+										value="Enviar preinscripción"
+										rendered="#{ManejadorPreinscripcionExamenIngles.aceptaFormulario}"
+										update="idPanelInfoCurso,panelMensajes, mensaje, @form, msgs"
+										ajax="false" />
+
+									<p:ajaxStatus onstart="status.show()"
+										oncomplete="status.hide()" />
+
+									<p:dialog widgetVar="status" modal="true" closable="false">
+									Please Wait
+								</p:dialog>
+								</h:panelGrid>
+							</center>
+						</p:outputPanel>
+
+					</p:panel>
+
+				</t:div>
+			</t:div>
+			<t:div styleClass="contenido-menu">
+				<t:div styleClass="menu-superior">
+					<div class="logo-hermes">
+						<a href="#{facesContext.externalContext.requestContextPath}/"><img
+							src="#{facesContext.externalContext.requestContextPath}/images/her-general/logo_hermes.png" /></a>
+					</div>
+				</t:div>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

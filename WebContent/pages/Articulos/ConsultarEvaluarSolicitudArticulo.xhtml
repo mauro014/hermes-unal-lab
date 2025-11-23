@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+
+<s:fieldset
+	legend="Convocatoria de artículos - Universidad Nacional de Colombia"
+	styleClass="legend1" style='font-size: 12px;'>
+	<h:panelGrid columns="2">
+					<h:outputText value="Solicitudes registradas:"
+						styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+					<h:selectOneMenu
+						value="#{ManejadorConsultarEvaluarSolicitudArticulo.codigo}"
+						styleClass="texto" style='font-size: 10px; font-style: normal'>
+						<f:selectItems
+							value="#{ManejadorConsultarEvaluarSolicitudArticulo.articuloItem}" />
+					</h:selectOneMenu>	
+					
+					</h:panelGrid>	
+					
+					<h:panelGrid columns="3" align="center">
+								
+				<h:outputText value=""
+						styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+					<h:commandButton
+					action="#{ManejadorConsultarEvaluarSolicitudArticulo.buscarPersona}"
+					value="Buscar" image="/imgplantilla/pngtitulos/cen_buscar.png" />
+									
+			
+					<h:commandButton action="misProyectos" 
+		           		 value="Atrás"
+		           		 image="/imgplantilla/pngtitulos/cen_atras.png" />	
+		           		 
+		           		 </h:panelGrid>
+		           		 
+	<h:panelGrid columns="2">
+					<h:outputText value=""
+						styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+					<h:outputText value="#{ManejadorConsultarEvaluarSolicitudArticulo.errores[0]}"
+						styleClass="labels_proyecto" />
+	</h:panelGrid>
+</s:fieldset>
+
+<s:fieldset legend="Datos del solicitante" styleClass="legend1"
+	style='font-size: 12px;' rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRender[1]}"	>
+
+	<h:panelGrid columns="2">	
+		
+		<h:outputText value="Nombre de docente" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:outputText value="#{ManejadorConsultarEvaluarSolicitudArticulo.nombreDocente}"
+			styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+		<h:outputText value="Documento de identidad"
+			styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:outputText
+			value="#{ManejadorConsultarEvaluarSolicitudArticulo.documentoDocente}"
+			styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+		<h:outputText value="Sede:" styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:outputText value="#{ManejadorConsultarEvaluarSolicitudArticulo.sede}"
+			styleClass="texto" style='font-size: 10px; font-style: normal' />
+
+
+		<h:outputText value="Facultad o instituto"
+			styleClass="labels_proyecto"
+			style='font-size: 10px; font-style: normal' />
+		<h:outputText
+			value="#{ManejadorConsultarEvaluarSolicitudArticulo.facultadDocente}"
+			styleClass="texto" style='font-size: 10px; font-style: normal' />
+  </h:panelGrid>
+</s:fieldset>
+
+<s:fieldset
+	legend="Visualizar la solicitud "
+	styleClass="legend1" style='font-size: 12px;' rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRender[1]}">
+	
+	<h:panelGrid columns="1" align="center" >
+	<h:commandLink
+		action="#{ManejadorConsultarEvaluarSolicitudArticulo.imprimirReporte}"
+		target="_blank"	rendered="true">
+							
+		<h:graphicImage
+								value="/imgplantilla/pngtitulos/_formulario_imprimir.png" />
+	</h:commandLink>
+    </h:panelGrid>
+</s:fieldset>
+
+<s:fieldset legend="Información Archivos Adjuntos" styleClass="legend1"
+	style='font-size: 12px;'
+	rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRender[1]}">
+
+<h:panelGrid columns="2">
+			<h:outputText value="" rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRenderError[11]}"/>
+			<h:outputText
+				value="#{ManejadorConsultarEvaluarSolicitudArticulo.errores[11]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRenderError[11]}" />
+			<h:outputText value="Archivos Registrados(*)"
+				style='font-size: 10px; font-style: normal'
+				styleClass="labels_proyecto" />
+			<h:dataTable var="archivoAdjunto"
+					value="#{ManejadorConsultarEvaluarSolicitudArticulo.listaArchivosObligatoriosSel}"
+					cellpadding="1" cellspacing="8" align="center" border="1"
+					binding="#{ManejadorConsultarEvaluarSolicitudArticulo.tablaArchivosObligatoriosSel}">
+					
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Tipo documento" style='font-size: 10px;'/>
+						</f:facet>
+						<h:outputText value="#{archivoAdjunto.tipoArchivo}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" style='font-size: 10px;'/>
+						</f:facet>
+						<h:commandLink
+							action="#{ManejadorConsultarEvaluarSolicitudArticulo.verArchivo}"
+							value="#{archivoAdjunto.nombre}"
+							styleClass="normal" style='font-size: 10px; font-style: normal'/>
+					</h:column>				
+					
+				</h:dataTable>
+	    </h:panelGrid>
+
+</s:fieldset>
+
+		<h:panelGrid columns="2" align="center"
+			rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRenderError[0]}">
+			<h:outputText
+				value="#{ManejadorConsultarEvaluarSolicitudArticulo.errores[0]}"
+				styleClass="labels_proyecto" />
+		</h:panelGrid>
+
+
+		
+<s:fieldset legend="Evaluación de la solicitud" styleClass="legend1"
+	style='font-size: 12px;'
+	rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.panelRender[1]}">
+<br/>
+<br/>
+<h:panelGrid columns="2" footerClass="subtitle" 
+  headerClass="subtitlebig" styleClass="medium" 
+  columnClasses="subtitle,medium" style="width: 602px">
+ <h:outputText value="Verificación de Requisitos" />
+  <h:outputText value="Cumple" />
+ 
+  <h:outputText value="" rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.banderaReq1}" />
+  <h:outputText rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.banderaReq1}"
+				value="#{ManejadorConsultarEvaluarSolicitudArticulo.errorReq1}"
+				styleClass="mensajeerror" />  
+ <h:outputText value="1. Está al día con los compromisos adquiridos en relación a proyectos de investigación financiados a través de las instancias e investigación de la Universidad Nacional de Colombia y cumple con los requisitos de la convocatoria" style="font-size: 10px"/>
+ <h:selectOneRadio id="requerimiento1" value="#{ManejadorConsultarEvaluarSolicitudArticulo.conArt.requerimiento1}">
+   <f:selectItem itemValue="SI" value="SI" itemLabel="SI" />   
+   <f:selectItem itemValue="NO" value="NO" itemLabel="NO"/>      
+</h:selectOneRadio>
+ 
+  <h:outputText value="" rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.banderaReq2}" />
+  <h:outputText rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.banderaReq2}"
+				value="#{ManejadorConsultarEvaluarSolicitudArticulo.errorReq2}"
+				styleClass="mensajeerror" /> 
+ <h:outputText value="2. Si ha recibido apoyo anterior mediante esta convocatoria, presenta certificación que el artículo ha sido sometido (radicado) en la revista indicada" style="font-size: 10px"/>
+ <h:selectOneRadio id="requerimiento2" value="#{ManejadorConsultarEvaluarSolicitudArticulo.conArt.requerimiento2}">
+   <f:selectItem itemValue="SI" value="SI" itemLabel="SI" />   
+   <f:selectItem itemValue="NO" value="NO" itemLabel="NO" />
+   <f:selectItem itemValue="No Aplica" value="No Aplica" itemLabel=" No Aplica" />        
+</h:selectOneRadio>
+  <h:outputText value="" rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.banderaReq3}" />
+  <h:outputText rendered="#{ManejadorConsultarEvaluarSolicitudArticulo.banderaReq3}"
+				value="#{ManejadorConsultarEvaluarSolicitudArticulo.errorReq3}"
+				styleClass="mensajeerror" /> 
+</h:panelGrid>
+
+
+ 
+
+<br/>
+<h:panelGrid columns="2" footerClass="subtitle" 
+  headerClass="subtitlebig" styleClass="medium" 
+  columnClasses="subtitle,medium" style="width: 602px">
+	<t:outputText value="Comentario de la Evaluación : " styleClass="labels_proyecto2"/>
+		<t:inputTextarea rows="4" cols="50" 
+		 value="#{ManejadorConsultarEvaluarSolicitudArticulo.conArt.comentarioEvaluacion}" />
+</h:panelGrid>
+<br/>
+
+
+
+
+
+	
+	<h:panelGrid columns="3" align="center">
+	
+		<h:panelGroup style="align:center">
+		
+			
+					<h:commandButton value="Aprobar" 
+						onclick="if(!confirm('¿Está seguro(a) de aprobar la solicitud?. Si es así, por favor oprima aceptar.'))return false"
+						style="font-style: normal; font-size: 11px; font-weight: bold; color: #0000A0; text-transform: capitalize; right: auto"
+						action="#{ManejadorConsultarEvaluarSolicitudArticulo.articuloAprobar}" />
+					<h:commandButton value="No Aprobar" 
+					onclick="if(!confirm('¿Está seguro(a) de negar la solicitud?. Si es así, por favor oprima aceptar.'))return false"
+						style="font-style: normal; font-size: 11px; font-weight: bold; color: #0000A0; text-transform: capitalize"
+						action="#{ManejadorConsultarEvaluarSolicitudArticulo.articuloNegar}" />
+				</h:panelGroup>
+			
+		 </h:panelGrid>
+		 			
+		<h:panelGrid columns="2">
+					<h:outputText value=""
+						styleClass="labels_proyecto" style='font-size: 10px; font-style: normal'/>
+					<h:outputText value="#{ManejadorConsultarEvaluarSolicitudArticulo.errores[0]}"
+						styleClass="labels_proyecto" />
+	    </h:panelGrid>
+
+</s:fieldset>
+
+
+
+
+
+</h:form>
+</ui:define>
+</ui:composition>

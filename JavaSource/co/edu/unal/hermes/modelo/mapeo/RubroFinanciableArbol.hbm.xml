@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+
+	<class name="RubroFinanciableArbol" table="HER_RUBRO_FINANCIABLE_ARBOL">
+
+		<id column="RFA_ID" name="id" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_RUBRO_FINANCIABLE_ARBOL</param>
+			</generator>
+		</id>
+
+		<many-to-one name="modalidadFuenteFinanciacion" column="MDF_ID"
+			class="ModalidadFuenteFinanciacion" not-null="true" lazy="false" />
+		<many-to-one name="tipoRubro" column="TRU_ID" class="TipoRubro"
+			not-null="true" lazy="false" />
+		<property name="padre" column="RFA_PADRE" />
+		<property name="tipo" column="RFA_TIPO" />
+		<property name="orden" column="RFA_ORDEN" />
+		<set name="hijos" table="HER_RUBRO_FINANCIABLE_ARBOL" inverse="true"
+		    order-by="RFA_ORDEN" lazy="false">
+			<key column="RFA_PADRE" />
+			<one-to-many class="co.edu.unal.hermes.modelo.RubroFinanciableArbol" />
+		</set>
+	</class>
+</hibernate-mapping>

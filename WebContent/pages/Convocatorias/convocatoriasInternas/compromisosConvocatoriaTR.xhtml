@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Compromisos</t:div>
+			<p:menubar>
+				<p:menuitem value="Información general"
+					action="crearTerminiosReferenciaConvocatoria" icon="pi pi-times" />
+				<p:menuitem value="Modalidades" action="modalidadesConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Información financiera"
+					action="informacionFinancieraConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Requisitos" action="requisitosConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Documentación"
+					action="documentacionConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Selección ganadores"
+					action="seleccionGanadoresConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Compromisos" action="compromisosConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Productos esperados"
+					action="productosEsperadosConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Icompatibilidades"
+					action="incompatibilidadesConvocatoriaTR" icon="pi pi-times" />
+				<p:menuitem value="Calendario" action="calendarioConvocatoriaTR"
+					icon="pi pi-times" />
+				<p:menuitem value="Consideraciones"
+					action="consideracionesConvocatoriaTR" icon="pi pi-times" />
+			</p:menubar>
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<br />
+			<h:panelGrid columns="3" align="center" cellpadding="5"
+				cellspacing="5" id="infoResultados">
+
+				<h:outputText
+					value="Resultados (texto a mostrar en los términos de referencia): "
+					styleClass="labels_proyecto2" />
+				<p:inputTextarea rows="5" cols="80" id="textoResultados"
+					value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.textoResultados}"
+					validatorMessage="El campo de resultados debe ser de máximo 2000 caracteres"
+					maxlength="2000" counter="counterTextoResultados"
+					counterTemplate="{0} caracteres restantes">
+					<f:validateLength minimum="2" maximum="2000" />
+				</p:inputTextarea>
+				<p:message for="textoResultados" />
+
+				<h:outputText />
+				<h:outputText id="counterTextoResultados" />
+				<h:outputText />
+			</h:panelGrid>
+			<p:separator />
+
+			<t:div
+				style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+				<h:outputText value="COMPROMISOS" style="font-weight: bold;" />
+			</t:div>
+
+			<p:panel id="panelCreacionConvocatoria">
+				<h:panelGrid columns="2" align="center" cellpadding="2"
+					cellspacing="2">
+
+					<h:outputText value="Compromiso: " />
+					<p:inputTextarea
+						value="#{manejadorTerminosReferenciaConvocatoria.compromiso.compromiso}"
+						styleClass="texto" rows="3" cols="80" />
+				</h:panelGrid>
+
+				<center>
+					<h:panelGrid columns="1" align="center">
+						<p:commandButton
+							action="#{manejadorTerminosReferenciaConvocatoria.adicionarCompromiso}"
+							value="Agregar"
+							update="panelCreacionConvocatoria, tablaCompromiso"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</h:panelGrid>
+				</center>
+
+				<br />
+
+				<p:dataTable
+					value="#{manejadorTerminosReferenciaConvocatoria.convocatoria.listaCompromisoConvocatoriaTR}"
+					id="tablaCompromiso" var="moda" cellpadding="1" cellspacing="15"
+					editable="true" align="center">
+					<p:column headerText="Compromiso">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{moda.compromiso}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputTextarea value="#{moda.compromiso}" styleClass="texto"
+									rows="3" cols="40" style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Orden">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{moda.orden}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="modelInput" value="#{moda.orden}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column style="width:35px" headerText="Editar">
+						<p:rowEditor />
+					</p:column>
+					<p:column headerText="Eliminar">
+						<center>
+							<p:commandButton
+								action="#{manejadorTerminosReferenciaConvocatoria.eliminarCompromiso}"
+								update="@form"
+								onclick="if(!confirm('¿Está seguro(a) de eliminar el compromiso?'))return false"
+								id="eliminarCompromiso" icon="ui-icon-trash"
+								title="Eliminar compromiso">
+
+								<f:setPropertyActionListener value="#{moda}"
+									target="#{manejadorTerminosReferenciaConvocatoria.compromisoTRSeleccionada}" />
+							</p:commandButton>
+						</center>
+
+
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<br />
+			<center>
+				<h:panelGrid columns="3">
+					<p:commandButton value="Guardar y salir"
+						action="#{manejadorTerminosReferenciaConvocatoria.guardarCompromisosSalir}"
+						id="botonGuardarFinalizar1" styleClass="ui-priority-primary"
+						ajax="false" />
+
+					<p:commandButton value="Guardar y continuar"
+						action="#{manejadorTerminosReferenciaConvocatoria.guardarCompromisos}"
+						id="botonGuardarFinalizar3" styleClass="ui-priority-primary"
+						ajax="false" />
+				</h:panelGrid>
+			</center>
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 </p:dialog>
+	</ui:define>
+</ui:composition>

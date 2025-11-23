@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Consultar histórico de asignación de roles de usuarios</t:div>
+		<h:form id="form">
+
+
+			<p:dataTable var="solicitud"
+				emptyMessage="No existen resultados de la Consulta"
+				style="margin-top: 20px;"
+				filteredValue="#{manejadorConsultarHistoricoSolicitudesUsuario.objetosFiltrados}"
+				value="#{manejadorConsultarHistoricoSolicitudesUsuario.listaSolicitudes}"
+				paginator="true" paginatorposition="bottom" rows="20">
+				
+				<!-- filteredValue="#{tableBean.filteredCars} -->
+				<p:column headerText="No.">
+						<h:outputText value="#{solicitud.id}"
+							style=' font-weight: bold;' />
+				</p:column>
+					
+				<p:column headerText="Documento"
+					filterBy="#{solicitud.usuarioDocumento}" filterMatchMode="contains">
+					<h:outputText value="#{solicitud.usuarioDocumento}"
+						style="font-size: 12px;" />
+				</p:column>
+
+				<p:column headerText="Nombre del usuario">
+					<h:outputText value="#{solicitud.nombre1} " />
+					<h:outputText value="#{solicitud.nombre2} " />
+					<h:outputText value="#{solicitud.apellido1} " />
+					<h:outputText value="#{solicitud.apellido2}" />
+				</p:column>
+				<p:column headerText="Fecha de registro" sortBy="#{solicitud.fechaSolicitud}">
+					<h:outputText value="#{solicitud.fechaSolicitud}" />
+				</p:column>
+				<p:column headerText="Estado"
+					filterBy="#{solicitud.nombreEstadoSol}" filterMatchMode="contains">
+					<h:outputText value="#{solicitud.nombreEstadoSol}"
+						style="font-size: 12px;" />
+				</p:column>
+
+				<p:column headerText="Ver">
+					<p:commandButton
+						action="#{manejadorConsultarHistoricoSolicitudesUsuario.administrar}"
+						icon="ui-icon-search" ajax="false">
+						<f:setPropertyActionListener value="#{solicitud}"
+							target="#{manejadorConsultarHistoricoSolicitudesUsuario.solicitudSeleccionada}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

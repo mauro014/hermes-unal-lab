@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Buscador de Usuarios Hermes</t:div>
+			<p:panel>
+				
+					<center>
+					<h:outputText value="Buscar Usuarios por:" />
+					<br/>
+					
+					<p:selectOneButton value="#{ManejadorBuscarUsuario.tipoBusqueda}">
+						<f:selectItem itemLabel="Documento" itemValue="busqDoc" />
+						<f:selectItem itemLabel="Correo" itemValue="busqEmail" />
+						<f:selectItem itemLabel="Rol" itemValue="busqDep" />
+						<p:ajax event="change" update="@form"
+							listener="#{ManejadorBuscarUsuario.cambiarForm}" />
+					</p:selectOneButton>
+					</center>
+				
+			</p:panel>
+			
+			<br/>
+			<p:panel header="Búsqueda de Usuarios" align="center"
+				id="solicUsuario" style="margin-top: 10px;"
+				rendered="#{ManejadorBuscarUsuario.mostrarpanelDoc}">
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelSolu">
+					
+					<h:outputLabel value="Tipo de documento:" styleClass="negrilla"
+						for="usuarioTipoDocumento" />
+					<p:selectOneMenu
+						value="#{ManejadorBuscarUsuario.usuarioTipoDocumento}"
+						id="usuarioTipoDocumento">
+						 <f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+						<f:selectItems value="#{ManejadorBuscarUsuario.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					
+					<h:outputLabel value="Documento:" for="usuarioDocumento"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioDocumento" maxlength="256" size="50"
+						required="true" rendered="true"
+						requiredMessage="Indique el número de documento del usuario"
+						value="#{ManejadorBuscarUsuario.usuarioDocumento}">
+					</p:inputText>
+				
+					<h:outputText />
+					<p:commandButton value="Buscar usuario"
+					action="#{ManejadorBuscarUsuario.buscarPersona}" update="msgs"
+					icon="ui-icon-search" ajax="false" />
+				</p:panelGrid>
+				
+			</p:panel>
+			
+			<br/>
+			<p:panel header="Búsqueda de Usuarios" align="center"
+				id="solicUsuario" style="margin-top: 10px;"
+				rendered="#{ManejadorBuscarUsuario.mostrarpanelEmail}">
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelEmail">
+					<h:outputLabel value="Correo electrónico:" for="usuarioEmail"
+						rendered="true" styleClass="negrilla" />
+					<p:inputText id="usuarioEmail" maxlength="256" size="50"
+						required="true" rendered="true"
+						requiredMessage="Indique el correo electrónico del usuario"
+						value="#{ManejadorBuscarUsuario.usuarioEmail}">
+					</p:inputText>
+
+					<h:outputText />
+					<p:commandButton value="Buscar usuario"
+					action="#{ManejadorBuscarUsuario.buscarPersona}" update="msgs"
+					icon="ui-icon-search" ajax="false" />
+				</p:panelGrid>
+				
+			</p:panel>
+			
+			<br />
+			<p:panel  header="Usuarios encontrados" rendered="#{ManejadorBuscarUsuario.mostrarUsuarios}">
+				
+				<center>
+   					 <p:dataTable id="usuariosTabla" var="usuario"
+   						 value="#{ManejadorBuscarUsuario.listaPersonas}"
+   						 emptyMessage="No se han encontrado usuarios" style="width:80%">
+
+   						 <p:column headerText="Nombre">
+   							 <h:outputText
+   								 value="#{usuario.nombre1} #{usuario.nombre2} #{usuario.apellido1} #{usuario.apellido2}" />
+   						 </p:column>
+   						 <p:column headerText="Documento">
+   							 <h:outputText
+   								 value="#{usuario.id.tipoDocumento} #{usuario.id.documento}" />
+   						 </p:column>
+   						 <p:column headerText="Editar" style="text-align: center;">
+							<p:commandButton
+								action="#{ManejadorBuscarUsuario.editarUsuario}"
+								icon="ui-icon-pencil" ajax="false">
+								<f:setPropertyActionListener value="#{usuario}"
+									target="#{ManejadorBuscarUsuario.usuarioSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+   					</p:dataTable>
+				</center>
+				
+			</p:panel>
+			
+			
+			<br/>
+			<p:panel header="Información de usuario" style="margin-top: 10px;"
+				id="formUsuario" rendered="#{ManejadorBuscarUsuario.mostrarForm}"
+				styleClass="contenido-nombre-grande">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelInfUsuario">
+					<h:outputText style="font-weight: bold;"
+						value="Nombre:"/>
+					<h:outputText style="font-weight: bold;"
+						value="#{ManejadorBuscarUsuario.persona.nombreCompleto}" />
+						
+					<h:outputText style="font-weight: bold;"
+						value="Documento:"/>
+					<h:outputText style="font-weight: bold;"
+						value="#{ManejadorBuscarUsuario.persona.id.tipoDocumento} #{ManejadorBuscarUsuario.persona.id.documento}" />
+
+					<h:outputText style="font-weight: bold;"
+						value="Correo electrónico:"/>
+					<h:outputText style="font-weight: bold;"
+						value="#{ManejadorBuscarUsuario.persona.email}" />
+
+					<h:outputText style="font-weight: bold;"
+						value="Dependencia principal del usuario:"/>
+					<h:outputText style="font-weight: bold;" rendered="#{ManejadorBuscarUsuario.esInvestigadorInterno}"
+						value="#{ManejadorBuscarUsuario.persona.dependencia.nombre} - 
+						#{ManejadorBuscarUsuario.persona.dependencia.sede.nombre}" />
+					<h:outputText style="font-weight: bold;" rendered="#{!ManejadorBuscarUsuario.esInvestigadorInterno}"
+						value="No se encontró dependencia" />
+						
+					<h:outputText style="font-weight: bold;"
+						value="Dependencia secundaria del usuario:"/>
+					<h:outputText style="font-weight: bold;" rendered="#{ManejadorBuscarUsuario.esInvestigadorInterno}"
+						value="#{ManejadorBuscarUsuario.persona.dependencia2.nombre} - 
+						#{ManejadorBuscarUsuario.persona.dependencia2.sede.nombre}" />
+					<h:outputText style="font-weight: bold;" rendered="#{!ManejadorBuscarUsuario.esInvestigadorInterno}"
+						value="No se encontró dependencia" />
+
+					<h:outputText rendered="#{ManejadorBuscarUsuario.esActivo}" style="font-weight: bold;" value="" />
+					<h:outputText rendered="#{ManejadorBuscarUsuario.esActivo}" style="font-weight: bold;" value="El docente relacionado se encuentra activo" />
+				</p:panelGrid>
+				
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" id="panelInfUsuario2">
+					<h:outputText style="font-weight: bold;" value="Roles en el Sistema:"/>
+					<p:spacer width='70'/>
+					<p:dataList value="#{ManejadorBuscarUsuario.rolesMostrar}" var="roles">
+						<t:div style="width: 350px;">
+							<h:outputText style="font-weight: bold;" value="#{roles.nombre}" />
+							<p:spacer width='15'/>
+							<h:outputText style="font-weight: bold;" value="(Vence: #{roles.fechaVencimientoPersonaRol})"/>
+						</t:div>
+					</p:dataList>
+				</p:panelGrid>
+				
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" id="panelEsDocenteActivo" rendered="#{ManejadorBuscarUsuario.esDocenteActivo}">
+					<h:outputText style="font-weight: bold;" value="Datos docente activo"/>
+					<p:spacer width='70'/>
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelInfUsuario">
+						<h:outputText style="font-weight: bold;" value="Vinculación:"/>
+						<h:outputText value="#{ManejadorBuscarUsuario.vinculacionDocente}" />
+						
+						<h:outputText style="font-weight: bold;" value="Dedicación:"/>
+						<h:outputText value="#{ManejadorBuscarUsuario.dedicacionDocente}" />
+						
+						<h:outputText style="font-weight: bold;" value="Formación:"/>
+						<h:outputText value="#{ManejadorBuscarUsuario.formacionDocente}" />
+						
+						<h:outputText style="font-weight: bold;" value="Tipo cargo:"/>
+						<h:outputText value="#{ManejadorBuscarUsuario.tipoCargoDocente}" />
+						
+						<h:outputText style="font-weight: bold;" value="Valor hora:"/>
+						<h:outputText value="#{ManejadorBuscarUsuario.valorHoraDocente}" />
+					</p:panelGrid>
+				</p:panelGrid>
+				
+			</p:panel>
+			
+			<p:panel header="Búsqueda de Usuarios por Dependencia" align="center"
+				id="solicUsuarioDep"
+				rendered="#{ManejadorBuscarUsuario.mostrarpanelDep}">
+				<p:messages id="msgs" />
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelSolu">
+					<h:outputText value="Rol a Consultar:"  />
+					<p:selectOneMenu value="#{ManejadorBuscarUsuario.rolSel}"
+						id="rolesConsulta">
+						<f:selectItems value="#{ManejadorBuscarUsuario.rolesItem}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Dependencia:" />
+					<p:selectOneMenu filter="true" filterMatchMode="contains"
+						value="#{ManejadorBuscarUsuario.facultadSel.id}"
+						id="dependenciasUN_2" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorBuscarUsuario.dependenciaItem}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+				<p:outputPanel id="depEjeOP2">
+
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						id="panelSolDep" rendered="false">
+						<h:outputText value="Facultad:" />
+						<p:selectOneMenu filter="true"
+							value="#{ManejadorBuscarUsuario.facultadSel.id}"
+							id="dependenciasUN" style="width:300px">
+							<f:selectItems value="#{ManejadorBuscarUsuario.dependenciaItem}" />
+							<p:ajax listener="#{ManejadorBuscarUsuario.cambiarFacultad}"
+								update="depEjeOP2,  panelSolDep, dependenciasUN_deptos" />
+						</p:selectOneMenu>
+						
+						<h:outputText value="Dependencia:" />
+						<p:selectOneMenu filter="true"
+							value="#{ManejadorBuscarUsuario.deptoSeleccionado}"
+							id="dependenciasUN_deptos" style="width:300px">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorBuscarUsuario.dependenciaItem_Deptos}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+					
+					
+
+				</p:outputPanel>
+
+				<center>
+				<p:commandButton value="Buscar usuarios"
+					action="#{ManejadorBuscarUsuario.buscarXDependencia}" update="msgs"
+					icon="ui-icon-search" ajax="false" />
+				
+				<br /><br />
+				<p:dataTable var="usuariosRol"
+					emptyMessage="No existen resultados de la Consulta"
+					value="#{ManejadorBuscarUsuario.usuariosDep}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Usuario" />
+						</f:facet>
+						<h:outputText
+							value="#{usuariosRol.nombre1} #{usuariosRol.nombre2}" />
+						<br />
+						<h:outputText
+							value="#{usuariosRol.apellido1} #{usuariosRol.apellido2}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Correo Electrónico" />
+						</f:facet>
+						<h:outputText value="#{usuariosRol.email}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Documento" />
+						</f:facet>
+						<h:outputText value="#{usuariosRol.id.documento}" />
+					</p:column>
+				</p:dataTable>
+				</center>
+			</p:panel>
+			
+			<br />
+			<p:messages id="msgs" />
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,494 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">
+				<h:outputText
+					value="Informe semillero - #{manejadorSemillerosHome.informeActual.id}" />
+			</t:div>
+			<t:div>
+				<p:panelGrid style="width:100%;"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Semillero:&lt;/strong&gt; #{manejadorSemillerosHome.semilleroActual.id} - #{manejadorSemillerosHome.semilleroActual.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Director(a):&lt;/strong&gt;#{manejadorSemillerosHome.semilleroActual.lider.nombreCompleto}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Unidad Académica Básica:&lt;/strong&gt; #{manejadorSemillerosHome.semilleroActual.lider.dependencia.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Sede:&lt;/strong&gt; #{manejadorSemillerosHome.semilleroActual.lider.dependencia.sede.nombre} / &lt;strong&gt;Facultad:&lt;/strong&gt; #{manejadorSemillerosHome.semilleroActual.lider.dependencia.facultad.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								value="&lt;strong&gt;Estado Actual:&lt;/strong&gt; #{manejadorSemillerosHome.semilleroActual.estadoActual.nombre}"
+								escape="false" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+			<t:div styleClass="panel-interno-tabla" id="frmDialogInformeRegistro">
+				<p:panelGrid style="width: 100%;" id="panInforme"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column colspan="4">
+							<p:messages id="msgsModal" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="addActividades">
+								<f:facet name="header">
+									<p:commandButton id="infActividades" icon="ui-icon-info" />
+									<p:tooltip for="infActividades" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">De acuerdo al plan de trabajo registrar las actividades.</t:div>
+									</p:tooltip>
+									<h:outputText value="Avance de actividades del plan de trabajo" />
+								</f:facet>
+								<div style="width: 100%; text-align: center;">Por favor
+									coloque los comentarios o justificación del porcentaje de
+									avance de cada actividad (incluso si el avance de esta es
+									cero).</div>
+								<t:div
+									rendered="#{empty manejadorSemillerosHome.informeActual.listaActividades}"
+									style="color:#464646; text-align:justify;">
+									<strong style="color: #FF0000;">NOTA:</strong> 
+									Para este informe no tiene actividades para reportar, dado que las actividades del plan del trabajo del semillero ya están al 100% en informes anteriores. Para reportar actividades en el informe debe colocar actividades nuevamente en el plan de trabajo editando la información del semillero
+								</t:div>
+								<p:dataTable id="actividadesTabla" var="actividad"
+									value="#{manejadorSemillerosHome.informeActual.listaActividades}"
+									emptyMessage="No hay actividades."
+									style="width:650px; overflow-x: scroll; margin-top: 20px;">
+									<p:column headerText="Actividad" style="width:50%">
+										<h:outputText value="#{actividad.actividad.descripcion}" />
+									</p:column>
+									<p:column headerText="Avance de actividad" style="width:50%">
+										<h:outputText value="Porcentaje" />
+										<p:selectOneMenu id="porcentaje" style="width: 100%;"
+											value="#{actividad.porcentajeAvance}"
+											disabled="#{manejadorSemillerosHome.esConsulta}">
+											<f:selectItems
+												value="#{manejadorSemillerosHome.listaPorcentajes}" />
+										</p:selectOneMenu>
+										<br />
+										<h:outputText value="Comentarios" />
+										<p:inputTextarea style="width: 100%;" rows="5"
+											counter="outAvance" maxlength="2500"
+											counterTemplate="{0} caracteres restantes."
+											autoResize="false" value="#{actividad.avance}"
+											readonly="#{manejadorSemillerosHome.esConsulta}" />
+										<h:outputText id="outAvance" />
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="addResultadoProducto">
+								<f:facet name="header">
+									<p:commandButton id="infResultadoProducto" icon="ui-icon-info" />
+									<p:tooltip for="infResultadoProducto"
+										styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left;">De acuerdo al plan de trabajo registrar los resultados</t:div>
+									</p:tooltip>
+									<h:outputText value="Avance de resultados y productos" />
+								</f:facet>
+								<p:panelGrid style="width: 100%;" id="panResultados"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column style="width: 50%;">
+											<h:outputText value="Resultado" />
+										</p:column>
+										<p:column style="width: 50%;">
+											<p:selectOneMenu style="width: 500px;"
+												panelStyle="width: 500px;"
+												value="#{manejadorSemillerosHome.resultado}"
+												disabled="#{manejadorSemillerosHome.esConsulta}">
+												<f:selectItems
+													value="#{manejadorSemillerosHome.listaResultados}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="Avance de Resultado" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea style="width: 100%;" rows="5"
+												counter="outAvanceResultado" maxlength="2500"
+												counterTemplate="{0} caracteres restantes."
+												value="#{manejadorSemillerosHome.resultadoActual.avanceResultado}"
+												autoResize="false"
+												readonly="#{manejadorSemillerosHome.esConsulta}" />
+											<h:outputText id="outAvanceResultado" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column colspan="2">
+									<h:outputText
+								value="Listado de productos académicos: "/>
+							<h:outputLink value="#{manejadorSemillerosHome.linkProductos}"
+											target="_blank" icon="ui-icon-search">
+											<h:graphicImage id="images" alt="jsf-sun"
+												url="/images/iconpdf.png">
+											</h:graphicImage>
+										</h:outputLink>
+									</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="Tipo de producto: " />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width: 500px;"
+												panelStyle="width: 500px;"
+												value="#{manejadorSemillerosHome.prdNivel1}"
+												disabled="#{manejadorSemillerosHome.esConsulta}">
+												<f:selectItems
+													value="#{manejadorSemillerosHome.prdNivel1Item}" />
+												<p:ajax update="selNivel2,selNivel3"
+													listener="#{manejadorSemillerosHome.cambiarProductoNivel1}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="Subtipo 1: " />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width: 500px;"
+												panelStyle="width: 500px;" id="selNivel2"
+												value="#{manejadorSemillerosHome.prdNivel2}">
+												<f:selectItems
+													value="#{manejadorSemillerosHome.prdNivel2Item}"
+													disabled="#{manejadorSemillerosHome.esConsulta}" />
+												<p:ajax update="selNivel3"
+													listener="#{manejadorSemillerosHome.cambiarProductoNivel2}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="Subtipo 2: " />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu style="width: 500px;"
+												panelStyle="width: 500px;" id="selNivel3"
+												value="#{manejadorSemillerosHome.prdNivel3}"
+												disabled="#{manejadorSemillerosHome.esConsulta}">
+												<f:selectItems
+													value="#{manejadorSemillerosHome.prdNivel3Item}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="* Nombre del producto:  " />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSemillerosHome.resultadoActual.nombreProducto}"
+												readonly="#{manejadorSemillerosHome.esConsulta}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="Lugar de depósito:" />
+										</p:column>
+										<p:column>
+											<p:inputText style="width: 100%;"
+												value="#{manejadorSemillerosHome.resultadoActual.lugarDeposito}"
+												readonly="#{manejadorSemillerosHome.esConsulta}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="* Fecha de Entrega:" />
+										</p:column>
+										<p:column>
+											<p:calendar id="idFechaTerminacionEsperada" locale="es"
+												value="#{manejadorSemillerosHome.resultadoActual.fechaEntrega}"
+												readonlyInput="true" pattern="dd/MM/yyyy" navigator="true" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column>
+											<h:outputText value="¿Susceptible de protección?:" />
+										</p:column>
+										<p:column>
+											<p:selectOneRadio
+												value="#{manejadorSemillerosHome.resultadoActual.proteccion}"
+												disabled="#{manejadorSemillerosHome.esConsulta}">
+												<f:selectItem itemLabel="Sí" itemValue="Si" />
+												<f:selectItem itemLabel="No" itemValue="No" />
+											</p:selectOneRadio>
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column colspan="2">
+											<h:outputText
+												style="width: 100%; color: #FF3300; text-align: justify;"
+												value="#{manejadorSemillerosHome.msgDialog}" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column colspan="2" style="text-align: center;">
+											<p:commandButton value="Agregar"
+												action="#{manejadorSemillerosHome.agregarResultadoNuevo}"
+												update="addResultadoProducto" process="addResultadoProducto" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="2" style="text-align: center;">
+											<p:dataTable id="resultadosTabla" var="resultado"
+												emptyMessage="No se han agregado resultados"
+												value="#{manejadorSemillerosHome.informeActual.listaResultados}"
+												style="width:100%; margin-top: 20px;">
+												<p:column headerText="Resultado" style="width:33%">
+													<h:outputText
+														value="&lt;strong&gt;Resultado: &lt;/strong&gt; #{resultado.resultado.resultado}"
+														escape="false" />
+													<br />
+													<h:outputText
+														value="&lt;strong&gt;Avance: &lt;/strong&gt; #{resultado.avanceResultado}"
+														escape="false" />
+												</p:column>
+												<p:column headerText="Producto" style="width:34%">
+													<h:outputText
+														value="&lt;strong&gt;Tipo Producto: &lt;/strong&gt; #{resultado.producto.nombre}"
+														escape="false" />
+													<br />
+													<h:outputText
+														value="&lt;strong&gt;Producto: &lt;/strong&gt; #{resultado.nombreProducto}"
+														escape="false" />
+												</p:column>
+												<p:column headerText="Lugar depósito">
+													<h:outputText value="#{resultado.lugarDeposito}"
+														escape="false" />
+
+												</p:column>
+												<p:column headerText="Protección">
+													<h:outputText value="#{resultado.proteccion}"
+														escape="false" />
+												</p:column>
+												<p:column headerText="Fecha">
+													<h:outputText value="#{resultado.fechaEntrega}"
+														escape="false" />
+												</p:column>
+												<p:column headerText="Eliminar" style="width:33%"
+													rendered="#{!manejadorSemillerosHome.esConsulta}">
+													<p:commandButton icon="ui-icon-trash" title="Eliminar"
+														action="#{manejadorSemillerosHome.eliminarResultado}"
+														update="resultadosTabla">
+														<f:setPropertyActionListener value="#{resultado}"
+															target="#{manejadorSemillerosHome.resultadoActual}" />
+													</p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;"
+								id="panProyectos">
+								<f:facet name="header">
+									<p:commandButton id="infProyectos" icon="ui-icon-info" />
+									<p:tooltip for="infProyectos" styleClass="tooltip-mesage"
+										showDelay="999">
+										<t:div style="text-align: left; float:left;">Asociación de proyectos realizados por el semillero.</t:div>
+									</p:tooltip>
+									<h:outputText value="Proyectos asociados" />
+								</f:facet>
+								<p:panelGrid style="width: 100%;" id="panResultados"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column colspan="2">
+											<p:selectManyCheckbox layout="pageDirection"
+												rendered="#{not empty manejadorSemillerosHome.listaProyectos}"
+												value="#{manejadorSemillerosHome.proyectosSeleccionados}"
+												style="width:100%;"
+												disabled="#{manejadorSemillerosHome.esConsulta}">
+												<f:selectItems
+													value="#{manejadorSemillerosHome.listaProyectos}" />
+											</p:selectManyCheckbox>
+											<h:outputText
+												rendered="#{empty manejadorSemillerosHome.listaProyectos}"
+												value="No hay proyectos asociados a este semillero" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column colspan="2">
+											<h:outputText
+												value="Si el proyecto no aparece en el listado anterior, seleccione el proyecto que desea vincular de la siguiente lista:" />
+										</p:column>
+									</p:row>
+									<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+										<p:column style="width: 50%;">
+											<p:selectOneMenu style="width: 400px;"
+												panelStyle="width: 400px;"
+												value="#{manejadorSemillerosHome.idProyecto}">
+												<f:selectItems
+													value="#{manejadorSemillerosHome.listaNuevosProyectos}" />
+											</p:selectOneMenu>
+										</p:column>
+										<p:column style="width: 50%;">
+											<p:commandButton value="Vincular Proyecto"
+												action="#{manejadorSemillerosHome.vincularProyecto}"
+												update="panProyectos" process="panProyectos" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:panel
+								style="margin-top: 10px; margin-bottom: 20px; width: 100%;">
+								<f:facet name="header">
+									<h:outputText value="Periodo del Informe" />
+								</f:facet>
+								<p:panelGrid style="width: 100%;"
+									styleClass="estilo-panelgrid-sinbordes">
+									<p:row>
+										<p:column style="width: 25%;">
+											<h:outputText value="* Desde:" />
+										</p:column>
+										<p:column style="width: 25%;">
+											<p:calendar id="fechaDesde" navigator="true" locale="es"
+												readonlyInput="true"
+												value="#{manejadorSemillerosHome.informeActual.fechaDesde}"
+												maxdate="#{manejadorSemillerosHome.today}"
+												readonly="#{manejadorSemillerosHome.esConsulta}" />
+											<p:watermark for="fechaDesde" value="*" />
+										</p:column>
+										<p:column style="width: 25%;">
+											<h:outputText value="* Hasta:" />
+										</p:column>
+										<p:column style="width: 25%;">
+											<p:calendar id="fechaHasta" navigator="true" locale="es"
+												readonlyInput="true"
+												value="#{manejadorSemillerosHome.informeActual.fechaHasta}"
+												readonly="#{manejadorSemillerosHome.esConsulta}"
+												maxdate="#{manejadorSemillerosHome.today}" />
+											<p:watermark for="fechaHasta" value="*" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:panel>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Documentos Adjuntos:" />
+						</p:column>
+						<p:column colspan="3">
+							<p:fileUpload label="Seleccionar Archivo" update="tblArchivosInf"
+								style="max-width:666px;" auto="true" mode="advanced"
+								showButtons="false" sizeLimit="3145728"
+								invalidSizeMessage="El tamaño máximo por archivo es de 3MB."
+								fileUploadListener="#{manejadorSemillerosHome.agregarArchivoInf}"
+								rendered="#{!manejadorSemillerosHome.esConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:dataTable var="archivo" id="tblArchivosInf"
+								value="#{manejadorSemillerosHome.informeActual.listaArchivos}"
+								emptyMessage="No hay archivos asociados a esta solicitud.">
+								<f:facet name="header">
+									<h:outputText value="Archivos vinculados" />
+								</f:facet>
+								<p:column>
+									<h:outputText value=" #{archivo.nombre}" />
+								</p:column>
+								<p:column rendered="#{!manejadorSemillerosHome.esConsulta}">
+									<f:facet name="header">
+										<h:outputText value="Acciones" />
+									</f:facet>
+									<p:commandButton ajax="false" update="tblArchivosInf"
+										icon="ui-icon-search" title="Descargar"
+										action="#{manejadorSemillerosHome.descargarArchivoInf}">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorSemillerosHome.archivoInf}" />
+									</p:commandButton>
+									<p:commandButton update="tblArchivosInf" icon="ui-icon-trash"
+										title="Eliminar"
+										action="#{manejadorSemillerosHome.eliminarArchivoInf}">
+										<f:setPropertyActionListener value="#{archivo}"
+											target="#{manejadorSemillerosHome.archivoInf}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{!manejadorSemillerosHome.esConsulta}">
+						<p:column colspan="4">
+							<h:outputText
+								style="width: 100%; color: #FF3300; text-align: justify;"
+								value="El informe será enviado al coordinador de seguimiento que fue asignado." />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<p:messages id="msgsModal" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="4">
+							<center>
+								<p:commandButton value="Guardar Parcialmente" update="@form"
+									process="@form" icon="ui-icon-disk"
+									action="#{manejadorSemillerosHome.guardarInforme}"
+									rendered="#{!manejadorSemillerosHome.esConsulta and manejadorSemillerosHome.informeActual.esInformeEditable}" />
+								<p:commandButton value="Enviar Informe" update="@form"
+									process="@form" icon="ui-icon-check"
+									action="#{manejadorSemillerosHome.enviarInforme}"
+									rendered="#{!manejadorSemillerosHome.esConsulta and manejadorSemillerosHome.informeActual.esInformeEditable}" />
+								<p:commandButton value="Atrás" update="@form" process="@form"
+									icon="ui-icon-check" action="#{manejadorSemillerosHome.atras}" />
+							</center>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

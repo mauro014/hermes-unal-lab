@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" enctype="multipart/form-data" >
+			<t:div styleClass="contenido-titulo-general-myriad">Archivos Adjuntos</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorArchivos.proyectoActual.nombre}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+
+			<br />
+
+			<p:panel header="Archivos" id="subirArchivos">
+				
+				<p:dataTable var="archivoResumen"
+					value="#{manejadorArchivos.listaArchivos}" cellpadding="1"
+					cellspacing="8" align="center" border="1"
+					binding="#{manejadorArchivos.tablaArchivos}" emptyMessage=""
+					rendered="#{not empty manejadorArchivos.listaArchivos}"
+					id="tabla-archivo">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre del archivo" />
+						</f:facet>
+						<h:outputText value=" #{archivoResumen.nombre}"
+							styleClass="normal" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+						<center>
+							<p:commandButton 
+								action="#{manejadorArchivos.descargarArchivo}"
+								icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo" ajax="false" />
+						</center>
+					</p:column>
+
+
+				</p:dataTable>
+
+				<br />
+				<t:div rendered="#{!manejadorArchivos.esPermisoMarcoAsignatura and !manejadorArchivos.esPermisoMarco}">
+				<h4>Recuerde verificar que se encuentran cargados todos los
+					documentos necesarios para la participación en esta convocatoria.</h4>
+				</t:div>
+
+				<h:panelGrid columns="2" align="center" cellpadding="6"
+					cellspacing="1">
+
+					<h:outputText rendered="#{!manejadorArchivos.esPermisoMarcoAsignatura}"
+						value="Su proyecto se ingresó satisfactoriamente con el número:" />
+					<h:outputText rendered="#{manejadorArchivos.esPermisoMarcoAsignatura}"
+						value="Su asignatura se ingresó satisfactoriamente con el número:" />
+					<h:outputText value="#{manejadorArchivos.proyectoActual.id}" />
+					
+				</h:panelGrid>
+					<center>
+						<br />
+					<h:commandLink value="Imprimir Reporte" target="_blank"
+						action="#{manejadorArchivos.reporte}"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+						/>
+						<br />
+						<br />
+					
+					<h:outputText value="Este propuesta está asociada a otro proyecto de investigación"
+						rendered="#{!empty manejadorArchivos.proyectoActual.codigoDib and manejadorArchivos.checkProyectoAsociado}"/><br />
+					<h:commandLink target="popupWindow" value="Ver reporte de proyecto asociado" 
+						action="#{manejadorArchivos.imprimirProyectoAsociado}" 
+						style="text-decoration:none; 
+							color: #16A8E2;
+							font-weight: bold;"
+						rendered="#{!empty manejadorArchivos.proyectoActual.codigoDib}">
+					</h:commandLink>
+					</center>
+			</p:panel>
+			
+			
+			<br />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

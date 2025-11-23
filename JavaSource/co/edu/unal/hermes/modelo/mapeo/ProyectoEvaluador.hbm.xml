@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="ProyectoEvaluador" table="HER_PROYECTO_EVALUADOR">
+		<id name="id" column="PRE_ID" type="long">
+			<generator class="sequence">
+				<param name="sequence">SEQ_PROYECTO_EVALUADOR</param>
+			</generator>
+		</id>
+
+		<many-to-one name="proyecto" class="Proyecto" column="PRY_ID"
+			not-null="true" lazy="false" />
+
+		<many-to-one name="evaluador" class="Investigador"
+			not-null="true" lazy="false">
+			<column name="INV_ID" />
+			<column name="TDO_ID" />
+		</many-to-one>
+
+		<property name="observaciones" column="PRE_OBSERVACIONES" />
+		<property name="documentoEvaluador" column="PRE_NOMBRE_ARCHIVO" />
+		<property name="calificacionFinal" type="float"
+			column="PRE_CALIFICACION_FINAL" />
+		<many-to-one name="concepto" class="TipoConcepto" column="PRE_CONCEPTO"
+			lazy="false" />
+		<property name="estado" column="PRE_ESTADO_EVALUACION" />
+		<property name="activo" column="PRE_ACTIVO" />
+		<property name="fecha" column="PRE_FECHA" />
+		<property name="justificacionBancoFinanciable" column="PRE_JUST_BANCO_FINAN" />
+		<property name="tipoEvaluacion" column="PRE_TIPO_EVALUACION" />
+		<property name="fechaSeleccion" column="PRE_FECHA_SELECCION" />
+		<property name="observacionesSeleccion" column="PRE_OBSERVACIONES_SELECCION" />
+		<property name="calificacionFinalSeleccion" column="PRE_CALIF_FINAL_SELECCION" />
+		<property name="estadoSeleccion" column="PRE_ESTADO_SELECCION" />
+		<property name="documentoSeleccion" column="PRE_NOMBRE_ARCHIVO_SELECCION" />
+		<property name="fechaLimite" column="PRE_FECHA_LIMITE" />
+		<property name="comentariosCoordinador" column="PRE_COMENTARIO_COORDINADOR"/>
+		<many-to-one name="conceptoSeleccion" class="TipoConcepto" column="PRE_CONCEPTO_SELECCION"
+			lazy="false" />
+
+		<set name="calificaciones" table="HER_CALIFICACION_EVALUACION"
+			inverse="true" cascade="all-delete-orphan">
+			<key column="PRE_ID" />
+			<one-to-many class="CalificacionEvaluacion" />
+		</set>
+		<many-to-one name="tipoFinanciacion" class="TipoFinanciacion"
+			column="PRE_CONCEPTO1" not-null="false" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Revisar requisitos</t:div>
+			<p:panel>
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelBusquedaProyectosxConvocatoria">
+						<t:div style="width: 120px;"><h:outputText value="Nombre convocatoria:" /></t:div>
+						<t:div>
+							<p:inputText id="numCom"  style="width:418px;"	value="#{manejadorRevisarRequisitos.nombreConvocatoriaBusqueda}" />
+						<p:commandButton
+							actionListener="#{manejadorRevisarRequisitos.consultarConvocatorias}"
+							value="Consultar" update="panelBusquedaProyectosxConvocatoria"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+						</p:commandButton>
+					</t:div>
+						<h:outputText value="Convocatoria:" />
+						<p:selectOneMenu style="width:520px;"
+							value="#{manejadorRevisarRequisitos.convocatoriaPadre}"
+							id="somConvocatoriaPadre"
+							panelStyle="width: 520px;" 
+							valueChangeListener="#{manejadorRevisarRequisitos.cambiarConvocatoriaPadre}">
+							<f:selectItems
+								value="#{manejadorRevisarRequisitos.convocatoriaPadreItem}" />
+							<p:ajax update="somModalidad" />
+						</p:selectOneMenu>
+						<h:outputText value="Modalidad:" />
+						<p:selectOneMenu id="somModalidad" style="width:520px;"
+							value="#{manejadorRevisarRequisitos.convocatoria}"
+							panelStyle="width: 520px;" 
+							valueChangeListener="#{manejadorRevisarRequisitos.cambiarModalidad}" update="panelNombreConvocatoria">
+							<f:selectItems
+								value="#{manejadorRevisarRequisitos.convocatoriaItem}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<div style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
+						<p:commandButton value="Buscar proyectos" icon="ui-icon-search"
+						update="@form"  onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						actionListener="#{manejadorRevisarRequisitos.buscarProyectosRevisionxModalidad}" ajax="false"/>
+					</div>
+			</p:panel>
+			<br />
+			<t:div styleClass="estilo-panelgrid-sinbordes">
+						<a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=29" target="_blank" style="text-decoration:none; color: #16A8E2; font-weight: bold;">Instructivo de revisión de requisitos</a>
+		    </t:div>
+		    <br />		
+			<h:outputText
+					value="#{manejadorRevisarRequisitos.mensajeAsignacionId}"
+					styleClass="mensajeerror" />
+			<br />
+			<p:panel rendered="#{manejadorRevisarRequisitos.mostrarTabla}" id="panelNombreConvocatoria">
+					<p:panelGrid columns="2" id="panelProyectosxConvocatoria" styleClass="estilo-panelgrid-sinbordes"  >
+						<h:outputText
+							value="Convocatoria:" />
+						<h:outputText
+							value="#{manejadorRevisarRequisitos.nombreConvocatoria}"  style="font-weight:bold;" />
+						<h:outputText
+							value="Modalidad:" />
+						<h:outputText
+							value="#{manejadorRevisarRequisitos.nombreModalidad}" style="font-weight:bold;"  />
+					</p:panelGrid>
+			</p:panel>
+			<br />
+			<p:dataTable var="proyectoCoordinador"  style="width: 100%;" rendered="#{manejadorRevisarRequisitos.mostrarTabla}"
+				value="#{manejadorRevisarRequisitos.listaProyectosCoordinador}"
+				id="tablaConvocatoria" emptyMessage="No se han encontrado proyectos por revisar asignados">
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Código" />
+					</f:facet>
+					<h:outputText value="#{proyectoCoordinador.idProyecto}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Proyecto" />
+					</f:facet>
+					<h:outputText value="#{proyectoCoordinador.nombreProyecto}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Facultad" />
+					</f:facet>
+					<h:outputText value="#{proyectoCoordinador.nombreFacultad}" />
+				</p:column>
+				<p:column style="width: 50px;">
+					<f:facet name="header">
+						<h:outputText value="Acción" />
+					</f:facet>
+					<p:commandButton icon="ui-icon-zoomin" value="Revisar"	action="#{manejadorRevisarRequisitos.mostrarRequisitos}" ajax="false">
+						<f:setPropertyActionListener value="#{proyectoCoordinador}" target="#{manejadorRevisarRequisitos.proyectoCoordinadorSelecionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

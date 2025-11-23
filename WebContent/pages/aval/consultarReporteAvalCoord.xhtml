@@ -1,0 +1,1815 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Reportes</t:div>
+
+			<p:growl id="growl" showDetail="true" />
+			<p:growl id="growl2" showDetail="true" />
+			<p:tabView>
+
+				<!-- 	Avales -->
+
+				<p:tab title="Avales" titleStyle="font-size:12px">
+
+					<p:growl id="growl" showDetail="true" />
+
+					<br />
+					<p:accordionPanel>
+						<p:tab title="Información detallada avales">
+							<p:messages id="msgs" autoUpdate="true" showDetail="true"
+								closable="true" />
+							<br />
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column colspan="6">
+										<p:panel id="aclaracion">
+											<h:outputText style="color:#FF8000;"
+												value="El rango de fechas seleccionadas corresponde a las fechas de envío de las solicitudes de aval por parte de los docentes."></h:outputText>
+										</p:panel>
+										<br />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="3">
+										<h:outputText value="Fecha Inicial:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:calendar id="fechaInicial"
+											value="#{manejadorReportesSede.fechaInicio}"
+											mindate="28/02/14" readonlyInput="true" navigator="true"
+											locale="es" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="3">
+										<h:outputText value="Fecha Final:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:calendar id="fechaFinal"
+											value="#{manejadorReportesSede.fechaFin}" mindate="28/02/14"
+											readonlyInput="true" navigator="true" locale="es" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="3">
+										<p:commandButton id="info2" icon="ui-icon-info" />
+										<p:tooltip for="info2" showDelay="999">
+											<t:div style="text-align: left; float:left;width:400px">
+												Si selecciona tipo de aval ético, se habilitaran los campos específicos y los estados para este tipo de aval.
+												Tenga en cuenta que algunos campos son propios de avales éticos. 
+												Como el reporte es general para todos los avales, si un campo seleccionado no aplica para un tipo de aval específico esta columna en el excel saldrá vacia. 
+											</t:div>
+										</p:tooltip>
+										<h:outputText value="Tipo de Aval:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+											<p:row>
+												<p:column>
+													<p:selectCheckboxMenu id="siTipoAval"
+														value="#{manejadorReportesSede.selectedTipoAval}"
+														label="Seleccione tipo(s) de aval"
+														panelStyle="width:250px"
+														rendered="#{!manejadorReportesSede.esRolRevisionAvalEtico}">
+														<f:selectItems
+															value="#{manejadorReportesSede.tipoAvalItems}" />
+													</p:selectCheckboxMenu>
+													<h:outputText value="Aval Ético"
+														rendered="#{manejadorReportesSede.esRolRevisionAvalEtico}" />
+												</p:column>
+												<p:column
+													rendered="#{!manejadorReportesSede.esRolRevisionAvalEtico}">
+													<p:selectBooleanCheckbox
+														value="#{manejadorReportesSede.mostrarCamposAvalEtico}">
+														<p:ajax update="@form" process="@form"
+															listener="#{manejadorReportesSede.mostrarCamposAvalEtico}" />
+													</p:selectBooleanCheckbox>
+													<h:outputText value="¿Incluir avales éticos?" />
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="3">
+										<h:outputText value="Estado Aval:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:selectCheckboxMenu id="siCategoriaAval"
+											value="#{manejadorReportesSede.selectedEstados}"
+											label="Seleccione estado(s)" panelStyle="width:250px">
+											<f:selectItems value="#{manejadorReportesSede.estadoItems}" />
+										</p:selectCheckboxMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+										<h:outputText value="Contenido del reporte:"
+											style='font-weight: bold;' />
+										<br />
+										<h:outputText
+											value="Seleccione la información que desea ver de los proyectos en el reporte." />
+										<br />
+										<br />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[0]}" disabled="true" />
+									</p:column>
+									<p:column>
+										<h:outputText value="Nro. Aval" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[1]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha Último Envío" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[2]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Tipo de Aval" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[3]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Estado de Aval" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[4]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fechas de Revisión" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[5]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Convocatoria" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[6]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Número de la Convocatoria" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[7]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha de Cierre de la Convocatoria" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[8]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Entidad Convocante" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[9]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Investigador" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[10]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Departamento" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[11]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Facultad" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[12]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Sede" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[13]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Información de Proyecto" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[14]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor Total" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[15]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Información de Grupo" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[16]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor Solicitado a Entidad Convocante" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[17]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor de Contrapartida - Personal UN" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[18]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor Contrapartida en Especie UN" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[19]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor Contrapartida en Efectivo UN" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[20]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Entidades Participantes del Proyecto" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.mostrarCamposAvalEtico}">
+									<p:column colspan="6">
+										<h:outputText value="Campos exclusivos de avales éticos"
+											style="text-decoration: underline;" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.mostrarCamposAvalEtico}">
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[21]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre CEPI" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[22]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Aval CEPI" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[23]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha revisión CEPI" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.mostrarCamposAvalEtico}">
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[24]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Tiene recurso" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[25]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha recurso" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[26]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha revisión recurso" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.mostrarCamposAvalEtico}">
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columns[27]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Consideraciones Éticas" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6" style="text-align:center">
+										<br />
+										<p:commandButton
+											action="#{manejadorReportesSede.imprimirReporteSede}"
+											value="Generar Reporte avales" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+						<p:tab title="Graficación de datos de sede">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="reportes-direccion">
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Seleccione los datos que desea consultar:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="tipo-reporte"
+											value="#{manejadorReportesSede.tipoReporteAval}"
+											label="Seleccione reporte" panelStyle="width:250px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.reportesAvalesItems}" />
+											<p:ajax update="@form" process="@form"
+												listener="#{manejadorReportesSede.opcionesReporteAval}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.mostrarOpcionAno}">
+									<p:column>
+										<h:outputText value="Año para el reporte:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="ano-reporte" style="width:80px;"
+											value="#{manejadorReportesSede.anoReporteAval}"
+											panelStyle="width:50px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.anosReporteItems}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row id="facultad"
+									rendered="#{manejadorReportesSede.mostrarOpcionFacultad}">
+									<p:column>
+										<h:outputText value="Facultad para el reporte:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorReportesSede.facultadSeleccionadaAval}"
+											style="width:300px;">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.listaFacultadesItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:center">
+										<br />
+										<p:commandButton
+											action="#{manejadorReportesSede.generarGraficoAvalesSede}"
+											value="Generar gráfico" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteAvales}">
+									<p:column colspan="2">
+										<p:graphicImage
+											value="#{manejadorReportesSede.graficoAvalesSede}" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteAvales}">
+									<p:column>
+										<h:outputText value="Observaciones: " style='font-weight:bold' />
+									</p:column>
+									<p:column style="text-align:justify">
+										<h:outputText
+											value="#{manejadorReportesSede.indicador.observacion}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.reporteAvales and manejadorReportesSede.indicador.consultaDetalle!=null}">
+									<p:column>
+										<h:outputText value="Ver detalle: " style='font-weight:bold' />
+									</p:column>
+									<p:column>
+										<h:commandLink value="Descargar archivo excel"
+											action="#{manejadorReportesSede.descargarDetalleExcel}"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+										</h:commandLink>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+					</p:accordionPanel>
+				</p:tab>
+
+				<p:tab title="Grupos" titleStyle="font-size:12px">
+					<p:accordionPanel>
+						<p:tab title="Información detallada grupos">
+
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+								<p:row>
+									<p:column colspan="2">
+										<h:outputText value="Estado del grupo:" />
+									</p:column>
+									<p:column colspan="4">
+										<p:selectCheckboxMenu id="estadoGrupo" width="250px;"
+											value="#{manejadorReportesSede.selectedEstadosGrupos}"
+											label="Seleccione estado(s)" panelStyle="width:250px">
+											<f:selectItems
+												value="#{manejadorReportesSede.estadoItemsGrupos}" />
+										</p:selectCheckboxMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+										<h:outputText value="Contenido del reporte:"
+											style='font-weight: bold;' />
+										<br />
+										<h:outputText
+											value="Seleccione la información que desea ver de los grupos en el reporte." />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[0]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Código Minciencias" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[1]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Categoría Minciencias" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[2]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre del grupo" />
+									</p:column>
+
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[3]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha de creación" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[4]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Estado (Hermes / Minciencias)" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[5]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Link GruLAC" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[6]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Link Hermes" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[7]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Contacto (email/teléfono)" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[8]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Facultad" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[9]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Sede" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[10]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Es interfacultad?" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[11]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Es intersede?" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[12]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Es interinstitucional?" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[13]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Líder (Datos básicos)" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[14]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Enfoque" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[15]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Prioridades" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[16]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Perspectiva Interdisciplinaria" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[17]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="Necesidad académica o investigativa del grupo" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[18]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="Pertinencia de las actividades planteadas" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[19]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Otro grupo con las mismas líneas?" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[20]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Tiene aval?" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[21]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Área OCDE principal" />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsGrupos[22]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Agenda de conocimiento principal" />
+									</p:column>
+									<p:column>
+
+									</p:column>
+									<p:column>
+										<h:outputText value="" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+										<br />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+										<h:outputText value="Contenido ADICIONAL del reporte:"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="6">
+										<p:selectOneMenu style="width:350px;"
+											id="infoAdicionalReporte"
+											value="#{manejadorReportesSede.mostrarContenidoAdicionalGrupos}">
+											<f:selectItems
+												value="#{manejadorReportesSede.contenidoAdicionalGrupos}" />
+
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="4">
+										<br />
+									</p:column>
+								</p:row>
+								<br />
+								<br />
+								<p:row>
+									<p:column colspan="6" style="text-align:center">
+										<p:commandButton
+											action="#{manejadorReportesSede.reporteGruposSede}"
+											value="Generar Reporte grupos" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+							<br />
+						</p:tab>
+						<p:tab title="Graficación información grupos">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="reportes-grupos-sede">
+
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Seleccione los datos que desea consultar:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="tipo-reporte-grupo"
+											value="#{manejadorReportesSede.tipoReporteGrupo}"
+											label="Seleccione reporte" panelStyle="width:250px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.reportesGruposItems}" />
+											<p:ajax update="@form" process="@form"
+												listener="#{manejadorReportesSede.opcionesReporteGrupo}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:center">
+										<br />
+										<p:commandButton
+											action="#{manejadorReportesSede.generarGraficoGruposSede}"
+											value="Generar gráfico" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteGrupos}">
+									<p:column colspan="2">
+										<p:graphicImage
+											value="#{manejadorReportesSede.graficoGruposSede}"
+											cache="true" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteGrupos}">
+									<p:column>
+										<h:outputText value="Observaciones: " style='font-weight:bold' />
+									</p:column>
+									<p:column style="text-align:justify">
+										<h:outputText
+											value="#{manejadorReportesSede.indicador.observacion}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.reporteGrupos and manejadorReportesSede.indicador.consultaDetalle!=null}">
+									<p:column>
+										<h:outputText value="Ver detalle: " style='font-weight:bold' />
+									</p:column>
+									<p:column>
+										<h:commandLink value="Descargar archivo excel"
+											action="#{manejadorReportesSede.descargarDetalleExcel}"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+										</h:commandLink>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+					</p:accordionPanel>
+				</p:tab>
+				<p:tab title="Semilleros" titleStyle="font-size:12px">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						style="width:100%">
+						<p:row>
+							<p:column colspan="2" style="text-align:right;">
+								<h:outputText style="font-weight: bold;" value="Sede:" />
+							</p:column>
+							<p:column colspan="2">
+								<h:outputText
+									value="#{manejadorReportesSede.investigador.dependencia.sede.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:right;">
+								<h:outputText style="font-weight: bold;" value="Facultad:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu style="width:350px;"
+									value="#{manejadorReportesSede.facultadesSeleccionadas}">
+									<f:selectItems
+										value="#{manejadorReportesSede.listaFacultadesItem}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:right;">
+								<h:outputText style="font-weight: bold;" value="Estado Actual:" />
+							</p:column>
+							<p:column colspan="2">
+								<p:selectCheckboxMenu label="Seleccione Estados"
+									value="#{manejadorReportesSede.selectedEstadosSemilleros}"
+									style="width:350px;" panelStyle="width:250px">
+									<f:selectItems
+										value="#{manejadorReportesSede.estadosSemilleros}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido BASE del reporte:"
+									style='font-weight: bold;' />
+								<br />
+								<h:outputText
+									value="Seleccione la información que desea ver de los semilleros en el reporte." />
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:commandButton value="Limpiar"
+									actionListener="#{manejadorReportesSede.desmarcarTodoSemilleros}"
+									ajax="false" />
+							</p:column>
+							<p:column colspan="2" style="text-align:right">
+								<p:commandButton value="Seleccionar Todo"
+									actionListener="#{manejadorReportesSede.marcarTodoSemilleros}"
+									ajax="false" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[0]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Código" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[1]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Nombre" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[2]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Estado Actual" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[3]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Líder" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[4]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="E-mail" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[5]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Facultad principal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[6]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Sede principal" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[7]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha creación" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[8]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Presentación" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[9]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Objetivo general" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[10]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Justificación" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[11]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Enfoque" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[12]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Fecha registro" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[13]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Área OCDE principal" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[14]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Objetivo Desarrollo Sostenible" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[15]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Agenda conocimiento" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[16]}" />
+							</p:column>
+							<p:column>
+								<h:outputText
+									value="Pertinencia / Articulación con grupos de investigación" />
+							</p:column>
+							<p:column style="text-align: right;">
+								<p:selectBooleanCheckbox
+									value="#{manejadorReportesSede.columnsSemilleros[17]}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="Metodología" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<h:outputText value="Contenido ADICIONAL del reporte:"
+									style='font-weight: bold;' />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<p:selectOneMenu
+									value="#{manejadorReportesSede.contenidoAdicional}"
+									style="width:350px;">
+									<f:selectItem
+										itemLabel="Seleccione contenido adicional del reporte"
+										itemValue="" />
+									<f:selectItems
+										value="#{manejadorReportesSede.contenidoAdicionalSemilleros}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4">
+								<br />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="4" style="text-align: center;">
+								<p:commandButton value="Generar Reporte Excel" ajax="false"
+									action="#{manejadorReportesSede.generarReporteSemilleros}" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:tab>
+				<p:tab title="Investigadores" titleStyle="font-size:12px">
+					<p:accordionPanel>
+						<p:tab title="Graficación información investigadores">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="reportes-investigadores">
+
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Seleccione los datos que desea consultar:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="tipo-reporte-investigadores"
+											style="width:398px;"
+											value="#{manejadorReportesSede.tipoReporteInvestigadores}"
+											label="Seleccione reporte" panelStyle="width:400px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.reportesInvestigadoresItems}" />
+											<p:ajax update="@form" process="@form"
+												listener="#{manejadorReportesSede.opcionesReporteInvestigador}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:center">
+										<br />
+										<p:commandButton
+											action="#{manejadorReportesSede.generarGraficoDocentesSedes}"
+											value="Generar gráfico" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteInvestigadores}">
+									<p:column colspan="2">
+										<p:graphicImage
+											value="#{manejadorReportesSede.graficoDocentesSede}"
+											cache="true" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteInvestigadores}">
+									<p:column>
+										<h:outputText value="Observaciones: " style='font-weight:bold' />
+									</p:column>
+									<p:column style="text-align:justify">
+										<h:outputText
+											value="#{manejadorReportesSede.indicador.observacion}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.reporteInvestigadores and manejadorReportesSede.indicador.consultaDetalle!=null}">
+									<p:column>
+										<h:outputText value="Ver detalle: " style='font-weight:bold' />
+									</p:column>
+									<p:column>
+										<h:commandLink value="Descargar archivo excel"
+											action="#{manejadorReportesSede.descargarDetalleExcel}"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+										</h:commandLink>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+					</p:accordionPanel>
+				</p:tab>
+				<p:tab title="Biodiversidad" titleStyle="font-size:12px">
+					<p:accordionPanel>
+						<p:tab title="Graficación información biodiversidad">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="reportes-colecciones">
+
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Seleccione los datos que desea consultar:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="tipo-reporte-colecciones"
+											style="width:398px;"
+											value="#{manejadorReportesSede.tipoReporteBiodiversidad}"
+											label="Seleccione reporte" panelStyle="width:400px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.reportesBiodiversidadItems}" />
+											<p:ajax update="@form" process="@form"
+												listener="#{manejadorReportesSede.opcionesReporteBiodiversidad}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:center">
+										<br />
+										<p:commandButton
+											action="#{manejadorReportesSede.generarGraficoColeccionesSede}"
+											value="Generar gráfico" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteBiodiversidad}">
+									<p:column colspan="2">
+										<p:graphicImage
+											value="#{manejadorReportesSede.graficoColeccionesSede}"
+											cache="true" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteBiodiversidad}">
+									<p:column>
+										<h:outputText value="Observaciones: " style='font-weight:bold' />
+									</p:column>
+									<p:column style="text-align:justify">
+										<h:outputText
+											value="#{manejadorReportesSede.indicador.observacion}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.reporteBiodiversidad and manejadorReportesSede.indicador.consultaDetalle!=null}">
+									<p:column>
+										<h:outputText value="Ver detalle: " style='font-weight:bold' />
+									</p:column>
+									<p:column>
+										<h:commandLink value="Descargar archivo excel"
+											action="#{manejadorReportesSede.descargarDetalleExcel}"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+										</h:commandLink>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+					</p:accordionPanel>
+				</p:tab>
+				<p:tab title="Convocatorias internas" titleStyle="font-size:12px">
+					<p:accordionPanel>
+						<p:tab title="Graficación información convocatorias internas">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="reportes-convocatorias">
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Seleccione los datos que desea consultar:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="tipo-reporte-convocatorias"
+											style="width:398px;"
+											value="#{manejadorReportesSede.tipoReporteConvocatorias}"
+											label="Seleccione reporte" panelStyle="width:400px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.reportesConvocatoriasItems}" />
+											<p:ajax update="@form" process="@form"
+												listener="#{manejadorReportesSede.opcionesReporteConvocatoria}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row id="convoca"
+									rendered="#{manejadorReportesSede.mostrarOpcionConvocatoria}">
+									<p:column>
+										<h:outputText value="Convocatoria para el reporte:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorReportesSede.convocatoriaSeleccionada}"
+											style="width:400px" panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.listaConvocatoriasItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row id="convocaMov"
+									rendered="#{manejadorReportesSede.mostrarOpcionConvocatoriaMovilidad}">
+									<p:column>
+										<h:outputText value="Convocatoria para el reporte:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorReportesSede.convocatoriaSeleccionada}"
+											style="width:400px" panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.listaConvocatoriasMovilidadesItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.mostrarOpcionAno}">
+									<p:column>
+										<h:outputText value="Año para el reporte:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="ano-convoca" style="width:80px;"
+											value="#{manejadorReportesSede.anoReporte}"
+											panelStyle="width:50px">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.anosReporteItemsConvocatoria}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row id="facultadConvoca"
+									rendered="#{manejadorReportesSede.mostrarOpcionFacultad}">
+									<p:column>
+										<h:outputText value="Facultad para el reporte:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu
+											value="#{manejadorReportesSede.facultadSeleccionada}"
+											style="width:300px;">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems
+												value="#{manejadorReportesSede.listaFacultadesItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:center">
+										<br />
+										<p:commandButton
+											action="#{manejadorReportesSede.generarGraficoConvocatoriasSede}"
+											value="Generar gráfico" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteConvocatorias}">
+									<p:column colspan="2">
+										<p:graphicImage
+											value="#{manejadorReportesSede.graficoConvocatoriasSede}"
+											cache="true" />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.reporteConvocatorias}">
+									<p:column>
+										<h:outputText value="Observaciones: " style='font-weight:bold' />
+									</p:column>
+									<p:column style="text-align:justify">
+										<h:outputText
+											value="#{manejadorReportesSede.indicador.observacion}" />
+									</p:column>
+								</p:row>
+								<p:row
+									rendered="#{manejadorReportesSede.reporteConvocatorias and manejadorReportesSede.indicador.consultaDetalle!=null}">
+									<p:column>
+										<h:outputText value="Ver detalle: " style='font-weight:bold' />
+									</p:column>
+									<p:column>
+										<h:commandLink value="Descargar archivo excel"
+											action="#{manejadorReportesSede.descargarDetalleExcel}"
+											style="text-decoration:none; 
+										color: #16A8E2;
+										font-weight: bold;">
+										</h:commandLink>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+						<p:tab title="Información detallada convocatorias de movilidades">
+							<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+								id="reportes-excel-movilidades">
+								<p:row>
+									<p:column>
+										<h:outputText value="Convocatoria para el reporte:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:selectOneMenu
+											value="#{manejadorReportesSede.convocatoriaSeleccionadaMovilidad}"
+											style="width:400px" panelStyle="width: 400px;" filter="true"
+											filterMatchMode="contains">
+											<f:selectItems
+												value="#{manejadorReportesSede.listaConvocatoriasMovilidadesItem}" />
+											<p:ajax update="reportes-excel-movilidades"
+												process="reportes-excel-movilidades"
+												listener="#{manejadorReportesSede.cargarModalidades}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<h:outputText value="Seleccione la modalidad:" />
+									</p:column>
+									<p:column colspan="3">
+										<p:selectCheckboxMenu
+											rendered="#{!manejadorReportesSede.convNacional}"
+											value="#{manejadorReportesSede.selectedModalidades}"
+											label="Seleccione modalidad(es)" panelStyle="width:400px">
+											<f:selectItems
+												value="#{manejadorReportesSede.listaModalidadesMovilidadesItem}" />
+										</p:selectCheckboxMenu>
+										<p:selectOneMenu
+											rendered="#{manejadorReportesSede.convNacional}"
+											value="#{manejadorReportesSede.modalidades}"
+											label="Seleccione modalidad(es)" style="width:400px"
+											panelStyle="width:400px">
+											<f:selectItems
+												value="#{manejadorReportesSede.listaModalidadesMovilidadesItem}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="4">
+										<h:outputText value="Contenido del reporte:"
+											style='font-weight: bold;' />
+										<br />
+										<h:outputText
+											value="Seleccione la información que desea ver de las movilidades en el reporte." />
+										<br />
+										<br />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="4">
+									</p:column>
+								</p:row>
+
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[0]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha de registro"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[1]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Conv./Modalidad"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[2]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Investigador" style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[3]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Dependencia" style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[4]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Grupo de investigación"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[5]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha de inicio de viaje"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[6]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha fin de viaje"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[7]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="País" style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[8]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Evento" style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[9]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor inscripción al evento"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[10]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Gastos diarios de estadía"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[11]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Días a financiar"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[12]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor de tiquetes"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[13]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor viáticos"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[14]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Programa académico"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[15]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Estudiante" style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[16]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre visitante"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[17]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Valor aporte dependencias"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[18]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Información seguimiento"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[19]}" />
+									</p:column>
+									<p:column>
+										<h:outputText value="Disponibilidad presupuestal de Facultad"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[0]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Estado" style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[1]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha de Registro"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[2]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Nombre del Evento"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[3]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Convocatoria" style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[4]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Tipo Movilidad"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[5]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Tipo Actividad"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[6]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Datos Solicitante"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[7]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Datos Dependencia"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[8]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Grupo Investigación"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[9]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Datos Visitante"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[10]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha Fin" style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[11]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha Fin" style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[12]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Duración (Días)"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[13]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Información Económica"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[14]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Comentario de Sede"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[15]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Tiene Informe de Seguimiento?"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[16]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="¿Movilidad Realizada?"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[17]}"></p:selectBooleanCheckbox>
+									</p:column>
+									<p:column>
+										<h:outputText value="Fecha de Aprobación"
+											style='font-weight: bold;' />
+									</p:column>
+								</p:row>
+								<p:row rendered="#{!manejadorReportesSede.convNacional}">
+									<p:column style="text-align: right;">
+										<p:selectBooleanCheckbox
+											value="#{manejadorReportesSede.columnsMovilidades[20]}" />
+									</p:column>
+									<p:column>
+										<h:outputText value="Disponibilidad presupuestal de Sede"
+											style='font-weight: bold;' />
+									</p:column>
+									<p:column>
+									</p:column>
+									<p:column>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="4" style="text-align:center">
+										<p:commandButton
+											action="#{manejadorReportesSede.imprimirReporteSedeMovilidades}"
+											value="Generar reporte movilidades" ajax="false">
+										</p:commandButton>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:tab>
+
+
+					</p:accordionPanel>
+				</p:tab>
+				<p:tab title="Portafolio" titleStyle="font-size:12px">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="reportes-convocatorias">
+						<p:row>
+							<p:column colspan="2" style="width:50%;">
+								<h:outputText value="Generar portafolio para la sede " />
+								<h:outputText style="font-weight:bold;"
+									value="#{manejadorReportesSede.investigador.dependencia.sede.nombre}" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" styleClass="confirmaEdicion"
+								style="text-align:justify;">
+								<table>
+									<tr>
+										<td><h:outputText
+												value="¿Desea incluir el listado de investigadores?" /></td>
+										<td style="vertical-align: middle;"><p:selectBooleanCheckbox
+												value="#{manejadorReportesSede.incluirInvestigadores}">
+											</p:selectBooleanCheckbox></td>
+									</tr>
+								</table>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton
+									action="#{manejadorReportesSede.generarPortafolio}"
+									value="Generar portafolio" ajax="false">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:tab>
+				<p:tab title="Docentes compromisos pendientes"
+					titleStyle="font-size:11px" id="panelInformacionDocentesMorosos">
+					<br />
+					<p:panel>
+						<t:div style="color:#464646; text-align:justify;">
+						Este reporte <strong style="color: #FF0000;">DOCENTES
+								COMPROMISOS PENDIENTES</strong> toma los docentes que están participando en la convocatoria y modalidad(es) 
+						seleccionadas y consulta sus compromisos pendientes con proyectos, semilleros y movilidades registradas en el Sistema Hermes a la fecha de generación del reporte. 
+						El reporte presenta información del docente, tipo de registro que tiene compromiso pendiente (proyectos, semilleros, movilidades), convocatoria a la que pertenece el registro (si aplica), estados, 
+						fecha de vecimiento y coordinador (si aplica).
+				</t:div>
+					</p:panel>
+					<br />
+					<p:panelGrid id="panelGridDocentesMorosos"
+						styleClass="estilo-panelgrid-sinbordes">
+
+						<p:row>
+							<p:column style="width:200px;">
+								<h:outputText value="Convocatoria:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorReportesSede.convocatoriaSel}"
+									id="ConvocatoriaMorosos" style="width:500px"
+									panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="-" itemValue="-" />
+									<f:selectItems
+										value="#{manejadorReportesSede.listaConvocatoriasItem}" />
+									<p:ajax listener="#{manejadorReportesSede.cargarModalidad}"
+										update="panelGridDocentesMorosos"
+										process="panelGridDocentesMorosos" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Modalidad:" />
+							</p:column>
+							<p:column>
+								<p:selectCheckboxMenu
+									value="#{manejadorReportesSede.selectedConvocatorias}"
+									label="Seleccione modalidad(s)" id="convoca"
+									style="width:100%;" panelStyle="width: 500px;" filter="true"
+									filterMatchMode="contains">
+									<f:selectItems value="#{manejadorReportesSede.modalidadItem}" />
+								</p:selectCheckboxMenu>
+							</p:column>
+						</p:row>
+						<p:row style="text-align:center;">
+							<p:column colspan="2" style="text-align:center;">
+								<p:commandButton value="Generar reporte"
+									actionListener="#{manejadorReportesSede.consultarReporteProyectosMorosos}"
+									ajax="false" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:tab>
+			</p:tabView>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+
+
+
+	<ui:define name="content">
+		<h:form id="content" enctype="multipart/form-data">
+
+
+
+			<t:div styleClass="contenido-titulo-general-myriad">Mejoras al sistema HERMES</t:div>
+
+			<p:panel
+				header="Formato de especificación de solicitudes de mejora"
+				align="center" id="requerimiento">
+
+				<p:messages id="msgs" />
+
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelReq">
+
+
+					<p:outputLabel value="Nombre del Requerimiento:" for="Nombre"
+						styleClass="negrilla" rendered="false"/>
+
+					<p:inputText id="Nombre" maxlength="256" size="70"  rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.nombre}">
+					</p:inputText>
+
+
+					<h:outputLabel value="Tipo de documento:" styleClass="negrilla"
+						for="tipoDoc" rendered="false"/>
+					<p:selectOneMenu rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.tipoDoc.id}"
+						id="tipoDoc">
+						<f:selectItems
+							value="#{ManejadorEditarRequerimiento.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+
+
+
+					<p:outputLabel value="Documento del Solicitante:" for="idPersona" rendered="false"
+						styleClass="negrilla" />
+					<p:inputText id="idPersona" maxlength="256" size="50"
+						required="true" rendered="false"
+						requiredMessage="Indique el número de documento del solicitante."
+						value="#{ManejadorEditarRequerimiento.requerimiento.idPersona}">
+					</p:inputText>
+
+
+					<p:outputLabel value="Responsable del Requerimiento:" rendered="false"
+						for="personaReq" styleClass="negrilla" />
+					<p:inputText id="personaReq" maxlength="256" size="50" rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.personaRequerimiento}">
+					</p:inputText>
+
+
+					<p:outputLabel
+						value="Dependencia del Responsable del Requerimiento:" rendered="false"
+						styleClass="negrilla" for="dependencia" />
+					<p:selectOneMenu rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.idDependencia.id}"
+						id="dependencia" filter="true" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorEditarRequerimiento.dependenciaItem}" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="Secuencia que posee en el documento (en caso de existir algún documento asociado):"
+						for="secuencia" styleClass="negrilla" rendered="false"/>
+					<p:inputText id="secuencia" maxlength="256" size="10" rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.seqRequerimiento}">
+					</p:inputText>
+
+
+					<p:outputLabel value="Módulo al que corresponde la propuesta:"
+						for="modulo" styleClass="negrilla" />					
+					<p:selectOneMenu
+						value="#{ManejadorEditarRequerimiento.requerimiento.modulo}"
+						id="modulo" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorEditarRequerimiento.moduloItems}" />
+						<p:ajax process="panelReq" update="panelReq"  listener="#{ManejadorEditarRequerimiento.cargarSubModulo}"/> 
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Proceso:"
+						for="submodulo" styleClass="negrilla" />					
+					<p:selectOneMenu
+						value="#{ManejadorEditarRequerimiento.requerimiento.subModulo}"
+						id="submodulo" style="width:300px">
+						<f:selectItems
+							value="#{ManejadorEditarRequerimiento.subModuloItems}" />
+					</p:selectOneMenu>
+					
+				
+					<p:outputLabel for="fechaSolicitud" value="Fecha Solicitud:"
+						styleClass="negrilla" rendered="false"/>
+					<p:calendar rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.fechaSolicitud}"
+						required="true" id="fechaSolicitud"
+						requiredMessage="Escoja la fecha en la que el usuario espera que se entregue la solución."
+						pattern="dd/MM/yyyy" />
+
+
+					<p:outputLabel for="fechaEntrega" value="Fecha Entrega:" rendered="false"
+						styleClass="negrilla" />
+					<p:calendar rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.fechaEntrega}"
+						id="fechaEntrega"
+						requiredMessage="Escoja la fecha en la que el usuario espera que se entregue la solución."
+						pattern="dd/MM/yyyy" />
+
+
+					<p:outputLabel value="Estado:" rendered="false"
+						styleClass="negrilla" for="estSelRequerimiento" />
+					<p:selectOneMenu rendered="false"
+						value="#{ManejadorEditarRequerimiento.requerimiento.estSelRequerimiento}"
+						id="estSelRequerimiento">
+						<f:selectItems value="#{ManejadorEditarRequerimiento.estadosItem}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="Descripción de la propuesta de mejora (máx. 2000 caracteres):" styleClass="negrilla"/>
+					<p:inputTextarea value="#{ManejadorEditarRequerimiento.requerimiento.descripcionSolic}" id="descripcion" 
+					autoResize="false" rows="10" cols="55" 
+					validatorMessage="Descripción debe estar entre 1 - 2000 caracteres"
+					counter="counter" maxlength="2000" counterTemplate="{0} caracteres restantes.">	
+					<f:validateLength minimum="1" maximum="2000" for="descripcion"></f:validateLength>							
+					</p:inputTextarea>
+					<p:message for="descripcion" display="icon" />
+					<h:outputText id="counter" />
+
+				</p:panelGrid>
+				
+				<center>
+				<br/>
+				<p:commandButton value="Guardar"
+					action="#{ManejadorEditarRequerimiento.guardar}" update="msgs"
+					icon="ui-icon-disk" ajax="false" />
+				</center>
+				<br/>
+				
+				
+			</p:panel>
+			
+			<br></br>
+			<p:panel header="Agregar documentos (opcional)" id="panelArchivos">
+				<br />
+				<h:panelGrid id="subirArchivos" columns="2" border="0"
+						cellspacing="5" align="center">
+	
+						<h:outputText value="Tipo de Archivo:" />
+						<p:selectOneMenu value="#{ManejadorEditarRequerimiento.tipoArchivo.id}"
+							style="width:400px">
+							<f:selectItems value="#{ManejadorEditarRequerimiento.tipoArchivoItem}" />
+						</p:selectOneMenu>
+	
+						<h:outputText value="Archivo: " />
+						<p:fileUpload value="#{ManejadorEditarRequerimiento.archivoLeg}" mode="simple" />
+	
+						<h:outputText />
+						<p:commandButton value="Adjuntar Archivo" ajax="false" update="tabla-archivo"
+							actionListener="#{ManejadorEditarRequerimiento.insertarArchivoReq}" />
+
+				</h:panelGrid>
+				<br />
+
+					<br />
+					<p:dataTable var="archivoResumen"
+						value="#{ManejadorEditarRequerimiento.listaDocumentos}"
+						cellpadding="1" cellspacing="8" align="center" border="1"
+						emptyMessage=""
+						rendered="#{not empty ManejadorEditarRequerimiento.listaDocumentos}"
+						id="tabla-archivo">
+
+					
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre del archivo" />
+							</f:facet>
+							<h:outputText value=" #{archivoResumen.nombre}" />
+						</p:column>
+
+						<p:column >
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+
+							<p:commandButton ajax="false"
+								action="#{ManejadorEditarRequerimiento.descargarArchivo}"
+								icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+								styleClass="botonGrupo" update="tabla-archivo">
+
+								<f:setPropertyActionListener value="#{archivoResumen}"
+									target="#{ManejadorEditarRequerimiento.archivoSeleccionadoLeg}" />
+							</p:commandButton>
+						</p:column>
+						
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton update="tabla-archivo"
+									action="#{ManejadorEditarRequerimiento.eliminarArchivoLeg}"
+									icon="ui-icon-trash" title="Eliminar archivo">
+									<f:setPropertyActionListener value="#{archivoResumen}"
+										target="#{ManejadorEditarRequerimiento.archivoSeleccionadoLeg}" />
+									<p:ajax update="@form"/>
+								</p:commandButton>
+							</center>
+						</p:column>
+
+					</p:dataTable>
+					<br />
+			</p:panel>
+			
+			<br/>
+			<p:messages id="msgs" />
+		</h:form>
+	</ui:define>
+
+</ui:composition>

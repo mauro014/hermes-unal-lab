@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content" id="frmMain">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Informes Jovenes Investigadores</t:div>
+			<p:panel id="panelInformacionAcademica"
+				header="I. INFORMES JOVENES INVESTIGADORES">
+				<p:panelGrid columns="2" cellpadding="5" cellspacing="5"
+					id="panelGridAspectoGeneralPpal"
+					styleClass="estilo-panelgrid-sinbordes">
+
+					<h:outputText value="Nombre:" />
+					<h:outputText
+						value="#{ManejadorJovenesInvestigadoresInformes.jovenInvestigador.nombreCompleto}">
+					</p:outputText>
+
+					<h:outputText value="Documento:"/>
+					<h:outputText value="#{ManejadorJovenesInvestigadoresInformes.jovenInvestigador.id.documento}"/>
+					</p:panelGrid>								
+			</p:panel>
+
+			<t:div styleClass="estilo-propio">
+				<p:dataTable var="informe" id="dtInformes"  value="#{ManejadorJovenesInvestigadoresInformes.listadoInformes}" 
+						rows="10" type="none"
+						paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+						paginator="true" paginatorPosition="bottom"
+						paginatorAlwaysVisible="false" 
+					emptyMessage="No tiene estudiantes registrados">
+					<p:column filterBy="#{persona.id.documento}"
+						filterStyle="width: 60px;" filterMatchMode="contains">
+						<f:facet name="header">
+							<div style="width: 100%; margin: auto; text-align: center;">
+								<h:outputText value="Documento"/>
+							</div>
+						</f:facet>
+						<h:outputText value="#{persona.id.documento} - #{persona.id.tipoDocumento}"/>
+					</p:column>
+					<p:column  filterBy="#{persona.nombreCompleto}"
+						filterStyle="width: 200px;" filterMatchMode="contains">
+						<f:facet name="header">	
+							<div style="width: 100%; margin: auto; text-align: center;">
+								<h:outputText value="Nombre"/>
+							</div>
+						</f:facet>
+						<h:outputText value="#{persona.nombreCompleto}"/>
+					</p:column>
+					<p:column style="text-align: left;" filterBy="#{persona.direccion}"
+						filterStyle="width: 200px;" filterMatchMode="contains"> 
+						<f:facet name="header">
+							<div style="width: 100%; margin: auto; text-align: center;">
+								<h:outputText value="Proyecto"/>
+							</div>
+						</f:facet>
+						<h:outputText value="#{persona.direccion}"/>
+					</p:column>
+					<p:column sortBy="#{persona.edad}" style="text-align: center;"> 
+						<f:facet name="header">
+							<h:outputText value="Numero"/><br />
+							<h:outputText value="Informes."/>
+						</f:facet>
+						<h:outputText value="#{persona.edad}"/>
+					</p:column>	
+					
+					<p:column>
+						<div style="text-align:center;">
+							<p:commandButton rendered="#{persona.edad > 0}" 
+									icon="ui-icon-search"
+								action="#{ManejadorPrincipalJovenesInvestigadores.cargarInforme}" >
+								<f:setPropertyActionListener value="#{persona}" target="#{ManejadorPrincipalJovenesInvestigadores.personaSeleccionada}" ajax="false"  />
+							</p:commandButton>
+						</div>
+					</p:column>		
+
+				</p:dataTable>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

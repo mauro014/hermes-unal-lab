@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">			
+			<t:div styleClass="contenido-titulo-general-myriad">Rubros Estimados</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorRubros.proyectoActual.nombre}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+			<br />
+			<p:panel header="Rubros Ingresados">
+				<p:accordionPanel id="fuentesRubros" multiple="true"
+					value="#{manejadorRubros.listaFinanciacionVista}"
+					var="financiacionVista">
+					<p:tab id="fuenteFinanRubros"
+						value="#{financiacionVista.colapsado}"
+						title="#{financiacionVista.financiacion.fuente.descripcion}">
+						<h:panelGrid columns="1" align="center">
+							<h:outputText value="No hay rubros asociados a esta fuente"
+								rendered="#{empty financiacionVista.listaGastosVista }" />
+						</h:panelGrid>
+						<p:dataTable id="dataTableGastoVista" var="gastoVista"
+							value="#{financiacionVista.listaGastosVista}" align="center"
+							rendered="#{!empty financiacionVista.listaGastosVista }">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="RUBRO ADICIONADO"
+										style="font-weight: bold; font-style: italic;" />
+								</f:facet>
+								<h:outputText value="#{gastoVista.gasto.tipoRubro.nombre}" />
+								<h:panelGrid columns="2" align="center"
+									rendered="#{manejadorRubros.esProgramaNacional}">
+									<h:outputText value="Año" />
+									<h:outputText value="#{gastoVista.gasto.vigencia}"
+										rendered="#{manejadorRubros.esProgramaNacional}" />
+								</h:panelGrid>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="DESCRIPCIÓN"
+										style="font-weight: bold; font-style: italic;" />
+								</f:facet>
+								<h:outputText value="#{gastoVista.gasto.descripcion}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="VALOR"
+										style="font-weight: bold; font-style: italic;" />
+								</f:facet>
+								<h:outputText value="#{gastoVista.gasto.valor}"
+									style="font-size: small;" />
+							</p:column>							
+						</p:dataTable>
+					</p:tab>
+				</p:accordionPanel>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

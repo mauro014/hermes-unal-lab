@@ -1,0 +1,680 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="formEDS" styleClass="estilo-panelgrid-sinbordes">
+			<!-- dgbenitezc 20130702-->
+			<t:div styleClass="contenido-titulo-general-myriad">Encuesta Diagnóstico Software</t:div>
+
+			<p:panel visible="#{!ManejadorDiagnosticoSoftware.guardado}">
+
+				<p:panelGrid columns="2" id="pgPrincipal">
+
+					<p:outputLabel value="Sede" styleClass="negrilla" for="somSedes" />
+					<p:selectOneMenu required="true"
+						value="#{ManejadorDiagnosticoSoftware.sedeSeleccionada.id}"
+						id="somSedes">
+						<f:selectItems
+							value="#{ManejadorDiagnosticoSoftware.selectItemSedes}" />
+						<p:ajax update="somFacultades, somDepartamentos"
+							listener="#{ManejadorDiagnosticoSoftware.cambiarSede}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Facultad" styleClass="negrilla"
+						for="somFacultades" />
+					<p:selectOneMenu style="width:400px;" required="true"
+						value="#{ManejadorDiagnosticoSoftware.facultadSeleccionada.id}"
+						id="somFacultades">
+						<f:selectItems
+							value="#{ManejadorDiagnosticoSoftware.selectItemFacultades}" />
+						<p:ajax update="somSedes, somDepartamentos"
+							listener="#{ManejadorDiagnosticoSoftware.cambiarFacultad}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Departamento" styleClass="negrilla" />
+					<p:selectOneMenu style="width:400px;"
+						value="#{ManejadorDiagnosticoSoftware.departamentoSeleccionado.id}"
+						id="somDepartamentos">
+						<f:selectItems
+							value="#{ManejadorDiagnosticoSoftware.selectItemDepartamentos}" />
+						<p:ajax update="@parent"
+							listener="#{ManejadorDiagnosticoSoftware.cambiarDepartamento}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Cargo *" styleClass="negrilla" for="Cargo" />
+					<p:inputText id="Cargo" maxlength="128" size="50"
+						requiredMessage="El Cargo es obligatorio."
+						value="#{ManejadorDiagnosticoSoftware.diagnosticoSoftwareActual.cargoPersona}">
+					</p:inputText>
+
+					<h:outputText value="Usa software para Docencia"
+						styleClass="negrilla" />
+					<p:selectOneMenu style="width:100px;"
+						value="#{ManejadorDiagnosticoSoftware.usaSoftwareDocenciaBoolean}"
+						id="somUSD">
+						<f:selectItems
+							value="#{ManejadorDiagnosticoSoftware.usaSoftwareDocenciaItem}" />
+						<p:ajax update="opDOC"
+							listener="#{ManejadorDiagnosticoSoftware.cambiaUsaSoftwareDocencia}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Usa software para Investigación"
+						styleClass="negrilla" />
+					<p:selectOneMenu style="width:100px;"
+						value="#{ManejadorDiagnosticoSoftware.usaSoftwareInvestigacionBoolean}"
+						id="somUSI">
+						<f:selectItems
+							value="#{ManejadorDiagnosticoSoftware.usaSoftwareInvestigacionItem}" />
+						<p:ajax update="opINV"
+							listener="#{ManejadorDiagnosticoSoftware.cambiaUsaSoftwareInvestigacion}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="" />
+					<h:outputText
+						value="Nota: no incluir software de Office (Word, Excel, PowerPoint, etc.)" />
+
+				</p:panelGrid>
+
+				<p:spacer height="20" />
+
+				<p:outputPanel id="opDOC">
+
+
+					<p:panel header="Software de Docencia" toggleable="true"
+						id="panelDOC"
+						rendered="#{ManejadorDiagnosticoSoftware.usaSoftwareDocenciaBoolean}">
+
+
+
+						<p:dataTable var="softwareDocencia" id="dtSoftwareDocencia"
+							value="#{ManejadorDiagnosticoSoftware.listaSoftwareDocencia}"
+							rows="5" paginator="true" paginatorPosition="bottom"
+							pageLinks="5"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No existen registros."
+							paginatorAlwaysVisible="false">
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Software Docencia Asociado" />
+								</f:facet>
+								<h:outputText value="#{softwareDocencia.nombreSoftware}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-trash"
+										update="dtSoftwareDocencia"
+										action="#{ManejadorDiagnosticoSoftware.eliminarSoftwareDocencia}"
+										onclick="if(!confirm('Está seguro de eliminar el software de docencia #{softwareDocencia.nombreSoftware}?'))return false">
+										<f:setPropertyActionListener value="#{softwareDocencia}"
+											target="#{ManejadorDiagnosticoSoftware.softwareDocenciaSeleccionado}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+						</p:dataTable>
+
+						<p:spacer height="20"
+							rendered="#{ManejadorDiagnosticoSoftware.dSagregar != null}" />
+
+						<p:panel header="Nuevo registro" id="panelNuevoSoftware"
+							rendered="#{ManejadorDiagnosticoSoftware.dSagregar != null}">
+							<p:panelGrid columns="2">
+								<p:outputLabel value="Nombre del software:"
+									styleClass="negrilla" for="NombreSoftware" />
+								<p:inputText id="NombreSoftware" maxlength="128" size="50"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.nombreSoftware}">
+								</p:inputText>
+
+								<p:outputLabel value="Sistema Operativo:" styleClass="negrilla"
+									for="SistemaOperativoDOC" />
+								<p:inputText id="SistemaOperativoDOC" maxlength="128" size="50"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.sistemaOperativo}">
+								</p:inputText>
+
+								<p:outputLabel value="Libre / Gratuito:" styleClass="negrilla"
+									for="SoftwareLibreDoc" />
+								<p:selectBooleanCheckbox id="SoftwareLibreDoc"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.softwareLibre}" />
+
+								<p:outputLabel value="Disponibilidad Equipos:"
+									styleClass="negrilla" for="DisponibilidadEquiposDoc" />
+								<p:selectBooleanCheckbox id="DisponibilidadEquiposDoc"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.disponibidadEquipos}" />
+
+								<h:outputText value="Ejecución:" styleClass="negrilla" />
+								<p:selectOneMenu style="width:200px;"
+									converter="ConvertidorTipos"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.ejecucion}"
+									id="somEjecDoc">
+									<f:selectItems
+										value="#{ManejadorDiagnosticoSoftware.selectItemEjecucionDOC}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Descripción:" styleClass="negrilla" />
+								<p:inputTextarea rows="1" cols="50" autoResize="false"
+									counter="counterDescripcion" maxlength="4000"
+									counterTemplate="{0} caracteres restantes"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.descripcionSoftware}" />
+								<h:outputText />
+								<h:outputText id="counterDescripcion" styleClass="pequennio" />
+
+								<h:outputText value="Comentarios:" styleClass="negrilla" />
+								<p:inputTextarea rows="1" cols="50" autoResize="false"
+									counter="counterComentariosDoc" maxlength="4000"
+									counterTemplate="{0} caracteres restantes"
+									value="#{ManejadorDiagnosticoSoftware.dSagregar.comentarios}" />
+								<h:outputText />
+								<h:outputText id="counterComentariosDoc" styleClass="pequennio" />
+
+							</p:panelGrid>
+
+							<p:spacer height="20" />
+
+							<p:dataTable var="empresaDocencia" id="dtEmpresasDocencia"
+								value="#{ManejadorDiagnosticoSoftware.dSagregar.listaEmpresasDistribuidoras}"
+								rows="5" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen registros."
+								paginatorAlwaysVisible="false">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Empresas Distribuidoras" />
+									</f:facet>
+									<h:outputText value="#{empresaDocencia.empresa.nombre}" />
+								</p:column>
+							</p:dataTable>
+
+							<p:panelGrid columns="3">
+								<p:outputLabel value="Búsqueda Empresas:" for="acEmpresas"
+									styleClass="labels_proyecto" />
+								<p:autoComplete id="acEmpresas"
+									value="#{ManejadorDiagnosticoSoftware.nombreEmpresa}"
+									completeMethod="#{ManejadorDiagnosticoSoftware.servicioGeneral.listaNombresEmpresasContiene}"
+									size="40" scrollHeight="200" minQueryLength="3"
+									forceSelection="false" panelStyle="width:200px" />
+								<p:commandButton update="panelNuevoSoftware"
+									action="#{ManejadorDiagnosticoSoftware.adicionarEmpresaDocencia}"
+									value="Adicionar" />
+							</p:panelGrid>
+
+							<p:spacer height="20" />
+
+							<p:dataTable var="asignatura" id="dtAsignaturas"
+								value="#{ManejadorDiagnosticoSoftware.dSagregar.listaAsignaturas}"
+								rows="6" paginator="true" paginatorPosition="bottom"
+								pageLinks="4"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen registros."
+								paginatorAlwaysVisible="false" styleClass="pequennio">
+								<f:facet name="header">
+								Asignaturas Asociadas
+							</f:facet>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" />
+									</f:facet>
+									<h:outputText value="#{asignatura.asignatura.nombreAsignatura}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Profesores" />
+									</f:facet>
+									<p:inputText value="#{asignatura.profesores}" size="3"
+										maxlength="3" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Estudiantes Pregrado" />
+									</f:facet>
+									<p:inputText value="#{asignatura.estudiantesPregrado}" size="4"
+										maxlength="4" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Estudiantes Posgrado" />
+									</f:facet>
+									<p:inputText value="#{asignatura.estudiantesPosgrado}" size="4"
+										maxlength="4" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Eliminar" />
+									</f:facet>
+									<p:commandButton icon="ui-icon-trash" update="dtAsignaturas"
+										action="#{ManejadorDiagnosticoSoftware.eliminarAsignatura}"
+										onclick="if(!confirm('Está seguro de eliminar la asignatura #{asignatura.asignatura.nombreAsignatura}?'))return false">
+										<f:setPropertyActionListener value="#{asignatura}"
+											target="#{ManejadorDiagnosticoSoftware.asignaturaSeleccionada}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+							<p:panelGrid columns="1" id="pgBuscarAsignaturas">
+								<center>
+									<p:panelGrid columns="3">
+										<p:outputLabel
+											value="Búsqueda Asignaturas por código o nombre:"
+											for="udCodigoAsignatura" />
+										<p:inputText id="udCodigoAsignatura"
+											value="#{ManejadorDiagnosticoSoftware.asignaturaString}"
+											maxlength="15" size="20">
+										</p:inputText>
+										<p:commandButton value="Buscar" icon="ui-icon-search"
+											action="#{ManejadorDiagnosticoSoftware.buscarAsignaturas}"
+											update="pgBuscarAsignaturas" />
+									</p:panelGrid>
+								</center>
+								<p:panelGrid columns="1" styleClass="pequennio"
+									rendered="#{ManejadorDiagnosticoSoftware.asignaturasEncontradas != null}">
+									<p:dataTable id="asignaturasEncontradas" var="asignatura"
+										value="#{ManejadorDiagnosticoSoftware.asignaturasEncontradas}"
+										rows="6" paginator="true" paginatorPosition="bottom"
+										paginatorAlwaysVisible="false" pageLinks="4"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+										currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} asignaturas, pagina: {currentPage}/{totalPages})">
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Sede" />
+											</f:facet>
+											<h:outputText value="#{asignatura.nombreSede}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Código" />
+											</f:facet>
+											<h:outputText value="#{asignatura.codAsignatura}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Nombre" />
+											</f:facet>
+											<h:outputText value="#{asignatura.nombreAsignatura}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Grupos" />
+											</f:facet>
+											<h:outputText value="#{asignatura.grupo}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Nivel" />
+											</f:facet>
+											<h:outputText value="#{asignatura.nivel}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Inscritos" />
+											</f:facet>
+											<h:outputText value="#{asignatura.inscritos}" />
+										</p:column>
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="" />
+											</f:facet>
+											<center>
+												<p:commandButton icon="ui-icon-plusthick"
+													title="Asociar asignatura"
+													action="#{ManejadorDiagnosticoSoftware.adicionarAsignatura}"
+													update=":formEDS:dtAsignaturas, :formEDS:pgBuscarAsignaturas">
+													<f:setPropertyActionListener value="#{asignatura}"
+														target="#{ManejadorDiagnosticoSoftware.vAsignaturasSIAseleccionada}" />
+												</p:commandButton>
+											</center>
+										</p:column>
+									</p:dataTable>
+								</p:panelGrid>
+							</p:panelGrid>
+
+						</p:panel>
+
+						<center>
+							<p:panelGrid columns="3">
+								<p:commandButton value="Nuevo" icon="ui-icon-plus"
+									id="cbNuevoDoc"
+									action="#{ManejadorDiagnosticoSoftware.nuevoSoftware}"
+									update="panelINV, panelDOC"
+									rendered="#{ManejadorDiagnosticoSoftware.dSagregar == null and ManejadorDiagnosticoSoftware.nuevoSoftInv == null}" />
+								<p:commandButton value="Agregar" icon="ui-icon-check"
+									onclick="if(!confirm('Está seguro de agregar este Software?. Verifique la información sobre empresas distribuidoras, asignaturas y su cantidad de profesores y estudiantes.'))return false"
+									action="#{ManejadorDiagnosticoSoftware.agregarSoftware}"
+									update="panelINV, panelDOC"
+									rendered="#{ManejadorDiagnosticoSoftware.dSagregar != null}" />
+								<p:commandButton value="Cancelar" icon="ui-icon-close"
+									onclick="if(!confirm('Está seguro de cancelar este Software?. Toda la información registrada se perderá.'))return false"
+									action="#{ManejadorDiagnosticoSoftware.cancelarSoftware}"
+									update="panelINV, panelDOC"
+									rendered="#{ManejadorDiagnosticoSoftware.dSagregar != null}" />
+							</p:panelGrid>
+						</center>
+
+					</p:panel>
+
+				</p:outputPanel>
+
+				<p:outputPanel id="opINV">
+
+					<p:spacer height="20"
+						rendered="#{ManejadorDiagnosticoSoftware.usaSoftwareInvestigacionBoolean}" />
+
+					<p:panel header="Software de Investigación" toggleable="true"
+						id="panelINV"
+						rendered="#{ManejadorDiagnosticoSoftware.usaSoftwareInvestigacionBoolean}">
+
+
+						<p:dataTable var="softwareInvestigacion"
+							id="dtSoftwareInvestigacion"
+							value="#{ManejadorDiagnosticoSoftware.listaSoftwareInvestigacion}"
+							rows="5" paginator="true" paginatorPosition="bottom"
+							pageLinks="5"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+							emptyMessage="No existen registros."
+							paginatorAlwaysVisible="false">
+
+							<f:facet name="header">
+							Software Investigación Asociado
+						</f:facet>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre" />
+								</f:facet>
+								<h:outputText value="#{softwareInvestigacion.nombreSoftware}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton icon="ui-icon-trash"
+										update="dtSoftwareInvestigacion"
+										action="#{ManejadorDiagnosticoSoftware.eliminarSoftwareInvestigacion}"
+										onclick="if(!confirm('Está seguro de eliminar el software de investigación #{softwareInvestigacion.nombreSoftware}?'))return false">
+										<f:setPropertyActionListener value="#{softwareInvestigacion}"
+											target="#{ManejadorDiagnosticoSoftware.softwareInvestigacionSeleccionado}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+
+						<p:spacer height="20"
+							rendered="#{ManejadorDiagnosticoSoftware.nuevoSoftInv != null}" />
+
+						<p:panel header="Nuevo registro" id="panelNuevoSoftwareInv"
+							rendered="#{ManejadorDiagnosticoSoftware.nuevoSoftInv != null}">
+
+							<p:panelGrid columns="2">
+								<p:outputLabel value="Nombre del software:"
+									styleClass="negrilla" for="NombreSoftwareInv" />
+								<p:inputText id="NombreSoftwareInv" maxlength="128" size="50"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.nombreSoftware}">
+								</p:inputText>
+
+								<p:outputLabel value="Sistema Operativo:" styleClass="negrilla"
+									for="SistemaOperativoInv" />
+								<p:inputText id="SistemaOperativoInv" maxlength="128" size="50"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.sistemaOperativo}">
+								</p:inputText>
+
+								<p:outputLabel value="Libre / Gratuito:" styleClass="negrilla"
+									for="SoftwareLibreInv" />
+								<p:selectBooleanCheckbox id="SoftwareLibreInv"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.softwareLibre}" />
+
+								<p:outputLabel value="Disponibilidad Equipos:"
+									styleClass="negrilla" for="DisponibilidadEquiposInv" />
+								<p:selectBooleanCheckbox id="DisponibilidadEquiposInv"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.disponibidadEquipos}" />
+
+								<h:outputText value="Ejecución:" styleClass="negrilla" />
+								<p:selectOneMenu style="width:200px;"
+									converter="ConvertidorTipos"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.ejecucion}"
+									id="somEjecINV">
+									<f:selectItems
+										value="#{ManejadorDiagnosticoSoftware.selectItemEjecucionINV}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Descripción:" styleClass="negrilla" />
+								<p:inputTextarea rows="1" cols="50" autoResize="false"
+									counter="counterDescripcionInv" maxlength="4000"
+									counterTemplate="{0} caracteres restantes"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.descripcionSoftware}" />
+								<h:outputText />
+								<h:outputText id="counterDescripcionInv" styleClass="pequennio" />
+
+								<h:outputText value="Comentarios:" styleClass="negrilla" />
+								<p:inputTextarea rows="1" cols="50" autoResize="false"
+									counter="counterComentariosInv" maxlength="4000"
+									counterTemplate="{0} caracteres restantes"
+									value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.comentarios}" />
+								<h:outputText />
+								<h:outputText id="counterComentariosInv" styleClass="pequennio" />
+
+							</p:panelGrid>
+
+							<p:spacer height="20" />
+
+							<p:dataTable var="empresaDocencia"
+								value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.listaEmpresasDistribuidoras}"
+								rows="5" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen registros."
+								paginatorAlwaysVisible="false">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Empresas Distribuidoras" />
+									</f:facet>
+									<h:outputText value="#{empresaDocencia.empresa.nombre}" />
+								</p:column>
+							</p:dataTable>
+
+							<p:panelGrid columns="3">
+								<p:outputLabel value="Búsqueda Empresas:" for="acEmpresasInv"
+									styleClass="labels_proyecto" />
+								<p:autoComplete id="acEmpresasInv"
+									value="#{ManejadorDiagnosticoSoftware.nombreEmpresaInv}"
+									completeMethod="#{ManejadorDiagnosticoSoftware.servicioGeneral.listaNombresEmpresasContiene}"
+									size="40" scrollHeight="200" minQueryLength="3"
+									forceSelection="false" panelStyle="width:200px" />
+								<p:commandButton update="@form"
+									action="#{ManejadorDiagnosticoSoftware.adicionarEmpresaInv}"
+									value="Adicionar" />
+							</p:panelGrid>
+
+							<p:spacer height="20" />
+
+							<p:dataTable var="clasificacionConocimiento"
+								id="dtAreasTematicas"
+								value="#{ManejadorDiagnosticoSoftware.nuevoSoftInv.listaAreasConocimiento}"
+								rows="5" paginator="true" paginatorPosition="bottom"
+								pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen registros."
+								paginatorAlwaysVisible="false" styleClass="pequennio">
+								<f:facet name="header">
+								Áreas del Conocimiento Asociadas
+							</f:facet>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nombre" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText styleClass="pequennio"
+										value="#{clasificacionConocimiento.areaConocimiento.codigoNombre}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Profesores" styleClass="pequennio" />
+									</f:facet>
+									<p:inputText value="#{clasificacionConocimiento.profesores}"
+										size="3" maxlength="3" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Estudiantes Pregrado"
+											styleClass="pequennio" />
+									</f:facet>
+									<p:inputText
+										value="#{clasificacionConocimiento.estudiantesPregrado}"
+										size="4" maxlength="4" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Estudiantes Posgrado"
+											styleClass="pequennio" />
+									</f:facet>
+									<p:inputText
+										value="#{clasificacionConocimiento.estudiantesPosgrado}"
+										size="4" maxlength="4" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Eliminar" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash"
+											update="dtAreasTematicas"
+											action="#{ManejadorDiagnosticoSoftware.eliminarAreaTematica}"
+											onclick="if(!confirm('Está seguro de eliminar el área del conocimiento #{clasificacionConocimiento.areaConocimiento.nombre}?'))return false">
+											<f:setPropertyActionListener
+												value="#{clasificacionConocimiento}"
+												target="#{ManejadorDiagnosticoSoftware.clasificacionConocimientoSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+
+							<p:panelGrid columns="3">
+								<p:outputLabel value="Sede" styleClass="negrilla"
+									for="somSedesINV" />
+								<p:selectOneMenu
+									value="#{ManejadorDiagnosticoSoftware.sedeSeleccionadaINV.id}"
+									id="somSedesINV">
+									<f:selectItems
+										value="#{ManejadorDiagnosticoSoftware.selectItemSedesINV}" />
+									<p:ajax update="panelINV"
+										listener="#{ManejadorDiagnosticoSoftware.cambiarSedeINV}" />
+								</p:selectOneMenu>
+								<h:outputText />
+
+								<p:outputLabel value="Facultad" styleClass="negrilla"
+									for="somFacultadesINV" />
+								<p:selectOneMenu style="width:300px;"
+									value="#{ManejadorDiagnosticoSoftware.facultadSeleccionadaINV.id}"
+									id="somFacultadesINV">
+									<f:selectItems
+										value="#{ManejadorDiagnosticoSoftware.selectItemFacultadesINV}" />
+									<p:ajax update="somSedesINV, somDepartamentosINV"
+										listener="#{ManejadorDiagnosticoSoftware.cambiarFacultadINV}" />
+								</p:selectOneMenu>
+								<h:outputText />
+
+								<h:outputText value="Departamento" styleClass="negrilla" />
+								<p:selectOneMenu style="width:300px;"
+									value="#{ManejadorDiagnosticoSoftware.departamentoSeleccionadoINV.id}"
+									id="somDepartamentosINV">
+									<f:selectItems
+										value="#{ManejadorDiagnosticoSoftware.selectItemDepartamentosINV}" />
+									<p:ajax update="@parent"
+										listener="#{ManejadorDiagnosticoSoftware.cambiarDepartamentoINV}" />
+								</p:selectOneMenu>
+								<h:outputText />
+
+								<h:outputText />
+								<h:outputText
+									value="Descargar líneas de áreas temáticas de la UNESCO:" />
+								<h:outputLink
+									value="http://www.hermes.unal.edu.co/pages/html/descargas/c2008areastematicasunesco.pdf"
+									target="_blank">
+									<h:graphicImage id="image" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+
+								<p:outputLabel value="Buscar" for="clasificacionConocimiento"
+									styleClass="negrilla" />
+								<p:autoComplete id="clasificacionConocimiento"
+									value="#{manejadorClasificacionConocimiento.textoBuscar}"
+									completeMethod="#{manejadorClasificacionConocimiento.obtenerAreasTematicasSugeridas}"
+									charset="utf-8" size="50" scrollHeight="200" minQueryLength="4"
+									forceSelection="true" panelStyle="width:200px" />
+								<p:commandButton icon="ui-icon-plusthick" value="Adicionar"
+									update="panelNuevoSoftwareInv"
+									action="#{ManejadorDiagnosticoSoftware.agregarAreaTematica}">
+									<f:setPropertyActionListener
+										value="#{manejadorClasificacionConocimiento.areaTematicaSeleccionadaEnBuscar}"
+										target="#{ManejadorDiagnosticoSoftware.areaTematicaSeleccionada}" />
+								</p:commandButton>
+							</p:panelGrid>
+
+						</p:panel>
+
+						<center>
+							<p:panelGrid columns="3">
+								<p:commandButton value="Nuevo" icon="ui-icon-plus"
+									action="#{ManejadorDiagnosticoSoftware.nuevoSoftwareInvestigacion}"
+									update="panelINV, panelDOC"
+									rendered="#{ManejadorDiagnosticoSoftware.dSagregar == null and ManejadorDiagnosticoSoftware.nuevoSoftInv == null}" />
+								<p:commandButton value="Agregar" icon="ui-icon-check"
+									onclick="if(!confirm('Está seguro de agregar este Software?. Verifique la información.'))return false"
+									action="#{ManejadorDiagnosticoSoftware.agregarSoftwareInvestigacion}"
+									update="panelINV, panelDOC"
+									rendered="#{ManejadorDiagnosticoSoftware.nuevoSoftInv != null}" />
+								<p:commandButton value="Cancelar" icon="ui-icon-close"
+									onclick="if(!confirm('Está seguro de cancelar este Software?. Toda la información registrada se perderá.'))return false"
+									action="#{ManejadorDiagnosticoSoftware.cancelarSoftwareInvestigacion}"
+									update="panelINV, panelDOC"
+									rendered="#{ManejadorDiagnosticoSoftware.nuevoSoftInv != null}" />
+							</p:panelGrid>
+						</center>
+
+					</p:panel>
+				</p:outputPanel>
+
+			</p:panel>
+
+			<p:messages id="messages" autoUpdate="true" closable="true" />
+
+			<center>
+				<p:panelGrid columns="3"
+					rendered="#{!ManejadorDiagnosticoSoftware.guardado}">
+					<p:commandButton value="Guardar" icon="ui-icon-disk"
+						action="#{ManejadorDiagnosticoSoftware.guardar}"
+						update="formEDS, pgPrincipal, messages"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						onclick="if(!confirm('Está seguro de guardar? No podrá hacer modificaciones posteriormente.'))return false" />
+				</p:panelGrid>
+			</center>
+
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

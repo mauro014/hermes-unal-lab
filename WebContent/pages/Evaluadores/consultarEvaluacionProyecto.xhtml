@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad">Evaluación proyecto</t:div>
+			<p:panel style="margin-bottom: 20px;">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<h:outputText value="Título del proyecto: "
+						style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.proyecto.nombre}" />
+					<h:outputText value="Código: " style="font-weight: bold;"
+						rendered="false" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.proyecto.id}"
+						rendered="false" />
+					<h:outputText value="Convocatoria:" style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.nombreConvocatoria}" />
+					<h:outputText value="Modalidad:" style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.nombreModalidad}" />
+					<h:outputText value="Evaluador actual: " style="font-weight: bold;" />
+					<h:outputText
+						value="#{manejadorEvaluacion.evaluacionProyecto.evaluador.nombre1} #{manejadorEvaluacion.evaluacionProyecto.evaluador.nombre2} 
+				    					#{manejadorEvaluacion.evaluacionProyecto.evaluador.apellido1} #{manejadorEvaluacion.evaluacionProyecto.evaluador.apellido2} -  #{proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente}" />
+				</p:panelGrid>
+			</p:panel>
+			<p:dataTable value="#{manejadorEvaluacion.listaCC}"
+				var="calificacion" styleClass="panel-interno-tabla"
+				rendered="#{proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente == 'N' or 
+						   	proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente == 'A' or empty proyectoEvaluador.proyecto.modalidad.documentoEvaluacionDocente}">
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Criterios evaluación:" />
+					</f:facet>
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate;">
+						<t:div>
+							<h:outputText value="#{calificacion.criterio.nombre}"
+								style="font-weight: bold;" />
+							<br />
+							<h:outputText value="#{calificacion.criterio.descripcion}" />
+							<br />
+							<br />
+							<t:div rendered="#{calificacion.preguntaCualitativa}">
+								<h:outputText value="Cualitativa" style="font-weight: bold;" />
+								<br />
+								<h:outputText value="#{calificacion.cualitativa}"/>
+							</t:div>
+							<t:div rendered="#{calificacion.preguntaCuantitativaCualitativa}">
+								<h:outputText value="Cualitativa:" style="font-weight: bold;" />
+								<br />
+								<h:outputText value="#{calificacion.cualitativa}"/>
+								<br />
+								<br />
+								<h:outputText
+									value="Cuantitativa (Máximo #{calificacion.criterioModalidadTipoPreguntaMaximo}):"
+									style="font-weight: bold;" />
+								<br />
+								<h:outputText id="calificacionCuantitativa2"
+									value="#{calificacion.cuantitativa}"/>
+							</t:div>
+							<t:div rendered="#{calificacion.preguntaCuantitativa}">
+								<h:outputText
+									value="Cuantitativa (Máximo #{calificacion.criterioModalidadTipoPreguntaMaximo}):"
+									style="font-weight: bold;" />
+								<br />
+								<h:outputText id="calificacionCuantitativa1"
+									value="#{calificacion.cuantitativa}"/>
+							</t:div>
+							<t:div rendered="#{calificacion.preguntaSeleccionUnica}">
+								<h:outputText value="Selección única:"
+									style="font-weight: bold;" />
+								<br />
+								<h:outputText  value="#{calificacion.cuantitativa}"/>
+							</t:div>
+						</t:div>
+					</p:panelGrid>
+				</p:column>
+			</p:dataTable>
+			
+			<br />
+			<p:panel header="Observaciones adicionales:">
+				<h:outputText
+					value="#{manejadorEvaluacion.evaluacionProyecto.observaciones}"/>
+			</p:panel>
+			<br />			
+			<p:panel header="Recomendación final:" style="text-align: center;"
+				id="panelPromedio">
+				<h:outputText value="Calificación del proyecto: " />
+				<h:outputText value="#{manejadorEvaluacion.promedioCalificacion}">
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+				<h:outputText value=" sobre "
+					rendered="#{manejadorEvaluacion.maximaCalificacion > 0}" />
+				<h:outputText value="#{manejadorEvaluacion.maximaCalificacion}"
+					rendered="#{manejadorEvaluacion.maximaCalificacion > 0}">
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+				<h:outputText value=" " />				
+				<br />
+				<h:outputText rendered="#{manejadorEvaluacion.evaluacionProyecto.concepto.id == 'A'}" 
+					value="Aprobar"/>
+				<h:outputText rendered="#{manejadorEvaluacion.evaluacionProyecto.concepto.id == 'N'}" 
+					value="No Aprobar"/>
+				<h:outputText rendered="#{manejadorEvaluacion.evaluacionProyecto.concepto.id == 'E'}" 
+					value="Aprobar con modificaciones y ajustes propuestos"/>
+			</p:panel>
+			<br />
+		</h:form>
+	</ui:define>
+</ui:composition>

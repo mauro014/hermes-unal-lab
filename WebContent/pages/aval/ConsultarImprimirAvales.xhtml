@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="userForm">
+			<t:div styleClass="contenido-titulo-general-myriad">Actualizar Aval</t:div>
+			<p:panel  style="margin-top: 20px;">
+				<p:panelGrid columns="4" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width: 80px;"><h:outputText value="Codigo aval:" /></t:div>
+					<p:inputText id="numCom"  style="width:350px;"	value="#{ManejadorConsultarActualizarAvales.sCodigoAval}" />
+					<p:commandButton
+						action="#{ManejadorConsultarActualizarAvales.buscarReporteSolicitudAval}"
+						value="Consultar"
+						update="@form">
+					</p:commandButton>				
+					<p:commandButton
+						action="#{ManejadorConsultarActualizarAvales.limpiar}"
+						actionListener="#{ManejadorConsultarActualizarAvales.cancelAction}"
+						value="Limpiar"
+						update="@form">
+					</p:commandButton>					
+				 </p:panelGrid>
+			 </p:panel>
+			<p:panel rendered="#{ManejadorConsultarActualizarAvales.panelRenderError[0]}"  style="margin-top: 20px; text-align: center;">
+				<h:outputText value="#{ManejadorConsultarActualizarAvales.errores[0]}"	
+				 />
+			</p:panel>
+			<p:panel rendered="#{ManejadorConsultarActualizarAvales.panelRenderError[10]}"  style="margin-top: 20px; text-align: center;">
+				Debe ingresar un valor númerico
+			</p:panel>
+			<p:panel header="Información general solicitud de aval" rendered="#{ManejadorConsultarActualizarAvales.imprimirReporteAval}" style="margin-top: 20px;">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+					<h:outputText value="Profesor(a) solicitante: " style='font-weight: bold' />
+					<h:outputText
+						value="#{ManejadorConsultarActualizarAvales.nombreProfesor}" />
+					<h:outputText value="Código de la Solicitud: " style='font-weight: bold' />
+					<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.aviId}"/>
+			
+					<h:outputText value="Estado: "  style='font-weight: bold' />
+					<h:outputText
+						value="#{ManejadorConsultarActualizarAvales.aval.nombreEstado}" />
+					
+					<h:outputText value="Tipo de aval: "  style='font-weight: bold' />
+					<h:outputText
+						value="#{ManejadorConsultarActualizarAvales.aval.nombreTipo}" />
+			
+					<h:outputText value="Título del aval: " style='font-weight: bold' />
+					<h:outputText
+						value="#{ManejadorConsultarActualizarAvales.aval.aviTitulo}" />
+			
+					<h:outputText rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'ETICO'}"
+						value="Entidad: " style='font-weight: bold'/>
+					<h:outputText rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'ETICO'}"
+						value="#{ManejadorConsultarActualizarAvales.entidad}"/>
+			
+					<h:outputText rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'ETICO'}"
+						value="Convocatoria: "  style='font-weight: bold' />
+					<h:outputText rendered="#{ManejadorConsultarActualizarAvales.aval.tipo != 'ETICO'}"
+						value="#{ManejadorConsultarActualizarAvales.convocatoria.nombre}" />
+			
+					<h:outputText value="Fecha de la Solicitud: " style='font-weight: bold' />
+					<h:outputText value="#{ManejadorConsultarActualizarAvales.aval.fechaUltimoEnvio}" />
+					
+				</p:panelGrid>
+				<p:dataTable var="archivoResumen" style="width: 100%; margin-top: 10px; margin-bottom: 10px;"
+						value="#{ManejadorConsultarActualizarAvales.listaArchivosAval}" emptyMessage="No existen archivos asociados">
+						<p:column style="width: 2%;">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value=" #{archivoResumen.id}" styleClass="normal" />
+						</p:column>
+						<p:column style="width: 90%;">
+							<f:facet name="header">
+								<h:outputText value="Nombre del archivo" />
+							</f:facet>
+							<h:outputText value=" #{archivoResumen.nombre}" styleClass="normal" />
+						</p:column>
+						<p:column  style="text-align: center; width: 4%;">
+							<f:facet name="header">
+								<h:outputText value="Descargar" />
+							</f:facet>
+							<h:commandLink value="Descargar"
+								action="#{ManejadorConsultarActualizarAvales.descargarArchivoAval}" 
+								target="_blank" 
+								style="text-decoration:none; color: #16A8E2;font-weight: bold;">
+							<f:setPropertyActionListener value="#{archivoResumen}"
+								target="#{ManejadorConsultarActualizarAvales.documentoSeleccionado}" />
+							</h:commandLink>
+						</p:column>
+						<p:column style="text-align: center; width: 4%;">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<p:commandButton
+								icon="ui-icon-trash"
+								action="#{ManejadorConsultarActualizarAvales.eliminarArchivoAval}" update="@form"
+								onclick="if(!confirm('Esta seguro de borrar el archivo?'))return false">
+								<f:setPropertyActionListener value="#{archivoResumen}" target="#{ManejadorConsultarActualizarAvales.archivoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<p:fileUpload fileUploadListener="#{ManejadorConsultarActualizarAvales.guardarArchivoAval}"  
+                        mode="advanced"  
+                        update="@form"  
+                        auto="true"  
+                        multiple="true"
+                        sizeLimit="3072000" 
+                        label="Seleccionar archivo para agregar" />
+                      <br />
+                     <h:outputText
+						value="-Tamaño MÁXIMO por archivo 3 megabytes (MB)-" />
+			</p:panel>
+			<h:commandLink value="" />
+			<!-- Este commmand link lo puse aqui porque es de la unica manera que funcona el descargar
+			de otra manera no funciona, no entiendo porque -->
+	</h:form>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad" >Consulta histórico de actualizaciones del laboratorio</t:div>
+			
+			<p:panelGrid styleClass="estilo-panelgrid-sinbordes" style="margin: auto;width: 100%;">
+				<p:row>
+					<p:column style="width: 65%">
+						<h:outputText value="LABORATORIO: #{manejadorConsultaHistoricosLaboratorios.laboratorioActual.nombre} - ID : #{manejadorConsultaHistoricosLaboratorios.laboratorioActual.id}" />
+					</p:column>
+					<p:column style="width: 10%">
+					
+					</p:column>
+					<p:column>
+						<div style="text-align: left;">
+							<p:commandButton value="Exportar a Excel" ajax="false" icon="ui-icon-circle-arrow-s">
+								<p:dataExporter type="xls" target="tableHistoricoEstadoLaboratorio"
+									fileName="Reporte_Actividades_Registradas_Laboratorio"
+									postProcessor="#{manejadorConsultaHistoricosLaboratorios.postProcessXLS}" />
+							</p:commandButton>
+						</div>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			
+			<p:dataTable 
+				rows="40"
+				id="tableHistoricoEstadoLaboratorio" var="historico"
+				style="margin-top: 20px;"	paginator="true"
+				value="#{manejadorConsultaHistoricosLaboratorios.listaHistoricoEstadoLaboratorio}"
+				emptyMessage="No se han encontrado cambios de estado para este laboratorio"
+				paginatorPosition="bottom"
+				paginatorAlwaysVisible="false"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="40,80,120"
+                >
+				<p:column rendered="false">
+					<f:facet name="header">
+						Laboratorio
+					</f:facet>
+					#{historico.laboratorio.id}
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Fecha
+					</f:facet>
+					<h:outputText value="#{historico.fechaRegistro}" >
+		              	<f:convertDateTime pattern="dd-MM-yyyy" />
+					 </h:outputText>
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Hora
+					</f:facet>
+					<h:outputText value="#{historico.fechaRegistro}" >
+		              	<f:convertDateTime pattern="HH:mm:ss" type="time"/>
+					 </h:outputText>
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Tipo de cambio
+					</f:facet>			
+					<h:outputText value="#{historico.tipoOperacion.nombre}" />
+				</p:column>
+				
+				<p:column >
+					<f:facet name="header">
+						Responsable
+					</f:facet>
+					<h:outputText value="#{historico.responsable.nombreCompleto}" />
+				</p:column>
+				
+			</p:dataTable>	
+			
+			<h:outputText value="" />
+			<h:outputText value="" />
+			
+			<p:panelGrid columns="1" style="width: 100%; text-align: right; margin-bottom: 15px;" rendered="false">
+				<h:commandLink
+					action="#{manejadorConsultaHistoricosLaboratorios.volverAdministrarLaboratorios}"
+					value="Volver a ADMINISTRAR LABORATORIOS"
+					style="color: #16A8E2; font-weight: bold;">
+								
+				</h:commandLink>
+			</p:panelGrid>
+			
+			<t:div style="width: 100%; text-align: right; margin-bottom: 15px;">
+				<h:commandLink
+					action="#{manejadorConsultaHistoricosLaboratorios.volverAdministrarLaboratorios}"
+					value="Volver a ADMINISTRAR LABORATORIOS"
+					style="color: #16A8E2; font-weight: bold;">
+				</h:commandLink>	
+			</t:div>
+					
+			<p:messages showSummary="true" autoUpdate="true" closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

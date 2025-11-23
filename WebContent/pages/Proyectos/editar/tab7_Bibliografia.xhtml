@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+	<p:dialog header="Sistema de Información de la Investigación - HERMES" 
+			  widgetVar="dlg"
+			  showEffect="fade" 
+			  hideEffect="fade"
+			  width="500"
+			  height="600"
+			  >
+		<h:panelGrid columns="1">	
+		
+		<div id="ayudaizq" title="Ayuda"></div>
+		<div id="logohermes" title="Sistema de Información de la Investigación - HERMES"></div>
+		<div id="cap">
+		<div class="titulo">AYUDA PARA INSCRIPCIÓN DE PROYECTOS</div>
+		<div class="subtitulo">REFERENCIAS BIBLIOGRÁFICAS</div>
+		<br />
+		<div class="texto">
+		  <p>Para insertar las referencias bibliográficas del proyecto podemos seguir los siguientes modelos, según el tipo de fuente.</p>
+		  <p><b>LIBRO O FOLLETO:</b> DUQUE, Olga Lucía. Las consecuencias del efecto invernadero en 2045. Buenos Aires: Planeta, 2003. p. 410-572.</p>
+		  <p><b>PUBLICACIÓN SERIADA:</b> ZAMUDIO MARTÍNEZ, Juan de la Cruz. La revolución de los blogs y el periodismo ciudadano. En: Enciclopedia de la Información. Caracas. Vol. 4, no. 10 (oct. 2004); p. 12-19.</p>
+		  <p><b>PUBLICACIÓN SERIADA (PERIÓDICO):</b> BARRETO GONZÁLEZ, Tomás de la Concepción. Los nuevos medios en la educaciÓn básica. En: El País. Cali. (27, sep, 2004); p. 8B</p>
+		  <p><b>SUPLEMENTO DE PERIÓDICO:</b> SANDOVAL, María de los Ángeles. Las historietas inspiran a Hollywood. En: Fin de Semana, Vanguardia Liberal. Bucaramanga. (15, abr., 2005); p. 8</p>
+		  <p><b>PONENCIA PRESENTADA EN SEMINARIO, CONGRESO O REUNIÓN:</b> VARGAS, Juan Manuel. Los desafíos del estado social de Derecho en Colombia. En: IV Congreso Nacional de Libertad de Prensa (15: 10-14 feb. 2004: MedellÍn): Memorias. Cali: Santillana, 2004, p. 120-140.</p>
+		  <p><b>DOCUMENTOS ELECTRÓNICOS:</b> COMITÉ DE EDUCACIÓN DEL DISTRITO CAPITAL. Manual de ordenamiento para bibliotecas escolares. [en línea] 1ed. Bogotá: El Comité, 2001. http://www.udistrital.edu.co/ (Consulta: 12 abril, 2002)</p>
+		  <p><b>DOCUMENTOS ELECTRÓNICOS (CD-ROM):</b> UNIVERSIDAD AUTÓNOMA DE BUCARAMANGA. Historia del Derecho en el departamento de Santander. [CD-Rom] Bucaramanga: UNAB, 2003.</p>
+		  <p></p>
+		</div>
+		</div>
+		<br />
+		<h:panelGrid style="text-align: center" align="center">
+			<p:commandButton icon="ui-icon-circle-close"
+						 value="Cerrar" 
+						 type="button" 
+						 onclick="dlg.hide()"/>
+		</h:panelGrid>
+					 
+		</h:panelGrid>
+		
+		
+</p:dialog>
+
+	<t:div styleClass="contenido-titulo-general-myriad" >Bibliografía</t:div>
+	<br />
+	<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+	<br />
+	<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+		<t:div styleClass="contenido-titulo-general-myriad-1">
+			<h:outputText value="#{manejadorBibliografia.inicioTitulo}"
+					style="font-weight: bold" />
+		</t:div>
+		
+	</h:panelGrid>	
+	<br />
+	
+
+
+	<p:panel id="grupoInsercionReferencias" header="Referencias Bibliográficas">
+
+	<t:div styleClass="informacion-subtexto">
+		<h:outputText
+			value="Debe ingresar cada ítem bibliográfico y agregarlo mediante el botón 'Agregar Referencia Bibliográfica', uno por uno."/>
+	</t:div>		
+	<br />	
+
+		<h:panelGrid columns="1" align="center">
+			
+			<p:dataTable  id="tablaBibliografica"
+						  binding="#{manejadorBibliografia.tablaBibliografia}"
+						  cellpadding="6" 
+						  cellspacing="3"
+						  value="#{manejadorBibliografia.listaBibliografia}"
+						  var="bibliografia"
+						  emptyMessage="No existen referencias bibliograficas asociadas al proyecto"
+						  style="width:500px">
+
+				<p:column headerText="REFERENCIA">
+
+					<p:message for="bibliografiaValor" rendered="#{!bibliografia.borrable}" />				
+					<p:inputTextarea id="bibliografiaValor"
+									 value="#{bibliografia.valor}" 
+									 rendered="#{!bibliografia.borrable}"
+									 style="width: 380px;" autoResize="false"
+									 rows="5" 
+									 required="true"
+									 requiredMessage="Campo obligatorio">
+						<f:validateLength maximum="2000" />
+					</p:inputTextarea>
+				</p:column>
+
+				<p:column headerText="ELIMINAR">
+					
+					<center>
+
+								<p:commandButton
+									onclick="if(!confirm('¿Está seguro(a) de eliminar la referencia?'))return false;"
+									oncomplete="location.reload();"
+									action="#{manejadorBibliografia.eliminarReferencia}"
+									rendered="#{!bibliografia.borrable}"
+									title="Eliminar Referencia Bibiográfica"
+									update="tablaBibliografica" icon="ui-icon-trash"
+									immediate="true" />
+							</center>
+					
+				</p:column>
+			</p:dataTable>
+
+		</h:panelGrid>
+			
+			<br />
+			<center>
+			
+			<p:commandButton
+							action="#{manejadorBibliografia.insertarReferencia}"
+							value="Agregar  nueva referencia bibliográfica"
+							oncomplete="location.reload();"
+							update="tablaBibliografica" />
+			</center>
+			<br />
+			
+	</p:panel>
+	
+<!-- 	2 -->
+
+	<p:messages id="msgForm" for="msgForm" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+
+	<h:panelGroup>
+	
+		<br />
+		<h:outputLink value="#" onclick="dlg.show()" style="informacion-subtitulo">
+			<h:graphicImage id="image1" alt="Ayuda" url="/imgplantilla/pngtitulos/_ayuda_boton.png" />
+			<p:spacer width="10" height="10" />
+			<h:outputText value="Ejemplos de bibliografía"/>
+		</h:outputLink>
+		<br />
+		<br /> 
+		<center>
+		
+		<h:panelGrid columns="4" cellpadding="3">
+		
+			<p:commandButton action="#{manejadorBibliografia.atras}" value="Atrás" immediate="true" />
+			<p:commandButton action="#{manejadorBibliografia.salirGuardar}" value="Guardar y continuar después" update="tablaBibliografica,msgForm" rendered = "#{manejadorBibliografia.validarBotonGuardar}"/>
+			<p:commandButton action="#{manejadorBibliografia.siguiente}" value="Guardar y avanzar" update="tablaBibliografica,msgForm" rendered = "#{manejadorBibliografia.validarBotonGuardar}"/>
+			
+		</h:panelGrid>
+		
+		</center>
+		
+	</h:panelGroup>
+
+</h:form>
+</ui:define>
+</ui:composition>

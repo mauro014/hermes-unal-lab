@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+<ui:define name="content">
+<h:form>
+
+	<t:div styleClass="contenido-titulo-general-myriad" >Productos</t:div>
+	<br />
+	<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+	<br />
+	<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+		<t:div styleClass="contenido-titulo-general-myriad-1">
+			<h:outputText value="#{manejadorProductos.inicioTitulo}"
+					style="font-weight: bold" />
+		</t:div>
+		
+	</h:panelGrid>	
+	<br />
+
+	<p:panel id="panelProductos" header="#{manejadorProductos.titulo2}">
+
+		<h:panelGrid columns="1" id="panelProductos" align="center">
+			
+			<h:outputText value="Adición de productos: "/><br/>
+	
+			<h:panelGroup>
+			
+				<h:panelGrid columns="2" cellpadding="3" align="left">
+	
+					<h:outputText value="Nivel 1 de Productos"/>
+					<p:selectOneMenu  id="listaNivel1"
+									  valueChangeListener="#{manejadorProductos.cambiarProductoNivel1}"
+									  value="#{manejadorProductos.productoNivel1}"
+									  immediate="true" >
+						<f:selectItems value="#{manejadorProductos.productoNivel1Item}" />
+						<p:ajax event="change" update="listaNivel2,listaNivel3" />
+					</p:selectOneMenu>
+	
+					<h:outputText value="Nivel 2 de Productos" />
+					<p:selectOneMenu id="listaNivel2" 
+									 value="#{manejadorProductos.productoNivel2}"
+									 valueChangeListener="#{manejadorProductos.cambiarProductoNivel2}"
+									 immediate="true" >
+						<p:ajax event="change" update="listaNivel3"/>
+						<f:selectItems value="#{manejadorProductos.productoNivel2Item}" />
+					</p:selectOneMenu>
+	
+					<h:outputText value="Nivel 3 de Productos" />
+					<p:selectOneMenu 	id="listaNivel3"
+										value="#{manejadorProductos.productoNivel3}">				
+						<f:selectItems value="#{manejadorProductos.productoNivel3Item}" />
+					</p:selectOneMenu>
+	
+					<h:outputText value="" />
+					
+					</h:panelGrid>
+					
+					<h:panelGrid columns="4" id="panelCantidad">
+					
+						<h:outputText value="Cantidad"/>
+						<p:spacer width="70"/>
+						<p:inputText id="cantidad" 
+									 value="#{manejadorProductos.cantidad}"
+									 validatorMessage="La cantidad debe ser máximo de 4 dígitos y mayor a 0"
+									 requiredMessage="Debe ingresar una cantidad para el producto seleccionado"
+									 required="true"
+									 size="5">
+							<f:validateLength minimum="1" maximum="4" />
+							<f:validateDoubleRange minimum="1" maximum="99999" />
+						</p:inputText>
+						<p:message for="cantidad" />
+						
+					</h:panelGrid>
+					
+					<h:panelGrid columns="4" id="panelDescripcion" rendered="#{manejadorProductos.esProgramaNacional}">
+					
+						<h:outputText value="Descripción" />
+						<p:spacer width="55"/>						
+						<p:inputTextarea id="descripcion"
+										 value="#{manejadorProductos.descripcion}"
+										 rows="3" 
+										 cols="60" >
+						</p:inputTextarea>			
+						<h:outputText value="" />		
+					
+					</h:panelGrid>
+			</h:panelGroup>
+			
+			<h:panelGroup>
+				<center>
+				
+				<p:commandButton 
+					action="#{manejadorProductos.adicionarProducto}"
+					value="Adicionar producto"
+					icon="ui-icon-plus"
+					update="panelProductosAdicionados,panelCantidad"/>
+				</center>
+				<br />
+			</h:panelGroup>
+	
+			<h:panelGrid columns="1" align="left" id="panelProductosAdicionados" style="width:600px">
+	
+					<p:dataTable    id="tablaProductos"
+									value="#{manejadorProductos.proyectoActual.listaProductosProyecto}"
+									var="proyectoProducto" 
+									cellpadding="6" 
+									cellspacing="3" 
+									border="0"
+									emptyMessage="No existen productos asociados al proyecto">
+						
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="PRODUCTOS ADICIONADOS"/>
+							</f:facet>
+							<h:outputText value="#{proyectoProducto.producto.nombre}"
+								/>
+						</p:column>
+	
+						<p:column >
+							<f:facet name="header">
+								<h:outputText value="CANTIDAD" />
+							</f:facet>
+							<h:outputText value="#{proyectoProducto.cantidad}" />
+						</p:column>
+						
+						<p:column rendered="#{manejadorProductos.esProgramaNacional}">
+							<f:facet name="header">
+								<h:outputText value="DESCRIPCIÓN" />
+							</f:facet>
+							<h:outputText value="#{proyectoProducto.descripcion}"/>
+						</p:column>
+	
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="ELIMINAR"/>
+							</f:facet>
+							<center>
+								<p:commandButton 
+												action="#{manejadorProductos.eliminarProducto}"
+												title="Eliminar Producto"
+												icon="ui-icon-trash"
+												update="tablaProductos"
+												immediate="true">
+								<f:setPropertyActionListener target="#{manejadorProductos.productoSeleccionado}" value="#{proyectoProducto}" />				
+								</p:commandButton>
+							</center>				
+						</p:column>
+					</p:dataTable>
+	
+				</h:panelGrid>
+				
+				<br />
+	
+		</h:panelGrid>
+	
+	</p:panel>
+	
+<!-- 	2 -->
+
+<br />
+	
+<center>
+
+<p:messages id="mensajeError" for="mensajeError" autoUpdate="true" closable="true" showSummary="true" showDetail="true" />
+
+<h:panelGrid columns="4" cellpadding="3">
+	<p:commandButton 
+		action="#{manejadorProductos.atras}" 
+		value="Atras" 
+		immediate="true"/>
+
+	<p:commandButton 
+		action="#{manejadorProductos.salirGuardar}"
+		value="Guardar y continuar después"
+		update="mensajeError"
+		immediate="true"/>
+		
+	<p:commandButton 
+		action="#{manejadorProductos.siguiente}" 
+		value="Guardar y avanzar"
+		update="mensajeError"/>
+</h:panelGrid>
+
+</center>
+</h:form>
+</ui:define>
+</ui:composition>

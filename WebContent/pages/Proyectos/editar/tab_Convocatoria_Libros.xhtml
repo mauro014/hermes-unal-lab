@@ -1,0 +1,2260 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Información General</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+
+			<h:panelGrid id="mostrarSiConvocatoriaLibros"
+				rendered="#{ManejadorConvocatoriaLibros.mostrarSiConvLibros}"
+				style="width:100%">
+
+				<p:panel id="datosContactoConvLib" header="Datos de Contacto">
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del docente:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Sede:" />
+						<h:outputText value="#{ManejadorConvocatoriaLibros.nombreSede}" />
+
+						<h:outputText value="Facultad/Instituto:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreFacultad}" />
+
+						<h:outputText value="Departamento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreDepartamento}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.emailPersonaActual}" />
+						<h:outputText value="Teléfono de contacto:" />
+						<h:outputText value="#{ManejadorConvocatoriaLibros.telefono}" />
+					</h:panelGrid>
+
+				</p:panel>
+				<br />
+				<p:panel header="Información General" id="idInfoGeneral">
+					<h:panelGrid columns="2" cellpadding="10" align="center">
+						<h:outputText value="Título (Máx. 1000 caracteres)"
+							styleClass="legend2" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							counter="counterTitulo" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." required="true"
+							id="Titulo"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.nombre}"
+							requiredMessage="El título del proyecto es obligatorio" />
+						<h:outputText id="countTitulo" value="" />
+						<h:outputText id="counterTitulo" />
+
+						<h:outputText value="Resumen (Máx. 4000 caracteres)" />
+						<p:inputTextarea id="Resumen" autoResize="false"
+							counter="counterResumen" maxlength="4000"
+							counterTemplate="{0} caracteres restantes."
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.resumen}"
+							rows="10" cols="65" required="true"
+							requiredMessage="Debe ingresar el resumen del proyecto">
+						</p:inputTextarea>
+						<h:outputText id="countRes" value="" />
+						<h:outputText id="counterResumen" />
+
+						<h:outputText
+							value="Objeto/Objetivo principal (Máx. 4000 caracteres):" />
+						<p:inputTextarea id="objeto" autoResize="false"
+							counter="counterObjeto" maxlength="4000"
+							counterTemplate="{0} caracteres restantes."
+							validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.objetivoGeneral}"
+							rows="10" cols="65" required="true"
+							requiredMessage="Debe ingresar el objetivo del proyecto">
+						</p:inputTextarea>
+						<h:outputText id="countObj" value="" />
+						<h:outputText id="counterObjeto" />
+					</h:panelGrid>
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="ÁREAS OCDE" style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid id="panelAreaCientifica"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Area científica y tecnológica principal:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.areaCiencia}"
+									id="areaCiencia">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.areaCienciaItems}" />
+									<p:ajax listener="#{ManejadorConvocatoriaLibros.cambiarArea}"
+										update="subareaCiencia" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+								<h:outputLink value="#{ManejadorConvocatoriaLibros.linkLineas}"
+									target="_blank">
+									<h:graphicImage id="imageee" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="imageee"
+									value="Descargar pdf con la clasificación de las áreas."
+									showEffect="fade" hideEffect="fade" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Sub-área de la ciencia:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.subAreaCiencia}"
+									id="subareaCiencia">
+									<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+										itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.subAreaCienciaItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="ÁREAS SECUNDARIAS" style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid id="panelAreaCientificaSecundaria"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Area científica y tecnológica secundaria:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.areaCienciaSec}"
+									id="areaCienciaSec">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.areaCienciaItems}" />
+									<p:ajax
+										listener="#{ManejadorConvocatoriaLibros.cambiarAreaSec}"
+										update="subareaCienciaSec" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+								<h:outputLink value="#{ManejadorConvocatoriaLibros.linkLineas}"
+									target="_blank">
+									<h:graphicImage id="imageees" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="imageees"
+									value="Descargar pdf con la clasificación de las áreas."
+									showEffect="fade" hideEffect="fade" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Sub-área de la ciencia secundaria:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.subAreaCienciaSec}"
+									id="subareaCienciaSec">
+									<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+										itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.subAreaCienciaSecItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:commandButton
+									action="#{ManejadorConvocatoriaLibros.agregarArea}"
+									value="Adicionar área secundaria" icon="ui-icon-plus"
+									update="areasTabla, botonAreasTabla, msgArea, msgAreaSEc, areaCienciaSec, subareaCienciaSec"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+								<p:commandButton id="btnArea" icon="ui-icon-info">
+								</p:commandButton>
+								<p:tooltip for="btnArea" showEffect="fade" hideEffect="fade">
+									<p:panelGrid columns="1" style="width:170px"
+										styleClass="estilo-panelgrid-sinbordes" id="paneltool2">
+										<h:outputText
+											value="Para agregar el Area científica y tecnológica secundaria seleccionada, por favor haga clic en el botón Adicionar área." />
+									</p:panelGrid>
+								</p:tooltip>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputText id="botonAreasTabla" value=""
+									binding="#{ManejadorConvocatoriaLibros.botonAreasTabla}">
+								</h:outputText>
+								<p:outputPanel id="msgArea" align="center">
+									<p:message id="msgAreaSEc" for="botonAreasTabla"
+										showSummary="false" />
+								</p:outputPanel>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="areasTabla" var="area"
+									value="#{ManejadorConvocatoriaLibros.listaAreasTematicas}"
+									emptyMessage="No se han agregado áreas" style="width: 550px;">
+									<p:column headerText="Área">
+										<h:outputText value="#{area.nombreArea}" />
+									</p:column>
+									<p:column headerText="Subárea">
+										<h:outputText value=" #{area.nombreSubArea}" />
+									</p:column>
+									<p:column headerText="Eliminar" id="columndarea"
+										style="width: 10%;">
+										<p:commandButton
+											action="#{ManejadorConvocatoriaLibros.eliminarArea}"
+											update="areasTabla" id="eliminararea" icon="ui-icon-trash"
+											onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" title="Eliminar área">
+											<f:setPropertyActionListener value="#{area}"
+												target="#{ManejadorConvocatoriaLibros.areaSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+					<br />
+					<h:panelGrid columns="2" cellpadding="10" align="center"
+						rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.mostrarColeccionAsociada eq 1}">
+
+						<h:outputText value="Colección asociada:" />
+						<p:selectOneMenu
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.claseEvento}"
+							id="tipoEvento">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{ManejadorConvocatoriaLibros.tipoEventoItems}" />
+							<p:ajax
+								listener="#{ManejadorConvocatoriaLibros.cambiarTipoEvento}"
+								update="panOtroTipEve" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid id="panOtroTipEve" columns="2" cellpadding="5"
+						cellspacing="5"
+						rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.mostrarColeccionAsociada eq 1}">
+						<h:outputText value="Otra - Cuál?:" id="otroEventotxt"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarOtroTipoEvento}" />
+						<p:inputText size="40" id="otroEvento"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarOtroTipoEvento}"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.otroClaseEvento}" />
+					</h:panelGrid>
+				</p:panel>
+				<br />
+
+				<p:panel header="Palabras Clave" id="idPalabrasClave">
+
+					<h:panelGrid columns="3" id="gridPalabraClave" align="center">
+						<h:outputText value="Palabras Clave" />
+						<p:autoComplete id="palabraClaveS"
+							value="#{ManejadorConvocatoriaLibros.palabraClave.palabra}"
+							size="50" maxResults="10"
+							completeMethod="#{ManejadorConvocatoriaLibros.obtenerPalabraClavesSugeridas}"
+							minQueryLength="2">
+							<f:validateLength maximum="100" />
+						</p:autoComplete>
+
+						<p:commandButton id="agregarPalabraClave" value="Agregar palabra"
+							update="palabrasTable, gridPalabraClave"
+							action="#{ManejadorConvocatoriaLibros.insertarPalabraClave}">
+						</p:commandButton>
+
+					</h:panelGrid>
+
+					<br />
+					<br />
+					<p:outputPanel id="grupoListaPalabras" align="center">
+						<p:dataTable id="palabrasTable"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.listaPalabrasES}"
+							var="pal"
+							emptyMessage="No se encuentran palabras clave registradas">
+
+							<p:column style="width:25%">
+								<f:facet name="header">
+									<h:outputText value="Palabra Clave" />
+								</f:facet>
+								<h:outputText value="#{pal.palabraVista}" />
+							</p:column>
+
+							<p:column style="width:3%">
+								<center>
+									<p:commandButton id="selectButton" update="palabrasTable"
+										icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaLibros.eliminarPalabraClave}"
+										title="Eliminar palabra clave">
+										<f:setPropertyActionListener value="#{pal}"
+											target="#{ManejadorConvocatoriaLibros.palabraClaveTabla}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+						</p:dataTable>
+					</p:outputPanel>
+				</p:panel>
+				<br />
+				<p:panel header="Autores" id="idAutores">
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="pgFormInves" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelect"
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv2.id}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaLibros.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumento"
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv2}" />
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvMain"
+							value="#{ManejadorConvocatoriaLibros.tipoInvestigador}">
+							<f:selectItems value="#{ManejadorConvocatoriaLibros.autores}" />
+							<p:ajax
+								listener="#{ManejadorConvocatoriaLibros.cambiarVinculacion}"
+								update="pgFormInvesExt, OP_prueba" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<p:outputPanel id="OP_prueba">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt" cellspacing="5"
+							rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+
+							<h:outputText value="Primer Nombre *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="primerNombreInvestigador"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre1}"
+								size="38" requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Nombre"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="segundoNombreInv"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre2}"
+								size="38"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Primer Apellido *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="primerApellidoInvestigador"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido1}"
+								size="38" requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Apellido"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="segundoApellidoInv"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Género"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:selectOneMenu
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.genero}"
+								id="idGenero" style="width:40px">
+								<f:selectItems value="#{ManejadorConvocatoriaLibros.generoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Institución *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="insitucionNombre"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.insitucionNombre}"
+								size="38" requiredMessage="La institución es obligatoria">
+								<f:validateLength maximum="200" />
+							</p:inputText>
+
+
+
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<br />
+					<center>
+						<p:commandButton value="Adicionar investigador"
+							id="botonAdicionarInvestigador"
+							update="listaParticipantes, pgFormInvesExt, OP_prueba, pgFormInves"
+							action="#{ManejadorConvocatoriaLibros.agregarParticipante}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+					<br />
+
+					<p:dataTable var="i" style="width:650px"
+						value="#{ManejadorConvocatoriaLibros.listaParticipantes}"
+						id="listaParticipantes">
+
+						<p:column style="width:30%">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText
+								value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Tipo de Autor" />
+							</f:facet>
+							<h:outputText
+								value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton id="botonEliminarIntegrantes"
+									update="listaParticipantes" icon="ui-icon-trash"
+									action="#{ManejadorConvocatoriaLibros.eliminarParticipante}"
+									title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+									<f:setPropertyActionListener value="#{i}"
+										target="#{ManejadorConvocatoriaLibros.participante}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<br />
+
+
+				</p:panel>
+
+				<br />
+
+				<p:panel header="Dependencias Relacionadas" id="idDepRelacionadas">
+
+					<p:panelGrid id="panelGridDependencia"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width:180px">
+								<h:outputText value="Sede:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu value="#{ManejadorConvocatoriaLibros.sedeSel}"
+									id="sedeUN" style="width:300px">
+									<f:selectItems value="#{ManejadorConvocatoriaLibros.sedeItem}" />
+									<p:ajax listener="#{ManejadorConvocatoriaLibros.cambiarSede}"
+										update="panelGridDependencia" process="panelGridDependencia" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{ManejadorConvocatoriaLibros.mostrarFacultades}">
+							<p:column>
+								<h:outputText value="Facultad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{ManejadorConvocatoriaLibros.facultadSel}"
+									filter="true" filterMatchMode="contains" id="facultadUN"
+									style="width:380px" panelStyle="380px">
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.facultadItem}" />
+									<p:ajax
+										listener="#{ManejadorConvocatoriaLibros.cambiarFacultad}"
+										update="panelGridDependencia" process="panelGridDependencia" />
+								</p:selectOneMenu>
+								<p:tooltip for="facultadUN" showEffect="fade" hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 300px">
+										<h:outputText
+											value="Seleccione el Centro, Facultad, Dirección o Instituto correspondiente." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Dependencia:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu filter="true" filterMatchMode="contains"
+									value="#{ManejadorConvocatoriaLibros.dependenciaProyecto}"
+									id="dependenciasUN" style="width:380px"
+									panelStyle="width:380px">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.dependenciaItem}" />
+								</p:selectOneMenu>
+								<p:tooltip for="dependenciasUN" showEffect="fade"
+									hideEffect="fade">
+									<h:panelGrid columns="1"
+										style="border-bottom: 0px; padding-bottom: 0px; width: 300px">
+										<h:outputText
+											value="Para agregar la dependencia seleccionada, por favor haga clic en el botón Adicionar Dependencia." />
+									</h:panelGrid>
+								</p:tooltip>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:commandButton id="botonAgregarDependencia"
+									binding="#{ManejadorConvocatoriaLibros.botonAgregarDependencia}"
+									action="#{ManejadorConvocatoriaLibros.adicionarDependencia}"
+									value="Adicionar dependencia" icon="ui-icon-plus"
+									update="dependenciasTabla, panelGridDependencia" />
+								<p:commandButton id="btndpn" icon="ui-icon-info" />
+								<p:tooltip for="btndpn" showEffect="fade" hideEffect="fade">
+									<p:panelGrid columns="1"
+										style="width: 300px; font-weight: bold;"
+										styleClass="estilo-panelgrid-sinbordes"
+										id="paneltoolAdicionarDependencia">
+										<h:outputText
+											value="Para agregar la dependencia seleccionada, por favor haga clic en el botón 'Adicionar Dependencia'." />
+									</p:panelGrid>
+								</p:tooltip>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column id="msgDep" colspan="2" style="text-align: center;">
+								<p:message id="msgTester" for="botonAgregarDependencia"
+									showSummary="false" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+
+
+
+					<p:dataTable id="dependenciasTabla"
+						value="#{ManejadorConvocatoriaLibros.proyectoActual.listaDependenciasAreaResponsabilidad}"
+						var="dependenciaArea" cellpadding="6" cellspacing="3" border="0"
+						emptyMessage="No existen dependencias asociadas al proyecto">
+
+						<p:column width="300">
+							<f:facet name="header">
+								<h:outputText value="Dependencia" />
+							</f:facet>
+							<h:outputText value="#{dependenciaArea.dependencia.nombre}" />
+						</p:column>
+
+
+						<p:column width="30" style="width:50px;text-align:center">
+							<p:commandButton
+								action="#{ManejadorConvocatoriaLibros.eliminarDependencia}"
+								icon="ui-icon-trash" update="dependenciasTabla"
+								title="Eliminar Área de Responsabilidad">
+
+								<f:setPropertyActionListener
+									target="#{ManejadorConvocatoriaLibros.dependenciaAreaResponsabilidadSeleccionada}"
+									value="#{dependenciaArea}" />
+
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoDep">
+
+						<h:outputText value="Instituciones externas:" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							id="entidadesParticipantes"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.entidadesParticipantes}" />
+
+
+					</h:panelGrid>
+
+
+				</p:panel>
+
+
+			</h:panelGrid>
+
+
+			<p:outputPanel id="mostrarSiArticulosUno"
+				rendered="#{ManejadorConvocatoriaLibros.mostrarSiArticulosUno}"
+				style="width:100%">
+
+				<p:panel id="datosContacto" header="Datos de Contacto">
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del docente:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Sede:" />
+						<h:outputText value="#{ManejadorConvocatoriaLibros.nombreSede}" />
+
+						<h:outputText value="Facultad/Instituto:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreFacultad}" />
+
+						<h:outputText value="Departamento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreDepartamento}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.emailPersonaActual}" />
+
+						<h:outputText value="Teléfono de contacto:" />
+						<h:outputText value="#{ManejadorConvocatoriaLibros.telefono}" />
+
+					</h:panelGrid>
+				</p:panel>
+				<br />
+				<p:panel id="informacionGeneral" header="Información General">
+					<h:panelGrid columns="2">
+						<h:outputText value="Tipo de servicio"
+							rendered="#{!ManejadorConvocatoriaLibros.esConvMinas and !ManejadorConvocatoriaLibros.esConvCienciasMed}" />
+						<p:selectOneMenu id="SOM_TipoServicio"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.modalidadEcp}"
+							rendered="#{!ManejadorConvocatoriaLibros.esConvMinas and !ManejadorConvocatoriaLibros.esConvCienciasMed}">
+							<f:selectItem itemLabel="Revisión de estilo"
+								itemValue="REV_ESTILO" />
+							<f:selectItem itemLabel="Traducción" itemValue="TRADUCCION" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Idioma" />
+						<p:selectOneMenu id="SOM_Idioma"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.claseEvento}">
+							<f:selectItem itemLabel="Inglés - Americano"
+								itemValue="ING_AMERICANO" />
+							<f:selectItem itemLabel="Inglés - Británico"
+								itemValue="ING_BRITANICO" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Objetivo de la propuesta" />
+						<p:inputTextarea id="ObjPropuestaConvArtMod1" autoResize="false"
+							counter="counterResumenObjConvArtMod1" maxlength="4000"
+							counterTemplate="{0} caracteres restantes."
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.objetivoGeneral}"
+							rows="5" cols="65" required="false">
+						</p:inputTextarea>
+						<h:outputText id="countResObjConvArtMod1" value="" />
+						<h:outputText id="counterResumenObjConvArtMod1" />
+
+						<h:outputText
+							value="Nombre del proyecto de investigación que precede al artículo (si aplica)"
+							styleClass="legend2" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							counter="counterTituloConvArtMod1" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." required="false"
+							id="Titulo"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.justificacion}"
+							requiredMessage="El título del proyecto es obligatorio" />
+						<h:outputText id="countTituloConvArtMod1" value="" />
+						<h:outputText id="counterTituloConvArtMod1" />
+
+
+					</h:panelGrid>
+				</p:panel>
+				<br />
+				<p:panel header="Grupos de investigación"
+					id="panelGruposConvArtMod1">
+
+					<h:panelGroup>
+						<h:panelGrid columns="2" align="center" cellpadding="6"
+							cellspacing="3">
+
+							<h:outputText value="Grupo de Investigación" />
+							<p:selectOneMenu
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.aliados}"
+								id="idGrupoInvConvArtMod1" panelStyle="width:600px;"
+								style="width:400px" filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+								<f:selectItems
+									value="#{ManejadorConvocatoriaLibros.gruposInvItem}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</h:panelGroup>
+
+					<h:panelGroup>
+						<center>
+
+							<p:commandButton
+								action="#{ManejadorConvocatoriaLibros.adicionarGrupoInv}"
+								value="Adicionar" icon="ui-icon-plus"
+								update="panelGruposConvArtMod1, tablaGruposConvArtMod1" />
+						</center>
+						<br />
+					</h:panelGroup>
+
+					<center>
+
+						<p:dataTable
+							value="#{ManejadorConvocatoriaLibros.listaGruposConvMedicina}"
+							var="gru" emptyMessage="No hay grupos adicionados"
+							id="tablaGruposConvArtMod1">
+
+							<p:column headerText="Grupo">
+								<h:outputText value="#{gru.nombre}"
+									style="text-align: left; width: 50%; padding-bottom: 10px;" />
+							</p:column>
+
+							<p:column style="width:20%" headerText="(-)">
+								<p:commandButton id="eliminarGrupo"
+									update="tablaGruposConvArtMod1" icon="ui-icon-trash"
+									action="#{ManejadorConvocatoriaLibros.eliminarGrupoInv}"
+									title="Eliminar Grupo">
+									<f:setPropertyActionListener value="#{gru}"
+										target="#{ManejadorConvocatoriaLibros.grupoSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</center>
+
+				</p:panel>
+				<br />
+				<p:panel id="informacionArticulo" header="Información Artículo">
+					<h:panelGrid columns="2">
+						<h:outputText value="Título artículo (*):" />
+						<p:inputTextarea id="ITA_tituloArt"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.nombre}"
+							rows="5" cols="60" autoResize="false" maxlength="2000"
+							counter="counter" counterTemplate="{0} caracteres restantes"
+							required="true" style="width:490px"
+							requiredMessage="El título del artículo es obligatorio" />
+
+						<h:outputText />
+						<h:outputText id="counter" />
+
+						<h:outputText
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+							value="Título de la revista:" />
+						<p:inputTextarea id="ITA_tituloRevConvArtMod1"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.marcoTeorico}"
+							rows="5" cols="60" autoResize="false" maxlength="2000"
+							counter="counterRevConvArtMod1"
+							counterTemplate="{0} caracteres restantes" required="false"
+							requiredMessage="El título de la revista es obligatorio"
+							style="width:490px" />
+
+						<h:outputText
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}" />
+						<h:outputText
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+							id="counterRevConvArtMod1" />
+
+						<h:outputText value="Número palabras (*):" />
+						<p:inputText id="IT_numPalabras"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.diaSesion}"
+							size="30" />
+
+						<h:outputText value="Resumen artículo (*):" />
+						<p:inputTextarea id="ITA_resumenArt"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.resumen}"
+							rows="5" cols="60" autoResize="false" maxlength="2000"
+							counter="counter2" counterTemplate="{0} caracteres restantes"
+							required="true" style="width:490px"
+							requiredMessage="El resumen del artículo es obligatorio" />
+
+						<h:outputText />
+						<h:outputText id="counter2" />
+
+						<h:outputText value="Palabras claves (*):"
+							rendered="#{ManejadorConvocatoriaLibros.esConvCienciasMed}" />
+						<p:inputTextarea id="ITA_palabraClave"
+							rendered="#{ManejadorConvocatoriaLibros.esConvCienciasMed}"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.consideracionesEticas}"
+							rows="5" cols="60" autoResize="false" maxlength="2000"
+							required="true" style="width:490px"
+							requiredMessage="Las palabras clave son obligatorias" />
+
+						<h:outputText
+							value="Nombre de la revista #{(ManejadorConvocatoriaLibros.proyectoActual.modalidad.id eq 917) ? '(*)' : ''}:"
+							rendered="#{ManejadorConvocatoriaLibros.esConvCienciasMed}" />
+						<p:inputText
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.involucraMaestriaDoctorado}"
+							rendered="#{ManejadorConvocatoriaLibros.esConvCienciasMed}"
+							size="70"
+							required="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.id eq 917}"
+							requiredMessage="El nombre de la revista es obligatorio" />
+
+						<h:outputText
+							value="ISSN #{(ManejadorConvocatoriaLibros.proyectoActual.modalidad.id eq 917) ? '(*)' : ''}:" />
+						<p:inputText id="IT_ISSN"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.porqueNivelSostenibilidad}"
+							size="30" />
+
+						<h:outputText value="Área:" rendered="false" />
+						<p:selectOneMenu id="SOM_area" rendered="false"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.observaciones}">
+							<f:selectItems value="#{ManejadorConvocatoriaLibros.listaAreas}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="OBJETIVO SOCIOECONÓMICO"
+							style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid id="panelObjetivo"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Objetivo socioeconómico:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="socioeconomico" style="width:350px"
+									panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.proyectoActual.objetivoSocioeconomico}">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.objSocioeconomicoItems}" />
+
+								</p:selectOneMenu>
+								<h:outputLink
+									value="#{ManejadorConvocatoriaLibros.linkObjetivos}"
+									target="_blank" icon="ui-icon-search">
+
+									<h:graphicImage id="images" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="images"
+									value="Descargar pdf con la clasificación de los objetivos."
+									showEffect="fade" hideEffect="fade" />
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<p:separator />
+					<t:div
+						style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+						<h:outputText value="ÁREAS OCDE" style="font-weight: bold;" />
+					</t:div>
+					<p:panelGrid id="panelAreaCientificaArt"
+						styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Area científica y tecnológica principal:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.areaCiencia}"
+									id="areaCienciaArt">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.areaCienciaItems}" />
+									<p:ajax listener="#{ManejadorConvocatoriaLibros.cambiarArea}"
+										update="subareaCienciaArt" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide()" />
+								</p:selectOneMenu>
+								<h:outputLink value="#{ManejadorConvocatoriaLibros.linkLineas}"
+									target="_blank">
+									<h:graphicImage id="imageeeArt" alt="jsf-sun"
+										url="/images/iconpdf.png">
+									</h:graphicImage>
+								</h:outputLink>
+								<p:tooltip for="imageeeArt"
+									value="Descargar pdf con la clasificación de las áreas."
+									showEffect="fade" hideEffect="fade" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Sub-área de la ciencia:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+									value="#{ManejadorConvocatoriaLibros.subAreaCiencia}"
+									id="subareaCienciaArt">
+									<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+										itemValue="" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.subAreaCienciaItems}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+				<br />
+				<p:panel header="Palabras Clave" id="idPalabrasClave">
+
+					<h:panelGrid columns="3" id="gridPalabraClave" align="center">
+						<h:outputText value="Palabras Clave" />
+						<p:autoComplete id="palabraClaveS"
+							value="#{ManejadorConvocatoriaLibros.palabraClave.palabra}"
+							size="50" maxResults="10"
+							completeMethod="#{ManejadorConvocatoriaLibros.obtenerPalabraClavesSugeridas}"
+							minQueryLength="2">
+							<f:validateLength maximum="100" />
+						</p:autoComplete>
+
+						<p:commandButton id="agregarPalabraClave" value="Agregar palabra"
+							update="palabrasTable, gridPalabraClave"
+							action="#{ManejadorConvocatoriaLibros.insertarPalabraClave}">
+						</p:commandButton>
+
+					</h:panelGrid>
+					<br />
+					<p:outputPanel id="grupoListaPalabras" align="center">
+						<p:dataTable id="palabrasTable"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.listaPalabrasES}"
+							var="pal"
+							emptyMessage="No se encuentran palabras clave registradas">
+
+							<p:column style="width:25%">
+								<f:facet name="header">
+									<h:outputText value="Palabra Clave" />
+								</f:facet>
+								<h:outputText value="#{pal.palabraVista}" />
+							</p:column>
+
+							<p:column style="width:3%">
+								<center>
+									<p:commandButton id="selectButton" update="palabrasTable"
+										icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaLibros.eliminarPalabraClave}"
+										title="Eliminar palabra clave">
+										<f:setPropertyActionListener value="#{pal}"
+											target="#{ManejadorConvocatoriaLibros.palabraClaveTabla}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+						</p:dataTable>
+					</p:outputPanel>
+				</p:panel>
+				<br />
+				<p:panel header="Coautores" id="Coautores">
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="PG_Coautores" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelect2"
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv2.id}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaLibros.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumento2"
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv2}" />
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvMain2"
+							value="#{ManejadorConvocatoriaLibros.tipoInvestigador}">
+							<f:selectItems value="#{ManejadorConvocatoriaLibros.autores}" />
+							<p:ajax
+								listener="#{ManejadorConvocatoriaLibros.cambiarVinculacion}"
+								update="pgFormInvesExt2, OP_prueba2" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<p:outputPanel id="OP_prueba2">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt2" cellspacing="5"
+							rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+
+							<h:outputText value="Primer Nombre *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="primerNombreInvestigador2"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre1}"
+								size="38" requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Nombre"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="segundoNombreInv2"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre2}"
+								size="38"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Primer Apellido *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="primerApellidoInvestigador2"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido1}"
+								size="38" requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Apellido"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="segundoApellidoInv"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Género"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:selectOneMenu
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.genero}"
+								id="idGenero2" style="width:40px">
+								<f:selectItems value="#{ManejadorConvocatoriaLibros.generoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Institución *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="insitucionNombre2"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.insitucionNombre}"
+								size="38" requiredMessage="La institución es obligatoria">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<br />
+					<center>
+						<p:commandButton value="Adicionar investigador"
+							id="botonAdicionarInvestigador2"
+							update="listaParticipantes2, pgFormInvesExt2, OP_prueba2, PG_Coautores"
+							action="#{ManejadorConvocatoriaLibros.agregarParticipante}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+					<br />
+
+					<p:dataTable var="i" style="width:650px"
+						value="#{ManejadorConvocatoriaLibros.listaParticipantes}"
+						id="listaParticipantes2">
+
+						<p:column style="width:30%">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText
+								value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Tipo de Autor" />
+							</f:facet>
+							<h:outputText
+								value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton id="botonEliminarIntegrantes2"
+									update="listaParticipantes2" icon="ui-icon-trash"
+									action="#{ManejadorConvocatoriaLibros.eliminarParticipante}"
+									title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+									<f:setPropertyActionListener value="#{i}"
+										target="#{ManejadorConvocatoriaLibros.participante}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<br />
+				</p:panel>
+				<p:panel header="Información Financiera" id="Financiera"
+					rendered="#{ManejadorConvocatoriaLibros.mostrarFinanciacion}">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="panelGridFinanciacionConvocatoria">
+						<p:row>
+							<p:column colspan="2" style="text-align: center; width: 630px;">
+								<p:dataTable cellpadding="6" cellspacing="3"
+									value="#{ManejadorConvocatoriaLibros.proyectoActual.listaFinanciones}"
+									var="financiacion" id="listaFuentesFinan2"
+									rendered="#{not empty ManejadorConvocatoriaLibros.proyectoActual.listaFinanciones}">
+									<p:column style="width:40%">
+										<f:facet name="header">
+											<h:outputText value="Fuente de financiación" />
+										</f:facet>
+										<h:outputText value="#{financiacion.fuente.descripcion}" />
+									</p:column>
+
+									<p:column style="width:20%">
+										<f:facet name="header">
+											<h:outputText value="Valor" />
+										</f:facet>
+										<h:outputText value="#{financiacion.valor}">
+											<f:convertNumber currencySymbol="$" groupingUsed="true"
+												type="currency" minFractionDigits="0" maxFractionDigits="0" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width: 180px;">
+								<h:outputText value="Tipo de rubro:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{ManejadorConvocatoriaLibros.idTipoRubro}"
+									id="selectTipoRubro" style="width: 350px;">
+									<f:selectItem itemLabel="Seleccione un rubro" itemValue="0" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.tiposRubroItem}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Valor:" />
+							</p:column>
+							<p:column>
+								<p:inputText id="valorRubro"
+									value="#{ManejadorConvocatoriaLibros.valorGasto}"
+									maxlength="12"
+									converterMessage="El valor del rubro debe ser numérico sin comas, puntos, espacios o letras.">
+									<f:validateLength minimum="1" />
+								</p:inputText>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value="Descripción:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="gastosDescripcion"
+									value="#{ManejadorConvocatoriaLibros.descripcionGasto}"
+									rows="4" style="width: 350px; height: 60px;" maxlenght="3000" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2" style="text-align: center;">
+								<p:commandButton id="botonAgregarGasto"
+									action="#{ManejadorConvocatoriaLibros.agregarGasto}"
+									value="Agregar" update="panelGridFinanciacionConvocatoria"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="dataTableGastoVista2" var="gasto"
+									value="#{ManejadorConvocatoriaLibros.listaGastos}"
+									align="center" border="1" cellpadding="4" cellspacing="0"
+									rendered="#{!empty ManejadorConvocatoriaLibros.listaGastos}">
+									<p:column style="width: 40%;">
+										<f:facet name="header">
+											<h:outputText value="Rubro" />
+										</f:facet>
+										<h:outputText value="#{gasto.tipoRubro.nombre}" />
+									</p:column>
+									<p:column style="width: 40%;">
+										<f:facet name="header">
+											<h:outputText value="Descripción" />
+										</f:facet>
+										<h:outputText value="#{gasto.descripcion}" />
+									</p:column>
+									<p:column style="text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Valor" />
+										</f:facet>
+										<h:outputText value="#{gasto.valor}">
+											<f:convertNumber currencySymbol="$" groupingUsed="true"
+												type="currency" minFractionDigits="0" maxFractionDigits="0" />
+										</h:outputText>
+									</p:column>
+									<p:column>
+										<f:facet name="header" style="width: 10%;">
+											<h:outputText value="Eliminar" />
+										</f:facet>
+										<center>
+											<p:commandButton id="eliminarGastoBoton"
+												action="#{ManejadorConvocatoriaLibros.eliminarGastoConv}"
+												icon="ui-icon-trash" update="dataTableGastoVista2"
+												onstart="dialogEspere.show()"
+												oncomplete="dialogEspere.hide()" ajax="false"
+												title="Eliminar gasto">
+												<f:setPropertyActionListener
+													target="#{ManejadorConvocatoriaLibros.gastoSeleccionado}"
+													value="#{gasto}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+			</p:outputPanel>
+
+			<p:outputPanel id="mostrarSiArticulosDos"
+				rendered="#{ManejadorConvocatoriaLibros.mostrarSiArticulosDos}"
+				style="width:100%">
+
+				<p:panel id="datosContacto" header="Datos de Contacto">
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre de la revista:" rendered="#{!(ManejadorConvocatoriaLibros.proyectoActual.modalidad.id eq 1186)}"/>
+						<p:inputText
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.involucraMaestriaDoctorado}"
+							size="70" rendered="#{!(ManejadorConvocatoriaLibros.proyectoActual.modalidad.id eq 1186)}"/>
+
+						<h:outputText value="Nombre Editor:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.emailPersonaActual}" />
+
+						<h:outputText value="Teléfono de contacto:" />
+						<p:inputText size="20" id="idTelefono"
+							value="#{ManejadorConvocatoriaLibros.telefono}" />
+
+					</h:panelGrid>
+				</p:panel>
+				<br />
+				<p:panel id="informacionGeneral" header="Modalidad"
+					rendered="#{!(ManejadorConvocatoriaLibros.proyectoActual.modalidad.id eq 1186)}">
+					<h:panelGrid columns="2">
+						<h:outputText value="Seleccione modalidad: " />
+						<p:selectOneRadio id="RB_ModArt"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.tipoZona}">
+							<f:selectItem itemLabel="Artículo completo"
+								itemValue="ART_COMPLETO" />
+							<f:selectItem itemLabel="Grupo de resumenes"
+								itemValue="GRP_RESUMEN" />
+							<p:ajax update="OP_DatosArtCompleto, OP_DatosGrpResumenes @form"
+								event="change" />
+						</p:selectOneRadio>
+					</h:panelGrid>
+				</p:panel>
+				<br />
+
+				<p:outputPanel id="OP_DatosArtCompleto"
+					rendered="#{ManejadorConvocatoriaLibros.proyectoActual.tipoZona == 'ART_COMPLETO'}">
+					<p:panel id="informacionGeneralArtCompleto"
+						header="Información General">
+						<h:panelGrid columns="2">
+							<h:outputText value="Tipo de servicio" />
+							<p:selectOneMenu id="SOM_TipoServicio_artCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.modalidadEcp}">
+								<f:selectItem itemLabel="Revisión de estilo"
+									itemValue="REV_ESTILO" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Idioma" />
+							<p:selectOneMenu id="SOM_Idioma_ArtCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.claseEvento}">
+								<f:selectItem itemLabel="Inglés - Americano"
+									itemValue="ING_AMERICANO" />
+								<f:selectItem itemLabel="Inglés - Británico"
+									itemValue="ING_BRITANICO" />
+								<f:selectItem itemLabel="Portugués" itemValue="PORTUGUES" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Objetivo de la propuesta" />
+							<p:inputTextarea id="ObjPropuestaConvArtMod2" autoResize="false"
+								counter="counterResumenObjConvArtMod2" maxlength="4000"
+								counterTemplate="{0} caracteres restantes."
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.objetivoGeneral}"
+								rows="5" cols="65" required="false">
+							</p:inputTextarea>
+							<h:outputText id="countResObjConvArtMod2" value="" />
+							<h:outputText id="counterResumenObjConvArtMod2" />
+
+							<h:outputText
+								value="Nombre del proyecto de investigación que precede al artículo (si aplica)"
+								styleClass="legend2" />
+							<p:inputTextarea rows="5" cols="65" autoResize="false"
+								counter="counterTituloConvArtMod2" maxlength="1000"
+								counterTemplate="{0} caracteres restantes." required="false"
+								id="Titulo"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.justificacion}"
+								requiredMessage="El título del proyecto es obligatorio" />
+							<h:outputText id="countTituloConvArtMod2" value="" />
+							<h:outputText id="counterTituloConvArtMod2" />
+						</h:panelGrid>
+					</p:panel>
+					<br />
+					<p:panel header="Grupos de investigación"
+						id="panelGruposConvArtMod2">
+
+						<h:panelGroup>
+							<h:panelGrid columns="2" align="center" cellpadding="6"
+								cellspacing="3">
+
+								<h:outputText value="Grupo de Investigación" />
+								<p:selectOneMenu
+									value="#{ManejadorConvocatoriaLibros.proyectoActual.aliados}"
+									id="idGrupoInvConvArtMod2" panelStyle="width:600px;"
+									style="width:400px" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.gruposInvItem}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGroup>
+
+						<h:panelGroup>
+							<center>
+
+								<p:commandButton
+									action="#{ManejadorConvocatoriaLibros.adicionarGrupoInv}"
+									value="Adicionar" icon="ui-icon-plus"
+									update="panelGruposConvArtMod2, tablaGruposConvArtMod2" />
+							</center>
+							<br />
+						</h:panelGroup>
+
+						<center>
+
+							<p:dataTable
+								value="#{ManejadorConvocatoriaLibros.listaGruposConvMedicina}"
+								var="gru" emptyMessage="No hay grupos adicionados"
+								id="tablaGruposConvArtMod2">
+
+								<p:column headerText="Grupo">
+									<h:outputText value="#{gru.nombre}"
+										style="text-align: left; width: 50%; padding-bottom: 10px;" />
+								</p:column>
+
+								<p:column style="width:20%" headerText="(-)">
+									<p:commandButton id="eliminarGrupo"
+										update="tablaGruposConvArtMod2" icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaLibros.eliminarGrupoInv}"
+										title="Eliminar Grupo">
+										<f:setPropertyActionListener value="#{gru}"
+											target="#{ManejadorConvocatoriaLibros.grupoSeleccionado}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+						</center>
+
+					</p:panel>
+					<br />
+					<p:panel id="informacionArticuloArtCompleto"
+						header="Información Artículo">
+						<h:panelGrid columns="2">
+							<h:outputText value="Título artículo (*):" />
+							<p:inputTextarea id="ITA_tituloArtCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.nombre}"
+								rows="5" cols="60" autoResize="false" maxlength="2000"
+								counter="counter" counterTemplate="{0} caracteres restantes"
+								required="true"
+								requiredMessage="El título del artículo es obligatorio"
+								style="width:490px" />
+
+							<h:outputText />
+							<h:outputText id="counter" />
+
+							<h:outputText
+								rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+								value="Título de la revista:" />
+							<p:inputTextarea id="ITA_tituloRevConvArtMod2"
+								rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.marcoTeorico}"
+								rows="5" cols="60" autoResize="false" maxlength="2000"
+								counter="counterRevConvArtMod2"
+								counterTemplate="{0} caracteres restantes" required="false"
+								requiredMessage="El título de la revista es obligatorio"
+								style="width:490px" />
+
+							<h:outputText
+								rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}" />
+							<h:outputText
+								rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+								id="counterRevConvArtMod2" />
+
+							<h:outputText value="Número palabras (*):" />
+							<p:inputText id="IT_numPalabrasArtCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.diaSesion}"
+								size="30" required="true"
+								requiredMessage="El de palabras del artículo es obligatorio" />
+
+							<h:outputText value="Resumen artículo (*):" />
+							<p:inputTextarea id="ITA_resumenArtCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.resumen}"
+								rows="5" cols="60" autoResize="false" maxlength="2000"
+								counter="counter2" counterTemplate="{0} caracteres restantes"
+								required="true"
+								requiredMessage="El resumen del artículo es obligatorio"
+								style="width:490px" />
+
+							<h:outputText />
+							<h:outputText id="counter2" />
+
+							<h:outputText value="ISSN (*)" />
+							<p:inputText id="IT_ISSN_ArtCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.porqueNivelSostenibilidad}"
+								size="30" required="true"
+								requiredMessage="El ISSN es obligatorio" />
+
+							<h:outputText value="Área:" rendered="false" />
+							<p:selectOneMenu id="SOM_area_ArtCompleto"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.observaciones}"
+								rendered="false">
+								<f:selectItems value="#{ManejadorConvocatoriaLibros.listaAreas}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="OBJETIVO SOCIOECONÓMICO"
+								style="font-weight: bold;" />
+						</t:div>
+						<p:panelGrid id="panelObjetivo"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width: 180px;">
+									<h:outputText value="Objetivo socioeconómico:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="socioeconomico" style="width:350px"
+										panelStyle="width:350px"
+										value="#{ManejadorConvocatoriaLibros.proyectoActual.objetivoSocioeconomico}">
+										<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+										<f:selectItems
+											value="#{ManejadorConvocatoriaLibros.objSocioeconomicoItems}" />
+
+									</p:selectOneMenu>
+									<h:outputLink
+										value="#{ManejadorConvocatoriaLibros.linkObjetivos}"
+										target="_blank" icon="ui-icon-search">
+
+										<h:graphicImage id="images" alt="jsf-sun"
+											url="/images/iconpdf.png">
+										</h:graphicImage>
+									</h:outputLink>
+									<p:tooltip for="images"
+										value="Descargar pdf con la clasificación de los objetivos."
+										showEffect="fade" hideEffect="fade" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<p:separator />
+						<t:div
+							style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+							<h:outputText value="ÁREAS OCDE" style="font-weight: bold;" />
+						</t:div>
+						<p:panelGrid id="panelAreaCientificaArt"
+							styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width: 180px;">
+									<h:outputText value="Area científica y tecnológica principal:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+										value="#{ManejadorConvocatoriaLibros.areaCiencia}"
+										id="areaCienciaArt">
+										<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+										<f:selectItems
+											value="#{ManejadorConvocatoriaLibros.areaCienciaItems}" />
+										<p:ajax listener="#{ManejadorConvocatoriaLibros.cambiarArea}"
+											update="subareaCienciaArt" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()" />
+									</p:selectOneMenu>
+									<h:outputLink value="#{ManejadorConvocatoriaLibros.linkLineas}"
+										target="_blank">
+										<h:graphicImage id="imageeeArt" alt="jsf-sun"
+											url="/images/iconpdf.png">
+										</h:graphicImage>
+									</h:outputLink>
+									<p:tooltip for="imageeeArt"
+										value="Descargar pdf con la clasificación de las áreas."
+										showEffect="fade" hideEffect="fade" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Sub-área de la ciencia:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+										value="#{ManejadorConvocatoriaLibros.subAreaCiencia}"
+										id="subareaCienciaArt">
+										<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+											itemValue="" />
+										<f:selectItems
+											value="#{ManejadorConvocatoriaLibros.subAreaCienciaItems}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<br />
+					<p:panel header="Palabras Clave" id="idPalabrasClave">
+
+						<h:panelGrid columns="3" id="gridPalabraClave" align="center">
+							<h:outputText value="Palabras Clave" />
+							<p:autoComplete id="palabraClaveS"
+								value="#{ManejadorConvocatoriaLibros.palabraClave.palabra}"
+								size="50" maxResults="10"
+								completeMethod="#{ManejadorConvocatoriaLibros.obtenerPalabraClavesSugeridas}"
+								minQueryLength="2">
+								<f:validateLength maximum="100" />
+							</p:autoComplete>
+
+							<p:commandButton id="agregarPalabraClave" value="Agregar palabra"
+								update="palabrasTable, gridPalabraClave"
+								action="#{ManejadorConvocatoriaLibros.insertarPalabraClave}">
+							</p:commandButton>
+
+						</h:panelGrid>
+						<br />
+						<p:outputPanel id="grupoListaPalabras" align="center">
+							<p:dataTable id="palabrasTable"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.listaPalabrasES}"
+								var="pal"
+								emptyMessage="No se encuentran palabras clave registradas">
+
+								<p:column style="width:25%">
+									<f:facet name="header">
+										<h:outputText value="Palabra Clave" />
+									</f:facet>
+									<h:outputText value="#{pal.palabraVista}" />
+								</p:column>
+
+								<p:column style="width:3%">
+									<center>
+										<p:commandButton id="selectButton" update="palabrasTable"
+											icon="ui-icon-trash"
+											action="#{ManejadorConvocatoriaLibros.eliminarPalabraClave}"
+											title="Eliminar palabra clave">
+											<f:setPropertyActionListener value="#{pal}"
+												target="#{ManejadorConvocatoriaLibros.palabraClaveTabla}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+
+							</p:dataTable>
+						</p:outputPanel>
+					</p:panel>
+					<br />
+					<p:panel header="Coautores" id="CoautoresArtCompleto">
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="PG_Coautores_ArtCompleto" cellspacing="5">
+
+							<h:outputText value="Tipo de documento" />
+							<p:selectOneMenu id="tipoDocInvestigadorSelect2"
+								value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv2.id}">
+								<f:selectItems
+									value="#{ManejadorConvocatoriaLibros.tipoDocumentoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="No. documento: " />
+							<p:inputText id="numDocumento2"
+								value="#{ManejadorConvocatoriaLibros.documentoCoinv2}" />
+
+							<h:outputText value="Tipo de participante:" />
+							<p:selectOneMenu id="tipoInvMain2"
+								value="#{ManejadorConvocatoriaLibros.tipoInvestigador}">
+								<f:selectItems value="#{ManejadorConvocatoriaLibros.autores}" />
+								<p:ajax
+									listener="#{ManejadorConvocatoriaLibros.cambiarVinculacion}"
+									update="pgFormInvesExt3, OP_prueba3" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+						<p:outputPanel id="OP_prueba3">
+
+							<h:panelGrid columns="2" align="center" cellpadding="5"
+								id="pgFormInvesExt3" cellspacing="5"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+
+								<h:outputText value="Primer Nombre *"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+								<p:inputText id="primerNombreInvestigador3"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+									value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre1}"
+									size="38" requiredMessage="El Primer Nombre es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Segundo Nombre"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+								<p:inputText id="segundoNombreInv3"
+									value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre2}"
+									size="38"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Primer Apellido *"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+								<p:inputText id="primerApellidoInvestigador3"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+									value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido1}"
+									size="38" requiredMessage="El Primer Apellido es obligatorio">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Segundo Apellido"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+								<p:inputText id="segundoApellidoInv3"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+									value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido2}"
+									size="38">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+								<h:outputText value="Género"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+								<p:selectOneMenu
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+									value="#{ManejadorConvocatoriaLibros.investigadorExterno.genero}"
+									id="idGenero3" style="width:40px">
+									<f:selectItems
+										value="#{ManejadorConvocatoriaLibros.generoItem}" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Institución *"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+								<p:inputText id="insitucionNombre3"
+									rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+									value="#{ManejadorConvocatoriaLibros.insitucionNombre}"
+									size="38" requiredMessage="La institución es obligatoria">
+									<f:validateLength maximum="20" />
+								</p:inputText>
+
+							</h:panelGrid>
+
+						</p:outputPanel>
+
+						<br />
+						<center>
+							<p:commandButton value="Adicionar investigador"
+								id="botonAdicionarInvestigador3"
+								update="listaParticipantes3, pgFormInvesExt3, OP_prueba3, PG_Coautores_ArtCompleto"
+								action="#{ManejadorConvocatoriaLibros.agregarParticipante}"
+								styleClass="ui-priority-primary" />
+						</center>
+
+						<br />
+						<br />
+
+						<p:dataTable var="i" style="width:650px"
+							value="#{ManejadorConvocatoriaLibros.listaParticipantes}"
+							id="listaParticipantes3">
+
+							<p:column style="width:30%">
+								<f:facet name="header">
+									<h:outputText value="Nombre" />
+								</f:facet>
+								<h:outputText
+									value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Tipo de Autor" />
+								</f:facet>
+								<h:outputText
+									value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante':''))}" />
+							</p:column>
+
+							<p:column style="width:10%">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<center>
+									<p:commandButton id="botonEliminarIntegrantes3"
+										update="listaParticipantes3" icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaLibros.eliminarParticipante}"
+										title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+										<f:setPropertyActionListener value="#{i}"
+											target="#{ManejadorConvocatoriaLibros.participante}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						<br />
+					</p:panel>
+				</p:outputPanel>
+
+				<p:outputPanel id="OP_DatosGrpResumenes"
+					rendered="#{ManejadorConvocatoriaLibros.proyectoActual.tipoZona == 'GRP_RESUMEN'}">
+
+					<p:panel id="informacionGeneralGrpResumenes"
+						header="Información General">
+						<h:panelGrid columns="2">
+							<h:outputText value="Tipo de servicio" />
+							<p:selectOneMenu id="SOM_TipoServicioGrpResumenes"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.modalidadEcp}">
+								<f:selectItem itemLabel="Revisión de estilo"
+									itemValue="REV_ESTILO" />
+								<f:selectItem itemLabel="Traducción" itemValue="TRADUCCION" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Idioma" />
+							<p:selectOneMenu id="SOM_IdiomaGrpResumenes"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.claseEvento}">
+								<f:selectItem itemLabel="Inglés - Americano"
+									itemValue="ING_AMERICANO" />
+								<f:selectItem itemLabel="Inglés - Británico"
+									itemValue="ING_BRITANICO" />
+								<f:selectItem itemLabel="Portugués" itemValue="PORTUGUES" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:panel>
+					<br />
+					<p:panel id="informacionArticuloGrpResumenes"
+						header="Información Artículo">
+						<h:panelGrid columns="2">
+							<h:outputText value="Título del número de Revista (*):" />
+							<p:inputTextarea id="ITA_tituloArtGrpResumenes"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.nombre}"
+								rows="5" cols="60" autoResize="false" maxlength="2000"
+								counter="counter" counterTemplate="{0} caracteres restantes"
+								required="true"
+								requiredMessage="El título del artículo es obligatorio"
+								style="width:490px" />
+
+							<h:outputText />
+							<h:outputText id="counter" />
+
+							<h:outputText value="Número palabras:" />
+							<p:inputText id="IT_numPalabrasGrpResumenes"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.diaSesion}"
+								size="30" />
+
+							<h:outputText value="ISSN" />
+							<p:inputText id="IT_ISSN_GrpResumenes"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.porqueNivelSostenibilidad}"
+								size="30" />
+
+							<h:outputText value="Área:" />
+							<p:selectOneMenu id="SOM_areaGrpResumenes"
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.observaciones}">
+								<f:selectItems value="#{ManejadorConvocatoriaLibros.listaAreas}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:panel>
+					<br />
+				</p:outputPanel>
+				<br />
+			</p:outputPanel>
+
+			<p:outputPanel id="mostrarSiConvMedicina"
+				rendered="#{ManejadorConvocatoriaLibros.mostrarSiConvocatoriaMedicina}"
+				style="width:100%">
+
+				<p:panel id="datosContactoConvMed" header="Datos de Contacto">
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="formInfoGeneral">
+
+						<h:outputText value="Nombre del docente:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreCompletoPersonaActual}" />
+
+						<h:outputText value="Documento de identidad:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv}" />
+
+						<h:outputText value="Tipo de Documento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv.nombre}" />
+
+						<h:outputText value="Sede:" />
+						<h:outputText value="#{ManejadorConvocatoriaLibros.nombreSede}" />
+
+						<h:outputText value="Facultad/Instituto:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreFacultad}" />
+
+						<h:outputText value="Departamento:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.nombreDepartamento}" />
+
+						<h:outputText value="Correo electrónico:" />
+						<h:outputText
+							value="#{ManejadorConvocatoriaLibros.emailPersonaActual}" />
+						<h:outputText value="Teléfono de contacto:" />
+						<h:outputText value="#{ManejadorConvocatoriaLibros.telefono}" />
+					</h:panelGrid>
+
+				</p:panel>
+				<br />
+				<p:panel id="datosGeneralConvMed" header="Información General">
+
+					<h:panelGrid columns="2" cellpadding="10" align="center">
+
+						<h:outputText value="Objetivo de la propuesta" />
+						<p:inputTextarea id="ObjPropuesta" autoResize="false"
+							counter="counterResumenObj" maxlength="4000"
+							counterTemplate="{0} caracteres restantes."
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.objetivoGeneral}"
+							rows="5" cols="65" required="false">
+						</p:inputTextarea>
+						<h:outputText id="countResObj" value="" />
+						<h:outputText id="counterResumenObj" />
+
+						<h:outputText
+							value="Nombre del proyecto de investigación que precede al artículo (si aplica)"
+							styleClass="legend2" />
+						<p:inputTextarea rows="5" cols="65" autoResize="false"
+							counter="counterTituloConvMed" maxlength="1000"
+							counterTemplate="{0} caracteres restantes." required="false"
+							id="Titulo"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.justificacion}"
+							requiredMessage="El título del proyecto es obligatorio" />
+						<h:outputText id="countTituloConvMed" value="" />
+						<h:outputText id="counterTituloConvMed" />
+
+					</h:panelGrid>
+
+				</p:panel>
+				<br />
+				<p:panel header="Grupos de investigación" id="panelGruposConvMed">
+
+					<h:panelGroup>
+						<h:panelGrid columns="2" align="center" cellpadding="6"
+							cellspacing="3">
+
+							<h:outputText value="Grupo de Investigación" />
+							<p:selectOneMenu
+								value="#{ManejadorConvocatoriaLibros.proyectoActual.aliados}"
+								id="idGrupoInvConvMed" panelStyle="width:600px;"
+								style="width:400px" filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+								<f:selectItems
+									value="#{ManejadorConvocatoriaLibros.gruposInvItem}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</h:panelGroup>
+
+					<h:panelGroup>
+						<center>
+
+							<p:commandButton
+								action="#{ManejadorConvocatoriaLibros.adicionarGrupoInv}"
+								value="Adicionar" icon="ui-icon-plus"
+								update="panelGruposConvMed, tablaGruposInvMed" />
+						</center>
+						<br />
+					</h:panelGroup>
+
+					<center>
+
+						<p:dataTable
+							value="#{ManejadorConvocatoriaLibros.listaGruposConvMedicina}"
+							var="gru" emptyMessage="No hay grupos adicionados"
+							id="tablaGruposInvMed">
+
+							<p:column headerText="Grupo">
+								<h:outputText value="#{gru.nombre}"
+									style="text-align: left; width: 50%; padding-bottom: 10px;" />
+							</p:column>
+
+							<p:column style="width:20%" headerText="(-)">
+								<p:commandButton id="eliminarGrupo" update="tablaGruposInvMed"
+									icon="ui-icon-trash"
+									action="#{ManejadorConvocatoriaLibros.eliminarGrupoInv}"
+									title="Eliminar Grupo">
+									<f:setPropertyActionListener value="#{gru}"
+										target="#{ManejadorConvocatoriaLibros.grupoSeleccionado}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</center>
+
+				</p:panel>
+				<br />
+				<p:panel id="datosRevistaConvMed"
+					header="Información del Artículo y Revista">
+
+					<h:panelGrid columns="2">
+						<h:outputText value="Título del artículo:" />
+						<p:inputTextarea id="ITA_tituloArtGrpResumenesConvMed"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.nombre}"
+							rows="5" cols="60" autoResize="false" maxlength="2000"
+							counter="counterConvMed"
+							counterTemplate="{0} caracteres restantes" required="false"
+							requiredMessage="El título del artículo es obligatorio"
+							style="width:490px" />
+
+						<h:outputText />
+						<h:outputText id="counterConvMed" />
+
+						<h:outputText
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+							value="Título de la revista:" />
+						<p:inputTextarea id="ITA_tituloRevConvMed"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.marcoTeorico}"
+							rows="5" cols="60" autoResize="false" maxlength="2000"
+							counter="counterRevConvMed"
+							counterTemplate="{0} caracteres restantes" required="false"
+							requiredMessage="El título del artículo es obligatorio"
+							style="width:490px" />
+
+						<h:outputText
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}" />
+						<h:outputText
+							rendered="#{ManejadorConvocatoriaLibros.mostrarTituloRevista}"
+							id="counterRevConvMed" />
+
+						<h:outputText value="Resumen articulo:" />
+						<p:inputTextarea id="ResumenArtConvMed" autoResize="false"
+							counter="counterResumenArtConvMed" maxlength="1000"
+							counterTemplate="{0} caracteres restantes."
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.resumen}"
+							rows="10" cols="65" required="false">
+						</p:inputTextarea>
+						<h:outputText id="countResArtConvMed" value="" />
+						<h:outputText id="counterResumenArtConvMed" />
+
+						<h:outputText value="ISBN de la revista que aceptó la publicación"
+							rendered="#{not ManejadorConvocatoriaLibros.mostrarODCEMed}" />
+						<h:outputText value="ISSN (*):"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarODCEMed}" />
+						<p:inputText id="IT_ISSN_GrpResumenesConvMed"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.porqueNivelSostenibilidad}"
+							size="30" />
+						<h:outputText value="Area OCDE principal:"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarODCEMed}" />
+						<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+							value="#{ManejadorConvocatoriaLibros.areaCiencia}"
+							id="areaCiencia"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarODCEMed}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{ManejadorConvocatoriaLibros.areaCienciaItems}" />
+							<p:ajax listener="#{ManejadorConvocatoriaLibros.cambiarArea}"
+								update="subareaCiencia" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()" />
+						</p:selectOneMenu>
+						<h:outputText value="Sub-área OCDE:"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarODCEMed}" />
+						<p:selectOneMenu style="width:350px" panelStyle="width:350px"
+							value="#{ManejadorConvocatoriaLibros.subAreaCiencia}"
+							id="subareaCiencia"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarODCEMed}">
+							<f:selectItem itemLabel="Seleccione una Sub-área secundaria"
+								itemValue="" />
+							<f:selectItems
+								value="#{ManejadorConvocatoriaLibros.subAreaCienciaItems}" />
+						</p:selectOneMenu>
+						<h:outputText value="Área:"
+							rendered="#{not ManejadorConvocatoriaLibros.mostrarODCEMed}" />
+						<p:selectOneMenu id="SOM_areaGrpResumenesConvMed"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.observaciones}"
+							rendered="#{not ManejadorConvocatoriaLibros.mostrarODCEMed}">
+							<f:selectItems value="#{ManejadorConvocatoriaLibros.listaAreas}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Costo de la publicación:"
+							rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1271 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1103 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1017 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1019 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1020
+							and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1064}" />
+						<p:inputText id="IT_CostoPublica"
+							rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1271 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1103 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1017 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1019 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1020
+							and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1064}"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.valorTotalFinal}"
+							size="30" required="false"
+							requiredMessage="El Costo de la publicación es obligatorio" />
+
+						<h:outputText
+							value="Valor solicitado para financiación (no podrá exceder los 1000 dólares):"
+							rendered="#{not ManejadorConvocatoriaLibros.mostrarODCEMed}" />
+						<h:outputText value="Valor solicitado para financiación:"
+							rendered="#{ManejadorConvocatoriaLibros.mostrarODCEMed and (ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1271 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1103 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1017 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1020)}" />
+						<p:inputText id="IT_CostoSolicitado"
+							rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1271 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1103 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1017 and ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1020}"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.valorSolicitado}"
+							size="30" required="false"
+							requiredMessage="El Valor solicitado para financiación es obligatorio" />
+						<h:outputText value="Número palabras:"
+							rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1064}" />
+						<p:inputText id="IT_numPalabrasGrpResumenes"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.diaSesion}"
+							rendered="#{ManejadorConvocatoriaLibros.proyectoActual.modalidad.id != 1064}"
+							size="30" />
+					</h:panelGrid>
+				</p:panel>
+				<br />
+				<p:panel header="Palabras Clave" id="idPalabrasClave">
+
+					<h:panelGrid columns="3" id="gridPalabraClave" align="center">
+						<h:outputText value="Palabras Clave" />
+						<p:autoComplete id="palabraClaveS"
+							value="#{ManejadorConvocatoriaLibros.palabraClave.palabra}"
+							size="50" maxResults="10"
+							completeMethod="#{ManejadorConvocatoriaLibros.obtenerPalabraClavesSugeridas}"
+							minQueryLength="2">
+							<f:validateLength maximum="100" />
+						</p:autoComplete>
+
+						<p:commandButton id="agregarPalabraClave" value="Agregar palabra"
+							update="palabrasTable, gridPalabraClave"
+							action="#{ManejadorConvocatoriaLibros.insertarPalabraClave}">
+						</p:commandButton>
+
+					</h:panelGrid>
+
+					<br />
+					<br />
+					<p:outputPanel id="grupoListaPalabras" align="center">
+						<p:dataTable id="palabrasTable"
+							value="#{ManejadorConvocatoriaLibros.proyectoActual.listaPalabrasES}"
+							var="pal"
+							emptyMessage="No se encuentran palabras clave registradas">
+
+							<p:column style="width:25%">
+								<f:facet name="header">
+									<h:outputText value="Palabra Clave" />
+								</f:facet>
+								<h:outputText value="#{pal.palabraVista}" />
+							</p:column>
+
+							<p:column style="width:3%">
+								<center>
+									<p:commandButton id="selectButton" update="palabrasTable"
+										icon="ui-icon-trash"
+										action="#{ManejadorConvocatoriaLibros.eliminarPalabraClave}"
+										title="Eliminar palabra clave">
+										<f:setPropertyActionListener value="#{pal}"
+											target="#{ManejadorConvocatoriaLibros.palabraClaveTabla}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+
+						</p:dataTable>
+					</p:outputPanel>
+				</p:panel>
+				<br />
+				<p:panel header="Coautores" id="Coautores">
+
+					<h:panelGrid columns="2" align="center" cellpadding="5"
+						id="PG_Coautores" cellspacing="5">
+
+						<h:outputText value="Tipo de documento" />
+						<p:selectOneMenu id="tipoDocInvestigadorSelect2"
+							value="#{ManejadorConvocatoriaLibros.tipoDocumentoCoInv2.id}">
+							<f:selectItems
+								value="#{ManejadorConvocatoriaLibros.tipoDocumentoItem}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="No. documento: " />
+						<p:inputText id="numDocumento2"
+							value="#{ManejadorConvocatoriaLibros.documentoCoinv2}" />
+
+						<h:outputText value="Tipo de participante:" />
+						<p:selectOneMenu id="tipoInvMain2"
+							value="#{ManejadorConvocatoriaLibros.tipoInvestigador}">
+							<f:selectItems value="#{ManejadorConvocatoriaLibros.autores}" />
+							<p:ajax
+								listener="#{ManejadorConvocatoriaLibros.cambiarVinculacion}"
+								update="pgFormInvesExt2, OP_prueba2" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+					<p:outputPanel id="OP_prueba2">
+
+						<h:panelGrid columns="2" align="center" cellpadding="5"
+							id="pgFormInvesExt2" cellspacing="5"
+							rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+
+							<h:outputText value="Primer Nombre *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="primerNombreInvestigador2"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre1}"
+								size="38" requiredMessage="El Primer Nombre es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Nombre"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="segundoNombreInv2"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.nombre2}"
+								size="38"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Primer Apellido *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="primerApellidoInvestigador2"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido1}"
+								size="38" requiredMessage="El Primer Apellido es obligatorio">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Segundo Apellido"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="segundoApellidoInv"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.apellido2}"
+								size="38">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+							<h:outputText value="Género"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:selectOneMenu
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.investigadorExterno.genero}"
+								id="idGenero2" style="width:40px">
+								<f:selectItems value="#{ManejadorConvocatoriaLibros.generoItem}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Institución *"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}" />
+							<p:inputText id="insitucionNombre2"
+								rendered="#{ManejadorConvocatoriaLibros.esOtraVinculacion}"
+								value="#{ManejadorConvocatoriaLibros.insitucionNombre}"
+								size="38" requiredMessage="La institución es obligatoria">
+								<f:validateLength maximum="20" />
+							</p:inputText>
+
+						</h:panelGrid>
+
+					</p:outputPanel>
+
+					<br />
+					<center>
+						<p:commandButton value="Adicionar investigador"
+							id="botonAdicionarInvestigador2"
+							update="listaParticipantes2, pgFormInvesExt2, OP_prueba2, PG_Coautores"
+							action="#{ManejadorConvocatoriaLibros.agregarParticipante}"
+							styleClass="ui-priority-primary" />
+					</center>
+
+					<br />
+					<br />
+
+					<p:dataTable var="i" style="width:650px"
+						value="#{ManejadorConvocatoriaLibros.listaParticipantes}"
+						id="listaParticipantes2">
+
+						<p:column style="width:30%">
+							<f:facet name="header">
+								<h:outputText value="Nombre" />
+							</f:facet>
+							<h:outputText
+								value="#{i.investigador.nombre1} #{i.investigador.nombre2} #{i.investigador.apellido1} #{i.investigador.apellido2}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Tipo de Autor" />
+							</f:facet>
+							<h:outputText
+								value="#{i.tipo.id == 'AI' ? 'Autor interno':(i.tipo.id == 'AEL' ? 'Autor externo':( i.tipo.id == 'P' ? 'Solicitante / Autor Principal':''))}" />
+						</p:column>
+
+						<p:column style="width:10%">
+							<f:facet name="header">
+								<h:outputText value="Eliminar" />
+							</f:facet>
+							<center>
+								<p:commandButton id="botonEliminarIntegrantes2"
+									update="listaParticipantes2" icon="ui-icon-trash"
+									action="#{ManejadorConvocatoriaLibros.eliminarParticipante}"
+									title="Eliminar" rendered="#{i.tipo.id=='P'? false:true}">
+									<f:setPropertyActionListener value="#{i}"
+										target="#{ManejadorConvocatoriaLibros.participante}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+					<br />
+				</p:panel>
+			</p:outputPanel>
+
+			<br />
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+			<br />
+
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Salir" id="botonAtras"
+							action="#{ManejadorConvocatoriaLibros.atras}"
+							styleClass="ui-priority-primary"
+							rendered="#{ManejadorConvocatoriaLibros.validarBotonGuardar}" />
+
+						<p:commandButton value="Guardar y continuar después"
+							id="botonGuardarSalir"
+							action="#{ManejadorConvocatoriaLibros.salirGuardar}"
+							styleClass="ui-priority-primary" update="@form"
+							rendered="#{ManejadorConvocatoriaLibros.validarBotonGuardar}" />
+
+						<p:commandButton value="Guardar y avanzar"
+							id="botonGuardarSiguiente"
+							action="#{ManejadorConvocatoriaLibros.siguiente}"
+							styleClass="ui-priority-primary" update="@form"
+							rendered="#{ManejadorConvocatoriaLibros.validarBotonGuardar}" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+
+		</h:form>
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+			modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+   					 Por favor espere...
+   	 </p:dialog>
+	</ui:define>
+</ui:composition>

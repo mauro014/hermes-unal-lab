@@ -1,0 +1,1699 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">INFORMACIÓN ESPECÍFICA</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Información específica</t:div>
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+			<p:panel header="Líneas asociadas al proyecto" id="idLinea"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017}">
+
+				<center>
+					<p:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="panelLineas" styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Línea:" />
+						<p:selectOneMenu style="width:250px"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.lineaProyecto}"
+							id="areaCienciaSec">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.lineasProyectos2017}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+				</center>
+
+				<br />
+				<h:panelGroup>
+					<center>
+
+						<p:commandButton id="botonLineas"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarLineaProyecto}"
+							value="Adicionar línea" icon="ui-icon-plus"
+							binding="#{ManejadorTrabajoPrevioProyectoES_Inno.botonLineas}"
+							update="tablaLineasProyecto" />
+					</center>
+					<p:message id="messaLineas" for="botonLineas" />
+					<br />
+				</h:panelGroup>
+
+				<center>
+
+					<p:dataTable
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaLineasProyecto}"
+						var="gru" emptyMessage="No hay líneas adicionadas"
+						id="tablaLineasProyecto">
+
+						<p:column headerText="Línea">
+							<h:outputText value="#{gru.descripcion}"
+								style="text-align: left; width: 50%; padding-bottom: 10px;" />
+						</p:column>
+
+						<p:column style="width:20%" headerText="(-)">
+							<p:commandButton id="eliminarLinea" update="tablaLineasProyecto"
+								icon="ui-icon-trash"
+								action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarLineaProyecto}"
+								title="Eliminar línea">
+								<f:setPropertyActionListener value="#{gru}"
+									target="#{ManejadorTrabajoPrevioProyectoES_Inno.lineaProyectoSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</center>
+
+
+			</p:panel>
+			<p:panel header="Lugar de Ejecución" id="idLugarEjecucion"
+				rendered="false">
+
+				<h:panelGrid columns="2" cellpadding="10" align="center" id="dep">
+					<h:outputText value="Departamento" />
+					<p:selectOneMenu
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.departamentoActual.id}"
+						effect="fade" id="depto" filter="true" required="true">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.departamentoItem}" />
+						<p:ajax update="depto,ciudad "
+							listener="#{ManejadorTrabajoPrevioProyectoES_Inno.cambiarDepartamento}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Ciudad:" id="ciudText" />
+					<p:selectOneMenu
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.ciudadActual.id}"
+						effect="fade" id="ciudad" filter="true">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.ciudadItem}" />
+					</p:selectOneMenu>
+
+
+					<h:outputText value="Lugar específico" />
+					<p:inputTextarea id="Lugar_Especifico"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.lugarEspecifico}"
+						rows="5" cols="65" styleClass="textarea" autoResize="false"
+						validatorMessage="Lugar específico debe estar entre 1 - 950 caracteres"
+						counter="counterlugar" maxlength="950"
+						counterTemplate="{0} caracteres restantes.">
+					</p:inputTextarea>
+					<h:outputText id="count2" value="" />
+					<h:outputText id="counterlugar" />
+
+					<h:outputText value="Tipo de zona: " />
+					<p:selectOneMenu id="tipoZona" layout="pageDirection"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.tipoZona}">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaZonas}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+			</p:panel>
+			<p:panel header="Problemas de Innovación Social" id="idProblema"
+				rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}">
+				<h:panelGrid columns="2" cellpadding="10" align="center"
+					id="probleTema">
+					<h:outputText value="Problema: " />
+					<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.asignatura}"
+						effect="fade" id="problema" filter="true"
+						filterMatchMode="contains">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.problemasItem}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<br />
+				<center>
+					<p:panel id="infoResEspe" header="NOTA" style="width:80%"
+						styleClass="mypanel">
+						<h:panelGrid columns="1" id="panelContrapart1"
+							styleClass="estilo-panelgrid-sinbordes">
+
+							<h:outputText
+								value="Para consultar problemas registrados, por favor haga clic en el siguiente enlace:" />
+							<h:outputLink
+								value="http://www.hermes.unal.edu.co/pages/BancoProblemas/ProblemasAprobados.xhtml"
+								target="_blank">
+								<h:outputText value="[+] Consultar problemas registrados" />
+							</h:outputLink>
+						</h:panelGrid>
+
+
+					</p:panel>
+				</center>
+			</p:panel>
+			<p:panel header="Problemas de Innovación Social" id="idProblemaTema"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+
+				<h:panelGrid columns="2" cellpadding="10" align="center"
+					id="probleTema">
+					<h:outputText value="Problema: " />
+					<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.asignatura}"
+						effect="fade" id="problemaTema" filter="true">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.problemasItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Enfoque: "
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+					<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.claseEvento}"
+						effect="fade" id="enfoque" filter="true">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.enfoquesItem}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<br />
+
+				<center>
+					<p:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						id="panelDurac2" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+						<h:outputText value="Temática:" />
+						<p:selectOneMenu style="width:250px"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.areaCienciaSec}"
+							id="areaCienciaSec">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.areaCienciaItems}" />
+							<p:ajax
+								listener="#{ManejadorTrabajoPrevioProyectoES_Inno.cambiarAreaSec}"
+								update="subareaCienciaSec" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Subtemas:" />
+						<p:selectOneMenu style="width:250px"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.subAreaCienciaSec}"
+							id="subareaCienciaSec">
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.subAreaCienciaSecItems}" />
+						</p:selectOneMenu>
+						<h:outputText value="" />
+
+					</p:panelGrid>
+				</center>
+
+				<br />
+				<center>
+					<p:panelGrid columns="1" cellpadding="5" cellspacing="5"
+						id="panelbtnArea" styleClass="estilo-panelgrid-sinbordes"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+						<p:commandButton
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.agregarArea}"
+							value="Adicionar temática" icon="ui-icon-plus"
+							update="areasTabla" />
+					</p:panelGrid>
+				</center>
+				<br />
+				<center>
+					<p:dataTable id="areasTabla" var="area"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaAreasTematicas}"
+						emptyMessage="No se han agregado temáticas" style="width:80%"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+
+						<p:column headerText="Temática">
+							<h:outputText value="#{area.nombreArea}" />
+						</p:column>
+						<p:column headerText="Subtema">
+							<h:outputText value=" #{area.nombreSubArea}" />
+						</p:column>
+
+						<p:column headerText="Eliminar" id="columndarea">
+							<p:commandButton
+								action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarArea}"
+								update="areasTabla" id="eliminararea" icon="ui-icon-trash"
+								title="Eliminar">
+								<f:setPropertyActionListener value="#{area}"
+									target="#{ManejadorTrabajoPrevioProyectoES_Inno.areaSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</center>
+			</p:panel>
+			<p:panel header="Continuidad de Proyectos de Innovación Social"
+				id="idProblemaContinuidad"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+
+				<h:panelGrid columns="2" cellpadding="10" align="center"
+					id="probleCont">
+					<h:outputText value="Proyecto al que le dará continuidad: " />
+					<p:selectOneMenu style="width: 500px;" panelStyle="width: 500px;"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.codigoDib}"
+						effect="fade" id="problemaConti" filter="true">
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.problemasContinuidadItem}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelViabilidad"
+				header="Trabajo previo con comunidades vulnerables"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.mostrarTrabajoPrevio}">
+				<p:outputPanel>
+					Debe mencionar y relacionar trabajos previos realizados por alguno de los integrantes del grupo proponente, que den cuenta de su trayectoria y experiencia en trabajo previo con comunidades vulnerables. 
+				</p:outputPanel>
+				<br />
+				<h:panelGrid columns="2" id="viabilidadPGprueba">
+
+					<h:outputText value="(*) Nombre del trabajo previo realizado:" />
+					<p:inputTextarea id="descViab" rows="5"
+						style="width: 350px; height: 100px;"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.viabPry.descripcion}"
+						binding="#{ManejadorTrabajoPrevioProyectoES_Inno.idDescrViabiliad}"
+						counter="counterTrabajoPrevio" maxlength="490"
+						counterTemplate="{0} caracteres restantes.">
+					</p:inputTextarea>
+					<h:outputText id="count2" value="" />
+					<h:outputText id="counterTrabajoPrevio" />
+					<h:outputText />
+					<p:message id="messViabilidad" for="descViab" />
+
+					<div style="text-align: left">
+						<span>(*) Ingresar el link en donde se encuentra el soporte
+							relacionado en los siguientes formatos: </span>
+
+						<ul id="lista2">
+							<li>Vídeo</li>
+							<li>Otro tipo de soportes</li>
+						</ul>
+					</div>
+					<p:inputTextarea id="enlaceViabilidad" rows="5"
+						style="width: 350px; height: 100px;"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.viabPry.enlace}"
+						counter="counterEnlace" maxlength="490"
+						counterTemplate="{0} caracteres restantes.">
+					</p:inputTextarea>
+					<h:outputText value="" />
+					<h:outputText id="counterEnlace" />
+
+				</h:panelGrid>
+				<br />
+				<div style="text-align: left">
+					<span> <b>Nota: </b>Los archivos de soporte se adjuntan en
+						el formulario "Imprimir Reporte", eligiendo el tipo de archivo
+						"Proyectos Relacionados".
+					</span>
+				</div>
+				<br />
+				<h:panelGrid columns="1" align="center">
+					<p:commandButton value="Agregar" id="botonAgregarViabilidad"
+						update="@form"
+						action="#{ManejadorTrabajoPrevioProyectoES_Inno.agregarViabilidad}"
+						styleClass="ui-priority-primary" />
+				</h:panelGrid>
+				<br />
+				<p:dataTable id="dtViabilidad"
+					value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaViabilidad}"
+					var="viabilidad"
+					emptyMessage="No hay trabajos previos relacionados">
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Descripción" />
+						</f:facet>
+						<h:outputText value="#{viabilidad.descripcion}" />
+					</p:column>
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Link" />
+						</f:facet>
+						<h:outputText value="#{viabilidad.enlace}" />
+					</p:column>
+
+					<p:column style="width:3%">
+						<p:commandButton id="selectButton" icon="ui-icon-trash"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarViabilidad}"
+							title="Eliminar" update="@form">
+							<f:setPropertyActionListener value="#{viabilidad}"
+								target="#{ManejadorTrabajoPrevioProyectoES_Inno.viabAct}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel id="panelComunidades"
+				header="Comunidades Relacionadas al Proyecto"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.mostrarComunidades or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}">
+				<h:panelGrid columns="1">
+					<h:outputText
+						value="Relacione las comunidades que relacionará el proyecto." />
+				</h:panelGrid>
+
+				<h:panelGrid columns="4" id="comunidadesEtnicas">
+					<h:outputText value="Comunidad étnica:" />
+					<p:selectOneMenu id="idListaSelUno"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.comunidadEtnica}"
+						style="width: 480px;" panelStyle="width: 480px;">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaComunidadesEtnicas}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="Ciclo vital principal:" />
+					<p:selectOneMenu id="idListaSelDos"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.cicloVital}"
+						style="width: 480px;" panelStyle="width: 480px;">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaCicloVital}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="Población principal a la que se dirige:" />
+					<p:selectOneMenu id="idCondicionPoblacion"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.condicionPoblacion}"
+						style="width: 480px;" panelStyle="width: 480px;">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaCondicionPoblacion}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText value="Grupo principal al que se dirige:" />
+					<p:selectOneMenu id="idGrupoPoblacion"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.grupoPoblacion}"
+						style="width: 480px;" panelStyle="width: 480px;">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaGrupoPoblacion}" />
+					</p:selectOneMenu>
+					<h:outputText value="" />
+					<h:outputText value="" />
+					<h:outputText
+						value="Cantidad estimada de población beneficiaria del proyecto:" />
+					<p:inputText id="idNumPoblacion"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.numeroPoblacion}"
+						style="width: 50px;" maxlength="100" />
+					<h:outputText value="" />
+					<h:outputText value="" />
+				</h:panelGrid>
+
+				<p:commandButton
+					action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarComunidadEtnica}"
+					value="Adicionar" icon="ui-icon-plus"
+					update="comunidadesEtnicasTable, comunidadesEtnicas"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+				<p:dataTable id="comunidadesEtnicasTable"
+					value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaComunidadesEtnicasProyecto}"
+					var="obj"
+					emptyMessage="No se encuentran comunidades étnicas registradas"
+					style="margin-top: 10px;width:550px;">
+
+					<p:column style="width:70%;">
+						<f:facet name="header">
+							<h:outputText value="Comunidad" />
+						</f:facet>
+						<h:outputText value="#{obj.descripcion}" />
+					</p:column>
+					<p:column style="width:70%;">
+						<f:facet name="header">
+							<h:outputText value="Ciclo Vital" />
+						</f:facet>
+						<h:outputText value="#{obj.descripcionCuatro}" />
+					</p:column>
+					<p:column style="width:70%;">
+						<f:facet name="header">
+							<h:outputText value="Población" />
+						</f:facet>
+						<h:outputText value="#{obj.descripcionDos}" />
+					</p:column>
+					<p:column style="width:70%;">
+						<f:facet name="header">
+							<h:outputText value="Grupo" />
+						</f:facet>
+						<h:outputText value="#{obj.descripcionTres}" />
+					</p:column>
+					<p:column style="width:70%;">
+						<f:facet name="header">
+							<h:outputText value="Número estimado" />
+						</f:facet>
+						<h:outputText value="#{obj.nombreValor}" />
+					</p:column>
+					<p:column style="width:10%; text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton id="selectButton"
+							update="comunidadesEtnicasTable" icon="ui-icon-trash"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarComunidadEtnica}"
+							title="Eliminar indicador" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()">
+							<f:setPropertyActionListener value="#{obj}"
+								target="#{ManejadorTrabajoPrevioProyectoES_Inno.comunidadEtnicaSeleccionada}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:panel id="panelCalidadPropuesta"
+				header="Pertinencia y calidad académica de la propuesta"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}">
+				<h:panelGrid columns="1" id="metoPG" align="center" cellpadding="5"
+					cellspacing="5">
+					<h:outputText
+						value="Estrategia metodológica - Describa la metodología que usará para desarrollar su proyecto" />
+					<p:inputTextarea id="potenMetodologiaCal" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.metodologia}"
+						counter="counterMetoEst" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterMetoEst" />
+					<br />
+					<h:outputText
+						value="Marco conceptual - Describa el marco teórico y conceptual en que se basará el proyecto" />
+					<p:inputTextarea id="potenMetodologiaMarCon" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.marcoConceptualExtSol}"
+						counter="counterMetoEstMarCon" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterMetoEstMarCon" />
+					<br />
+					<h:outputText
+						value="Condiciones del entorno del proyecto y caracterización del contexto local" />
+					<p:inputTextarea id="potenMetodologiaConEnto" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.condicionesEntornoExtSol}"
+						counter="counterMetoEstConEnto" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterMetoEstConEnto" />
+					<br />
+					<h:outputText
+						value="Descripción de la alternativa de solución coherente con el contexto local y la problemática u oportunidad identificada y con el plan de desarrollo municipal, departamental o nacional, según sea el caso" />
+					<p:inputTextarea id="potenMetodologiaSolAlt" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.solucionAlternaExtSol}"
+						counter="counterMetoEstSolAlt" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterMetoEstSolAlt" />
+					<br />
+					<h:outputText
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoCuatro}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoCuatroTexto}" />
+					<p:inputTextarea id="potenMetodologiaSolCampo4" rows="10" cols="90"
+						autoResize="false"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoCuatro}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoCuatro}"
+						counter="counterMetoevidencia" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterMetoevidencia" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel id="panelApropiacion" header="Apropiacion"
+				rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+				<p:outputPanel>
+					Trabajo previo en la(s) problemática(s) que la propuesta pretende resolver 
+				</p:outputPanel>
+				<br />
+				<br />
+				<h:panelGrid columns="2" id="ApropiacionPG">
+					<f:facet name="header">
+						<h:outputText
+							value="Proyectos y actividades desarollados con el grupo poblacional al que está dirigida la iniciativa social" />
+						<br />
+					</f:facet>
+
+					<h:outputText value="Nombre:" />
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="descApro"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.aproPry.descripcionApro}"
+						binding="#{ManejadorTrabajoPrevioProyectoES_Inno.idDescrAprobacion}" />
+					<h:outputText />
+					<p:message id="messViabilidad" for="descApro" />
+
+					<h:outputText value="Comunidad Beneficiaria" />
+					<h:inputTextarea id="comunidadApropiación" rows="10" cols="70"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.aproPry.comunidad}" />
+
+				</h:panelGrid>
+				<br />
+				<div style="text-align: left">
+					<span> Ingresar el link en donde se encuentra el soporte
+						relacionado en los siguientes formatos: </span>
+
+					<ul id="lista2">
+						<li>Vídeo</li>
+						<li>Otro tipo de soportes</li>
+					</ul>
+				</div>
+
+				<h:panelGrid columns="1" id="Apropiacion_2PG" align="center">
+					<h:inputTextarea id="enlaceApropiación" rows="4" cols="70"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.aproPry.enlace}" />
+				</h:panelGrid>
+				<br />
+				<div style="text-align: left">
+					<span> <b>Nota: </b>Los archivos de soporte se adjuntan en
+						el formulario "Imprimir Reporte", eligiendo el tipo de archivo
+						"Proyectos Relacionados".
+					</span>
+				</div>
+				<br />
+				<h:panelGrid columns="1" align="center">
+					<p:commandButton value="Agregar" id="botonAgregarApropiacion"
+						update="@form"
+						action="#{ManejadorTrabajoPrevioProyectoES_Inno.agregarApropiacion}"
+						styleClass="ui-priority-primary" />
+				</h:panelGrid>
+				<br />
+				<p:dataTable id="dtApropiacion"
+					value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaApropiacion}"
+					var="apropiacion"
+					emptyMessage="No hay trabajos previos relacionados">
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Descripción" />
+						</f:facet>
+						<h:outputText value="#{apropiacion.descripcionApro}" />
+					</p:column>
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Comunidad Beneficiaria" />
+						</f:facet>
+						<h:outputText value="#{apropiacion.comunidad}" />
+					</p:column>
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Link" />
+						</f:facet>
+						<h:outputText value="#{apropiacion.enlace}" />
+					</p:column>
+
+					<p:column style="width:3%">
+						<p:commandButton id="selectButton" icon="ui-icon-trash"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarApropiacion}"
+							title="Eliminar" update="@form">
+							<f:setPropertyActionListener value="#{apropiacion}"
+								target="#{ManejadorTrabajoPrevioProyectoES_Inno.apropAct}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel id="panelNatIniExtSol2018"
+				header="Articulación del proyecto con otras iniciativas"
+				rendered="#{false and ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}">
+
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5">
+					<h:outputText
+						value="Articulación misional - Indique como el proyecto articula las funcionales misionales UN (investigación, docencia y extensión)" />
+					<p:inputTextarea id="artMisExtSol2018" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.transferencia}" />
+				</h:panelGrid>
+				<br />
+				<p:outputPanel id="pgListCentrosPensamientoArti" rendered="false">
+
+					<h:panelGrid columns="2" id="pgCampoUnoArti">
+						<h:outputText
+							value="Este proyecto aplica a través de un centro de pensamiento:" />
+						<p:selectOneMenu id="esCampoUnoArti"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.tieneCentrosPensamiento}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItem itemValue="S" itemLabel="Si" />
+							<f:selectItem itemValue="N" itemLabel="No" />
+							<p:ajax
+								listener="#{ManejadorTrabajoPrevioProyectoES_Inno.cambioSiCentroPensamiento}"
+								update="pgListCentrosPensamientoArti,textoCampo1Arti, pgCampoUnoArti" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" id="textoCampo1Arti" align="center"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.siTieneCentrosPensamiento}">
+						<h:outputText
+							value="Por favor seleccione el centro de pensamiento:" />
+						<p:selectOneMenu id="idListaSelUnoArti"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.ejeTematico}"
+							style="width: 480px;" panelStyle="width: 480px;">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaCentrosPensamiento}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:outputPanel>
+			</p:panel>
+			<p:panel id="panelSostenibiliad" header="Sostenibilidad">
+				<h:panelGrid columns="3" cellpadding="5" cellspacing="5" id="pgForm"
+					align="center">
+					<h:outputText
+						value="Articulación del proyecto con otras iniciativas (descripción, naturaleza)" />
+					<p:inputTextarea id="artMisExtSol2018" rows="10" cols="70"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.transferencia}" />
+					<h:outputText />
+					<h:outputText value="Nivel de sostenibilidad:"></h:outputText>
+					<p:selectOneMenu id="idNivelSos"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.nivelSostenibilidad}">
+						<f:selectItems id="tipoContrato"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.nivelSostenibilidadItem}" />
+					</p:selectOneMenu>
+					<p:message id="messaIdNivSos" for="idNivelSos" />
+
+					<h:outputText value="¿Por qué ese nivel de sosteniblidad?: "></h:outputText>
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="pqNivSos"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.porqueNivelSostenibilidad}"
+						binding="#{ManejadorTrabajoPrevioProyectoES_Inno.pqNivSos}"
+						counter="counterPorqueSost" maxlength="3950"
+						counterTemplate="{0} caracteres restantes.">
+					</p:inputTextarea>
+					<p:message id="messaNivSos" for="pqNivSos" />
+					<h:outputText id="count2" value="" />
+					<h:outputText id="counterPorqueSost" />
+					<h:outputText id="count3" value="" />
+					<h:outputText
+						value="Estrategias que harán sostenible el proyecto una vez finalizada la participación de la UN:"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="idDescripcionEstrategias"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.descripcion}"
+						counter="counterDescEstra" maxlength="3950"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:message id="messaDescripcion" for="idDescripcionEstrategias"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="countEst" value=""
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="counterDescEstra"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText
+						value="¿De qué manera se le va a dar continuidad a este proyecto?: "
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}"></h:outputText>
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="pqContinuidad"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.porqueContinuidadProyecto}"
+						binding="#{ManejadorTrabajoPrevioProyectoES_Inno.pqContinuidad}"
+						counter="counterPorqueCont" maxlength="3950"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:message id="messaConti" for="pqContinuidad"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="count2" value=""
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="counterPorqueCont"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="count3" value=""
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+
+					<h:outputText
+						value="¿El proyecto cuenta con aliados estratégicos para su desarrollo? "
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+					<p:selectOneRadio id="opcionesAliados"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.aliados}"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+						<f:selectItem itemLabel="Si" itemValue="Si" />
+						<f:selectItem itemLabel="No" itemValue="No" />
+					</p:selectOneRadio>
+					<p:message id="messaAli" for="opcionesAliados"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+
+					<h:outputText
+						value="¿Si el proyecto cuenta con aliados estratégicos, cuáles son y cómo aportarán al desarrollo del mismo? "
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="idDescripcionAliados"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.observacionesSostenibilidad}"
+						counter="counterDesc" maxlength="3950"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:message id="messaDescripcion" for="idDescripcionAliados"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="count2" value=""
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="counterDesc"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="count3" value=""
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+
+					<h:outputText value="Observaciones: "
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}"></h:outputText>
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="idObservaciones"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.observacionesSostenibilidad}"
+						counter="counterObser" maxlength="3950"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:message id="messaObserv" for="idObservaciones"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="count2" value=""
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="counterObser"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText id="count3" value=""
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<h:outputText
+						value="Describa las configuraciones sociales y nuevas metodologías: "
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}"></h:outputText>
+					<p:inputTextarea rows="10" cols="70" autoResize="false"
+						id="idObservacionesConfSoc"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.observacionesSostenibilidad}"
+						counter="counterObserConfSoc" maxlength="3950"
+						counterTemplate="{0} caracteres restantes."
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+					<p:message id="messaObservConfSoc" for="idObservacionesConfSoc"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+					<h:outputText id="count2ConfSoc" value=""
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+					<h:outputText id="counterObserConfSoc"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+					<h:outputText id="count3ConfSoc" value=""
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}" />
+				</h:panelGrid>
+				<br />
+
+				<h:panelGrid columns="1" cellpadding="5" cellspacing="5"
+					rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and false}"
+					align="center">
+					<p:outputPanel>
+						<h:outputText
+							value="¿Observa usted alguna posibilidad de articulación de este proyecto con otras iniciativas públicas, de cooperación internacional, mixtas, privadas o de la sociedad civil que soporten la sostenibilidad el proyecto? Indique cuáles iniciativas y su naturaleza."></h:outputText>
+					</p:outputPanel>
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+					id="pgFormArtiSoste"
+					rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and false}">
+
+					<h:outputText value="Naturaleza:"></h:outputText>
+					<p:selectOneMenu id="idNaturalezaArtiSoste"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.natIni.naturalezaIniciativa}">
+						<f:selectItems id="tipoContratoArtiSoste"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.naturalezaEntidadItem}" />
+					</p:selectOneMenu>
+					<p:message id="messaNaturArtiSoste" for="idNaturalezaArtiSoste" />
+
+					<h:outputText value="Descripción: "></h:outputText>
+					<p:inputTextarea id="idDescrIniciaArtiSoste" rows="5" cols="60"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.natIni.descripcion}"
+						binding="#{ManejadorTrabajoPrevioProyectoES_Inno.idDescrIniciaArtiSoste}"
+						counter="counterDescNat" maxlength="950"
+						counterTemplate="{0} caracteres restantes." />
+					<p:message id="messaDescIniArtiSoste" for="idDescrIniciaArtiSoste" />
+					<h:outputText id="count2" value="" />
+					<h:outputText id="counterDescNat" />
+					<h:outputText id="count3" value="" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="1" align="center"
+					rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and false}">
+					<p:commandButton value="Agregar" id="botonAgregarIni"
+						update="dtIniArtiSoste, pgFormArtiSoste"
+						action="#{ManejadorTrabajoPrevioProyectoES_Inno.agregarIniciativa}"
+						styleClass="ui-priority-primary"></p:commandButton>
+				</h:panelGrid>
+				<br />
+				<p:dataTable id="dtIniArtiSoste"
+					rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and false}"
+					value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaIniciativas}"
+					var="ini">
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Naturaleza" />
+						</f:facet>
+						<h:outputText value="#{ini.naturalezaIniciativa}" />
+					</p:column>
+
+					<p:column style="width:50%">
+						<f:facet name="header">
+							<h:outputText value="Descripción" />
+						</f:facet>
+						<h:outputText value="#{ini.descripcion}" />
+					</p:column>
+
+					<p:column style="width:3%">
+						<p:commandButton id="selectButton" icon="ui-icon-trash"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarIniciativa}"
+							title="Eliminar" update="dtIniArtiSoste">
+							<f:setPropertyActionListener value="#{ini}"
+								target="#{ManejadorTrabajoPrevioProyectoES_Inno.iniciativaAct}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<br />
+				<h:panelGrid columns="2" align="center" cellpadding="5"
+					cellspacing="5"
+					rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}">
+					<h:outputText
+						value="¿El proyecto cuenta con cofinanciación por parte de entidades externas y/o comunidades? ¿Cuáles?" />
+					<p:inputTextarea id="finEnExtArtiSost" rows="10" cols="90"
+						style="width: 350px; height: 100px;"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.consideracionesEticas}" />
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5">
+					<h:outputText
+						value="Planteamiento de procesos de intercambio de conocimiento y diálogo de saberes con la(s) comunidad(es) participante(s)" />
+					<p:inputTextarea id="empdaraPlant" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.procesosTransferenciaExtSol}"
+						counter="counterEmpoderamientoPlant" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterEmpoderamientoPlant" />
+					<br />
+					<h:outputText
+						value="Grado de participación de la comunidad en la construcción de la propuesta y planteamiento de roles de la comunidad en la ejecución del proyecto" />
+					<p:inputTextarea id="empdaraPartCom" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.participacionComunidadExtSol}"
+						counter="counterEmpoderamientoPartCom" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterEmpoderamientoPartCom" />
+					<br />
+					<h:outputText
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoCinco}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoCincoTexto}" />
+					<p:inputTextarea id="ExtSolCampo5" rows="10" cols="90"
+						autoResize="false"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoCinco}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoCinco}"
+						counter="counterCampo5" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterCampo5" />
+					<br />
+					<h:outputText
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoTrece}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoTreceTexto}" />
+					<p:inputTextarea id="ExtSolCampo13" rows="10" cols="90"
+						autoResize="false"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoTrece}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoTrece}"
+						counter="counterCampo13" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterCampo13" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelArmonizabcion"
+				header="Armonización de las funciones misionales">
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5">
+					<h:outputText rendered="false"
+						value="Desarrollo de la formación integral en el aula y fuera de ella, en relación con el proyecto de extensión postulado" />
+					<p:inputTextarea id="aplicabJust" rows="10" cols="90"
+						autoResize="false" rendered="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.aplicabilidadJustificacionExtSol}"
+						counter="counteraplicabJust" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counteraplicabJust" rendered="false" />
+					<br />
+					<h:outputText
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoDiez}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoDiezTexto}" />
+
+					<p:inputTextarea id="Campo10" rows="10" cols="90" autoResize="false"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoDiez}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoDiez}"
+						counter="counterCampo10" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterCampo10" />
+					<br />
+					<h:outputText
+						value="Fomento e incorporación de la innovación pedagógica presentando nuevas experiencias al aula dirigidas a la comunidad mediante el desarrollo del proyecto de extensión postulado" />
+					<p:inputTextarea id="aplicabJustAE" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.aplicabilidadJustificacionAEExtSol}"
+						counter="counteraplicabJustAE" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<br />
+					<h:outputText
+						value="Articulación con grupos de investigación y semilleros de investigación, creación, extensión solidaria o innovación para el desarrollo del proyecto de extensión postulado" />
+					<p:inputTextarea id="empdaraIT" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.impactoEsperado}"
+						counter="counterEmpoderamiento" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterEmpoderamiento" />
+					<br />
+					<h:outputText
+						value="Articulación con resultados de investigación previamente obtenidos, para el desarrollo del proyecto de extensión postulado" />
+					<p:inputTextarea id="transfPoten" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoOcho}"
+						counter="counterTransfPoten" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterTransfPoten" />
+					<br/>
+					<h:outputText
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoSiete}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoSieteTexto}" />
+
+					<p:inputTextarea id="Campo7" rows="10" cols="90" autoResize="false"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoSiete}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoSiete}"
+						counter="counterCampo7" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterCampo7" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelAplicabilidad" header="Aplicabilidad del proyecto"
+				rendered="#{false and ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022}">
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5">
+					<h:outputText
+						value="Justifique como va a aportar la propuesta al cumplimiento de los Objetivos de Desarrollo Sostenible seleccionados" />
+					<p:inputTextarea id="aplicabJust" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.aplicabilidadJustificacionExtSol}"
+						counter="counteraplicabJust" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counteraplicabJust" />
+					<br />
+					<h:outputText
+						value="Áreas Estratégicas (Seleccione las áreas estratégicas de la Vicerrectoría de Investigación en los cuales están enmarcadas las actividades)"
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}" />
+					<p:selectOneMenu id="aplicabAreaEst" panelStyle="width:600px;"
+						style="width:600px"
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.areaEst}">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaAreasEst}" />
+					</p:selectOneMenu>
+					<p:commandButton id="botonValoresProyectos" value="Adicionar"
+						icon="ui-icon-plus"
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}"
+						action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarAreaEst}"
+						update="tablaAreasEst" />
+					<p:dataTable
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.areasEst}"
+						var="gru" emptyMessage="No hay valores adicionados"
+						id="tablaAreasEst">
+						<p:column headerText="Área Estratégica">
+							<h:outputText value="#{gru.descripcion}"
+								style="text-align: left; width: 50%; padding-bottom: 10px;" />
+						</p:column>
+						<p:column style="width:20%" headerText="(-)">
+							<p:commandButton id="eliminarLinea" update="tablaAreasEst"
+								icon="ui-icon-trash"
+								action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarAreaEst}"
+								title="Eliminar">
+								<f:setPropertyActionListener value="#{gru}"
+									target="#{ManejadorTrabajoPrevioProyectoES_Inno.areaEstSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+					<br />
+					<h:outputText
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}"
+						value="Justifique como va a aportar la propuesta al cumplimiento de las áreas estratégicas de la Vicerrectoría de Investigación seleccionadas" />
+					<p:inputTextarea id="aplicabJustAE" rows="10" cols="90"
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.aplicabilidadJustificacionAEExtSol}"
+						counter="counteraplicabJustAE" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counteraplicabJustAE"
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 940 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 941 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007
+						or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034)}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelNatIni"
+				header="Articulación del proyecto con otras iniciativas"
+				rendered="#{false and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}">
+				<br />
+				<p:outputPanel>
+			¿Observa usted alguna posibilidad de articulación de este proyecto con otras iniciativas públicas, de cooperación internacional, mixtas, privadas o de la sociedad civil? Indique cuáles iniciativas y su naturaleza.
+			</p:outputPanel>
+				<br />
+				<br />
+				<p:outputPanel>
+					<b> Nota: Por favor verificar que la información a registrar en
+						el campo "Descripción" no contenga los caracteres ampersand
+						(&amp;) o virgulilla (~). </b>
+				</p:outputPanel>
+				<br />
+				<br />
+				<h:panelGrid columns="3" cellpadding="5" cellspacing="5"
+					id="pgFormInicia">
+
+					<h:outputText value="Naturaleza:"></h:outputText>
+					<p:selectOneMenu id="idNaturaleza"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.natIni.naturalezaIniciativa}">
+						<f:selectItems id="tipoContrato"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.naturalezaEntidadItem}" />
+					</p:selectOneMenu>
+					<p:message id="messaNatur" for="idNaturaleza" />
+
+					<h:outputText value="Descripción: "></h:outputText>
+					<p:inputTextarea id="idDescrInicia" rows="5" cols="60"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.natIni.descripcion}"
+						binding="#{ManejadorTrabajoPrevioProyectoES_Inno.idDescrInicia}"
+						counter="counterDescNat" maxlength="950"
+						counterTemplate="{0} caracteres restantes." />
+					<p:message id="messaDescIni" for="idDescrInicia" />
+					<h:outputText id="count2" value="" />
+					<h:outputText id="counterDescNat" />
+					<h:outputText id="count3" value="" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" align="center">
+					<p:commandButton value="Agregar" id="botonAgregarIni"
+						update="dtIni, pgFormInicia"
+						action="#{ManejadorTrabajoPrevioProyectoES_Inno.agregarIniciativa}"
+						styleClass="ui-priority-primary"></p:commandButton>
+				</h:panelGrid>
+
+				<br />
+
+				<p:dataTable id="dtIni"
+					value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaIniciativas}"
+					var="ini">
+
+					<p:column style="width:25%">
+						<f:facet name="header">
+							<h:outputText value="Naturaleza" />
+						</f:facet>
+						<h:outputText value="#{ini.naturalezaIniciativa}" />
+					</p:column>
+
+					<p:column style="width:50%">
+						<f:facet name="header">
+							<h:outputText value="Descripción" />
+						</f:facet>
+						<h:outputText value="#{ini.descripcion}" />
+					</p:column>
+
+					<p:column style="width:3%">
+						<p:commandButton id="selectButton" icon="ui-icon-trash"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarIniciativa}"
+							title="Eliminar" update="dtIni">
+							<f:setPropertyActionListener value="#{ini}"
+								target="#{ManejadorTrabajoPrevioProyectoES_Inno.iniciativaAct}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<h:panelGrid columns="1" align="center" cellpadding="5"
+					cellspacing="5"
+					rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+					<h:outputText
+						value="Articulación misional - Indique cómo el proyecto articula las funciones misionales UN. (Investigación, docencia, extensión) y si articula dos o más facultades, sedes o instituto" />
+					<p:inputTextarea id="artMis" rows="10" cols="90" autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.transferencia}" />
+
+					<h:outputText
+						value="El proyecto cuenta cofinanciación por parte de entidades externas y/o comunidades" />
+					<p:inputTextarea id="finEnExt" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.consideracionesEticas}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelTransferencia" header="Transferencia"
+				rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2015 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+				<h:panelGrid columns="1" id="transferenciaPG" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText
+						value="¿Cuáles son las potencialidades a transferir de esta experiencia a otros contextos o problemas?" />
+					<p:inputTextarea id="transfPoten" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.transferencia}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelCentrosPensamiento" header="Centros de pensamiento"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+
+				<p:outputPanel id="pgListCentrosPensamiento">
+
+					<h:panelGrid columns="2" id="pgCampoUno">
+						<h:outputText
+							value="Este proyecto aplica a través de un centro de pensamiento:" />
+						<p:selectOneMenu id="esCampoUno"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.tieneCentrosPensamiento}">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItem itemValue="S" itemLabel="Si" />
+							<f:selectItem itemValue="N" itemLabel="No" />
+							<p:ajax
+								listener="#{ManejadorTrabajoPrevioProyectoES_Inno.cambioSiCentroPensamiento}"
+								update="pgListCentrosPensamiento,textoCampo1, pgCampoUno" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" id="textoCampo1" align="center"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.siTieneCentrosPensamiento}">
+						<h:outputText
+							value="Por favor seleccione el centro de pensamiento:" />
+						<p:selectOneMenu id="idListaSelUno"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.ejeTematico}"
+							style="width: 480px;" panelStyle="width: 480px;">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaCentrosPensamiento}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:outputPanel>
+			</p:panel>
+			<p:panel id="panelEscalabilidad" header="Escalabilidad"
+				rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+				<h:panelGrid columns="1" id="escalabilidadIn" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText
+						value="Posibilidades de escalabilidad de la experiencia y sus resultados a otros grupos, comunidades o problemas similares" />
+					<p:inputTextarea id="potenEscalabilidad" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.transferencia}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelEficiencia" header="Eficiencia"
+				rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+				<h:panelGrid columns="1" id="eficienciaIn" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText value="Eficiencia de la solución" />
+					<p:inputTextarea id="potenEficiencia" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.consideracionesEticas}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelNovedad" header="Novedad"
+				rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2}">
+				<h:panelGrid columns="1" id="novedadIn" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText value="Novedad" />
+					<p:inputTextarea id="potenNovedad" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.metodologia}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelMetodologia" header="Metodología"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+				<h:panelGrid columns="1" id="metoPG" align="center" cellpadding="5"
+					cellspacing="5">
+					<h:outputText
+						value="Describa la metodología que usará para desarrollar su proyecto" />
+					<p:inputTextarea id="potenMetodologia" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.metodologia}"
+						counter="counterMeto" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterMeto" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel id="panelArticulacionMisional"
+				header="Articulación Misional"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+				<h:panelGrid columns="1" id="artiMisonal" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText
+						value="Indique cómo el proyecto articula las funciones misionales UN. (investigación, docencia, extensión) y si articula dos o más facultades, sedes o institutos" />
+					<p:inputTextarea id="artiMisiIT" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.transferencia}"
+						counter="counterArticulacion" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterArticulacion" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelEmpoderamiento"
+				header="Estrategia de Empoderamiento de la Comunidad"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+				<h:panelGrid columns="1" id="empoderamiento" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText
+						value="Estrategia para el desarrollo de capacidades y competencias en la comunidad" />
+					<p:inputTextarea id="empdaraIT" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.consideracionesEticas}"
+						counter="counterEmpoderamiento" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterEmpoderamiento" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelEmpoderamiento2017" header="Empoderamiento"
+				rendered="#{false and !ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 and (ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and not(ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034))}">
+				<h:panelGrid columns="1" id="empoderamientoPg" align="center"
+					cellpadding="5" cellspacing="5">
+					<br />
+					<h:outputText
+						value="Planteamiento de roles de la comunidad en la ejecución del proyecto"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}" />
+					<p:inputTextarea id="empdaraRoles" rows="10" cols="90"
+						autoResize="false"
+						rendered="#{!ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.planteamientoRolesExtSol}"
+						counter="counterEmpoderamientoRoles" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterEmpoderamientoRoles" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelPotInno" header="Potencial Innovador"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+				<h:panelGrid columns="1" id="potInnoPG" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText value="Potencial Innovador" />
+					<p:inputTextarea id="potInnoIT" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.justificacion}"
+						counter="counterPotencial" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterPotencial" />
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelPotInno2017" header="Potencial Innovador"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.mostrarPotencialInnovador}">
+				<h:panelGrid columns="1" id="potInnoPG2017" align="center"
+					cellpadding="5" cellspacing="5">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+						<p:row>
+							<p:column style="width:180px">
+								<h:outputText
+									value="Planteamiento de indicadores de apropiación de la innovación por la comunidad:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea
+									value="#{ManejadorTrabajoPrevioProyectoES_Inno.indicadoresApropiacion}"
+									rows="3" id="indicador" style="width: 350px; height: 60px;"
+									validatorMessage="El indicador debe estar entre 1 - 2000 caracteres"
+									counter="counterIndicador" maxlength="2000"
+									counterTemplate="{0} caracteres restantes.">
+								</p:inputTextarea>
+								<h:outputText id="counterIndicador" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="text-align: center;" colspan="2">
+								<p:commandButton
+									action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarIndicadoresApropiacion}"
+									value="Adicionar indicador" icon="ui-icon-plus"
+									update="indicadoresTable, indicador"
+									onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<p:dataTable id="indicadoresTable"
+									value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaindicadoresApropiacion}"
+									var="obj"
+									emptyMessage="No se encuentran objetivos indicadores registrados"
+									editable="true" style="margin-top: 10px;width:550px;">
+
+									<p:column style="width:70%;">
+										<f:facet name="header">
+											<h:outputText value="Indicador" />
+										</f:facet>
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{obj.descripcion}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputTextarea rows="3" maxlength="2000"
+													value="#{obj.descripcion}" style="width:100%" />
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column style="width:10%; text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Editar" />
+										</f:facet>
+										<p:rowEditor />
+									</p:column>
+									<p:column style="width:10%; text-align: center;">
+										<f:facet name="header">
+											<h:outputText value="Eliminar" />
+										</f:facet>
+										<p:commandButton id="selectButton" update="indicadoresTable"
+											icon="ui-icon-trash"
+											action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarIndicadoresApropiacion}"
+											title="Eliminar indicador" onstart="dialogEspere.show()"
+											oncomplete="dialogEspere.hide()">
+											<f:setPropertyActionListener value="#{obj}"
+												target="#{ManejadorTrabajoPrevioProyectoES_Inno.indicadoresApropiacionSeleccionada}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<br />
+					<h:outputText
+						rendered="#{false and not(ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007)}"
+						value="Descripción de nuevos diálogos del saber como aporte a la solución o mejora de la condición de un problema de manera original" />
+					<p:inputTextarea id="potInnoIT2017" rows="10" cols="90"
+						autoResize="false"
+						rendered="#{false and not(ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007)}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.justificacion}"
+						counter="counterPotencial2017" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterPotencial2017"
+						rendered="#{not(ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1006 or ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1007)}" />
+					<br />
+					<h:outputText
+						value="Descripción de atributos de la solución innovadora" />
+					<p:inputTextarea id="potInnoITDesAtr" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.atributosSolInnoExtSol}"
+						counter="counterPotencialDesAtr" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterPotencialDesAtr" />
+					<br />
+					<p:panel header="" id="idValoresListaProyectos"
+						rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2017_M2 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2018 and ManejadorTrabajoPrevioProyectoES_Inno.convocatoriaActual.id eq 1034}">
+						<center>
+							<p:panelGrid columns="2" id="panelLineas"
+								styleClass="estilo-panelgrid-sinbordes">
+								<h:outputText value="Área(s) de atención prioritaria" />
+								<p:selectOneMenu panelStyle="width:350px;" style="width:350px"
+									filter="true" filterMatchMode="contains"
+									value="#{ManejadorTrabajoPrevioProyectoES_Inno.valorListaProyecto}"
+									id="areaCienciaSec">
+									<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+									<f:selectItems
+										value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaSeleccionValoresProyecto}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+						</center>
+						<br />
+						<h:panelGroup>
+							<center>
+								<p:commandButton id="btnVLP"
+									action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarValorProyecto}"
+									value="Adicionar" icon="ui-icon-plus"
+									update="idValoresListaProyectos" />
+							</center>
+							<br />
+						</h:panelGroup>
+						<center>
+							<p:dataTable
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.valoresListasProyectos}"
+								var="gru" emptyMessage="No hay valores adicionados"
+								id="tablaValoresProyecto1">
+								<p:column headerText="Área de Atención prioritaria">
+									<h:outputText value="#{gru.descripcion}"
+										style="text-align: left; width: 50%; padding-bottom: 10px;" />
+								</p:column>
+								<p:column style="width:20%" headerText="(-)">
+									<p:commandButton id="eliminarLinea"
+										update="tablaValoresProyecto" icon="ui-icon-trash"
+										action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarValorProyecto}"
+										title="Eliminar">
+										<f:setPropertyActionListener value="#{gru}"
+											target="#{ManejadorTrabajoPrevioProyectoES_Inno.valorListaProyectoSeleccionada}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</center>
+					</p:panel>
+					<br />
+					<h:outputText
+						rendered="#{false and not(ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022)}"
+						value="Justificación sobre asociación de Áreas de Atención Prioritaria" />
+					<p:inputTextarea id="proyectoActualTitulo12_CP"
+						rendered="#{false and not(ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022)}"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoDoce}"
+						rows="10" cols="75" autoResize="false" maxlength="3950" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelImpacto" header="Impacto esperado"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016 or ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2016_M3}">
+				<h:panelGrid columns="1" id="impactoPG" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText value="Impacto esperado" />
+					<p:inputTextarea id="impactoIT" rows="10" cols="90"
+						autoResize="false"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.impactoEsperado}"
+						counter="counterImpacto" maxlength="3950"
+						counterTemplate="{0} caracteres restantes." />
+					<h:outputText id="counterImpacto" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="panelImpacto" header="Consideraciones Éticas"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.esInnoSocial2022}">
+				<h:panelGrid columns="1" id="impactoPG" align="center"
+					cellpadding="5" cellspacing="5">
+					<h:outputText value="Consideraciones Éticas" />
+					<p:inputTextarea id="proyectoActualTitulo4"
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoNueve}"
+						rows="10" cols="90" autoResize="false" maxlength="3950" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel
+				header="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccionmultiple}"
+				id="idValoresListaProyectos"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.listaSeleccionMultiple}">
+
+				<center>
+					<p:panelGrid columns="3" id="panelLista"
+						styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccionmultiple}" />
+						<p:selectOneMenu panelStyle="width:350px;" style="width:350px"
+							filter="true" filterMatchMode="contains"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.valorListaProyectoParametrizado}"
+							id="areaCienciaSec">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaSeleccionMultipleValoresProyecto}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+				</center>
+
+				<br />
+				<h:panelGroup>
+					<center>
+
+						<p:commandButton id="botonValoresParametrizadosProyectos"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarValorProyectoParametrizado}"
+							value="Adicionar" icon="ui-icon-plus"
+							update="tablaValoresProyectoParametrizado" />
+					</center>
+					<br />
+				</h:panelGroup>
+
+				<center>
+
+					<p:dataTable
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.valoresListasProyectosParametrizado}"
+						var="gru" emptyMessage="No hay valores adicionados"
+						id="tablaValoresProyectoParametrizado">
+
+						<p:column
+							headerText="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccionmultiple}">
+							<h:outputText value="#{gru.descripcion}"
+								style="text-align: left; width: 50%; padding-bottom: 10px;" />
+						</p:column>
+
+						<p:column style="width:20%" headerText="(-)">
+							<p:commandButton id="eliminarLinea1"
+								update="tablaValoresProyectoParametrizado" icon="ui-icon-trash"
+								action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarValorProyectoParametrizado}"
+								title="Eliminar">
+								<f:setPropertyActionListener value="#{gru}"
+									target="#{ManejadorTrabajoPrevioProyectoES_Inno.valorListaProyectoSeleccionadaParametrizada}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</center>
+				<br />
+				<p:panelGrid id="panelListaCampo1" styleClass="estilo-panelgrid-sinbordes" rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoUno}">
+					<p:row>
+						<p:column>
+							<h:outputText
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoUno}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoUnoTexto}" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="potenMetodologiaSolCampo1" rows="10"
+								cols="80" autoResize="false"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoUno}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoUno}"
+								counter="counterCampo1" maxlength="3950"
+								counterTemplate="{0} caracteres restantes." />
+							<h:outputText id="counterCampo1" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel
+				header="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccionmultiple2}"
+				id="idValoresListaProyectos2"
+				rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.listaSeleccionMultiple2}">
+				<center>
+					<p:panelGrid columns="3" id="panelLista2"
+						styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccionmultiple2}" />
+						<p:selectOneMenu panelStyle="width:350px;" style="width:350px"
+							filter="true" filterMatchMode="contains"
+							value="#{ManejadorTrabajoPrevioProyectoES_Inno.valorListaProyectoParametrizado2}"
+							id="listaMultiple2">
+							<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+							<f:selectItems
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaSeleccionMultipleValoresProyecto2}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+				</center>
+
+				<br />
+				<h:panelGroup>
+					<center>
+
+						<p:commandButton id="botonValoresParametrizadosProyectos2"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.adicionarValorProyectoParametrizado2}"
+							value="Adicionar" icon="ui-icon-plus"
+							update="tablaValoresProyectoParametrizado2" />
+					</center>
+					<br />
+				</h:panelGroup>
+
+				<center>
+
+					<p:dataTable
+						value="#{ManejadorTrabajoPrevioProyectoES_Inno.valoresListasProyectosParametrizado2}"
+						var="gru" emptyMessage="No hay valores adicionados"
+						id="tablaValoresProyectoParametrizado2">
+
+						<p:column
+							headerText="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccionmultiple2}">
+							<h:outputText value="#{gru.descripcion}"
+								style="text-align: left; width: 50%; padding-bottom: 10px;" />
+						</p:column>
+
+						<p:column style="width:20%" headerText="(-)">
+							<p:commandButton id="eliminarLinea1"
+								update="tablaValoresProyectoParametrizado2" icon="ui-icon-trash"
+								action="#{ManejadorTrabajoPrevioProyectoES_Inno.eliminarValorProyectoParametrizado2}"
+								title="Eliminar">
+								<f:setPropertyActionListener value="#{gru}"
+									target="#{ManejadorTrabajoPrevioProyectoES_Inno.valorListaProyectoSeleccionadaParametrizada2}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</center>
+
+
+			</p:panel>
+			<p:panel id="infoAdicional" header="Información adicional">
+				<p:panelGrid id="panelListaEje"
+					styleClass="estilo-panelgrid-sinbordes">
+					<p:row>
+						<p:column style="width:200px;">
+							<h:outputText
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.textoListaSeleccion}"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.listaSeleccion}" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu panelStyle="width:350px;" style="width:350px"
+								filter="true" filterMatchMode="contains"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.ejeTematico}"
+								id="idListaSel1"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.listaSeleccion}">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+								<f:selectItems
+									value="#{ManejadorTrabajoPrevioProyectoES_Inno.listaSeleccion1valoresProyecto}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value=""
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.listaSeleccion}" />
+							<p:message for="idListaSelUno"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.listaSeleccion}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoDos}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoDosTexto}" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="potenMetodologiaSolCampo2" rows="10"
+								cols="80" autoResize="false"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoDos}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoDos}"
+								counter="counterCampo2" maxlength="3950"
+								counterTemplate="{0} caracteres restantes." />
+							<h:outputText id="counterCampo2" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoTres}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoTresTexto}" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="Campo3" rows="10" cols="80"
+								autoResize="false"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoTres}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoTres}"
+								counter="counterCampo3" maxlength="3950"
+								counterTemplate="{0} caracteres restantes." />
+							<h:outputText id="counterCampo3" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoSeis}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoSeisTexto}" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="Campo6" rows="10" cols="80"
+								autoResize="false"
+								rendered="#{ManejadorTrabajoPrevioProyectoES_Inno.formularioEspecifica.campoSeis}"
+								value="#{ManejadorTrabajoPrevioProyectoES_Inno.proyectoActual.campoGenericoSeis}"
+								counter="counterCampo6" maxlength="3950"
+								counterTemplate="{0} caracteres restantes." />
+							<h:outputText id="counterCampo6" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<h:panelGroup>
+				<center>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Atrás" id="botonAtras"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.atras}"
+							styleClass="ui-priority-primary" />
+
+						<p:commandButton value="Guardar y continuar después"
+							id="botonGuardarSalir" update="form"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.salirGuardar}"
+							styleClass="ui-priority-primary" />
+
+						<p:commandButton value="Guardar y avanzar"
+							id="botonGuardarSiguiente" update="form"
+							action="#{ManejadorTrabajoPrevioProyectoES_Inno.siguiente}"
+							styleClass="ui-priority-primary" />
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" />
+		</h:form>
+	</ui:define>
+</ui:composition>

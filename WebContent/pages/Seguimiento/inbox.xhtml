@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content-title">
+		<t:div styleClass="border-bottom-blue">
+			<t:div styleClass="contenido-titulo-general-no-border">Alertas de Proyecto<br/></t:div>
+			Puede consultar el instructivo del rol coordinador <a href="http://www.hermes.unal.edu.co/pages/html/descargas/instructivo.xhtml?id=6" target="_blank" style="color: #16A8E2;font-weight: bold;">aquí</a>
+			<br />
+			Lo invitamos a diligenciar la 
+			<a href="https://docs.google.com/forms/d/e/1FAIpQLSdVtNHo3fKcgcj1bHg3ppRaPdkHIk2OGxTaEaK_PX2bBo1hcA/viewform"
+						target="_blank" style="color: #16A8E2; font-weight: bold;">
+				encuesta de satisfacción del proceso de gestión de investigación y creación artística
+			</a> 
+			<br />
+		</t:div>
+	</ui:define>
+	<ui:define name="content">
+		<h:form>
+			<p:dataTable var="alerta"
+				value="#{manejadorSeguimiento.alertasAsesor}"
+				filteredValue="#{manejadorSeguimiento.filteredAlertas}"
+				emptyMessage="No tiene alertas para revisión" rows="10"
+				paginator="true" paginatorPosition="bottom"
+				paginatorAlwaysVisible="false"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column filterBy="#{alerta.proyecto.id}">
+					<f:facet name="header">
+						<h:outputText value="Buscar alertas por código de proyecto:" />
+					</f:facet>
+					<div class="panel-interno-tabla">
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+							<p:row>
+								<p:column style="width:110px;">
+									<h:outputText value="Código proyecto : " />
+								</p:column>
+								<p:column style="width:390px;">
+								<h:outputText value="#{alerta.proyecto.id}"
+									style="font-weight: bold:" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Código División Investigación : "
+										rendered="#{alerta.proyecto.codigoDib!=null}" />
+								</p:column>
+								<p:column>
+									<h:outputText style="font-weight: bold;" value="#{alerta.proyecto.codigoDib}"
+										rendered="#{alerta.proyecto.codigoDib!=null}" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Alerta : " />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{alerta.mensaje}"
+										style="font-weight: bold:" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Fecha : " />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{alerta.fechaGenera}"
+										style="font-weight: bold:" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Estado : " />
+								</p:column>
+								<p:column>
+									<t:div style="background-color:#{alerta.colorAlerta};">
+										<h:outputText value="#{alerta.estadoMostrar}"
+											style="font-weight: bold:" />
+									</t:div>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Código solicitud : " />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{alerta.solicitud.id}"
+										style="font-weight: bold:" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</div>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="ver" />
+					</f:facet>
+					<p:commandButton
+						action="#{manejadorSeguimiento.examinarInformacion}" value="Ver"
+						ajax="false">
+						<f:setPropertyActionListener value="#{alerta}"
+							target="#{manejadorSeguimiento.alertaSeleccionada}" />
+					</p:commandButton>
+				</p:column>
+				<f:facet name="header">Han sido encontradas #{manejadorSeguimiento.tamañoListaAsesor} alertas</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

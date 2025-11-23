@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="../../templates/common.xhtml">
+
+
+	<ui:define name="content">
+		<t:div styleClass="contenido-titulo-general-myriad">Solicitudes de mejora</t:div>
+
+		<h:form id="content">
+
+			<p:messages id="msgs" />
+
+			<br> </br>
+
+			<p:dataTable var="requerimientoRegistrado"
+				emptyMessage="No existen resultados de la Consulta"
+				value="#{ManejadorConsultarRequerimiento.requerimientoLista}">
+
+				<f:facet name="header">  
+	            	Solicitudes registradas
+	        	</f:facet>
+
+
+				<p:column headerText="Número" style="text-align: center;">
+					<h:outputText value="#{requerimientoRegistrado.id}" />
+				</p:column>
+
+				<p:column headerText="Módulo al que corresponde"
+					style="text-align: center;">
+					<h:outputText value="#{requerimientoRegistrado.moduloVista}" />
+				</p:column>
+
+				<p:column headerText="Estado"
+					filterBy="#{requerimientoRegistrado.estSelRequerimiento}"
+					filterMatchMode="contains">
+					<h:outputText
+						value="#{requerimientoRegistrado.estSelRequerimiento}" />
+				</p:column>
+
+				<p:column headerText="Fecha de solicitud">
+					<h:outputText value="#{requerimientoRegistrado.fechaSolicitud}" />
+				</p:column>
+
+
+				<p:column headerText="Editar/Consultar" style="text-align: center;">
+					<p:commandButton
+						rendered="#{requerimientoRegistrado.estSelRequerimiento eq 'Registrado'}"
+						action="#{ManejadorConsultarRequerimiento.editarRequerimiento}"
+						icon="ui-icon-pencil" ajax="false">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimiento.requerimientoSeleccionado}" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{ManejadorConsultarRequerimiento.consultarRequerimiento}"
+						icon="ui-icon-search" rendered="true" title="Consultar">
+						<f:setPropertyActionListener value="#{requerimientoRegistrado}"
+							target="#{ManejadorConsultarRequerimiento.requerimientoSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+
+
+			</p:dataTable>
+
+			<br> </br>
+			<br> </br>
+
+
+
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

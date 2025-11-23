@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="title">SELECCIONAR CURSOS MODULO</ui:define>
+	<ui:define name="content">
+		<h:head>
+			<style>
+			.ui-picklist .ui-picklist-list {
+				height: 350px;
+				width: 250px
+			}
+			</style>
+		</h:head>
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">
+				<h:outputText value="Adicionar Cursos Módulo" />
+			</t:div>
+
+			<t:div styleClass="informacion">				
+				
+				<t:div styleClass="informacion-subtitulo">
+					<h:outputText value="Módulo" />
+				</t:div>
+				<t:div styleClass="informacion-subtexto">
+           		 	<h:outputText value="#{ManejadorAdministrarModuloECP.moduloSeleccionado.titulo}"/>
+				</t:div>
+				
+				<t:div styleClass="informacion-subtexto">
+					<h:outputText value="Por favor seleccione los cursos que van a incluirse en el módulo" />
+				</t:div>
+				
+				<h:panelGrid columns="2" align="center" id="pG_botones">
+					<h:outputText value="Departamento:"/>
+					<p:selectOneMenu
+						value="#{ManejadorAdministrarModuloECP.departamento}"
+						effect="fade" id="departamento" filter="true">
+						<f:selectItems
+							value="#{ManejadorAdministrarModuloECP.departamentoItem}" />
+						<p:ajax update="pickList" event="change"
+								listener="#{ManejadorAdministrarModuloECP.cargarCursosDepto}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				
+				<center>
+					<p:pickList id="pickList"
+						value="#{ManejadorAdministrarModuloECP.proyectosCurso}"
+						var="proyecto" itemLabel="#{proyecto.nombre}" converter="ConvertidorProyecto"
+						itemValue="#{proyecto}" showCheckbox="true"
+						showSourceFilter="true" showTargetFilter="true"
+						filterMatchMode="contains">
+
+						<f:facet name="sourceCaption">Cursos disponibles</f:facet>
+						<f:facet name="targetCaption">Cursos seleccionados para el módulo</f:facet>
+					</p:pickList>
+				</center>
+				
+				<p:messages id="msgs" />
+				<br />
+
+				<h:panelGrid columns="2" align="center" id="pG_botones">
+					<p:commandButton value="Volver"
+						action="#{ManejadorAdministrarModuloECP.volverAdmin}" immediate="true" />
+					
+					<p:commandButton value="Guardar" title="Adicionar a Modulo"
+						action="#{ManejadorAdministrarModuloECP.vincularCursosModulo}"
+						update="msgs"/>
+				</h:panelGrid>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

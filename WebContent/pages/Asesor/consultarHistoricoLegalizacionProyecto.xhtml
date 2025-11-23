@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form enctype="multipart/form-data">
+			<t:div styleClass="contenido-titulo-general-myriad" >Consulta histórico estado legalización proyecto</t:div>
+
+			<p:panel id="panelConsultaProyectos"
+				rendered="#{manejadorConsultaHistoricos.codigoSesion}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<t:div style="width: 150px;">
+						<h:outputText value="Código proyecto:"  style="font-weight: bold;"/>
+					</t:div>
+					<h:outputText value="#{manejadorConsultaHistoricos.codigo}" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:dataTable 
+				rows="15"
+				id="tableHistoricoEstadoLegalizacionProyecto" var="historico"
+				style="margin-top: 20px;"	paginator="true"
+				value="#{manejadorConsultaHistoricos.listaHistoricoEstadoLegalizacion}"
+				rendered="#{!manejadorConsultaHistoricos.primerBusquedaHistoricoEstadosLegalizacion}"
+				emptyMessage="No se ha encontrado historico de este proyecto."
+				paginatorPosition="bottom"
+				paginatorAlwaysVisible="false"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15"
+                >
+				<p:column >
+					<f:facet name="header">
+						Proyecto
+					</f:facet>
+					#{historico.proyecto.id}
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Fecha
+					</f:facet>
+					<h:outputText value="#{historico.fecha}" >
+		              	<f:convertDateTime pattern="dd/MM/yyyy" />
+					 </h:outputText>
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Estado asignado
+					</f:facet>			
+					#{historico.estadoProyecto.nombre}
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Justificación
+					</f:facet>			
+					#{historico.justificacion}
+				</p:column>
+				<p:column >
+					<f:facet name="header">
+						Responsable
+					</f:facet>			
+					#{historico.responsable.nombreCompleto}
+				</p:column>
+			</p:dataTable>			
+			<p:messages showSummary="true" autoUpdate="true" closable="true" />
+			<p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

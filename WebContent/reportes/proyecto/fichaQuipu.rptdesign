@@ -1,0 +1,1798 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.0.1 Build &lt;20060222-1204></property>
+    <property name="units">in</property>
+    <list-property name="configVars">
+        <structure>
+            <property name="name">proyectoId</property>
+            <property name="value">5555</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="proyectoId" id="101">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="format">Unformatted</property>
+            <property name="controlType">text-box</property>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Fuente de datos" id="4">
+            <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@168.176.6.21:1521:produnal</property>
+            <property name="odaUser">hermes</property>
+            <encrypted-property name="odaPassword">aGVybWVzMjAwNQ==</encrypted-property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="1 ProyectoResponsable" id="5">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select pry.PRY_CODIGO_QUIPU, pry.PRY_NOMBRE,
+dep.DPN_NOMBRE, per.PER_NOMBRE1, per.PER_NOMBRE2, per.PER_APELLIDO1, per.PER_APELLIDO2, per.PER_ID,
+pry.PRY_DESCRIPCION, pry.PRY_OBJETIVO_GENERAL, to_char (pry.PRY_FECHA_TENTATIVA_INICIO, 'dd mm yyyY') as FECHA_INICIO_PROYECTO, pry.PRY_DURACION, to_char ( Add_months(PRY_FECHA_TENTATIVA_INICIO, pry.PRY_DURACION), 'dd mm yyyy' ) as FECHA_FINAL
+from HER_PROYECTO pry, HER_PERSONA per, HER_INVESTIGADOR_PROYECTO inp, HER_INVESTIGADOR_INTERNO ini, HER_DEPENDENCIA dep 
+WHERE pry.PRY_ID = ? 
+AND per.PER_ID = inp.INV_ID AND per.TDO_ID = inp.TDO_ID AND inp.INP_TIPO = 'P' AND inp.PRY_ID = pry.PRY_ID
+AND per.PER_ID = ini.INV_ID AND per.TDO_ID = ini.TDO_ID AND dep.DPN_ID = ini.DPN_ID 
+</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="1 Dependencias" id="73">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select dep.DPN_NOMBRE, prd.PRD_AREA_RESPONSABILIDAD
+from HER_PROYECTO_DEPENDENCIA prd, HER_DEPENDENCIA dep
+WHERE prd.PRY_ID = ?
+AND prd.DPN_ID = dep.DPN_ID  
+</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="1 Objetivos" id="93">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_OBJETIVO_ESPECIFICO.OBJ_DESCRIPCION
+from HERMES.HER_OBJETIVO_ESPECIFICO
+where HERMES.HER_OBJETIVO_ESPECIFICO.PRY_ID = ?
+order by HERMES.HER_OBJETIVO_ESPECIFICO.OBJ_DESCRIPCION</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="1 Resultados" id="136">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_RESULTADO_PROYECTO.RST_DESCRIPCION
+from HERMES.HER_RESULTADO_PROYECTO
+where HERMES.HER_RESULTADO_PROYECTO.PRY_ID = ?
+order by HERMES.HER_RESULTADO_PROYECTO.RST_DESCRIPCION</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="2 AreaTematica" id="153">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select clc.CLC_ID, clc.CLC_NOMBRE
+from HER_CLASIFICACION_CONOCIMIENTO clc, HER_PROYECTO_CLAS_CON pcc
+where clc.CLC_ID = pcc.CLC_ID AND pcc.PRY_ID = ?
+order by clc.CLC_ID</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="2 PlanGlobalDesarrollo" id="170">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_PLAN_GLOBAL_DESARROLLO.PGD_ID, HERMES.HER_PLAN_GLOBAL_DESARROLLO.PGD_DESCRIPCION
+from HERMES.HER_PLAN_GLOBAL_DESARROLLO, HERMES.HER_PROYECTO
+where HERMES.HER_PROYECTO.PGD_ID = HERMES.HER_PLAN_GLOBAL_DESARROLLO.PGD_ID and HERMES.HER_PROYECTO.PRY_ID = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="3 ActoAdministrativo" id="189">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_CONVOCATORIA.CON_ACT_NOMBRE, HERMES.HER_CONVOCATORIA.CON_ACT_NUMERO, to_char (HERMES.HER_CONVOCATORIA.CON_ACT_FECHA, 'dd mm yyyY') as FECHA_ACTO, HERMES.HER_CONVOCATORIA.CON_ACT_NOMBRE_FUNCIONARIO
+from HERMES.HER_CONVOCATORIA, HERMES.HER_PROYECTO
+where HERMES.HER_PROYECTO.MOD_ID = HERMES.HER_CONVOCATORIA.CON_ID and HERMES.HER_PROYECTO.PRY_ID = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="5 Investigadores" id="220">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_PERSONA.PER_ID, HERMES.HER_PERSONA.PER_NOMBRE1, HERMES.HER_PERSONA.PER_NOMBRE2, HERMES.HER_PERSONA.PER_APELLIDO1, 
+(HERMES.HER_INVESTIGADOR_PROYECTO.INP_DEDICACION_HORAS_SEMANA * 16) as HORAS_PRIMER_SEMESTRE, (HERMES.HER_INVESTIGADOR_PROYECTO.INP_DEDICACION_HORAS_SEMANA * 16) as HORAS_SEGUNDO_SEMESTRE
+from HERMES.HER_PERSONA, HERMES.HER_INVESTIGADOR_PROYECTO, HERMES.HER_INVESTIGADOR
+where HERMES.HER_INVESTIGADOR_PROYECTO.PRY_ID = ?
+and HERMES.HER_INVESTIGADOR_PROYECTO.TDO_ID = HERMES.HER_PERSONA.TDO_ID
+and HERMES.HER_INVESTIGADOR_PROYECTO.INV_ID = HERMES.HER_PERSONA.PER_ID
+and HERMES.HER_INVESTIGADOR_PROYECTO.INV_ID = HERMES.HER_INVESTIGADOR.INV_ID
+and HERMES.HER_INVESTIGADOR_PROYECTO.TDO_ID = HERMES.HER_INVESTIGADOR.TDO_ID
+and HERMES.HER_INVESTIGADOR.CAT_ID = '2'
+</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="financiera 1 financiacionInterna" id="290">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_FUENTE_FINANCIACION.FFI_DESCRIPCION as FUENTE_INTERNA, HERMES.HER_FINANCIACION.FIN_VALOR
+from HERMES.HER_FUENTE_FINANCIACION, HERMES.HER_FINANCIACION
+where HERMES.HER_FINANCIACION.FFI_ID = HERMES.HER_FUENTE_FINANCIACION.FFI_ID 
+and HERMES.HER_FUENTE_FINANCIACION.FFI_INTERNA_EXTERNA = 'I'
+and HERMES.HER_FINANCIACION.PRY_ID = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="financiera 1 financiacionExterna" id="291">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_FUENTE_FINANCIACION.FFI_DESCRIPCION, HERMES.HER_FINANCIACION.FIN_VALOR, HERMES.HER_FINANCIACION.FIN_IDENTIFICACION_NIT, HERMES.HER_FINANCIACION.FIN_CONTRATO, to_char (HERMES.HER_FINANCIACION.FIN_FECHA_CONTRATO, 'dd mm yyyy') as FECHA_CONTRATO, HERMES.HER_FINANCIACION.FIN_CONVENIO
+from HERMES.HER_FINANCIACION, HERMES.HER_FUENTE_FINANCIACION
+where HERMES.HER_FINANCIACION.PRY_ID = ?
+and HERMES.HER_FINANCIACION.FFI_ID = HERMES.HER_FUENTE_FINANCIACION.FFI_ID
+and HERMES.HER_FUENTE_FINANCIACION.FFI_INTERNA_EXTERNA = 'E'</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="financiera 1 financiacionTotal" id="353">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select sum(HERMES.HER_FINANCIACION.FIN_VALOR) as TOTAL_FINANCIACION
+from HERMES.HER_FINANCIACION
+where HERMES.HER_FINANCIACION.PRY_ID = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="financiera 2 gastos" id="370">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_TIPO_RUBRO.TRU_NOMBRE, HERMES.HER_RUBRO.RUB_VALOR_1 as AÃ‘O_1, HERMES.HER_RUBRO.RUB_VALOR_2 as AÃ‘O_2, (HERMES.HER_RUBRO.RUB_VALOR_1 + HERMES.HER_RUBRO.RUB_VALOR_2) as TOTAL
+from HERMES.HER_RUBRO, HERMES.HER_TIPO_RUBRO
+where HERMES.HER_RUBRO.PRY_ID = ?
+and HERMES.HER_RUBRO.TRU_ID = HERMES.HER_TIPO_RUBRO.TRU_ID
+order by HERMES.HER_RUBRO.TRU_ID
+</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="financiera 2 totalGastos" id="401">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select sum (HERMES.HER_RUBRO.RUB_VALOR_1) as TOTAL_AÃ‘O_1, sum (HERMES.HER_RUBRO.RUB_VALOR_2) as TOTAL_AÃ‘O_2, sum (HERMES.HER_RUBRO.RUB_VALOR_1 + HERMES.HER_RUBRO.RUB_VALOR_2) as TOTAL_GASTOS
+from HERMES.HER_RUBRO
+where HERMES.HER_RUBRO.PRY_ID = ?
+</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="4 VigenciaActual" id="507">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select HERMES.HER_VIGENCIA.VIG_VALOR as VIGENCIA_ACTUAL
+from HERMES.HER_VIGENCIA
+where HERMES.HER_VIGENCIA.VIG_VIGENCIA = '1'
+and HERMES.HER_VIGENCIA.PRY_ID = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="4 total proyecto" id="508">
+            <property name="dataSource">Fuente de datos</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramId</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">5555</expression>
+                    <property name="isInput">true</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select sum (HERMES.HER_VIGENCIA.VIG_VALOR) as VALOR_TOTAL
+from HERMES.HER_VIGENCIA
+where HERMES.HER_VIGENCIA.PRY_ID = ?
+</property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="EncabezadoEstilo" id="123">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">small</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontStyle">normal</property>
+            <property name="color">#000000</property>
+            <property name="borderBottomColor">#0080FF</property>
+            <property name="borderBottomStyle">none</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+        </style>
+        <style name="Encabezado1" id="124">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">small</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontStyle">normal</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+        </style>
+        <style name="titulo" id="125">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">medium</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingLeft">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="paddingRight">3pt</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="item" id="541">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">smaller</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+        </style>
+        <style name="itemnum" id="542">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">smaller</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+            <structure name="numberFormat">
+                <property name="category">Currency</property>
+                <property name="pattern">#,##0.00</property>
+            </structure>
+        </style>
+        <style name="tabla4border" id="543">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="tabla3border_upleftright" id="547">
+            <property name="borderBottomStyle">none</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="tabla3border_botleftright" id="548">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="tabla2border_leftright" id="549">
+            <property name="borderBottomStyle">none</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="item_der" id="561">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">smaller</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="itemnum_der" id="562">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">smaller</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+            <structure name="numberFormat">
+                <property name="category">Currency</property>
+                <property name="pattern">#,##0.00</property>
+            </structure>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="titulo1" id="569">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">small</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingLeft">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="paddingRight">3pt</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="Encabezado2" id="582">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">smaller</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontStyle">normal</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+        </style>
+        <style name="Encabezado2_der" id="583">
+            <property name="fontFamily">Verdana</property>
+            <property name="fontSize">smaller</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontStyle">normal</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
+            <property name="textAlign">right</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <page-header>
+                <image id="581">
+                    <property name="imageName">encabezadoinformes3.png</property>
+                </image>
+            </page-header>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <text id="545">
+            <property name="style">titulo</property>
+            <property name="fontSize">x-large</property>
+            <property name="contentType">plain</property>
+            <text-property name="content"><![CDATA[FICHA QUIPU]]></text-property>
+        </text>
+        <text id="551">
+            <property name="style">EncabezadoEstilo</property>
+            <property name="contentType">plain</property>
+            <text-property name="content"><![CDATA[INFORMACIÃ“N ACADÃ‰MICO - ADMINISTRATIVA DEL PROYECTO]]></text-property>
+        </text>
+        <table id="16">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">1 ProyectoResponsable</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="61">
+                <property name="width">3.229in</property>
+            </column>
+            <column id="62">
+                <property name="width">2.76in</property>
+            </column>
+            <header>
+                <row id="17">
+                    <cell id="18">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <text id="546">
+                            <property name="style">EncabezadoEstilo</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[1. InformaciÃ³n general del proyecto]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="21">
+                    <cell id="22">
+                        <text id="95">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[CÃ“DIGO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="23">
+                        <data id="65">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PRY_CODIGO_QUIPU"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="25">
+                    <cell id="26">
+                        <text id="96">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[TÃ�TULO DEL PROYECTO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="27">
+                        <data id="66">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PRY_NOMBRE"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="29">
+                    <cell id="30">
+                        <text id="97">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[DEPENDENCIA RESPONSABLE]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="31">
+                        <data id="72">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["DPN_NOMBRE"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="33">
+                    <cell id="34">
+                        <text id="98">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[RESPONSABLE]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="35">
+                        <data id="69">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PER_APELLIDO1"] + "  " + row["PER_NOMBRE1"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="41">
+                    <cell id="42">
+                        <text id="100">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[DOCUMENTO RESPONSABLE]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="43">
+                        <data id="71">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PER_ID"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="45">
+                    <cell id="46"/>
+                    <cell id="47"/>
+                </row>
+            </detail>
+        </table>
+        <text id="149">
+            <property name="style">tabla2border_leftright</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="103">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">1 Dependencias</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="116"/>
+            <column id="117"/>
+            <header>
+                <row id="104">
+                    <cell id="105">
+                        <label id="119">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">NOMBRE DEPENDENCIA</text-property>
+                        </label>
+                    </cell>
+                    <cell id="106">
+                        <label id="121">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">Ã�REA DE RESPONSABILIDAD</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="108">
+                    <cell id="109">
+                        <data id="120">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["DPN_NOMBRE"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="110">
+                        <data id="122">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PRD_AREA_RESPONSABILIDAD"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="112">
+                    <cell id="113"/>
+                    <cell id="114"/>
+                </row>
+            </footer>
+        </table>
+        <text id="148">
+            <property name="style">tabla2border_leftright</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="126">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">1 Objetivos</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="133"/>
+            <header>
+                <row id="127">
+                    <cell id="128">
+                        <label id="134">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">OBJETIVOS</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="129">
+                    <cell id="130">
+                        <data id="135">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["OBJ_DESCRIPCION"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="131">
+                    <cell id="132"/>
+                </row>
+            </footer>
+        </table>
+        <text id="151">
+            <property name="style">tabla2border_leftright</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="137">
+            <property name="style">tabla4border</property>
+            <property name="width">100%</property>
+            <property name="dataSet">1 Resultados</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="144"/>
+            <header>
+                <row id="138">
+                    <cell id="139">
+                        <label id="145">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">RESULTADOS</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="140">
+                    <cell id="141">
+                        <data id="146">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["RST_DESCRIPCION"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="142">
+                    <cell id="143"/>
+                </row>
+            </footer>
+        </table>
+        <text id="150">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="154">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">2 AreaTematica</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="164"/>
+            <column id="165"/>
+            <header>
+                <row id="554">
+                    <cell id="555">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <text id="553">
+                            <property name="style">EncabezadoEstilo</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[2. ClasificaciÃ³n del proyecto]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="155">
+                    <cell id="156">
+                        <label id="166">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">CODIGO AREA TEMATICA</text-property>
+                        </label>
+                    </cell>
+                    <cell id="157">
+                        <label id="168">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">NOMBRE AREA TEMATICA</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="158">
+                    <cell id="159">
+                        <data id="167">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["CLC_ID"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="160">
+                        <data id="169">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["CLC_NOMBRE"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="161">
+                    <cell id="162"/>
+                    <cell id="163"/>
+                </row>
+            </footer>
+        </table>
+        <text id="152">
+            <property name="style">tabla2border_leftright</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="171">
+            <property name="style">tabla3border_botleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">2 PlanGlobalDesarrollo</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="181"/>
+            <column id="182"/>
+            <header>
+                <row id="172">
+                    <cell id="173">
+                        <label id="183">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">ID</text-property>
+                        </label>
+                    </cell>
+                    <cell id="174">
+                        <label id="185">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">PLAN GLOBAL DE DESARROLLO</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="175">
+                    <cell id="176">
+                        <data id="184">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PGD_ID"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="177">
+                        <data id="186">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PGD_DESCRIPCION"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="178">
+                    <cell id="179"/>
+                    <cell id="180"/>
+                </row>
+            </footer>
+        </table>
+        <text id="147">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="190">
+            <property name="style">tabla4border</property>
+            <property name="width">100%</property>
+            <property name="dataSet">3 ActoAdministrativo</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="209"/>
+            <column id="210"/>
+            <header>
+                <row id="191">
+                    <cell id="192">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="211">
+                            <property name="style">EncabezadoEstilo</property>
+                            <text-property name="text">3. AprobaciÃ³n del proyecto</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="194">
+                    <cell id="195">
+                        <text id="216">
+                            <property name="style">Encabezado2</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[ACTO ADMINISTRATIVO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="196">
+                        <data id="212">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["CON_ACT_NOMBRE"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="197">
+                    <cell id="198">
+                        <text id="217">
+                            <property name="style">Encabezado2</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[NUMERO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="199">
+                        <data id="213">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["CON_ACT_NUMERO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="200">
+                    <cell id="201">
+                        <text id="218">
+                            <property name="style">Encabezado2</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[FECHA]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="202">
+                        <data id="504">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FECHA_ACTO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="203">
+                    <cell id="204">
+                        <text id="219">
+                            <property name="style">Encabezado2</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[FUNCIONARIO SIGNATARIO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="205">
+                        <data id="215">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["CON_ACT_NOMBRE_FUNCIONARIO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <text id="187">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="249">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">1 ProyectoResponsable</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="271"/>
+            <column id="272"/>
+            <detail>
+                <row id="558">
+                    <cell id="559">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="557">
+                            <property name="style">EncabezadoEstilo</property>
+                            <text-property name="text">4. EjecuciÃ³n del proyecto</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="253">
+                    <cell id="254">
+                        <text id="277">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[Fecha de inicio del proyecto]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="255">
+                        <data id="505">
+                            <property name="style">item_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FECHA_INICIO_PROYECTO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="256">
+                    <cell id="257">
+                        <text id="278">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[Plazo de ejecucion en meses]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="258">
+                        <data id="286">
+                            <property name="style">item_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PRY_DURACION"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="259">
+                    <cell id="260">
+                        <text id="279">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[Fecha aproximada de finalizacion]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="261">
+                        <data id="287">
+                            <property name="style">item_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FECHA_FINAL"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <table id="509">
+            <property name="style">tabla2border_leftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">4 total proyecto</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="522"/>
+            <column id="523"/>
+            <detail>
+                <row id="513">
+                    <cell id="514">
+                        <text id="538">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[Valor total]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="515">
+                        <data id="524">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["VALOR_TOTAL"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <table id="525">
+            <property name="style">tabla3border_botleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">4 VigenciaActual</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="535"/>
+            <column id="536"/>
+            <detail>
+                <row id="529">
+                    <cell id="530">
+                        <text id="539">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[Vigencia actual]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="531">
+                        <data id="537">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["VIGENCIA_ACTUAL"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <text id="273">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="221">
+            <property name="style">tabla4border</property>
+            <property name="width">100%</property>
+            <property name="dataSet">5 Investigadores</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="237"/>
+            <column id="238"/>
+            <column id="239"/>
+            <column id="240"/>
+            <header>
+                <row id="563">
+                    <cell id="564">
+                        <property name="colSpan">4</property>
+                        <property name="rowSpan">1</property>
+                        <label id="568">
+                            <property name="style">EncabezadoEstilo</property>
+                            <text-property name="text">INVESTIGADORES</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="222">
+                    <cell id="223">
+                        <label id="241">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">NOMBRE</text-property>
+                        </label>
+                    </cell>
+                    <cell id="224">
+                        <label id="243">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">DOCUMENTO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="225">
+                        <label id="245">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">HORAS A LA SEMANA</text-property>
+                        </label>
+                    </cell>
+                    <cell id="226">
+                        <label id="247">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">HORAS TOTALES</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="227">
+                    <cell id="228">
+                        <data id="242">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PER_NOMBRE1"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="229">
+                        <data id="244">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["PER_ID"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="230">
+                        <data id="284">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["HORAS_PRIMER_SEMESTRE"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="231">
+                        <data id="540">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["HORAS_SEGUNDO_SEMESTRE"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="232">
+                    <cell id="233"/>
+                    <cell id="234"/>
+                    <cell id="235"/>
+                    <cell id="236"/>
+                </row>
+            </footer>
+        </table>
+        <text id="188">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <text id="570">
+            <property name="style">titulo1</property>
+            <property name="fontSize">x-large</property>
+            <property name="contentType">plain</property>
+            <text-property name="content"><![CDATA[INFORMACIÃ“N FINANCIERA]]></text-property>
+        </text>
+        <table id="292">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">financiera 1 financiacionInterna</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="302"/>
+            <column id="303"/>
+            <header>
+                <row id="571">
+                    <cell id="572">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <text id="574">
+                            <property name="style">EncabezadoEstilo</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[1. Fuentes de financiaciÃ³n del proyecto para la vigencia]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="293">
+                    <cell id="294">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <text id="311">
+                            <property name="style">Encabezado1</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[FINANCIACION INTERNA]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="308">
+                    <cell id="309">
+                        <label id="304">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">FUENTE DE FINANCIACION</text-property>
+                        </label>
+                    </cell>
+                    <cell id="310">
+                        <label id="306">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">VALOR</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="296">
+                    <cell id="297">
+                        <data id="305">
+                            <property name="style">item</property>
+                            <expression name="valueExpr">row["FUENTE_INTERNA"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="298">
+                        <data id="307">
+                            <property name="style">itemnum</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FIN_VALOR"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="299">
+                    <cell id="300"/>
+                    <cell id="301"/>
+                </row>
+            </footer>
+        </table>
+        <text id="584">
+            <property name="style">tabla2border_leftright</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="312">
+            <property name="style">tabla2border_leftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">financiera 1 financiacionExterna</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="337"/>
+            <column id="338"/>
+            <header>
+                <row id="313">
+                    <cell id="314">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <text id="339">
+                            <property name="style">Encabezado1</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[FINANCIACION EXTERNA]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="316">
+                    <cell id="317">
+                        <text id="346">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[FUENTE DE FINANCIACION]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="318">
+                        <data id="340">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FFI_DESCRIPCION"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="319">
+                    <cell id="320">
+                        <text id="347">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[NIT]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="321">
+                        <data id="342">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FIN_IDENTIFICACION_NIT"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="322">
+                    <cell id="323">
+                        <text id="348">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[VALOR]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="324">
+                        <data id="341">
+                            <property name="style">itemnum</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FIN_VALOR"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="325">
+                    <cell id="326">
+                        <text id="349">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[CONTRATO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="327">
+                        <data id="343">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FIN_CONTRATO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="328">
+                    <cell id="329">
+                        <text id="350">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[FECHA DEL CONTRATO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="330">
+                        <data id="506">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FECHA_CONTRATO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+                <row id="331">
+                    <cell id="332">
+                        <text id="351">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[CONVENIO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="333">
+                        <data id="345">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["FIN_CONVENIO"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="334">
+                    <cell id="335"/>
+                    <cell id="336"/>
+                </row>
+            </footer>
+        </table>
+        <text id="352">
+            <property name="style">tabla2border_leftright</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="354">
+            <property name="style">tabla3border_botleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">financiera 1 financiacionTotal</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="364"/>
+            <column id="365"/>
+            <detail>
+                <row id="358">
+                    <cell id="359">
+                        <label id="366">
+                            <property name="style">Encabezado2</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">TOTAL_FINANCIACION</text-property>
+                        </label>
+                    </cell>
+                    <cell id="360">
+                        <data id="367">
+                            <property name="style">itemnum</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["TOTAL_FINANCIACION"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <text id="369">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<br>]]></text-property>
+        </text>
+        <table id="371">
+            <property name="style">tabla3border_upleftright</property>
+            <property name="width">100%</property>
+            <property name="dataSet">financiera 2 gastos</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="387">
+                <property name="width">2.468in</property>
+            </column>
+            <column id="388">
+                <property name="width">1.18in</property>
+            </column>
+            <column id="389">
+                <property name="width">1.18in</property>
+            </column>
+            <column id="390">
+                <property name="width">1.18in</property>
+            </column>
+            <header>
+                <row id="575">
+                    <property name="style">EncabezadoEstilo</property>
+                    <cell id="576">
+                        <property name="colSpan">4</property>
+                        <property name="rowSpan">1</property>
+                        <text id="580">
+                            <property name="contentType">plain</property>
+                            <text-property name="content"><![CDATA[2. Plan de gastos del proyecto]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="372">
+                    <property name="style">EncabezadoEstilo</property>
+                    <cell id="373">
+                        <label id="391">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">DESCRIPCION</text-property>
+                        </label>
+                    </cell>
+                    <cell id="374">
+                        <label id="393">
+                            <property name="style">Encabezado2_der</property>
+                            <property name="fontSize">x-small</property>
+                            <text-property name="text">VALOR_1</text-property>
+                        </label>
+                    </cell>
+                    <cell id="375">
+                        <label id="395">
+                            <property name="style">Encabezado2_der</property>
+                            <text-property name="text">VALOR_2</text-property>
+                        </label>
+                    </cell>
+                    <cell id="376">
+                        <label id="397">
+                            <property name="style">Encabezado2_der</property>
+                            <text-property name="text">TOTAL</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="377">
+                    <cell id="378">
+                        <data id="392">
+                            <property name="style">item</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["TRU_NOMBRE"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="379">
+                        <data id="399">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["AÃ‘O_1"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="380">
+                        <data id="400">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["AÃ‘O_2"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="381">
+                        <data id="398">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["TOTAL"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <table id="408">
+            <property name="style">tabla3border_botleftright</property>
+            <property name="height">0.875in</property>
+            <property name="width">100%</property>
+            <property name="dataSet">financiera 2 totalGastos</property>
+            <list-property name="paramBindings">
+                <structure>
+                    <property name="paramName">paramId</property>
+                    <expression name="expression">params["proyectoId"]</expression>
+                </structure>
+            </list-property>
+            <column id="424">
+                <property name="width">2.447in</property>
+            </column>
+            <column id="425">
+                <property name="width">1.18in</property>
+            </column>
+            <column id="426">
+                <property name="width">1.18in</property>
+            </column>
+            <column id="427">
+                <property name="width">1.18in</property>
+            </column>
+            <detail>
+                <row id="414">
+                    <property name="height">0.875in</property>
+                    <cell id="415">
+                        <label id="435">
+                            <property name="style">Encabezado2</property>
+                            <text-property name="text">TOTAL_GASTOS</text-property>
+                        </label>
+                    </cell>
+                    <cell id="416">
+                        <data id="429">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["TOTAL_AÃ‘O_1"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="417">
+                        <data id="431">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["TOTAL_AÃ‘O_2"]</expression>
+                        </data>
+                    </cell>
+                    <cell id="418">
+                        <data id="433">
+                            <property name="style">itemnum_der</property>
+                            <property name="fontSize">x-small</property>
+                            <expression name="valueExpr">row["TOTAL_GASTOS"]</expression>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">encabezadoinformes2.png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAsUAAABMBAMAAAEAwueEAAAAA3NCSVQICAjb4U/gAAAAMFBMVEX/////
+                //8AM2bp6enY2NjBwcFbfJ2jo6MBI1qcscSIiIgZP281XIUAGlJfX188PDy3ovwNAAAAEHRSTlMA////
+                ////////////////wFCLQwAAAAlwSFlzAAAPYQAAD2EBqD+naQAAABZ0RVh0Q3JlYXRpb24gVGltZQAw
+                NS8wNS8wNpJYncAAAAAldEVYdFNvZnR3YXJlAE1hY3JvbWVkaWEgRmlyZXdvcmtzIE1YIDIwMDSHdqzP
+                AAAWxklEQVR4nO1c/08T2drfP+E+nDOtLQJhXLkllB/GtrCyK5vZzljh9Utm27Fr18WAa6+8wA/dttu8
+                fV811H1ZDPhD/cLKq/5AoOlN8y6GuuvVoD+Au1yJ+gO4srri3hA1JiQXQ9SQmKy+58y0FZR6gW3xel8f
+                7cyZc06f+fQzZ57zPM+Z4R1YhPzhHQg+TNuKYE3h3N64+p7Vwfjz5+ud27emMF4Yeo+N5xSSfyzRzSA7
+                MGl057CGwpKQgWXZQjYep7q5CeknTvopb2Ke3swh0jEEbE58FctS3diP7ZLe40mD21g6rPQuZK9+GiJI
+                7DYu7c8kopHUvS7MhElvD07bO3dn56qSC8XDtzUfoH7dJgvpvQhZdG+0qN6V0Ve0sy/0xjUBTvu4JzZf
+                39wBlvQ3Fq8qGYR4X07JH95hFChpLmYOmzNWyBYb2EG2sIjVkN75mHOOQPc8l5KQTC5goUFXTHYsO0qu
+                pRZs5bEurZAGd45xROldWnp6nF552fyKXwnwTWKv4TXkVyKrPm3PnJxDTN7NemPTR5c62+Hi4q/OInvj
+                aJBfzHcS4rDC+/196dvfASzGYo6lqAZYwxambyR3MAbgJDDBPrwDmK4Fq+WA3thr2BALoSL2AKtICcOW
+                soX0qhPNNtGO7Z4CpiCPkeAXnuEXqFzVzLJudiTE7q9iV+ewfSEylIYGDXVsax/RrLWYzA5POZ4embk7
+                k6d39Py2UM2UDbaUFEMGMkqLiWZqbAZIBR6kmBkZwC+Bc2Lal//UO68VTCdEcy4BHp6lmf6QVR+z7Gqi
+                GZnLo2nG/6tE18kJFgmq+O82YZMAIgh410qk4cBkNmOkwbCoMbpAyVG22dAMKc0VXBYU03tQDpILuGhZ
+                KVRBf/+rNdsCziVozgEdhNj07USzU9jncy7+7l6A5h17p2Iuz+OZmZ4nFc9AXqjm3P5zVLOOZWs1bHN8
+                BbufXbWCDUMdWwwacnMSzdUMxhX8o88mYVL7JFCxcMwrqHUIkY2GNZJ7L07tRiGtrB1VNbskrV6rsMGD
+                tFC9Sc2Ymh8CkWg2suwldtUX5C4sJHcgTzSLjhqRkSKcA5gHKA8VpJns5tecyxbVsR0seziHMEJO8e4o
+                sVDETI1Sf6Iaqnk9183/HYDYop9s5QvVrOlklVmS6Coms2wzq2omNuMYMacUM9LqkTQSqd4yMd0r4ulf
+                fQvUTMeGhtp+DbsqpTmuDBdyXYlmK/HesHSvy+91xPRBbmGIU6OOZc9fmK05h20bbD54RdHs4Blkkh5N
+                8PmVjKO3e5GaCR2lszVjwkZzSB0bWp8eOxeq72XR1XNzKzrCgMiHaMaMX8aL15jLbQIOQx/YGd4KkrWW
+                0yAdf9Eq4JsmrorjiGa9vcLkXwLY8O0StzvnbB/HbdRcuaIrwy39uoFLgx+vaxsdy7saX5x3skBRLGBW
+                NMMbrpkLMhVSts6RYVEha0VnNOpYsM3/fZLDkbsL4D1qzJfyfQUyLg9E9vkikVe7/5mSTEAWBUck1h2M
+                9ggiR+s4GpvS/1zmcM6SXLfbXT8L8jb3kVQbMWNUUMdherBLrex0H1YL29ydXIJlO5j4dcjKMR4oAOFR
+                fgGarHRuqSjQOie6CzIOmfqSKZaRMtuTgobY84FRtpkE/QbaZMijGwl01DFgDQOAQomeSljl0pq6GOT1
+                2ATAkWpcyfH3ayoqKoJef0XMk3nIHCgzvnJ+GtV8E2INYY2KiEKeJYVAJmsjcQsMfB3ZnL98W4WMqjFX
+                brMwkM/Bli79BExDgTj9gLv7mflniBHiK6ezBXmlAusjlr2mQC69MUIhh1ck296l/kYtfMFSP4YtOUpd
+                LWUsF/QIFTVB0fHEwuXnWSX9FhgB2JEHcK37mhl6prXzBvu/B3LejVYKUYkYDbR4gEI2kFY6MMK0uo86
+                c++uUzqQzVfrlB9p6FMHRgDJ4mazo8viBT1s4rv0XU/BsbnAg6Y9zE/5EGO6FujjLRhyciznJkdAEYW8
+                /2XIeckOX4E2TqGzCmSL3irxDFg8/nRWbhEZocVBpveUkR5LaSDr6M8h1WXccYlcnCRk0RqhiSGb1itz
+                Bfpq3o8nCryVqNf0uCYfZ3RMvAQZclQO1dtvHsiwLtGB+0QtrFIHBpJtDsYsW+xmyHNt9hXILvl+jbPS
+                8yT2YfeHGYec29raekCF3EzAD1IgRj4JmXjypcrt10drviIeuWIGjbCR7kpqkxM2kp3+gGjNOLp5hQnv
+                fH6gIzaAnHd7quIokpQ+pETI5BK1eiUq0wCpViE7fFHR53fZ/BwsgxzrGwnV1dXtPnumoTl38FgTnL41
+                VtJws63pbNHx68b6K9dvXdPEG5tg+PjIypOGPe83jozXNWy6mlt0/mTe4KGzCR+DU5OcS8jFLEG+KDzN
+                rjxj/J+Ojv4+jbGjBC42n95/qLn5y46OhtNt9V/0jezXtde3wXDDgObQB519HxW25Ro3xjcM1e3OKTrx
+                fhbd2qzJW8jLIW8y5AUnBF67qIhNEWsso5NyFkVBbKkOxII90vKcsUwQxAGAhv7+/tqlfF9BXG6JxgJ2
+                T0aBpZX15EMQ1ylu8BKEImYcNTW993qWkLVdimQCsam62nnfH+l+YxBbHLIt+DQqiw4ps9jmlwwgdghy
+                MCbHgrIgvtScBQOy0e12Nz9HjL5xh1NtX3LKjqFVzJdqEgB3/ElSC98oeQOKuKZ8b+/U/XveRyJE9ff0
+                kWn/PddEYEckko8eZd61/4gYiRGAQRVxGfXbf1ACVwO32xAmhy3EQzbU0jiErsmdoB3oT9uuxN5hipjx
+                gJm7j02g5cGvrRF7eqTJ6onJfF8B7ppYWG58MTJnVKgpAIKIxB8GckARF+8mmwN0UwKwUo1FpETPBGIf
+                eMAEZt4vEcTSpK/ANOGcttV4Kx3T05mfCyniOjUWqlUKoyx7XUG8iVUQlzzPXkhAIhGDEqYkvqIgtjq1
+                Ft7KCFLEBHpPNw4wTNRV4ayIeiai0czbj9mIMQEzdpwETMnIL8zOkVoa9R04RqMnukpyZfCGgrjcZka8
+                HWzQ7aUaOfJBErnlLFzizuO4bCFWsyk0xJuN+DwdAC10M5BHRwT5XQZLSBnWayWKGHebkey3S0CmkG9h
+                E6+XILq552e9d0o/zTyCCHzmyRbiNWTD05tQwc6WHqSIDbTZEKbh9ADNFwHNfB0liIuOcKDYCtkuWzwR
+                5ASnDJXTesifZqaha7oGCrwPyAh/AJlNHs5GvIFs3PVkrPYpmaKdJk6532hgLa1IIna7WXURkT3YtpMi
+                RsImwRqM3JPlaw6wnNKD9DDfAzB9H7QPK6e7mAI+84ibWg8qiD8mm1aa9VFyWy2g0DkbcV2yw8Agm7Aq
+                BLElAiCeIqF41A5i/n14MpVPrPD0JDAP+aeegr0TmUf8Y+dRxR5/krzFmini5vkRK9K3clTZ76ejQmth
+                bEyPR5bILG2BZ4jPwyNkVGyCAhNXMI1hpGAxi7gLQpy0x+/NQTzwMmI6KpRUywBsV7KHRmXOsyALyCgg
+                +UwwxRUUdH04sWcK/8LMRAjXE0/Q0896MznzzUa8RrGwVNIg3qBmPxVBW6n5oIjFaoYBK9ZzdxxzVGcp
+                KJmNmKY5r5PjsnSI81g1yWWDM5ySnVM59lmBtyILU26BqCcqVXic3gltjxfFvBFtdhHTLGep8crZW+kQ
+                U++i9PyVC2MQHz0/OEqTiNS6mbtoDsxRYZLBX9DNTWgl/8REfkF+QYU3PztzXsqv+LM6jEvSIQbVRLBF
+                oK6fkBr6OIpF5AliLAtegjjCT2sl28S01uncstnjy7zvNgex7h8h1sxFbFRmEMFile1WURYkK8R8j7ti
+                nntdMzUu38wpV2TiccYRb2htbR1RvE3qRKqIzije5lzEeepvUJ3Mc9CgAJbUqEl2CijACf7UMupyJgJQ
+                h7vzlUMPdyjLeoAT63xKLI29Ab9fXJ4wD9bK4ecHGvKRAOpTFbU6pZpArFVy+qqUKdttiHRVEAtIDDgD
+                sml5UrI3P+etjYg3WXkB8AbE4/1Y14eRWamQwmVkckAbTDwaEWAd4nmTGayNOmzCnFnQgJVXR4XLL7pE
+                f+R3PIqyCLnQMfS94fi5W20jF6QNZz9djVvaLhe3F421tY0YPhm+Nn6mbSDv0rphNELctw39Q1+NXTkX
+                /6yh/fi19i8bDowqszQEfJyph0eu5cm9MWOfl7jrzo2M/NQWPvHe4Dn89a5zw31jtSMj/z3ehG7W3tzV
+                99GK3WfQtfHadRvXrDld8oPRvWH4RGNLrfvaieavFMR0eYw4Qmh5BjLb0Vh86PhPIyP7jeE1/blf4eJd
+                5wbi39QWFq5uP1E8Eu/cNZAbz72O9o93vffB+ytq4w2rjx1aM9RwMdRxqK/w3Sw+LJlRObY6VXxDEM+S
+                t4izL28RZ1/eIs6+zEFc7WPsTJR7TVD+VWXWEqRVKI9Gyu+VR/2CmXt9iP715DnHKOiTg4FoMBoIyFl4
+                5u01Ci7ilP3KMN2WhdTIsWXZzp/iGMlWJtAbjfVGeqNes2xfNgTZl/k5Llq286c4xnabw+WtDkaj5qjo
+                N7/lOHOS5JjxibIYjDpPPY06Yz5ZtniXDULW5Z+DYywLDsEVxdHeaHAq1l0ddQjCv465wAk6Xy/HZAxP
+                OSOmvcQcTwYCMbstsrdHlHmoiEIwKKFgMBqUyqOxYCAW5SxRRywQDfCAeSYWyPwicOYFx2+rEqZHL3K8
+                1X05zrL9Q4mH+Dvcihwmpbjhe1ivHpLGrY3xUP+QRLqsJ6WSodQvxx2N/UTD+aHDs2oUneeH/kTrVI7N
+                ZtkPZlcs5t/7VA7Golaw+O0CgPYxaC3PJFl/98Muxjplwvfz75zirb3ah/gBt/kh9HKVd5aFpt8l2HhU
+                pvJvYXo0l+MThuTakaGNNqPdSnPrRXyJFA7AIeXQ8LVySBt2YrUHazinKm8IpTQUKSkq1JiqYdliSNlj
+                S/KlUW0P2ZgFDvkdnMIxI1ofRPR30YyIppzmyV4OnbqzV/sQ9lkjDwjHzN3l42qpkrIVf6VvpjSwzznG
+                dbPoYFvDpEqtMdQeo/sDkHiR4szuZMe2htEkpfShD93ZWQrYdj51lV7iGIlyBESX307cC0Bmq8iV++nb
+                8mjK4avsRk/0M7ClCz8Tg6TkcvY8cM3YemqkyscPvEt6XX+ZJTnnaegKZmrcUo53q8Ub/beV/TiX5Jg9
+                o3CX4nheIRpwguLR+A2F9gOQGPmsgdimG7M5xrIjCn5AfpqRxWLATqJqZc5DVkDkxMhEyyYTOUBgBVLg
+                wMSRCtPrYW1xkuI49AJDSbNxGHTKSlbpxRTHqjznuPR2qv72jecaPlVrjXxClyGMrqqNw4IgdLovfw0p
+                W1Fu60ECh62iMyJyjEQqInThyRUlXl0sQpd2aK9gbNKujcZ4UpjygIvUl8d61EYyI3KvhcAFSFqOEwTe
+                JG3HldLYXI4NKY4N35uOJxra+bJWNsEsVgk1nCYaLinF7xPGoyQxAdIzJzi2uiSLbBedUnkEObCDDNqY
+                QG3F338G2OwByP+FdPq2C/Azfs9DOOUhLRP4t8ekkU807vnnnfzScYwSN/p3pO0DpTTOP+f44Hm3ezjJ
+                cZsEOtXKlJLeTUmOdQnbTN8aUa/S1wna2daS/qH/UF9bUThGspPvtZM73+Ktvm/xOQN21CsFRGI2Inse
+                Q4UEKPKtB/SUSsztmNYT4kH/K/J9+wgqeEA9hHzYl/kF7ExJiuPZFBOOGQP7ghDXIslxSH3b5lCqIcnx
+                9ykzbuTLRl/U0MKdfH4lW2+clyDlH9urn3kpx8FYbNJBCuYHM2aZI9zCt4/0Eui7P7yuDleAHdOVlGPm
+                makH/XZHz9PGn98Mjkv6icSfc/wiQdRVSHBsuKh+d7Ect0nMhdCs41A4ZSsYB/EnTGazY++kINHlSOyg
+                PjbhGP19iofegPMZr/8btR5kHGt/JU3aX5AP8G+TaqP0JnD8YpyHE+PY0JqU2ymO2xL+0qs51o6+qOGW
+                RDzm1hvPaS5O+W5+r0wf9eYscsCB9kb9YBEDEqF+hgPmNq8nTvBnj2Hfrw7nfY7Y4x2POfMpiXlEOvyN
+                199RGvfcQfsW/oeLllXmcvxBimM0mKChMyUpe9yufuUfcKxL6BpOKThKv4e3uS+ziYmxJMkxY5GCHJYY
+                nvoIZlPQDy6rTwSoDhCXgeECQQmTD9hiPmBIWE28CBJL25SrwAUCPPYH5EBg4X/HY5klbU7oY7XUnvTx
+                6aM7i+IYJWa/xAkUDVUJbesTYzzJscVLAj2GJw4FiUEwb+NRQMYk0EPEPzaZyeyIycfMIxPRRWJAjtoM
+                M5jekPeK0nKceBCMvVXvEASxs5EGeoviGD5QiTS0Uw3bOhpIFPPp7fP1R81CVSKe/GOSY9niM9M/gIco
+                xyAKXLXH4rOQ6exn28yWuzJXEbHdDdr3dT+QmPvilPgE9DPf+p9UPiLR3/JTtmhJn9tMxGRKUHa7lTK5
+                SI6TA1nVECJuBQ1LDAdvpwKV1EvIjFOwBJT3eRWOiaPsMDv9Sr7iQ9f9uzDFgf4RoMlefkcXKdV01Tza
+                EbmnvcM4ZpabsCXIK3Kbc6K6JXAM+NJsBQmOZ8mPkIqlRavgMIkOk5qvkE2CYJKtlGMUq+wiPnE3Mk9y
+                2ru9fOVjEmZ7n1ke75C22CYq7DukZSZsCYKN6nx0PEyPknOeup7XEZ9FyC3SYfcLHIdSHLemOG5K9FEs
+                b+MsBQbK8Sx/zvg57ZHwK6xYlJ1+h1kW/SIdwrJsJaZYmduqAxGOxM0cE/WhYFDSRiVtBDGxYMBbEY1J
+                tshyM7Z4QWoO2N2ocLI2cZR88HKrm7jMhpL+K+562p7IHyf/9tXWRG8emETp8xf7IDV/3E80KKagyt14
+                uZ9mj5N/Tia51iQKguwQlDSr7BBpkVseAl6vzJm10Tx/sQHNc5A2EZbGB5j9irdZDDhjsYjosHILhPhm
+                SNmFWxo67aGjL7agg2G6w4N0hy/8+NJX0dUwNKXe1GxSgj90QfkSavLM6YqP4rPS83OOgS75dEGSY9nm
+                s8n+cr/P4ndFo6Lgt70BieEFyuAPoKtHDcXH23Zu7Q+f+LK9wyhtN4YBtp8xhDvOh8nEJQ43/Li97ce1
+                g8O6f7/S4TbSHiVh3eAPJ6T1V3bp/lpH6C8zXtq5nt1Jed9Ycpjuhv7z3MZdmh/LL3+O66j2/zXVnXHj
+                ujPcdqNjGP3XUHijm54mybElILv8ghBw3Xd5zQ5XNGDnXiMrmRXt5dKyoo1FRzRjmrH1Yyd3Nl1sGqiq
+                +yPo2tHZ7S3bbwI+Wz5eVVJ1i2njmobI52LTD3surm1ouRpGVzvH4Wr9eNUtHof43fX9ne0cIXdtwxjh
+                +HDbEfbo+LHaUGf/xqLDK1vQ2a3XtWOmzqvuMTKO113UtH/y3aHVs9b+/bJiZpS1JjARi/z6OMm0fNMZ
+                Lytau7WkbLzDeNTeVHuy9uRw+4liYAz1ho6SI4cpx2NM/9px89X6QXcLMQ4nBw4NnT9xoOkvjqYjLCF2
+                jLnFo6vDV3ddOnKEkHu0pINyfKTdOhhuakeDn2/TbW0raztytvpWY8uJc031oV3OsfeLTvzlWN97776R
+                f3Jj0bK2kyOOUycPVRLu5MzKvyogtpA5bAZM3zUhThRSHCnaE9QeazkrbJPMgDrpZEhj3SOYQ/TVFQHW
+                8jTuJZUCiYqBdGOIliq7gISyFiDdcCf5ytrDRBNt/v/A8fIJbhziXq59y3H25S3H2Ze3HGdf3nKcfXnL
+                cfblLcfZl7ccZ1/+8H95PdtY85IV7gAAAABJRU5ErkJggg==
+            </property>
+        </structure>
+        <structure>
+            <property name="name">encabezadoinformes3.png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAk8AAAA/BAMAAAF8UwEjAAAAA3NCSVQICAjb4U/gAAAAMFBMVEX/////
+                //8AM2bn6+8AI1rX19epqam5ubnAxtR3kawyVoBOcJOMjIwAD0oiRnRfX1/DopkaAAAAEHRSTlMA////
+                ////////////////wFCLQwAAAAlwSFlzAAAnEAAAJxABlGlRGQAAABZ0RVh0Q3JlYXRpb24gVGltZQAw
+                NS8wNS8wNpJYncAAAAAldEVYdFNvZnR3YXJlAE1hY3JvbWVkaWEgRmlyZXdvcmtzIE1YIDIwMDSHdqzP
+                AAAR2ElEQVR4nO1b+08bx9rmT+jLsL5wicXEvQWBNNmYS0hAOE5PSESkrbvYaUjRlmLS1C1a8WHc1j2V
+                DzWXpm1EoGkBUSmXngJRI3FJcxLUSlYOTn9wPotcyUk4EST5vpaecmShQH+g4ptZ2xAS58RJTMkn5QlZ
+                78688+6zz9zembUTQAUPRgL43VEzNGvvtEJcblCtku6xSulPxIkv6zGmH2sSNKVnHEXAvX23VRJOnOhP
+                1xv7D038ZVOCuka+zx0TDyaOU6tEXjAmgE2MakUQHECE53kY0LoTAEU1Qr92catGfj5R7Hb/8MaLCVFt
+                7sb9fN1lhX4kUe8I+E4rNSVafuYeS6TFiZlUCfw8TsfpCbpsfhzIyD1WiRhP9JP01ZhiJCFVvt8djVw/
+                MKsUOT1BzctRrQiP+ngghNe25EOCBqL6Ssq6+ktX0zc3Dh5u/z5TiFUv8PnqYzJVwPHudab7uXK4/HWC
+                qBE9SOCEB7paNSWsxcB1CEgkB0WhEz4WQPtXgB3fUFdlFsHrJuzJBUIe6AqBEeMkjHA+plWSgbExa60+
+                Sd//AmpJAHVTFZHcL4GXGo4YRh7oirJKxGNjGbgIcJFxdT/up1eqC7SmoVImOe7bPi6oM3iDD2QF4KYP
+                SJml4PGwq2SMM9ZiTFlpKpzD0ftsNJD3ruzdm6LStEmdQ4hz7zm4F33XPPh+XntfX2z1HBPi6wqReLlC
+                pT5v7PYDPFzYfl9XVvvp2F310Ya15n6uSl12h5xr4My1MvdgVz9MMVfaHuBEba2IuuEkwM4BgD2fU1du
+                QiyE+/ecbh+affCT9kE7XrOKtvREvXGQts4JXETHmqJDGDNXIKQKdHyQ6D/CkQe6wnhNoj4pkzoYxCa8
+                BqefS3+ZjmoaOkZ6cirL3HLqRm4+TdY8kJbiipFJxEVJ+HNcRHti1sSLRryVspItnt1QiK6rfk/L1QQf
+                JJci+348diERQ8RV5tg/Eo1Yae2GDTLENMxHXCVikr/o6lwGuDdx+GACWICvlNSiFEidscfoKgXjrEVX
+                SbQSjFhPH9BirrVBzKzovEf/VCcFxAP94wlPIO8EaE4S6spjczXF5oZhU252M0lqGa3/okbz1+6+Vq38
+                P7z0rrrF3ajMhUQTu6uvW9vdv3SljyJ8pS2rp6h37+WJ/k3H1m75PEt6YgeZuLri7byPj5/PxwYjpcr2
+                z9vvE2s9JlIIIDeso932IUmJzlrfvN3aGD22e0xS8IikrN4ySmo41QpBsajwtEuYt5R7p4dLHfEgdcBm
+                E8Kk9tMJ3QhwxFRSY8xIM5nOD2L9pleMeBuAlobQ+nGANhPGpoMhUk6JV2enemCDy1yoSrXNugp9rtTq
+                e2PwRyBFgAUXjFQ/xsVGnMU+J3BGEl7EOJ0n6MiO+z6ilEwhUrn1ZotTdqvMcBZuwAgKVn+aKox+CsP0
+                /HzcSGnpAei0IlFS2MRIvaihYyWhl+n7MT5IzbbQ8xe/BGVebrrB5wQqYKOV1AQkXXUaQEE5pHG7kG4X
+                jMSBVNbUBCWVEpGF3nkTW9LgYi5C6lAoK2OVwv88U6pU4kkjd0ZdBXMQvKgLzgfPmmeCAfDOpF689pis
+                Fnsfk0VJoizG7yJFlUoP2Wu+wsoEj0pT6UjFCd5hcnuuLrXux4DaVairmucfIkSKgRTQO+vHxrZHI8VU
+                LBm70LeOHjDezJQyi9ke3iKJBrjtcyTV3A6U2nLmq+YaP4kHqd7eXgF2mUw0qvsLrRz9Vtr7TFQW2vuK
+                uQumEjLILlWs95n61rHO91N4RFc7/M7Yo+yHgXqgL7IKS6Y9H+BEOCNfTZNRH6jcoAobDLDDeDaEwmJf
+                ZXaV1+Iny0AqZXPvwEuD7VsuDiVv7BxJan/2T+2DaW/daFv9avqVNrLlyB5tw0/JazuvFnTfuvV8Z3Ox
+                dOXjd76L5zT6MIjESmQhhTa+Q5HzFSL1n/GUVKwIkSJesrI0luAZRgqZhytPk5WmsgiFlMrht/viEajc
+                i1U8X8CiFdPDzOwKqdoNfr9fIy8HqWTl75AyBz8UKZTjKp0pq1qWIP2RSdVZ6+zXqmot8hNESt3kcPlt
+                foezEQn1nEfweGSDaAW65I0DEqembkZIoeZTf6NJoijCzoMGUSSaU62AOpTZMLejh02+1ORkPSPFWcx2
+                3//6aywiBD90VAQLN2yYbpoOBseDcSC1ymZ7J0wK3aSRSjGgCyZTinGkzWQ6bML6FhanA7zGwgNZMcEm
+                wqqvgRaWwEzn62Ctv+aMruy0zhCc9QbjQYrWXUp7+wQj9RGLKvV9iN73IzxCoysWF29jsSaolIizmMVd
+                1ISRQtmWJkG2mksJ+HSpNrWuutDhmtHpZoU4kVJC3U00Btf3YnwRKQQYqQj0ZCNlN0E/mU6mC4pSVTlI
+                kDRuq4RCm3sWOoc7gbDzx97sWyRFP16k9bhmkVQWC82pXHo3VVKiK5oWttiBPIXUBo6vOO0BHUGjmqCO
+                6ISRyzpu5BoKary6YNxI0fh3Na3CTIXUOUaqaBWLks9RUvQ/0So7QbinRul9morTBmm6QTq9G94W3DnB
+                QkDBcfBVS5JqRCXHkxSewjiTNzLJYIEUrdX6czRrIkQKlxQrva/cS/YFBBQQwTsiD4/sAwiOgEsalUpn
+                o7wUenhSU1MRUqwBMVLjd5EyhvI27Qr1BVZ9tbzFcNsgG2TwpgkVrjQwB30wLad5T29UycJjk0pWVlWb
+                0pTFzNiYmbJwLyVFq48uZsbGzqNv6dCAi1jvM7tFqMiuqTdz5zWfBN82XJeu6fzyKAxPb6yef8x11uKI
+                ThfHL7AU2qb0wl2k2FIrZJ9DV++rGanGCpHIRPrxId7WPAIp2pAz3YC+RFGUokpuoQsc8osABSFSarEC
+                iKwx11rRzD65ara8PLV8uvBauS6+pNiWAq2ji9FIharWRA6VjNGaTGdKVdYJIHOWmgoIznuDOvA3phY6
+                5gqtcnxJKcM13hyNFGcMDaKhPQVQ2lStRai3WGUz+q283udwFe4r8+lGP6Rd8PGR1Nt7JBLkDbIBezOd
+                +0rcbCfKNLKKLZzpVChDsomtkAmzMPYpoYu6oYkb5hyNceBwDxB7vQv0QOhF3lB7vXIRyiBKZuiS6zz5
+                JTXJ7mwn4cgTRJu9liwHJ9DuXfCbB+ABbjx8NZACyvZHaDHPwPfRg1puCZFSV9Y5sv21VctB6oUc7esD
+                BztfTZG0nfnwRfvalq/fbGy39r0rv6s9Dj/kSWkpwrrGdm0K/835ypPJ/GFxoF1mpFRVNdbf+LKHeKMV
+                OwoOvfzxrrdGe3eMrGsu7vtydHJXWveJ0Z96xm91f/9Z8trO1WnaooLuy189l/X56m+T8n/Vvr3u1ogS
+                owsAMq3D5SA1tH/nL73Hz/f+uSjtaI/85fnJV4/e+HoEn7x645+frtL++nJfWkfRusMjF4c6V1+enBqa
+                6nmjJ33kmWVfIaOFXYzQpga5r6V2KJy7/KQeAU9JxYqnpGLFE0+qTMrh/cKKUXmysSBUrljmqwpU+Xwe
+                64oSejg0iAzZhJ6q2xXE481bNCwIlVNpcdn9fleduCyxwjLhFGHH9Wy7Zn0odj28THeKCJVd6/lkuNoX
+                qPDXeuqW6V7LgD9cKHWNpdbuc/0+4/A7q8zOZbpZ/PEHC4XqRENTwOyfrwz4h/cNi4bGmmW6Xbxximd4
+                NZpQSFk7LQFasvcdyV+aelexhUtFKI2z9FpZTcA/Pz/vC1Tayy7l7gZuntgDcrl9Zh78AduHc7ez7baZ
+                gOs2uKD6jO/xHzE+GGQ7OGMXBFgqFPf+BPtqA/5Z2Wvun6LIcqOvTCV92ix2kUFUh/QmY5YEaA9mdkTx
+                pulgxYy4R1AuuY6QFzzZGul6XB3TzgxnJc5MJcyupGnzkCP+XcyZLpTc1b7UmeHU69ztavhAdHnLZV08
+                3sDHA9G73sem8PYbNg3QBxtkZ0Z3lxFn9mmVnG15plB267ehUtuYn3dMkS1hYwtzGLlUnIaEynGcRtnD
+                BAwEOEFEvkYB4L+F2k/I79m/oX/BWXP59Fxp9uxsgPeV8XO7vPuEFZHlXoSESrlgMoW1Yc/0mnJaMqbs
+                nEoRod6ilxGhFqCPfA6EvplAC1wIyQop50JasiYVEQo1NQ6rZLSbCsU5bW7NGZFVkch0Q2Z2JiIzR8xI
+                pI2OpooiWUFtliAs1OLTU6HUytPrK5Dy2uBKWCjMbBaE0o+F7UO6YP0N0CrC0B6qmP8JupSMn+vq3vyB
+                5oZblLrMywlIdLqc9RoBkK+JJs3LUDYvANuqRn77nDkwR1JnArdRwEvzaD39CFBNbVYW0YQKNagtdPHP
+                TkzhJ1daR0lYKP1PXFi9llAn1D8Pb7Ac/bNhb9uJYpDVGrmTIhQn2sx1lTl2Ui0bDDTebKj0ABSOCbAb
+                oPwSwFk3qKZ1RamjALvOp45JUAqguk5AdXmlBIogmlBtyslz1qYdrGlltkSEKulpapZDQpkkKFBOthJQ
+                cvUvwPfKZzctplhLXWFtjZPfsZsoQhmc6gtmuhLwVdtnrE7PB6OaWgIu9XVyBtTes7LmOmNTOL4rSPW5
+                puLHJCrUj7ppUF1aMYXCiDZGhXTRK4MLSwgLpe9jpmGhWsLtblEodGRpsb7wGKWkHQ8LRTQOmX4YSudn
+                efY7HRub9Vwk9dpuKJ87e5EbY3QKizaepz3ykkrgxmygmvNff2KEWl8jiuaPjUuEiiDzVlioYqXA/YX6
+                dkkxOrrvLFmc9uTwGNVYWYvqSgWrq4rYfTVcrY0O5gECulHNLKAx4ZVrYrW38CL6XUJn5UKZdjuW+3Yw
+                9RqqlldMJIZo4UGo62WE1sjtna0hofS3lAL3FSrU9fDPkWKS8rL/Zrihrg6PUVazDzycADkE8fYK1Wmr
+                CMhZTxtXTqOg8dSA2iYgp4VAg5NAEx2/EOesQR6nVVRa4goimlDrIxIoIOFZT/+Tcnl/oULRwbaFYnmh
+                byV+ZrxTqBpHtsCDhwlltkJDaU0tcDabwL573FAFpT6Dj3C2ig0ClNpsvE144K87/jBEEwrdDA3DR9sP
+                tJ8qeSFWoTThGLSHNqcfSqjeY9uPHmjvDMUaLeElTJ05W/lZXg6BnBrVGb7RySLzwIdNZJ+Mqt2a2Tk0
+                B4WVl9SXChqmq6F8eqWEuRtRI/PIJMgGeNrjYhQq7CBcbEC51IfE0xdHAs7GeqvZUq8IhSxm0dxoZkLZ
+                PzSTXV7YJ3GzM2geNgyX3/aXm2fsmuHAykmzFKfYj0PJ3UsYrd4YGYYzY25RAPkLKx/m5tWFWc/EloKh
+                wdzMWRodTtHT4PFYHXV1HhqPI79NsNtlsA+Dq4rzV2l8NRsqiJ8m+e3y8rxzewR8NcGeJIvQ0/zJXopj
+                yreNUfMx2hqMOGvyJI2fv1IyvlYKaBWrKSls/guBUG63UmxvuFjvCbqWe+sYWxPjKeoCFvajDHxunafR
+                5mys8jQ6+SdnifJouGPfJJcszbrnK01Rf9y16GDBPCwU4sHQSEdqP1WKoCfpd0X/EVpjRj5dZKi6l6Rq
+                /qHkXaGHlCtkaYn8ATQUTnrlWXb8nm2yo1+FO2w6+aHIqbob/hya/cJCWRqcfpvoqPI5G4btVXV3FnuS
+                kb99oODw4JX9W/dMvtQ2sT3zxuslErRlbVs/WQzaLW0TV/uNb2Ztfc84tF0/cTXPtOW/1rx3Y/8hlkFU
+                xpvHjx1pga76I9sFdCz/n6bOLW3NazLWn+vUd08WbDd5bl5dv/3ASwVZ216jC8aIUNm+SkI/XAJVN9e+
+                m6zgwz8MEJr67PAO087Nb2Sc7KrflrJlarAPHbFeacvoAe1ol3syedMHfW+cupG86aOWY68fzZgSCr7e
+                mrutyz1Fkje/3IOHWqGr4eoRNzq2fvyjgYnn1q4Zyh1cfcg8+cFA//vFU9+3aC93uQffOdglPZkvG2OG
+                trclr6bjOOqo7xho5r9Qt77vcEPeyS+4juOgaW0mVapW1NGqldStOwRb9olK1dFSKe+o0EwOAOo4IOfR
+                sbyZ73QIyKaSdrh3yGhPd/7PZOffbJovDtWfdHCnKj/XDEl5crPw/1yoZYN2qvWulKdCxYinQsWIp0LF
+                iKdCxYinQsWIZ/4PsoRwi4JyuBsAAAAASUVORK5CYII=
+            </property>
+        </structure>
+    </list-property>
+</report>

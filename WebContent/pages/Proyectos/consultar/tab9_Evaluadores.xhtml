@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad" >Posibles Evaluadores</t:div>
+			<br />
+			<p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}" />
+			<br />
+			<h:panelGroup rendered="#{!manejadorMensajes.vacio}">
+				<script language="javascript">
+ 			alert("  <h:outputText value="#{manejadorMensajes.mensaje}"/>");
+ 		</script>
+			</h:panelGroup>
+
+			<h:panelGrid columns="1" cellpadding="6" cellspacing="3">
+		
+				<t:div styleClass="contenido-titulo-general-myriad-1">
+					<h:outputText value="#{manejadorEvaluadores.inicioTitulo}"
+							style="font-weight: bold" />
+				</t:div>
+				
+			</h:panelGrid>
+			<br />
+			<p:panel header="Posibles Evaluadores Agregados" align="center">
+				<h:panelGrid columns="1" align="center">
+					<h:outputText value="No hay evaluadores adicionados"
+						rendered="#{empty manejadorEvaluadores.listaEvaluadoresVista }" />
+				</h:panelGrid>
+
+				<p:dataTable id="posiblesEvaludadoresAgragados" align="center"
+					value="#{manejadorEvaluadores.listaEvaluadoresVista}"
+					var="posibleEvaluador"
+					rendered="#{!empty manejadorEvaluadores.listaEvaluadoresVista }">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="NOMBRE"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<h:outputText value="#{posibleEvaluador.nombre}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="VER"
+								style="font-weight: bold; font-style: italic;" />
+						</f:facet>
+						<center>
+							<p:commandButton id="BotonVerDetallesEvaludor"
+								update=":form:panelGridDetalles" icon="ui-icon-search"
+								onclick="dlg.show()" action="#{manejadorEvaluadores.verDetalle}">
+								<f:setPropertyActionListener
+									target="#{manejadorEvaluadores.posibleEvaluadorSeleccionado}"
+									value="#{posibleEvaluador}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				<p:dialog id="dialogDetalles" header="Detalles Evaluador"
+					widgetVar="dlg" closable="true" resizable="false" modal="true">
+					<h:panelGrid id="panelGridDetalles" columns="2">
+
+						<h:outputText value="NOMBRE:"
+							style="font-weight: bold; font-style: italic;" />
+						<h:outputText value="#{manejadorEvaluadores.nombreDetalle}" />
+
+						<h:outputText value="E-MAIL:"
+							style="font-weight: bold; font-style: italic;" />
+						<h:outputText value="#{manejadorEvaluadores.emailDetalle}" />
+
+						<h:outputText value="TELÉFONO: "
+							style="font-weight: bold; font-style: italic;" />
+						<h:outputText value="#{manejadorEvaluadores.telefonoDetalle}" />
+
+						<h:outputText value="EXPERTICIA: "
+							style="font-weight: bold; font-style: italic;" />
+						<h:outputText value="#{manejadorEvaluadores.experticiaDetalle}" />
+
+						<h:outputText value="TIPO DE EVALUADOR: "
+							style="font-weight: bold; font-style: italic;" />
+						<h:outputText value="#{manejadorEvaluadores.tipoEvaluadorDetalle}" />
+
+					</h:panelGrid>
+				</p:dialog>
+				<br />
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,512 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitud para desvincular o trasladar equipo de laboratorio</t:div>
+			
+			<p:panelGrid style="width:100%" styleClass="estilo-panelgrid-sinbordes">
+				<p:row>
+					<p:column colspan="2">
+						<h:outputText
+							value="Por medio de este formulario puede enviar solicitud para desasociar el equipo del 
+							       	laboratorio para que sea revisado por la Dirección de Laboratorio de la Sede. 
+							       	Luego de ingresar toda la información, hacer clic en 'Enviar Solicitud'" 
+							rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitudCoordinador}"/>
+						<h:outputText
+							value="La Dirección de Laboratorios de sede es responsable de la administración de equipos asociados a los laboratorios en su sede. 
+									Por lo tanto, se deben gestionar las solicitudes de modificación que realicen los laboratorios, 
+									ya sea desvincular el equipo o trasladarlo a otro laboratorio" 
+							rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}"/>
+					</p:column>
+				</p:row>	
+			</p:panelGrid>
+				
+			<p:spacer height="20" />
+			
+			<p:panel id="panelInfoSolicitud">
+
+				<t:div styleClass="contenido-titulo-general-ancizar-left" 
+					rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}" >
+					Información ingresada por el usuario que realiza la solicitud
+				</t:div>
+				<br />
+					
+				<center>	
+				<p:panelGrid id="panelGridInfoSolicitud" cellpadding="10" cellspacing="10" style="width:100%;">
+					<p:row>
+						<p:column style="width:25%;">
+							<h:outputText value="Laboratorio actual:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.equipoSeleccionado.laboratorio.id} - #{ManejadorEliminarEquipoHojaDeVida.equipoSeleccionado.laboratorio.nombre}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Equipo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.equipoSeleccionado.equipo}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Placa:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.equipoSeleccionado.placa}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Usuario:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.persona.nombreCompleto}"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputText value="Fecha solicitud:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.fechaRegistro}"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}">
+						<p:column style="width:25%;">
+							<h:outputText value="Descripción solicitud:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.descripcion}"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}">
+						<p:column>
+							<h:outputText value="Laboratorio sugerido:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.laboratorioDestinoEquipo.id} - #{ManejadorEliminarEquipoHojaDeVida.solicitud.laboratorioDestinoEquipo.nombre}"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}">
+						<p:column>
+							<h:outputText value="Motivo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<h:outputText rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo.id != 7727}" 
+							value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo.nombre}"/>
+							<h:outputText rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo.id == 7727}" 
+							value="Otro: #{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo_otro}"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS or ManejadorEliminarEquipoHojaDeVida.consultarSolicitud}">
+						<p:column>
+							<h:outputText value="Archivos:" styleClass="negrilla"/>
+						</p:column>
+						<p:column>
+							<p:fileUpload label="Agregar" update="dtArchivos"
+									fileUploadListener="#{ManejadorEliminarEquipoHojaDeVida.subirArchivo}"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="3145728" 
+									invalidSizeMessage="Tamaño máximo: 3 MB"
+									allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+									invalidFileMessage="El archivo debe ser de formato PDF, JPG o PNG."
+									style="width:100%;"
+									rendered="#{!ManejadorEliminarEquipoHojaDeVida.consultarSolicitud}"/>
+							<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+								value="#{ManejadorEliminarEquipoHojaDeVida.listaArchivos}"
+								rows="6" paginator="true" paginatorPosition="bottom"
+								paginatorAlwaysVisible="false" pageLinks="5"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+								emptyMessage="No existen archivos registrados."
+								style="width: 100%">
+								<p:column>
+									<f:facet name="header" style="width:10%">
+										<h:outputText value="Fecha" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+										styleClass="pequennio">
+										<f:convertDateTime pattern="yyyy-MM-dd" />
+									</h:outputText>
+								</p:column>
+								<p:column style="width:60%">
+									<f:facet name="header">
+										<h:outputText value="Nombre" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+										styleClass="pequennio" />
+								</p:column>
+								<p:column style="width:20%">
+									<f:facet name="header">
+										<h:outputText value="Tipo" styleClass="pequennio" />
+									</f:facet>
+									<h:outputText value="Coordinador" rendered="#{archivoLaboratorio.tipoArchivo.id == 7728}" 
+										styleClass="pequennio" />
+									<h:outputText value="Direccion de Sede" rendered="#{archivoLaboratorio.tipoArchivo.id == 7729}" 
+										styleClass="pequennio" />
+								</p:column>
+								<p:column style="width:5%">
+									<f:facet name="header">
+										<h:outputText value="D" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+											action="#{ManejadorEliminarEquipoHojaDeVida.descargarArchivo}">
+											<f:setPropertyActionListener value="#{archivoLaboratorio}"
+												target="#{ManejadorEliminarEquipoHojaDeVida.archivoLaboratorioSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+								<p:column style="width:5%"
+									rendered="#{not (ManejadorEliminarEquipoHojaDeVida.soloLectura or ManejadorEliminarEquipoHojaDeVida.consultarSolicitud) }">
+									<f:facet name="header">
+										<h:outputText value="(-)" styleClass="pequennio" />
+									</f:facet>
+									<center>
+										<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+											action="#{ManejadorEliminarEquipoHojaDeVida.eliminarArchivo}"
+											onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+											<f:setPropertyActionListener value="#{archivoLaboratorio}"
+												target="#{ManejadorEliminarEquipoHojaDeVida.archivoLaboratorioSeleccionado}" />
+										</p:commandButton>
+									</center>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:separator />
+					</p:row>
+				</p:panelGrid>
+				</center>
+			</p:panel>
+			
+			<p:spacer height="20" />
+			
+			<p:panel id="panelEnviarSolicitudEliminar"
+				rendered="#{!ManejadorEliminarEquipoHojaDeVida.consultarSolicitud}">
+			
+				<p:panelGrid id="panelEnviarSolicitud" cellpadding="5" cellspacing="5" style="width:100%;"
+							 rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitudCoordinador}">
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoMotivo" icon="ui-icon-info" />
+
+							<p:tooltip for="infoMotivo" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Seleccione motivo
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Motivo(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:selectOneMenu id="selectMotivo" style="width:80%;"
+								value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo}"
+								converter="ConvertidorTipos">
+								<f:selectItems value="#{ManejadorEliminarEquipoHojaDeVida.listaMotivos}" />
+								<p:ajax update=":form:panelEnviarSolicitud" process=":form:panelEnviarSolicitud"/>
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo.id == 7727}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoMotivoOtro" icon="ui-icon-info" />
+
+							<p:tooltip for="infoMotivoOtro" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Seleccione motivo
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Otro motivo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="motivoOtro" rows="3" autoResize="false" maxlength="200"
+								value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo_otro}" 
+								style="width:80%;"
+								title="Otro motivo"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.motivo.id == 7726}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoLabDestino" icon="ui-icon-info" />
+
+							<p:tooltip for="infoLabDestino" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Si conoce el laboratorio al cual pertenece el equipo, por favor seleccionelo en la siguiente lista.
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Laboratorio al cual pertenece el equipo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							
+							<p:selectOneMenu id="labDestino" style="width:80%;"
+								value="#{ManejadorEliminarEquipoHojaDeVida.idLabDestino}"
+								panelStyle="width: 400px;"
+								filter="true" filterMatchMode="contains"
+								effect="fade">
+								<f:selectItem itemLabel="Ninguno / Ubicación desconocida" itemValue="0" />
+								<f:selectItems value="#{ManejadorEliminarEquipoHojaDeVida.listaLaboratorios}" />
+							</p:selectOneMenu>
+							
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoDescripcion" icon="ui-icon-info" />
+
+							<p:tooltip for="infoDescripcion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Ingrese la descripción y motivo de la solicitud
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Descripción(*):" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="descripcionSol" rows="3" autoResize="false" maxlength="2000"
+								value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.descripcion}" 
+								style="width:80%;"/>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoArchivos" icon="ui-icon-info" />
+
+							<p:tooltip for="infoArchivos" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Archivos de soporte a la solicitud
+								</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Archivos soporte" styleClass="negrilla" />
+						</p:column>
+						<p:column style="text-align:left">
+							<t:div title="Archivos soporte de baja">
+								<p:fileUpload label="Agregar" update="dtArchivos"
+									fileUploadListener="#{ManejadorEliminarEquipoHojaDeVida.subirArchivo}"
+									auto="true" mode="advanced" showButtons="false"
+									sizeLimit="3145728" 
+									invalidSizeMessage="Tamaño máximo: 3 MB"
+									allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+									invalidFileMessage="El archivo debe ser de formato PDF, JPG o PNG."
+									style="width:100%;"/>
+								
+								<p:dataTable var="archivoLaboratorio" id="dtArchivos"
+									value="#{ManejadorEliminarEquipoHojaDeVida.listaArchivos}"
+									rows="6" paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} archivos, Pagina: {currentPage}/{totalPages})"
+									emptyMessage="No existen archivos registrados."
+									style="width: 100%">
+									<p:column>
+										<f:facet name="header" style="width:25%">
+											<h:outputText value="Fecha" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorio.fechaArchivo}"
+											styleClass="pequennio">
+											<f:convertDateTime pattern="yyyy-MM-dd" />
+										</h:outputText>
+									</p:column>
+									<p:column style="width:65%">
+										<f:facet name="header">
+											<h:outputText value="Nombre" styleClass="pequennio" />
+										</f:facet>
+										<h:outputText value="#{archivoLaboratorio.nombreArchivo}"
+											styleClass="pequennio" />
+									</p:column>
+									<p:column style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="D" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton ajax="false" icon="ui-icon-arrowthickstop-1-s"
+												action="#{ManejadorEliminarEquipoHojaDeVida.descargarArchivo}">
+												<f:setPropertyActionListener value="#{archivoLaboratorio}"
+													target="#{ManejadorEliminarEquipoHojaDeVida.archivoLaboratorioSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									<p:column
+										rendered="#{not ManejadorEliminarEquipoHojaDeVida.soloLectura}"
+										style="width:5%">
+										<f:facet name="header">
+											<h:outputText value="(-)" styleClass="pequennio" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-trash" update="dtArchivos"
+												action="#{ManejadorEliminarEquipoHojaDeVida.eliminarArchivo}"
+												onclick="if(!confirm('Está seguro de eliminar el archivo #{archivoLaboratorio.nombreArchivo}?.'))return false">
+												<f:setPropertyActionListener value="#{archivoLaboratorio}"
+													target="#{ManejadorEliminarEquipoHojaDeVida.archivoLaboratorioSeleccionado}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+								</p:dataTable>
+							</t:div>
+						</p:column>
+					</p:row>
+					
+				</p:panelGrid>
+				
+				<p:panelGrid id="panelRevisarSolicitud" cellpadding="5" cellspacing="5" style="width:100%;"
+							 rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}">
+					<p:row>
+						<p:column style="width:5%;">
+							<p:commandButton id="infoProceso" icon="ui-icon-info" />
+
+							<p:tooltip for="infoProceso" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Seleccione si desea desvincular o trasladar el equipo
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Proceso:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							
+						<p:selectOneRadio id="proceso" value="#{ManejadorEliminarEquipoHojaDeVida.procesoRevision}">
+				            <f:selectItem itemLabel="Desvincular equipo" itemValue="D" />
+				            <f:selectItem itemLabel="Trasladar a otro laboratorio" itemValue="T" />
+				            <p:ajax update=":form:panelRevisarSolicitud" />
+				        </p:selectOneRadio>	
+							
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.procesoRevision == 'T'}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoLabDestino" icon="ui-icon-info" />
+
+							<p:tooltip for="infoLabDestino" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Si conoce el laboratorio al cual pertenece el equipo, por favor seleccionelo en la siguiente lista.
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Laboratorio al cual pertenece el equipo:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							
+							<p:selectOneMenu id="labDestino" style="width:80%;"
+								value="#{ManejadorEliminarEquipoHojaDeVida.idLabDestino}"
+								panelStyle="width: 400px;"
+								filter="true" filterMatchMode="contains"
+								effect="fade">
+								<f:selectItem itemLabel="Ninguno / Ubicación desconocida" itemValue="0" />
+								<f:selectItems value="#{ManejadorEliminarEquipoHojaDeVida.listaLaboratorios}" />
+							</p:selectOneMenu>
+							
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{ManejadorEliminarEquipoHojaDeVida.procesoRevision == 'D'}">
+						<p:column style="width:5%;">
+							<p:commandButton id="infoObservacionesRevision" icon="ui-icon-info" />
+
+							<p:tooltip for="infoObservacionesRevision" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								 	Ingrese las observaciones pertinentes o comentarios adicionales de la solicitud. En el caso desvincular un equipo y no trasladarlo, por favor especifique el motivo.
+								</t:div>
+							</p:tooltip>
+
+						</p:column>
+						<p:column style="width:20%;">
+							<h:outputText value="Observaciones:" styleClass="negrilla"/>
+						</p:column>
+						<p:column style="width:75%;">
+							<p:inputTextarea id="observacionRev" rows="3" autoResize="false" maxlength="2000"
+								value="#{ManejadorEliminarEquipoHojaDeVida.solicitud.observaciones}" 
+								style="width:80%;"/>
+						</p:column>
+					</p:row>					
+				</p:panelGrid>
+				
+				<p:spacer height="30" />
+				<center>
+<!-- 					Boton guardar enviar solicitud -->
+					<p:panelGrid columns="2" rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitudCoordinador}">
+						<p:commandButton value="Enviar solicitud" icon="ui-icon-disk"
+							ajax="false"
+							action="#{ManejadorEliminarEquipoHojaDeVida.guardarSolicitud}"
+							onclick="if(!confirm('Está seguro de enviar la solicitud?'))return false" 
+							rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.id == null}"/>
+							
+						<p:commandButton value="Volver al Laboratorio"
+							icon="ui-icon-arrowreturnthick-1-w" ajax="false"
+							action="#{ManejadorEliminarEquipoHojaDeVida.volverLaboratorio}"
+							onclick="if(!confirm('Está seguro de regresar a la página del Laboratorio?'))return false" 
+							immediate="true"/>
+					</p:panelGrid>
+					
+<!-- 					Boton guardar aprobar solicitud -->
+					<p:panelGrid columns="3" rendered="#{ManejadorEliminarEquipoHojaDeVida.revisionDLS}">
+						<p:commandButton value="Aprobar solicitud" icon="ui-icon-check"
+							ajax="false"
+							action="#{ManejadorEliminarEquipoHojaDeVida.aprobarSolicitud}"
+							onclick="if(!confirm('Está seguro de aprobar la solicitud?'))return false" 
+							rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.estado.id == 7230}"/>
+							
+						<p:commandButton value="Rechazar solicitud" icon="ui-icon-close"
+							ajax="false"
+							action="#{ManejadorEliminarEquipoHojaDeVida.rechazarSolicitud}"
+							onclick="if(!confirm('Está seguro de rechazar la solicitud?'))return false" 
+							rendered="#{ManejadorEliminarEquipoHojaDeVida.solicitud.estado.id == 7230}"
+							immediate="true"/>
+
+						<p:commandButton value="Volver al Laboratorio"
+							icon="ui-icon-arrowreturnthick-1-w" ajax="false"
+							action="#{ManejadorEliminarEquipoHojaDeVida.volverLaboratorio}"
+							onclick="if(!confirm('Está seguro de regresar a la página del Laboratorio?'))return false" 
+							immediate="true"/>
+					</p:panelGrid>
+					
+				</center>
+				
+				<br />
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+			
+			</p:panel>
+				
+		</h:form>
+
+		<p:dialog widgetVar="dialogEspere" resizable="false" closable="false" modal="true">
+			<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

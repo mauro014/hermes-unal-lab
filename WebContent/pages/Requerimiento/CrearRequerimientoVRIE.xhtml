@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../principal/PlantillaInvestigacion.xhtml">
+	<ui:define name="content">
+		<h:form>
+		
+		<t:div id="panelTitulo" style="text-align: center; width: 100%;">
+			<h:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes1"
+				style="width: 100%;"	>	
+				<t:div styleClass="contendido-titulo-principal" style="margin-bottom: 30px;">			
+					<t:div style="text-align: center;" styleClass="contenido-titulo-general-myriad-3">
+						Inquietudes / propuestas de mejora a la VRI
+				    </t:div>
+				   
+			    </t:div>	
+			</h:panelGrid>
+		</t:div>
+			
+		<p:panel style="width:750px; margin:auto; margin-bottom:15px;" header="Vicerrectoría de Investigación (VRI)"
+				id="requerimiento">
+
+				<p:messages id="msgs" />
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="panelReq">
+
+					<p:outputLabel value="Nombre del solicitante:" 
+						for="personaReq" styleClass="negrilla" />
+					<p:inputText id="personaReq" maxlength="256" size="70" 
+						readonly="#{ManejadorCrearRequerimientoVRIE.esConsulta}"
+						value="#{ManejadorCrearRequerimientoVRIE.requerimiento.personaRequerimiento}">
+					</p:inputText>
+
+					<p:outputLabel value="E-mail del solicitante:" 
+						for="emailReq" styleClass="negrilla" />
+					<p:inputText id="emailReq" maxlength="256" size="70" 
+						readonly="#{ManejadorCrearRequerimientoVRIE.esConsulta}"
+						value="#{ManejadorCrearRequerimientoVRIE.requerimiento.emailSolicitante}">
+					</p:inputText>
+
+					<p:outputLabel value="Dependencia a la que se dirige:"
+						for="modulo" styleClass="negrilla" />					
+					<p:selectOneMenu
+						value="#{ManejadorCrearRequerimientoVRIE.requerimiento.modulo}"
+						id="modulo" style="width:300px"
+						disabled="#{ManejadorCrearRequerimientoVRIE.esConsulta}">
+						<f:selectItems
+							value="#{ManejadorCrearRequerimientoVRIE.moduloItems}" />
+						<p:ajax update="panelReq"  listener="#{ManejadorCrearRequerimientoVRIE.cargarSubModulo}"/> 
+					</p:selectOneMenu>					
+								
+					<h:outputText value="Descripción (máx. 2000 caracteres):" styleClass="negrilla"/>
+					<p:inputTextarea value="#{ManejadorCrearRequerimientoVRIE.requerimiento.descripcionSolic}" id="descripcion" 
+						autoResize="false" rows="10" cols="55" readonly="#{ManejadorCrearRequerimientoVRIE.esConsulta}"
+						validatorMessage="Descripción debe estar entre 1 - 2000 caracteres"
+						counter="counter" maxlength="2000" counterTemplate="{0} caracteres restantes.">	
+						<f:validateLength minimum="1" maximum="2000" for="descripcion"></f:validateLength>							
+						</p:inputTextarea>
+					<p:message for="descripcion" display="icon" />
+					<h:outputText id="counter" />
+										
+				</p:panelGrid>
+				
+				<br></br>
+				<center>
+					<p:commandButton value="Guardar" rendered="#{!ManejadorCrearRequerimientoVRIE.esConsulta}"
+					action="#{ManejadorCrearRequerimientoVRIE.guardar}" update="msgs"
+					icon="ui-icon-disk" onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"/>
+				</center>
+				
+		</p:panel>
+		
+			 <p:dialog widgetVar="dialogEspere" resizable="false"
+						closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+			
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

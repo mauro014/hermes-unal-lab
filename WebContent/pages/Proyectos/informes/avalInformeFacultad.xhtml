@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-aval-informes" />
+			<p:dataTable var="informe"
+				value="#{manejadorAvalInformeFacultad.listaInforme}"
+				paginator="true" rows="15" paginatorPosition="bottom"
+				filteredValue="#{manejadorAvalInformeFacultad.filteredinformes}"
+				emptyMessage="No existen informes disponibles para revisar.">
+				<f:facet name="header">
+					<h:outputText
+						value="Han sido encontrados #{manejadorAvalInformeFacultad.tamanoLista} informes pendientes de evaluación." />
+				</f:facet>
+				<p:column filterBy="#{informe.proyecto.id} #{informe.id}"
+					filterMatchMode="contains" filterStyle="width: 150px;">
+					<f:facet name="header">
+						<div style="width: 250px;">
+							<h:outputText value="Información" />
+						</div>
+					</f:facet>
+					<div class="panel-interno-tabla">
+						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes">
+							<h:outputText value="Código proyecto: " />
+							<h:outputText value="#{informe.proyecto.id}"
+								style="font-weight: bold;" />
+							<h:outputText value="Código Informe: " />
+							<t:div style="width: 120px;">
+								<h:outputText value="#{informe.id}" style="font-weight: bold;" />
+							</t:div>
+							<h:outputText value="Tipo:" />
+							<h:outputText value="#{informe.tipoInforme.nombre}"
+								style="font-weight: bold;" />
+							<h:outputText value="Fecha informe:" />
+							<h:outputText value="#{informe.fechaGeneracion}"
+								style="font-weight: bold;" />
+						</p:panelGrid>
+					</div>
+				</p:column>
+				<p:column filterBy="#{informe.proyecto.resumen}"
+					filterMatchMode="contains" filterStyle="width: 150px;">
+					<f:facet name="header">
+						<div style="width: 250px;">
+							<h:outputText value="Docente" />
+						</div>
+					</f:facet>
+					<h:outputText value="#{informe.proyecto.resumen}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Ver" />
+					</f:facet>
+					<p:commandButton
+						action="#{manejadorAvalInformeFacultad.aprobarInformeVIF}"
+						icon="ui-icon-search" ajax="false">
+						<f:setPropertyActionListener value="#{informe}"
+							target="#{manejadorAvalInformeFacultad.informeSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Imprimir" />
+					</f:facet>
+					<p:commandButton icon="ui-icon-print"
+						action="#{manejadorAvalInformeFacultad.imprimirInforme}"
+						ajax="false">
+						<f:setPropertyActionListener value="#{informe}"
+							target="#{manejadorAvalInformeFacultad.informeSeleccionado}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

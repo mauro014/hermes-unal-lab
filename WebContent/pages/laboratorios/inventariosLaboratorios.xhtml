@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="inventariosLaboratorios">
+			<t:div styleClass="contenido-titulo-general-myriad">Inventarios Laboratorios</t:div>
+			<!-- dgbenitezc 20140225-->
+
+			<p:panel header="Buscar Equipo en Inventario">
+
+				<center>
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes">
+						<p:outputLabel value="Placa:" for="placaEquipo"
+							styleClass="labels_proyecto" />
+						<p:inputText id="placaEquipo"
+							value="#{manejadorInventariosLaboratorios.placaEquipo}" size="20"
+							maxlength="20">
+						</p:inputText>
+						<p:commandButton value="Buscar" update="@form"
+							icon="ui-icon-search"
+							action="#{manejadorInventariosLaboratorios.buscarEquipo}"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+					</p:panelGrid>
+				</center>
+
+				<p:message for="placaEquipo" />
+
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+				</p:dialog>
+
+				<center>
+					<p:panelGrid columns="2"
+						rendered="#{manejadorInventariosLaboratorios.mostrarEquipo}"
+						styleClass="estilo-panelgrid-sinbordes">
+						<h:outputText value="Placa:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.placa}" />
+
+						<h:outputText value="Descripción:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.equipo}" />
+
+						<h:outputText value="Serial:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.serial}" />
+
+						<h:outputText value="Marca:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.marca}" />
+
+						<h:outputText value="Modelo:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.modelo}" />
+
+						<h:outputText value="Responsable:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.responsable} (#{manejadorInventariosLaboratorios.equipo.idResponsable})" />
+
+						<h:outputText value="Estado:" styleClass="negrilla" />
+						<h:outputText
+							value="#{manejadorInventariosLaboratorios.equipo.nombreEstadoFisico}" />
+					</p:panelGrid>
+				</center>
+
+				<p:messages redisplay="false" />
+
+				<p:dataTable var="laboratorio" id="TablaLaboratorios"
+					rendered="#{manejadorInventariosLaboratorios.mostrarEquipo}"
+					value="#{manejadorInventariosLaboratorios.listaLaboratorios}"
+					rows="5" paginator="true" paginatorPosition="bottom"
+					filteredValue="#{manejadorInventariosLaboratorios.laboratoriosFiltrados}"
+					pageLinks="5"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+					emptyMessage="No existen registros.">
+
+					<f:facet name="header">
+						Búsqueda del Laboratorio
+					</f:facet>
+
+					<p:column filterBy="#{laboratorio.sede.id}"
+						filterOptions="#{manejadorInventariosLaboratorios.selectItemSedes}">
+						<f:facet name="header">
+							Sede
+						</f:facet>
+							#{laboratorio.sede.nombre}
+					</p:column>
+
+					<p:column sortBy="#{laboratorio.nombre}" headerText="Nombre"
+						styleClass="pequennio" filterBy="#{laboratorio.nombre}"
+						filterStyle="width:150px;" filterMatchMode="contains">
+						#{laboratorio.nombre}
+					</p:column>
+
+					<p:column headerText="Ubicación" styleClass="pequennio">
+						Edificio: #{laboratorio.edificio.nombreEdificio}, Salón: #{laboratorio.salon} 
+					</p:column>
+
+					<p:column headerText="Asociar" styleClass="pequennio">
+						<center>
+							<p:commandButton icon="ui-icon-plusthick" update="@form"
+								action="#{manejadorInventariosLaboratorios.asociarEquipo}"
+								onclick="if(!confirm('Está seguro de Asociar el equipo con placa #{manejadorInventariosLaboratorios.placaEquipo} al laboratorio #{laboratorio.nombre} - sede #{laboratorio.sede.nombre}?'))return false"
+								title="Asociar equipo a laboratorio #{laboratorio.nombre} - sede #{laboratorio.sede.nombre}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{laboratorio}"
+									target="#{manejadorInventariosLaboratorios.laboratorioSeleccionado}" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<center>
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+					<p:commandButton icon="ui-icon-home"
+						action="#{manejadorInventariosLaboratorios.salir}"
+						onclick="if(!confirm('Está seguro de volver al Inicio?'))return false"
+						value="Inicio" />
+				</p:panelGrid>
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

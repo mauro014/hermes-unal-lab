@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Costos Servicios de Laboratorio</t:div>
+
+			<p:panel header="Costos Servicios de Laboratorio">
+				<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes">
+
+					<p:dialog header="Por favor espere" widgetVar="dlg"
+						resizable="false" closable="false" modal="true">
+						<p:graphicImage value="/images/ajaxloading.gif" />
+						Por favor espere...
+					</p:dialog>
+
+					<p:dataTable var="costo" id="tablaCostos"
+						value="#{manejadorCostosServiciosLaboratorio.listaCostos}"
+						rows="10" paginator="true" paginatorPosition="bottom"
+						pageLinks="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} estudios, Pagina: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="10,20,50"
+						emptyMessage="No existen registros.">
+						<f:facet name="header">
+							Servicios a los que se les ha realizado Estudio de Costos
+						</f:facet>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Año" />
+							</f:facet>
+							<h:outputText value="#{costo.annio}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{costo.servicio.laboratorio.sede.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Servicio/Laboratorio" />
+							</f:facet>
+							<h:outputText value="#{costo.servicio.nombre}" />
+							<br />
+							<h:outputText value="#{costo.servicio.laboratorio.nombre}"
+								styleClass="pequennio" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Consultar" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton icon="ui-icon-search" ajax="false"
+									action="#{manejadorCostosServiciosLaboratorio.consultarCostos}"
+									title="Consultar">
+									<f:setPropertyActionListener value="#{costo}"
+										target="#{manejadorCostosServiciosLaboratorio.costoSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Editar" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton icon="ui-icon-pencil" ajax="false"
+									action="#{manejadorCostosServiciosLaboratorio.editarCostos}"
+									title="Editar">
+									<f:setPropertyActionListener value="#{costo}"
+										target="#{manejadorCostosServiciosLaboratorio.costoSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+					<p:spacer height="15" />
+
+					<p:dataTable var="servicio" id="dtServiciosCandidatos"
+						rendered="#{manejadorCostosServiciosLaboratorio.mostrarListaEnsayos}"
+						value="#{manejadorCostosServiciosLaboratorio.listaServiciosCandidatos}"
+						filteredValue="#{manejadorCostosServiciosLaboratorio.listaServiciosCandidatosFiltrados}"
+						rows="10" paginator="true" paginatorPosition="bottom"
+						pageLinks="5"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords}, Pagina: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="10,20,50"
+						emptyMessage="No existen registros.">
+						<f:facet name="header">
+							<h:outputText
+								value="Servicios a los que se les puede realizar Estudio de Costos para el año #{manejadorCostosServiciosLaboratorio.annioActual}" />
+						</f:facet>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Sede" />
+							</f:facet>
+							<h:outputText value="#{servicio.laboratorio.sede.nombre}" />
+						</p:column>
+						<p:column filterBy="#{servicio.nombre}" filterMatchMode="contains"
+							filterStyle="width:200px;">
+							<f:facet name="header">
+								<h:outputText value="Servicio/Laboratorio" />
+							</f:facet>
+							<h:outputText value="#{servicio.nombre}" />
+							<br />
+							<h:outputText value="#{servicio.laboratorio.nombre}"
+								styleClass="pequennio" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Crear" styleClass="pequennio" />
+							</f:facet>
+							<center>
+								<p:commandButton icon="ui-icon-plusthick" ajax="false"
+									action="#{manejadorCostosServiciosLaboratorio.crearCostos}"
+									title="Crear Estudio de Costos"
+									onclick="if(!confirm('Está seguro de crear Estudio de Costos para el Servicio #{servicio.nombre}?'))return false">
+									<f:setPropertyActionListener value="#{servicio}"
+										target="#{manejadorCostosServiciosLaboratorio.servicioSeleccionado}" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+
+
+				</p:panelGrid>
+
+				<p:messages closable="true" />
+
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

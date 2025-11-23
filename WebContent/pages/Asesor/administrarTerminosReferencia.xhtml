@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Términos de referencia</t:div>
+				<div
+					style="width: 100%; text-align: right; padding-top: 5px; padding-bottom: 5px;">
+					<p:commandButton value="Agregar nuevos términos"
+						icon="ui-icon-circle-plus" update="@form" ajax="false"
+						action="#{manejadorAdministrarConvocatoriasExternas.agregarNuevosTerminos}" />
+				</div>
+			<br />
+			<p:dataTable var="terminos"
+				value="#{manejadorAdministrarConvocatoriasExternas.listaTerminosReferencia}"
+				emptyMessage="No se encontraron términos de referencia para convocatorias externas"
+				paginator="true" rows="20" paginatorPosition="top">
+				<f:facet name="header">Términos de referencia - convocatorias externas</f:facet>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Vigente?" />
+					</f:facet>
+					<p:graphicImage value="/images/check.png"
+						rendered="#{terminos.estado == 'A'}" style="width: 25px;" />
+					<p:graphicImage value="/images/cancel.png"
+						rendered="#{terminos.estado == 'I'}" style="width: 20px;" />
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Id" />
+					</f:facet>
+					<h:outputText value="#{terminos.id}" />
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Vigentes desde" />
+					</f:facet>
+					<h:outputText value="#{terminos.vigenciaInicio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="Vigentes hasta" />
+					</f:facet>
+					<h:outputText value="#{terminos.vigenciaTermina}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column style="text-align: center;" headerText="-">
+					<p:commandButton
+						action="#{manejadorAdministrarConvocatoriasExternas.consultarTerminosReferencia}"
+						icon="ui-icon-search" ajax="false">
+						<f:setPropertyActionListener value="#{terminos}"
+							target="#{manejadorAdministrarConvocatoriasExternas.terminosSeleccionados}" />
+
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+

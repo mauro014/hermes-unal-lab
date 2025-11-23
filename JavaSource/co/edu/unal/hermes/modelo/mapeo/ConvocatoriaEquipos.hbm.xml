@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="co.edu.unal.hermes.modelo">
+	<class name="ConvocatoriaEquipos" table="HER_CONVOCATORIA_EQUIPOS">
+		<meta attribute="sync-DAO">false</meta>
+
+		<id name="id" type="integer" column="CNEQ_ID">
+			<generator class="sequence">
+				<param name="sequence">SEQ_PROYECTO</param>
+			</generator>
+		</id>
+
+		<property name="modalidad" column="CNEQ_MODALIDAD" type="string"
+			not-null="false" length="2" />
+		<property name="propuestaEquipo" column="CNEQ_PROPUESTA_EQUIPO"
+			type="string" not-null="false" />
+		<property name="agendaConocimiento" column="CNEQ_AGENDA_CONOCIMIENTO"
+			type="string" not-null="false" />
+		<property name="tipoApoyo" column="CNEQ_TIPO_APOYO" type="string"
+			not-null="false" length="2" />
+		<property name="trayectoriaGrupo" column="CNEQ_TRAYECTORIA_GRUPO"
+			type="string" not-null="false" />
+		<property name="gruposUnAlianza" column="CNEQ_GRUPOS_UN_ALIANZA"
+			type="string" not-null="false" />
+		<property name="formacionEst" column="CNEQ_FORMACION_EST"
+			type="string" not-null="false" />
+		<property name="docentesParticipantes" column="CNEQ_DOCENTES_PARTICIPANTES"
+			type="string" not-null="false" />
+		<property name="produccionAcademica" column="CNEQ_PRODUCCION_ACADEMICA"
+			type="string" not-null="false" />
+		<property name="participacionEventos" column="CNEQ_PARTICIPACION_EVENTOS"
+			type="string" not-null="false" />
+		<property name="fechaSolicitud" column="CNEQ_FECHA_SOLICITUD"
+			type="date" not-null="false" length="7" />
+		<property name="etapa" column="CNEQ_ETAPA" type="integer"
+			not-null="false" />
+		<property name="estado" column="CNEQ_ESTADO" type="string"
+			not-null="true" />
+		<property name="estadoActa" column="CNEQ_ESTADO_ACTA" type="string"
+			not-null="true" />
+		<property name="fechaActa" column="CNEQ_FECHA_ACTA"
+			type="date" not-null="false" length="7" />
+
+		<many-to-one name="grupoResponsable" class="Grupo"
+			column="CNEQ_GRUPO_RESPONSABLE" not-null="false" lazy="false" />
+
+		<many-to-one name="investigador" class="Investigador"
+			not-null="true" lazy="false">
+			<column name="INV_ID" />
+			<column name="TDO_ID" />
+		</many-to-one>
+
+		<set name="archivos" table="HER_ARCHIVO_CONVOCATORIA" cascade="all-delete-orphan"
+			fetch="join">
+			<key column="ACN_CONVOCATORIA" />
+			<one-to-many class="ArchivoConvocatoria" />
+		</set>
+
+
+	</class>
+</hibernate-mapping>

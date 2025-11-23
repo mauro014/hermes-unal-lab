@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Aval institucional - Facultad</t:div>
+
+			<h:outputText
+				value="Han sido encontrados en total #{manejadorConsultaAvalFacultad.tamanoLista} avales pendientes de evaluación " />
+
+			<p:dataTable var="avalVisi"
+				value="#{manejadorConsultaAvalFacultad.listaAval}"
+				emptyMessage="No existen avales pendientes de revisión de facultad."
+				style="width:680px;">
+				
+				<p:column style="font-size:11px;">
+					<f:facet name="header">
+						<h:outputText value="Código-Tipo" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.aviId}-" />
+					<h:outputText value="#{avalVisi.nombreTipo}" />
+				</p:column>
+				
+				<p:column style="font-size:11px; text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Nro. Conv" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.aviNumeroConvocatoria}"
+						rendered="#{!avalVisi.esRegalias}" />
+					<h:outputText value="No aplica" rendered="#{avalVisi.esRegalias}" />
+				</p:column>
+				
+				<p:column style="font-size:11px;">
+					<f:facet name="header">
+						<h:outputText value="Título" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.aviTitulo}" />
+				</p:column>
+
+				<p:column style="font-size:11px;">
+					<f:facet name="header">
+						<h:outputText value="Profesor" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.nombreInvestigador}" />
+				</p:column>
+				
+				<p:column style="font-size:11px;">
+					<f:facet name="header">
+						<h:outputText value="Facultad" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.nombreFacultad}" />
+				</p:column>
+				
+				<p:column style="font-size:11px;">
+					<f:facet name="header">
+						<h:outputText value="Estado" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.nombreEstado}" />
+					<p:commandButton id="negarAval"
+						onclick="if(!confirm('¿Esta seguro de negar el aval?'))return false"
+						rendered="#{avalVisi.aviEstado == 'C' and avalVisi.avalVigente}"
+						action="#{manejadorConsultaAvalFacultad.negarAval}"
+						icon="ui-icon-trash" title="Negar aval" update="@form"
+						ajax="false" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()">
+						<f:setPropertyActionListener name="aval" value="#{avalVisi}"
+							target="#{manejadorConsultaAvalFacultad.avalActual}" />
+					</p:commandButton>
+				</p:column>
+				
+				<p:column style="font-size:11px;">
+					<f:facet name="header">
+						<h:outputText value="Fecha" />
+					</f:facet>
+					<h:outputText value="#{avalVisi.fecha}" />
+				</p:column>
+				
+				<p:dialog widgetVar="dialogEspere" resizable="false"
+					closable="false" modal="true">
+					<p:graphicImage value="/images/ajaxloading.gif" />
+							Por favor espere...
+			</p:dialog>
+			
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

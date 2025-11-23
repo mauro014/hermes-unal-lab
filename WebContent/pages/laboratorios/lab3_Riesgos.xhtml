@@ -1,0 +1,1884 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad">Infraestructura y Riesgos</t:div>
+			<p:menubar value="Formularios Laboratorios"
+				model="#{ManejadorMenuFormularioLaboratorios.modeloMenu}" />
+			<p:spacer height="15" />
+		</h:form>
+
+		<h:form id="RiesgosLaboratorios">
+		
+			<p:panel id="panelPorcentajelab">
+				<p:panelGrid columns="3" id="panelInfoGeneralPorcentajeLab" styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:70px;">
+						<h:outputText value="Avance: " styleClass="negrilla" />
+					</t:div>
+					
+					<t:div style="width:450px;">					
+						<p:progressBar value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.porcentajeCompletitud}" 
+							labelTemplate="{value}%" displayOnly="true" styleClass="animated"/>
+						<h:outputText value="Última actualización: " styleClass="negrilla" />
+						<h:outputText value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.fechaCreacionRegistro}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</h:outputText>
+					</t:div>
+					
+					<t:div style="width:80px;">
+						<p:commandLink id="ajax" onstart="informacionFaltanteLab.show()"
+								style="text-decoration:none; 
+									        color: #16A8E2;
+									        font-weight: bold;
+									        ">
+								<h:outputText value="Información faltante" />
+						</p:commandLink>
+					</t:div>
+		
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:spacer height="15" />
+			
+			<p:panel id="panelRiesgosLaboratorios"
+				header="#{ManejadorLaboratoriosRiesgos.laboratorioActual.nombre} - #{ManejadorLaboratoriosRiesgos.laboratorioActual.id}">
+				
+				<p:tabView id="tabViewIR">
+
+					<p:tab title="Infraestructura" id="panelInfraestructura" titleStyle="font-size:11px">
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" style="width:100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								Infraestructura - Estado Actual
+							</f:facet>
+		
+							<p:panelGrid columns="8">
+		
+								<h:outputText value="Instalaciones Físicas" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.estadoInstalacionesFisicas}"
+									id="cambia1">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRiesgos.estadoInstalacionesFisicasItem}" />
+								</p:selectOneMenu>
+								<h:outputText />
+		
+								<h:outputText value="Climatización" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.estadoClimatizacion}"
+									id="cambia2">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRiesgos.estadoClimatizacionItem}" />
+								</p:selectOneMenu>
+								<h:outputText />
+		
+								<h:outputText value="Ventilación" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.estadoVentilacion}"
+									id="cambia3">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRiesgos.estadoVentilacionItem}" />
+								</p:selectOneMenu>
+		
+								<h:outputText value="Iluminación" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.estadoIluminacion}"
+									id="cambia4">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRiesgos.estadoIluminacionItem}" />
+								</p:selectOneMenu>
+								<h:outputText />
+		
+								<h:outputText value="Ruido" />
+								<p:selectOneMenu
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.estadoRuido}"
+									id="cambia5">
+									<f:selectItems
+										value="#{ManejadorLaboratoriosRiesgos.estadoRuidoItem}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+						</p:panelGrid>
+						
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" style="width:100%;"
+							styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								Servicios requeridos
+							</f:facet>
+		
+							<p:panelGrid columns="8" styleClass="derecha">
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Ampliación" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereAmpliacion}"
+									id="cambia6">
+								</p:selectBooleanCheckbox>
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Adecuación" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereAdecuacion}"
+									id="cambia7">
+								</p:selectBooleanCheckbox>
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Cubiertas" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereCubiertas}">
+								</p:selectBooleanCheckbox>
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Equipos" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereEquipos}">
+								</p:selectBooleanCheckbox>
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Paredes" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereParedes}">
+								</p:selectBooleanCheckbox>
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Pisos" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requierePisos}">
+								</p:selectBooleanCheckbox>
+		
+								<t:div style="width:115px;">
+									<h:outputText value="Redistribución" />
+								</t:div>
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereRedistribucion}">
+								</p:selectBooleanCheckbox>
+		
+							</p:panelGrid>
+							
+							<p:spacer height="20" />
+							
+							<p:panelGrid
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5" style="width:100%;">
+
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Agua" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanAgua"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_agua}">
+											<p:ajax update="aguaCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="aguaCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_agua}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_agua_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Gas" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanGas"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_gas}">
+											<p:ajax update="gasCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="gasCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_gas}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_agua_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Vacio" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanVacio"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_vacio}">
+											<p:ajax update="vacioCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="vacioCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_vacio}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_vacio_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Aire comprimido" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanAireComp"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_aire_comprimido}">
+											<p:ajax update="aireCompCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="aireCompCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_aire_comprimido}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_aire_comprimido_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Control iluminación" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanControlIlum"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_control_iluminacion}">
+											<p:ajax update="controlIlumCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="controlIlumCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_control_iluminacion}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_control_iluminacion_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Aire acondicionado" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanAireAcond"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_aire_acondicionado}">
+											<p:ajax update="aireAcondCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="aireAcondCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_aire_acondicionado}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_aire_acondicionado_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Insonorización" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanInsonorizacion"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_insonorizacion}">
+											<p:ajax update="insonorizacionCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="insonorizacionCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_insonorizacion}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_insonorizacion_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Circuito cerrado de tv" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanCircuitoCerr"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_circuito_cerrado_de_tv}">
+											<p:ajax update="circuitoCerrCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="circuitoCerrCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_circuito_cerrado_de_tv}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_circuito_cerrado_de_tv_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Puntos de red" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanPuntosRed"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_puntos_de_red}">
+											<p:ajax update="puntosRedCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="puntosRedCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_puntos_de_red}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_puntos_de_red_detalle}" />
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Otro" />	
+									</p:column>
+									<p:column style="width:5%;">
+										<p:selectBooleanCheckbox id="booleanOtro"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_otro}">
+											<p:ajax update="otroCual" />
+										</p:selectBooleanCheckbox>
+									</p:column>
+									<p:column style="width:15%;">
+										<h:outputText value="Especificación" />
+									</p:column>
+									<p:column style="width:60%;">
+										<p:inputText id="otroCual" style="width:100%;" maxlength="190"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.ser_otro}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_otro_detalle}" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+							
+							<p:spacer height="10" />
+							
+							<p:panelGrid
+								styleClass="estilo-panelgrid-sinbordes" cellpadding="5"
+								cellspacing="5" style="width:100%;">
+
+								<p:row>
+									<p:column style="width:25%;">
+										<h:outputText value="Conexiones eléctricas requeridas" />	
+									</p:column>
+									<p:column style="width:15%;">
+										<p:panelGrid columns="2">
+											<h:outputText value="110 V" />
+											<p:selectBooleanCheckbox id="boolean110v"
+												disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+												value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_110v}">
+											</p:selectBooleanCheckbox>
+										</p:panelGrid>	
+									</p:column>
+									<p:column style="width:15%;">
+										<p:panelGrid columns="2">
+											<h:outputText value="220 V" />
+											<p:selectBooleanCheckbox id="boolean220v"
+												disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+												value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_220v}">
+											</p:selectBooleanCheckbox>
+										</p:panelGrid>	
+									</p:column>
+									<p:column style="width:45%;">
+										<p:panelGrid columns="2">
+											<h:outputText value="Tensión requerida en Voltios" />
+											<p:inputText id="tensionVoltios" style="width:100%;" maxlength="190"
+												readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+												value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.ser_tension_requerida_en_voltios}" />
+										</p:panelGrid>	
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+							
+							<p:spacer height="20" />
+		
+							<p:panelGrid columns="2">
+								<t:div style="width:115px;">
+									<h:outputText value="Otros / descripción requerimientos:" />
+								</t:div>
+								<p:inputTextarea rows="3" cols="60" counter="counterRequiereOtros"
+									autoResize="false" maxlength="2000"
+									counterTemplate="{0} caracteres restantes"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.requiereOtros}" />
+								<h:outputText />
+								<h:outputText id="counterRequiereOtros" styleClass="pequennio" />
+							</p:panelGrid>
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					
+					<p:tab title="Residuos y emisiones generadas" id="panelSGA" titleStyle="font-size:11px">
+						<p:spacer height="20" />
+						
+						<p:panelGrid styleClass="estilo-panelgrid-sinbordes" cellpadding="5" cellspacing="5" style="width:100%;">
+								
+								<f:facet name="header">
+									Emisiones, Residuos y Vertimientos Generados
+								</f:facet>
+
+								<p:row>
+									<p:column style="width:20%;">
+										<h:outputText value="Residuos Sólidos:" styleClass="negrilla"/>	
+									</p:column>
+									<p:column style="width:80%;">
+										<p:panelGrid columns="1">
+											<p:panelGrid columns="10">
+												<h:outputText value="Biológicos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosBiologicos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Químicos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosQuimicos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Radioactivos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosRadioactivos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Citotoxicos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosCitotoxicos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Eléctricos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosElectricos}">
+												</p:selectBooleanCheckbox>
+											</p:panelGrid>
+				
+											<p:panelGrid columns="2">
+												<h:outputText value="Otros" />
+												<p:inputText size="40" maxlength="256"
+													readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosOtros}" />
+											</p:panelGrid>
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column>
+										<h:outputText value="Residuos Líquidos/Vertimientos:" styleClass="negrilla"/>
+									</p:column>
+									<p:column>
+										<p:panelGrid columns="1">
+											<p:panelGrid columns="6">
+												<h:outputText value="Biológicos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosBiologicos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Químicos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosQuimicos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Radioactivos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosRadioactivos}">
+												</p:selectBooleanCheckbox>
+											</p:panelGrid>
+											<p:panelGrid columns="2">
+												<h:outputText value="Otros" />
+												<p:inputText size="40" maxlength="256"
+													readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosOtros}" />
+											</p:panelGrid>
+										</p:panelGrid>
+									</p:column>
+								</p:row>	
+								<!-- Res No Peligrosos -->
+								<p:row>
+									<p:column>
+										<h:outputText value="Residuos no peligrosos:" styleClass="negrilla"/>
+									</p:column>
+									<p:column>
+										<p:panelGrid columns="1">
+											<p:panelGrid columns="6">
+												<h:outputText value="Biodegradables" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_biodegradables}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Reciclables" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_reciclables}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Inertes" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_inertes}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Ordinarios" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_ordinarios}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Grasas y aceites" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_grasas_y_aceites}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Lixiviados" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_lixiviados}">
+												</p:selectBooleanCheckbox>
+											</p:panelGrid>
+										</p:panelGrid>
+									</p:column>
+								</p:row>	
+								
+								<!-- Res Peligrosos -->
+								<p:row>
+									<p:column>
+										<h:outputText value="Residuos peligrosos:" styleClass="negrilla"/>
+									</p:column>
+									<p:column>
+										<p:panelGrid columns="1">
+											<p:panelGrid columns="6">
+												<h:outputText value="Residuos infecciosos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_residuos_infecciosos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Residuos químicos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_residuos_quimicos}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Residuos radioactivos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_residuos_radioactivos}">
+												</p:selectBooleanCheckbox>
+											</p:panelGrid>
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+								<!-- Emisiones -->
+								<p:row>
+									<p:column>
+										<h:outputText value="Emisiones:" styleClass="negrilla"/>
+									</p:column>
+									<p:column>
+										<p:panelGrid columns="1">
+											<p:panelGrid columns="6">
+												<h:outputText value="Derivados de combustión" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_derivados_de_combustion}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="No derivados de combustión" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_no_derivados_de_combustion}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Ruido" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_ruido}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Olores ofensivos" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_olores_ofensivos}">
+												</p:selectBooleanCheckbox>
+											</p:panelGrid>
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+								<!-- Vertimiento -->
+								<p:row>
+									<p:column>
+										<h:outputText value="Vertimiento:" styleClass="negrilla"/>
+									</p:column>
+									<p:column>
+										<p:panelGrid columns="1">
+											<p:panelGrid columns="6">
+												<h:outputText value="Aguas domésticas" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_aguas_domesticas}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Aguas de interes ambiental" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_aguas_de_interes_ambiental}">
+												</p:selectBooleanCheckbox>
+												<h:outputText value="Aguas de interes sanitario" />
+												<p:selectBooleanCheckbox
+													disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+													value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_aguas_de_interes_sanitario}">
+												</p:selectBooleanCheckbox>
+											</p:panelGrid>
+										</p:panelGrid>
+									</p:column>
+								</p:row>
+								<!-- Otro -->
+								<p:row>
+									<p:column>
+										<h:outputText value="Otro" styleClass="negrilla"/>
+									</p:column>
+									<p:column>
+										<p:panelGrid columns="2">
+											<h:outputText value="Otros" />
+											<p:inputText size="40" maxlength="256"
+												readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+												value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sga_otro}" />
+										</p:panelGrid>		
+									</p:column>
+								</p:row>
+						</p:panelGrid>			
+						
+<!-- 						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="width:100%;"> -->
+							
+<!-- 							<f:facet name="header"> -->
+<!-- 								Emisiones, Residuos y Vertimientos Generados -->
+<!-- 							</f:facet> -->
+							
+<!-- 							<h:outputText value="Residuos Sólidos:" /> -->
+<!-- 							<p:panelGrid columns="1"> -->
+<!-- 								<p:panelGrid columns="10"> -->
+<!-- 									<h:outputText value="Biológicos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosBiologicos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 									<h:outputText value="Químicos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosQuimicos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 									<h:outputText value="Radioactivos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosRadioactivos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 									<h:outputText value="Citotoxicos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosCitotoxicos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 									<h:outputText value="Eléctricos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosElectricos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 								</p:panelGrid> -->
+	
+<!-- 								<p:panelGrid columns="2"> -->
+<!-- 									<h:outputText value="Otros" /> -->
+<!-- 									<p:inputText size="40" maxlength="256" -->
+<!-- 										readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosSolidosOtros}" /> -->
+<!-- 								</p:panelGrid> -->
+<!-- 							</p:panelGrid> -->
+<!-- 						</p:panelGrid> -->
+	
+<!-- 						<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"> -->
+<!-- 							<h:outputText value="Residuos Líquidos/Vertimientos:" /> -->
+<!-- 							<p:panelGrid columns="1"> -->
+	
+<!-- 								<p:panelGrid columns="6"> -->
+	
+<!-- 									<h:outputText value="Biológicos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosBiologicos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 									<h:outputText value="Químicos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosQuimicos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 									<h:outputText value="Radioactivos" /> -->
+<!-- 									<p:selectBooleanCheckbox -->
+<!-- 										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosRadioactivos}"> -->
+<!-- 									</p:selectBooleanCheckbox> -->
+<!-- 								</p:panelGrid> -->
+	
+<!-- 								<p:panelGrid columns="2"> -->
+	
+<!-- 									<h:outputText value="Otros" /> -->
+<!-- 									<p:inputText size="40" maxlength="256" -->
+<!-- 										readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}" -->
+<!-- 										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.residuosLiquidosOtros}" /> -->
+	
+<!-- 								</p:panelGrid> -->
+<!-- 							</p:panelGrid> -->
+<!-- 						</p:panelGrid> -->
+						
+					</p:tab>
+					
+					<p:tab title="Seguridad y Riesgos" id="panelSeguridadRiesgos" titleStyle="font-size:11px">
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							style="width:100%;">
+							<f:facet name="header">
+								Identificación de riesgos
+							</f:facet>
+		
+							<p:panelGrid columns="4">
+		
+								<h:outputText value="Riesgo Biológico" />
+								<p:selectBooleanCheckbox id="booleanRiesgoBiologico"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoBiologico}">
+									<p:ajax update="riesgoBiologicoCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="riesgoBiologicoCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoBiologico}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoBiologicoCual}" />
+		
+								<h:outputText value="Riesgo Químico" />
+								<p:selectBooleanCheckbox id="booleanRiesgoQuimico"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoQuimico}">
+									<p:ajax update="riesgoQuimicoCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="riesgoQuimicoCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoQuimico}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoQuimicoCual}" />
+		
+								<h:outputText value="Riesgo Eléctrico" />
+								<p:selectBooleanCheckbox id="booleanRiesgoElectrico"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoElectrico}">
+									<p:ajax update="riesgoElectricoCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="riesgoElectricoCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoElectrico}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.riesgoElectricoCual}" />
+		
+								<h:outputText value="Emisiones Atmosféricas" />
+								<p:selectBooleanCheckbox id="booleanEmisionesAtmosfericas"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.emisionesAtmosfericas}">
+									<p:ajax update="emisionesAtmosfericasCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="emisionesAtmosfericasCual" size="50"
+									maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.emisionesAtmosfericas}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.emisionesAtmosfericasCual}" />
+		
+								<h:outputText value="Exposición a Alta Tensión" />
+								<p:selectBooleanCheckbox id="booleanExposicionAltaTension"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.exposicionAltaTension}">
+									<p:ajax update="exposicionAltaTensionCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="exposicionAltaTensionCual" size="50"
+									maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.exposicionAltaTension}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.exposicionAltaTensionCual}" />
+		
+								<h:outputText value="Almacenamiento de reactivos" />
+								<p:selectBooleanCheckbox id="booleanAlmacenamientoReactivos"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.almacenamientoAdecuadoReactivos}">
+									<p:ajax update="almReactivosAdecuado" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?"/>
+								<p:inputText id="almReactivosAdecuado" size="50"
+									maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.almacenamientoAdecuadoReactivos}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_almacenamientoadecuadoreactivosdetalle}" />
+								
+								<h:outputText value="Exposición a radiación Ionizante" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionExposicionIonizante}">
+								<p:ajax update="expRadioacionIonizante" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?"/>
+								<p:inputText id="expRadioacionIonizante" size="50"
+									maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionExposicionIonizante}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_radiacionexposicionionizantedetalle}" />
+								
+								<h:outputText value="Exposición a radiación NO Ionizante" />
+								<p:selectBooleanCheckbox id="booleanRadiacionNoIonizante"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionExposicionNoIonizante}">
+									<p:ajax update="radiacionExposicionNoIonizanteCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="radiacionExposicionNoIonizanteCual" size="50"
+									maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionExposicionNoIonizante}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionExposicionNoIonizanteCual}" />
+		
+							</p:panelGrid>
+						
+						</p:panelGrid>	
+						
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+							style="width:100%;">
+							<f:facet name="header">
+								Elementos y/o Agentes manipulados en el laboratorio
+							</f:facet>
+							
+							<p:panelGrid columns="4">
+		
+								<h:outputText value="Animales" />
+								<p:selectBooleanCheckbox id="booleanAnimales"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_animales}">
+									<p:ajax update="animalesCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="animalesCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_animales}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_animales_detalle}" />
+		
+								<h:outputText value="Humanos" />
+								<p:selectBooleanCheckbox id="booleanHumanos"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_humanos}">
+									<p:ajax update="humanosCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="humanosCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_humanos}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_humanos_detalle}" />
+		
+								<h:outputText value="Medicamentos controlados" />
+								<p:selectBooleanCheckbox id="booleanMedicamentosControlados"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_medicamentos_controlados}">
+									<p:ajax update="medicamentosControladosCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="medicamentosControladosCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_medicamentos_controlados}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_medicamentos_controlados_detalle}" />
+		
+								<h:outputText value="Gases comprimidos" />
+								<p:selectBooleanCheckbox id="booleanGasesComprimidos"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_gases_comprimidos}">
+									<p:ajax update="gasesComprimidosCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="gasesComprimidosCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_gases_comprimidos}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_gases_comprimidos_detalle}" />
+		
+								<h:outputText value="Material biológico" />
+								<p:selectBooleanCheckbox id="booleanMaterialBiologico"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_material_biologico}">
+									<p:ajax update="materialBiologicoCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="materialBiologicoCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_material_biologico}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_material_biologico_detalle}" />
+		
+								<h:outputText value="Equipos y/o material generador de radiación ionizante" />
+								<p:selectBooleanCheckbox id="booleanEquiposRadiacionIonizante"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_equipos_y_o_material_generador_de_radiacion_ionizante}">
+									<p:ajax update="equiposRadiacionIonizanteCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="equiposRadiacionIonizanteCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_equipos_y_o_material_generador_de_radiacion_ionizante}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_equipos_y_o_material_generador_de_radiacion_ionizante_detalle}" />
+								
+								<h:outputText value="Equipos generadores de ruido/vibración" />
+								<p:selectBooleanCheckbox id="booleanEquiposRuidoVibracion"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_equipos_generadores_de_ruido_vibracion}">
+									<p:ajax update="equiposRuidoVibracionCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="equiposRuidoVibracionCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_equipos_generadores_de_ruido_vibracion}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_equipos_generadores_de_ruido_vibracion_detalle}" />
+								
+								<h:outputText value="otro" />
+								<p:selectBooleanCheckbox id="booleanSriOtro"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_otro}">
+									<p:ajax update="sriOtroCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="sriOtroCual" size="50" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.sri_otro}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.sri_otro_detalle}" />
+		
+							</p:panelGrid>
+							
+						</p:panelGrid>
+						
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" id="panelGridSeguridadRiesgos" 
+							styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+							<f:facet name="header">
+								Seguridad y Riesgos
+							</f:facet>
+						
+							<p:panelGrid columns="2" id="panelGridSeguridadIndustrial">
+								<h:outputText value="Seguridad Industrial:" />
+								<p:panelGrid columns="1">
+									<p:panelGrid columns="6" styleClass="derecha">
+										<h:outputText value="Extintores" />
+										<p:inputText size="4" maxlength="4"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.seguridadExtintores}" />
+										<t:div style="width:180px;">
+											<h:outputText value="Señalización General" />
+										</t:div>
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.seguridadSenalizacionGeneral}">
+										</p:selectBooleanCheckbox>
+										<t:div style="width:180px;">
+											<h:outputText value="Señalización de Seguridad" />
+										</t:div>
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.seguridadSenalizacionSeguridad}">
+										</p:selectBooleanCheckbox>
+										<h:outputText value="Botiquín" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.seguridadBotiquin}">
+										</p:selectBooleanCheckbox>
+										<h:outputText value="Señalización de Emergencia" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.seguridadSenalizacionEmergencia}">
+										</p:selectBooleanCheckbox>
+										<h:outputText value="Ducha de Emergencia" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.seguridadDuchaEmergencia}">
+										</p:selectBooleanCheckbox>
+									</p:panelGrid>
+		
+									<p:panelGrid columns="4">
+										<h:outputText value="Elementos de Protección Personal" />
+										<p:selectBooleanCheckbox id="booleanElementosProteccionPersonal"
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.elementosProteccionPersonal}">
+											<p:ajax update="elementosProteccionPersonalCual" />
+										</p:selectBooleanCheckbox>
+										<h:outputText value="¿Cuáles?" />
+										<p:inputText id="elementosProteccionPersonalCual" size="50"
+											maxlength="100"
+											disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.elementosProteccionPersonal}"
+											readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.elementosProteccionPersonalCual}" />
+									</p:panelGrid>
+		
+								</p:panelGrid>
+							</p:panelGrid>
+		
+							<p:panelGrid columns="2" id="panelGridManualProteccion">
+								<h:outputText value="Cuenta con Manual de Protección:" />
+								<p:panelGrid columns="1">
+									<p:panelGrid columns="8">
+										<h:outputText value="Biológica" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.manualProteccionBiologica}">
+										</p:selectBooleanCheckbox>
+		
+										<h:outputText value="Química" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.manualProteccionQuimica}">
+										</p:selectBooleanCheckbox>
+		
+										<h:outputText value="Radiológica" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.manualProteccionRadiologica}">
+										</p:selectBooleanCheckbox>
+		
+										<h:outputText value="Eléctrica" />
+										<p:selectBooleanCheckbox
+											disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+											value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.manualProteccionElectrica}">
+										</p:selectBooleanCheckbox>
+		
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:panelGrid>
+						
+						</p:panelGrid>
+						
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" id="panelGridRadiacion" 
+							styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+							<f:facet name="header">
+								Radiación
+							</f:facet>
+		
+							<p:panelGrid columns="4">
+		
+								<h:outputText value="Equipo Emisor" />
+								<p:selectBooleanCheckbox id="booleanEquipoEmisor"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionEquipoEmisor}">
+									<p:ajax update="radiacionEquipoEmisorCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="radiacionEquipoEmisorCual" size="60"
+									maxlength="100"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionEquipoEmisor}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionEquipoEmisorCual}" />
+		
+								<h:outputText value="Fuente" />
+								<p:selectBooleanCheckbox id="booleanFuente"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionFuente}">
+									<p:ajax update="radiacionFuenteCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="radiacionFuenteCual" size="60" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionFuente}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionFuenteCual}" />
+		
+								<h:outputText value="Material Radioactivo" />
+								<p:selectBooleanCheckbox id="booleanMaterial"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionMaterial}">
+									<p:ajax update="radiacionMaterialCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿Cuál?" />
+								<p:inputText id="radiacionMaterialCual" size="60" maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionMaterial}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionMaterialCual}" />
+		
+								<h:outputText value="Generación de residuos radioactivos" />
+								<p:selectBooleanCheckbox id="booleanGeneracionResiduos"
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionResiduosRadioactivos}">
+									<p:ajax update="radiacionResiduosRadioactivosCual" />
+								</p:selectBooleanCheckbox>
+								<h:outputText value="¿De qué tipo?" />
+								<p:inputText id="radiacionResiduosRadioactivosCual" size="60"
+									maxlength="100"
+									disabled="#{!ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionResiduosRadioactivos}"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionResiduosRadioactivosCual}" />
+							</p:panelGrid>
+		
+							<p:panelGrid columns="7">
+								<h:outputText value="Frecuencia emisión residuos radioactivos:" />
+								<h:outputText value="Diario" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionEmisionDiario}">
+								</p:selectBooleanCheckbox>
+								<h:outputText value="Semanal" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionEmisionSemanal}">
+								</p:selectBooleanCheckbox>
+								<h:outputText value="Mensual" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionEmisionMensual}">
+								</p:selectBooleanCheckbox>
+		
+								<h:outputText value="Dosímetros:" />
+								<h:outputText value="Personales" />
+								<p:inputText size="5" maxlength="5"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionDosimetrosPersonales}" />
+								<h:outputText value="Ambientales" />
+								<p:inputText size="5" maxlength="5"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionDosimetrosAmbientales}" />
+								<h:outputText value="de Control" />
+								<p:inputText size="5" maxlength="5"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionDosimetrosDeControl}" />
+		
+							</p:panelGrid>
+		
+							<p:panelGrid columns="2">
+								<h:outputText value="Cuenta con programa de monitoreo" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionProgramaMonitoreo}">
+								</p:selectBooleanCheckbox>
+								<h:outputText
+									value="Carné de protección radiológica expedido por Ingeominas" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionCarneProteccionRadiologica}">
+								</p:selectBooleanCheckbox>
+		
+								<h:outputText
+									value="Licencia de manejo de Ingeominas o de Funcionamiento de la Dirección Seccional de Salud" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionLicenciaManejoFuncionamiento}">
+								</p:selectBooleanCheckbox>
+		
+								<h:outputText value="Cuarto de decaimiento" />
+								<p:selectBooleanCheckbox
+									disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionCuartoDecaimiento}">
+								</p:selectBooleanCheckbox>
+							</p:panelGrid>
+		
+							<p:separator />
+							<p:spacer height="10" />
+		
+							<p:panelGrid columns="2">
+								<h:outputText value="Observaciones:" />
+								<p:inputTextarea rows="3" cols="70"
+									counter="counterObservacionesRadiacion" autoResize="false"
+									maxlength="2000" counterTemplate="{0} caracteres restantes"
+									readonly="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+									value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.radiacionObservaciones}" />
+								<h:outputText />
+								<h:outputText id="counterObservacionesRadiacion"
+									styleClass="pequennio" />
+							</p:panelGrid>
+						</p:panelGrid>
+						
+					</p:tab>
+					
+					<p:tab id="panelSustanciasProductosQuimicos" title="Sustancias y productos químicos" titleStyle="font-size:11px">
+						<p:spacer height="20" />
+						
+						<p:panelGrid columns="1" id="panelSustanciasControladas"
+							style="width:100%;" styleClass="estilo-panelgrid-sinbordes">
+							<f:facet name="header">
+								Sustancias y productos químicos
+							</f:facet>
+		
+							<p:panelGrid columns="2" id="panelPreguntaUsaControladas" style="width:100%;" styleClass="estilo-panelgrid-sinbordes">
+								
+								<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="width:70%;" id="panelSustanciasControladas1">
+									<h:outputText value="¿Usa sustancias y productos químicos?" />
+									<p:selectBooleanCheckbox id="booleanUsaSustanciasControladas"
+										disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+										value="#{ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}">
+										<p:ajax update=":RiesgosLaboratorios:tabViewIR:panelSustanciasControladas" />
+									</p:selectBooleanCheckbox>
+								</p:panelGrid>
+								
+								<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" style="width:100%;text-align: right" id="panelSustanciasControladas2">
+									<p:commandLink id="ajax" onstart="listaSustancias.show()"
+										style="text-decoration:none; 
+											        color: #16A8E2;
+											        font-weight: bold;">
+										<h:outputText value=" Ver lista de sustancias controladas" />
+									</p:commandLink>
+								</p:panelGrid>
+							</p:panelGrid>
+							
+							<p:spacer height="5" />
+							
+							<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" id="panelSustanciasControladas1"
+								rendered="#{!ManejadorLaboratoriosDocencia.soloLectura and ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}">
+								<p:commandButton id="infoSustanciasQuimicas" icon="ui-icon-info">
+									<p:tooltip for="infoSustanciasQuimicas" styleClass="tooltip-mesage" showDelay="999">
+										<t:div style="text-align: left; float:left; width: 300px">
+										 	Si usted desea incluir o editar una nueva sustancia o producto químico, debe realizar la solicitud a la Dirección Nacional de Investigación y Laboratorios al correo dnil@unal.edu.co
+										</t:div>
+									</p:tooltip>
+								</p:commandButton>
+								<h:outputText value="¿La sustancia no está en la lista?" styleClass="pequennio"/>
+							</p:panelGrid>
+							
+							<p:spacer height="5" />
+						
+							<p:panel id="panelUsaSustancias" rendered="#{!ManejadorLaboratoriosDocencia.soloLectura and ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}">
+			
+								<p:panelGrid 
+									id="panelListaUsaControladas"
+									styleClass="estilo-panelgrid-sinbordes"
+									cellpadding="3"
+									cellspacing="3"
+									rendered="#{!ManejadorLaboratoriosDocencia.soloLectura}">
+										
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoSustanciaLista" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoSustanciaLista" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												 	Seleccione de la lista la sustancia deseada
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Sustancia:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosRiesgos.idSustanciaSeleccionada}"
+												id="selectSustancia"
+												disabled="#{ManejadorLaboratoriosRiesgos.tipoOperación != 'C'}"
+												filter="true"
+												filterMatchMode="contains"
+												style="width: 400px"
+												effect="fade"
+												panelStyle="width: 520px">
+												<f:selectItem itemLabel="Seleccione una sustancia" itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosRiesgos.sustanciasItems}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoActividadManejoLista" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoActividadManejoLista" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												 	Seleccione de la actividad de manejo para la sustancia seleccionada
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Actividad de manejo:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												id="actividadManejo"
+												disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+												value="#{ManejadorLaboratoriosRiesgos.actividadManejoSeleccionada}"
+												style="width: 400px" >
+												<f:selectItem itemLabel="Seleccione una actividad de manejo" itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosRiesgos.actividadManejoItem}" />
+													<p:ajax update=":RiesgosLaboratorios:tabViewIR:panelUsaSustancias"
+															process=":RiesgosLaboratorios:tabViewIR:panelUsaSustancias"/>
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									
+									<p:row id="a654" rendered="#{ManejadorLaboratoriosRiesgos.actividadManejoSeleccionada == 654}">
+										<p:column style="width:4%;">
+											<p:commandButton id="infoProveedor" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoProveedor" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												 	Seleccione el proveedor para el ingreso de la sustancia seleccionada
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Proveedor:" />
+										</p:column>
+										<p:column>
+											
+											<p:autoComplete id="proveedorSustancia" queryDelay="600"
+												value="#{ManejadorLaboratoriosRiesgos.nombreProveedor}"
+												completeMethod="#{ManejadorLaboratoriosRiesgos.servicioGeneral.listaNombresEmpresasContiene}"
+												size="50" scrollHeight="200" minQueryLength="2"
+												forceSelection="false" panelStyle="width:200px"
+												disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}">
+											<p:ajax event="itemSelect"
+												listener="#{ManejadorLaboratoriosRiesgos.handleSelectProveedor}"/>
+										</p:autoComplete>
+											
+										</p:column>
+									</p:row>
+									
+									<p:row id="a655" rendered="#{ManejadorLaboratoriosRiesgos.actividadManejoSeleccionada == 655}">
+										<p:column style="width:4%;">
+											<p:commandButton id="infoDescActividadConsumo" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoDescActividadConsumo" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												       	Ingrese la descripción de la actividad en la que se consumió la sustancia química. Máximo 500 caracteres incluyendo espacios.
+													</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Descripción actividad:" />
+										</p:column>
+										<p:column>
+											<p:inputTextarea id="actividadConsumo"
+												value="#{ManejadorLaboratoriosRiesgos.descActividadConsumo}" rows="3" cols="70"
+												style="width: 400px;" autoResize="false" maxlength="500" />									
+										</p:column>
+									</p:row>
+									
+									<p:row id="a656" rendered="#{ManejadorLaboratoriosRiesgos.actividadManejoSeleccionada == 656}">
+										<p:column style="width:4%;">
+											<p:commandButton id="infoAlmacenamientoOpciones" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoAlmacenamientoOpciones" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												       	Seleccione alguna de las opciones para el almacenamiento. In situ: Todo el inventario del reactivo está en el laboratorio. 
+												       	Almacén: El reactivo se encuentra almacenado en un lugar fuera del laboratorio.
+													</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Lugar almacemaniento:" />
+										</p:column>
+										<p:column>
+											<p:selectOneRadio id="almacenamientoRadio" value="#{ManejadorLaboratoriosRiesgos.descAlmacenamiento}">
+									            <f:selectItem itemLabel="In situ" itemValue="I" />
+									            <f:selectItem itemLabel="Almacén" itemValue="A" />
+									        </p:selectOneRadio>								
+										</p:column>
+									</p:row>
+									
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoConsumo" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoConsumo" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												       Ingrese el consumo de la sustancia en el mes y año seleccionado. Si necesita ingresar valores decimales use punto (.)	
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Cantidad:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="consumoSustancia"
+												value="#{ManejadorLaboratoriosRiesgos.consumoSustancia}" maxlength="8" size="10"
+												requiredMessage="El valor del consumo es obligatorio" 
+												converter="javax.faces.Double"
+												converterMessage="El valor del consumo debe ser numérico">
+												<f:validateLength minimum="0" />
+											</p:inputText>
+										</p:column>
+									</p:row>
+									
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoUnConcentracionLista" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoUnConcentracionLista" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												 	Seleccione de la unidad de concentración para la sustancia seleccionada
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Unidad de concentración:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												id="unidadConcentracion"
+												disabled="#{ManejadorLaboratoriosRiesgos.soloLectura}"
+												value="#{ManejadorLaboratoriosRiesgos.unidadConcentracionSeleccionada}"
+												style="width: 400px" >
+												<f:selectItem itemLabel="Seleccione una unidad de concentración" itemValue="0" />
+												<f:selectItems value="#{ManejadorLaboratoriosRiesgos.unidadconcentracionSustanciaItem}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoValorConcentracion" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoValorConcentracion" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												       Ingrese el valor de la concentración de la sustancia el cual debe ser numérico. Si necesita ingresar valores decimales use punto (.)	
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Valor de concentración:" />
+										</p:column>
+										<p:column>
+											<p:inputText id="valorConcentracionSustancia"
+												value="#{ManejadorLaboratoriosRiesgos.valorConcentracionSustancia}" maxlength="8" size="10"
+												requiredMessage="El valor del valor de concentracion es obligatorio" 
+												converter="javax.faces.Double"
+												converterMessage="El valor del valor de concentracion ser numérico">
+												<f:validateLength minimum="0" />
+											</p:inputText>
+										</p:column>
+									</p:row>
+									
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoMes" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoMes" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												     Ingrese el mes del consumo de la sustancia seleccionada
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Mes:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosRiesgos.mes}"
+												id="selectMes"
+												style="width: 150px" effect="fade">
+												<f:selectItem itemLabel="Seleccione un mes" itemValue="0" />
+												<f:selectItems value="#{ManejadorLaboratoriosRiesgos.mesesItems}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="width:4%;">
+											<p:commandButton id="infoAnnio" icon="ui-icon-info" />
+											
+											<p:tooltip for="infoAnnio" styleClass="tooltip-mesage" showDelay="999">
+												<t:div style="text-align: left; float:left;">
+												     Ingrese el año del consumo de la sustancia seleccionada
+												</t:div>
+											</p:tooltip>
+											
+										</p:column>
+										<p:column>
+											<h:outputText value="Año:" />
+										</p:column>
+										<p:column>
+											<p:selectOneMenu
+												value="#{ManejadorLaboratoriosRiesgos.annio}"
+												id="selectAnnio"
+												style="width: 150px" effect="fade">
+												<f:selectItem itemLabel="Seleccione un año" itemValue="0" />
+												<f:selectItems
+													value="#{ManejadorLaboratoriosRiesgos.annioItems}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:row>
+								
+								</p:panelGrid>
+								
+								<p:spacer height="15" />
+								
+								<center>
+									<p:commandButton 
+										id="botonAgregarSustancia"
+										action="#{ManejadorLaboratoriosRiesgos.agregarSustancia}"
+										value="#{ManejadorLaboratoriosRiesgos.tipoOperación == 'C' ? 'Agregar' : 'Editar' }"
+										icon="#{ManejadorLaboratoriosRiesgos.tipoOperación == 'C' ? 'ui-icon-plusthick' : 'ui-icon-pencil' }"
+										update=":RiesgosLaboratorios:tabViewIR:panelSustanciasControladas" />
+									<p:commandButton 
+										id="botonCancelarEdicion"
+										rendered="#{ManejadorLaboratoriosRiesgos.tipoOperación == 'E'}"
+										action="#{ManejadorLaboratoriosRiesgos.cancelarModoEdicion}"
+										value="Cancelar"
+										update=":RiesgosLaboratorios:tabViewIR:panelSustanciasControladas"
+										icon="ui-icon-close" />
+								</center>
+								
+							</p:panel>
+						
+							<p:spacer height="10" rendered="#{ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}"/>
+							
+							<p:messages id="messages" autoUpdate="true" closable="true" />
+							
+							<p:panelGrid columns="2" id="panelExport" style="width:100%;" styleClass="estilo-panelgrid-sinbordes"
+										rendered="#{ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}">
+								<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes" style="width:100%;text-align: right" id="panelSustanciasControladas3">
+									<p:commandButton value="Exportar a Excel" ajax="false" icon="ui-icon-circle-arrow-s">
+										<p:dataExporter type="xls" target="tablaInsumosSustanciasControladasLaboratorioExcel"
+											fileName="Reporte Sustancias_Producto_Químicos_Laboratorio"
+											postProcessor="#{ManejadorLaboratoriosRiesgos.postProcessXLS}" />
+									</p:commandButton>
+								</p:panelGrid>
+							</p:panelGrid>
+						
+							<center>
+								<p:dataTable id="tablaInsumosSustanciasControladasLaboratorio"
+									rendered="#{ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}"
+									var="sustanciaEnLista"
+									value="#{ManejadorLaboratoriosRiesgos.listaSustanciasControladas}" rows="15"
+									paginator="true" paginatorPosition="bottom" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} sustancias, pagina: {currentPage}/{totalPages})"
+									emptyMessage="No hay sustancias asociadas"
+									filteredValue="#{ManejadorLaboratoriosRiesgos.listaSustanciasControladasFiltradas}">
+									<p:column style="width:25%;"
+											  sortBy="#{sustanciaEnLista.insumo.nombre}" 
+											  filterBy="#{sustanciaEnLista.insumo.nombre}"
+											  filterMatchMode="contains"
+											  styleClass="pequennio">
+										<f:facet name="header">
+											<h:outputText value="Sustancia" />
+										</f:facet>
+											<h:outputText value="#{sustanciaEnLista.insumo.nombre}" styleClass="labels_proyecto"/>
+									</p:column>
+									<p:column style="width:30%;"
+											  sortBy="#{sustanciaEnLista.actividadManejo.nombre}"				  
+											  filterBy="#{sustanciaEnLista.actividadManejo.nombre}"
+											  filterMatchMode="contains"
+											  styleClass="pequennio">
+										<f:facet name="header">
+											<h:outputText value="Actividad Manejo" />
+										</f:facet>
+											<h:outputText value="#{sustanciaEnLista.actividadManejo.nombre}" styleClass="labels_proyecto"/>
+											<br />
+											<h:outputText value="Proveedor: #{sustanciaEnLista.proveedor.nombre}"
+														  rendered="#{sustanciaEnLista.actividadManejo.id == 654}"/>
+											<h:outputText value="Actividad: #{sustanciaEnLista.descActividadConsumo}"
+														  rendered="#{sustanciaEnLista.actividadManejo.id == 655}"/>
+											<h:outputText value="Lugar: #{sustanciaEnLista.almacenamientoDetalle == 'I' ? 'In Situ' : 'Almacén'}"
+														  rendered="#{sustanciaEnLista.actividadManejo.id == 656}"/>
+									</p:column>
+									
+									<p:column style="width:10%;" styleClass="pequennio">
+										<f:facet name="header">
+											<h:outputText value="Cantidad" />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.consumo}" />
+										<br />
+										<h:outputText value="#{sustanciaEnLista.insumo.unidadDeMedida.nombre}" styleClass="azul-pequennio"/>
+									</p:column>
+									
+									<p:column style="width:5%;" styleClass="pequennio">
+										<f:facet name="header">
+											<h:outputText value="Conc." />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.valorConcentracion} "/>
+										<h:outputText value="#{sustanciaEnLista.unidadConcentracion.nombre}"/>
+										
+									</p:column>
+									
+									<p:column style="width:5%;" styleClass="pequennio">
+										<f:facet name="header">
+											<h:outputText value="Mes/Año" />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.mes}" />
+										<br />
+										<h:outputText value="#{sustanciaEnLista.annio}" />
+									</p:column>
+									
+									<p:column style="width:5%;" sortBy="#{sustanciaEnLista.insumo.controlado}">
+										<f:facet name="header">
+											<h:outputText value="C" />
+										</f:facet>
+										<center>
+											<p:selectBooleanCheckbox value="#{sustanciaEnLista.insumo.controlado}" disabled="true" />
+										</center>
+									</p:column>
+									
+									<p:column style="width:5%;">
+										<f:facet name="header">
+											<h:outputText value="FS" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-alert" ajax="false"
+												action="#{ManejadorLaboratoriosRiesgos.descargarArchivoFichaSeguridad}"
+												title="Descargar ficha de seguridad de la sustancia seleccionada">						
+												<f:setPropertyActionListener value="#{sustanciaEnLista}"
+													target="#{ManejadorLaboratoriosRiesgos.laboratorioDetInsumoSustControladaSeleccionada}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									
+									<p:column style="width:5%;">
+										<f:facet name="header">
+											<h:outputText value="ET" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-image" ajax="false"
+												action="#{ManejadorLaboratoriosRiesgos.descargarArchivoFichaSeguridad}"
+												oncomplete="archivosEtiqueta.show()"
+												title="Descargar etiqueta de la sustancia seleccionada">				
+												<f:setPropertyActionListener value="#{sustanciaEnLista}"
+													target="#{ManejadorLaboratoriosRiesgos.laboratorioDetInsumoSustControladaSeleccionada}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+									
+									<p:column headerText="Edit." rendered="#{!ManejadorLaboratoriosRiesgos.soloLectura}">
+										<center>									
+											<p:commandButton
+												id="botonEditarSustancia"
+												icon="ui-icon-pencil"
+												rendered="#{not ManejadorLaboratoriosRiesgos.soloLectura}"
+												action="#{ManejadorLaboratoriosRiesgos.editarSustanciaControlada}"
+												update=":RiesgosLaboratorios:tabViewIR:panelSustanciasControladas"
+												title="Editar información de la sustancia #{sustanciaEnLista.insumo.nombre}"
+												onclick="if(!confirm('¿Está seguro de editar la sustancia seleccionada?'))return false">
+												<f:setPropertyActionListener value="#{sustanciaEnLista}"
+													target="#{ManejadorLaboratoriosRiesgos.sustanciaSelEditar}" />
+											</p:commandButton>		
+										</center>
+									</p:column>
+									
+									<p:column rendered="#{!ManejadorLaboratoriosRiesgos.soloLectura}">
+										<f:facet name="header">
+											<h:outputText value="(-)" />
+										</f:facet>
+										<center>
+											<p:commandButton icon="ui-icon-trash"
+												onclick="if(!confirm('¿Está seguro(a) de eliminar la sustancia seleccionada?'))return false"
+												action="#{ManejadorLaboratoriosRiesgos.eliminarSustanciaControlada}"
+												update="tablaInsumosSustanciasControladasLaboratorio">
+												<f:setPropertyActionListener value="#{sustanciaEnLista}"
+													target="#{ManejadorLaboratoriosRiesgos.laboratorioDetInsumoSustControladaSeleccionada}" />
+											</p:commandButton>
+										</center>
+									</p:column>
+								</p:dataTable>
+							</center>
+							
+							<p:growl id="growlAgregarSust" for="botonAgregarSustancia" life="6000" severity="info"/>
+							<p:growl id="growlEditarSust" for="botonEditarSustancia" life="6000" severity="info"/>
+							
+							<center>
+								<p:dataTable id="tablaInsumosSustanciasControladasLaboratorioExcel"
+									rendered="false"
+									var="sustanciaEnLista"
+									value="#{ManejadorLaboratoriosRiesgos.listaSustanciasControladas}" rows="15"
+									paginator="true" paginatorPosition="bottom" pageLinks="5"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="(Mostrando {startRecord} - {endRecord} de {totalRecords} sustancias, pagina: {currentPage}/{totalPages})"
+									emptyMessage="No hay sustancias asociadas">
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="CAS" />
+										</f:facet>
+											<h:outputText value="#{sustanciaEnLista.insumo.cas}"/>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Sustancia" />
+										</f:facet>
+											<h:outputText value="#{sustanciaEnLista.insumo.nombre}"/>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Actividad Manejo" />
+										</f:facet>
+											<h:outputText value="#{sustanciaEnLista.actividadManejo.nombre}"/>
+									</p:column>
+									
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Detalle" />
+										</f:facet>
+											<h:outputText value="Proveedor: #{sustanciaEnLista.proveedor.nombre}"
+														  rendered="#{sustanciaEnLista.actividadManejo.id == 654}"/>
+											<h:outputText value="Actividad: #{sustanciaEnLista.descActividadConsumo}"
+														  rendered="#{sustanciaEnLista.actividadManejo.id == 655}"/>
+											<h:outputText value="Lugar: #{sustanciaEnLista.almacenamientoDetalle == 'I' ? 'In Situ' : 'Almacén'}"
+														  rendered="#{sustanciaEnLista.actividadManejo.id == 656}"/>
+									</p:column>
+									
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Cantidad" />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.consumo} " />
+										<h:outputText value="#{sustanciaEnLista.insumo.unidadDeMedida.nombre}"/>
+									</p:column>
+																	
+									<p:column style="width:5%;" styleClass="pequennio">
+										<f:facet name="header">
+											<h:outputText value="Concentracion" />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.valorConcentracion} "/>
+										<h:outputText value="#{sustanciaEnLista.unidadConcentracion.nombre}"/>
+										
+									</p:column>
+									
+									<p:column style="width:5%;">
+										<f:facet name="header">
+											<h:outputText value="Mes" />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.mes}" />
+									</p:column>
+									
+									<p:column style="width:5%;">
+										<f:facet name="header">
+											<h:outputText value="Año" />
+										</f:facet>
+										<h:outputText value="#{sustanciaEnLista.annio}" />
+									</p:column>
+									
+									<p:column style="width:5%;" sortBy="#{sustanciaEnLista.insumo.controlado}">
+										<f:facet name="header">
+											<h:outputText value="Controlada" />
+										</f:facet>
+										<h:outputText value="Si" rendered="#{sustanciaEnLista.insumo.controlado}"/>
+										<h:outputText value="No" rendered="#{!sustanciaEnLista.insumo.controlado}"/>
+									</p:column>
+								</p:dataTable>
+							</center>
+							
+							<h:outputText rendered="#{ManejadorLaboratoriosRiesgos.laboratorioActual.usaSustanciasControladas}"
+								value="Conc. = Concentración, FS = Ficha de seguridad, ET = Etiqueta, C = ¿Sustancia controlada?" />			
+						</p:panelGrid>
+						
+					</p:tab>
+				</p:tabView>
+			</p:panel>
+			
+			<br />
+
+			<center>
+				<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+					rendered="#{!ManejadorLaboratoriosRiesgos.soloLectura}">
+					<p:commandButton action="#{ManejadorLaboratoriosRiesgos.salir}"
+						onclick="if(!confirm('Está seguro de Salir?. Cualquier cambio realizado se perderá.'))return false"
+						value="Salir" immediate="true" />
+					<p:commandButton
+						action="#{ManejadorLaboratoriosRiesgos.salirGuardar}"
+						value="Guardar y continuar después" />
+					<p:commandButton
+						action="#{ManejadorLaboratoriosRiesgos.siguiente}"
+						value="Guardar y avanzar" />
+				</p:panelGrid>
+			</center>		
+			
+		<p:dialog header="Lista de sustancias controladas" id="listaSustancias"
+				widgetVar="listaSustancias" modal="true" resizable="false"
+				width="600" height="400">
+				
+				<center>
+					<p:dataTable id="tablaSustanciasControladasEmergente"
+						var="sustanciaEnLista"
+						value="#{ManejadorLaboratoriosRiesgos.listaInsumosConsulta}"
+						emptyMessage="No hay sustancias controladas asociadas">
+						
+						<p:column sortBy="#{sustanciaEnLista.nombre}">
+							<f:facet name="header">
+								<h:outputText value="Sustancia Controlada" />
+							</f:facet>
+							<h:outputText value="#{sustanciaEnLista.nombre}" />
+						</p:column>
+						
+						<p:column sortBy="#{sustanciaEnLista.unidadDeMedida.nombre}">
+							<f:facet name="header">
+								<h:outputText value="Unidad de medida" />
+							</f:facet>
+							<h:outputText value="#{sustanciaEnLista.unidadDeMedida.nombre}" />
+						</p:column>
+						
+					</p:dataTable>
+
+				</center>
+				
+		</p:dialog>
+		
+		<p:dialog widgetVar="informacionFaltanteLab" resizable="false" closable="true"
+							header="Información faltante para el laboratorio" width="680" height="450" modal="true">			
+				<p:dataList value="#{ManejadorLaboratoriosInformacionGeneral.listaInfoFaltante}" var="info">    
+		        	#{info}
+	    		</p:dataList>
+			</p:dialog>
+		
+		</h:form>
+	</ui:define>
+</ui:composition>

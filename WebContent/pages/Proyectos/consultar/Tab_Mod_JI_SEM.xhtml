@@ -1,0 +1,1857 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:s="http://myfaces.apache.org/sandbox"
+    template="../../../templates/common.xhtml">
+
+    <ui:define name="content">
+
+        <h:form id="form">
+
+            <h:panelGrid id="hpgIni"
+                rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarSiGuardarFinalizar}">
+                <t:div styleClass="contenido-titulo-general-myriad">Registro de proyectos</t:div>
+                <p:menubar model="#{manejadorMenuFormularios.modelItemProyecto}"
+                    rendered="#{ manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+                <br />
+                <p:messages id="messages" showDetail="false" autoUpdate="true"
+                    closable="true" />
+                <br />
+                <p:panel id="panelInformacionAcademica"
+                    header="I. INFORMACIÓN ACADÉMICO - ADMINISTRATIVA DEL PROYECTO"
+                    toggleable="true" toggleSpeed="500" closeSpeed="500">
+                    <p:accordionPanel id="panelUnoInfAcad" multiple="true"
+                        activeIndex="">
+
+                        <p:tab title="Información principal" id="infoLugarEjec">
+                            <p:outputPanel id="pgIG1">
+                                <p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+                                    id="panelGridAspectoGeneralPpal"
+                                    styleClass="estilo-panelgrid-sinbordes">
+                                    <h:outputText
+                                        value="Nombre del proyecto (Máx. 1000 caracteres):" />
+                                    <p:inputTextarea
+                                        readonly="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.nombre}"
+                                        id="titulo" autoResize="false"
+                                        validatorMessage="Título debe estar entre 1 - 1000 caracteres"
+                                        rows="3" cols="60" counter="counter" maxlength="1000"
+                                        counterTemplate="{0} caracteres restantes.">
+                                        <f:validateLength minimum="1" maximum="1000" for="titulo"></f:validateLength>
+                                    </p:inputTextarea>
+                                    <p:message for="titulo" display="icon" />
+                                    <h:outputText id="count" value="" />
+                                    <h:outputText id="counter" />
+                                </p:panelGrid>
+                            </p:outputPanel>
+                            <br />
+                            <p:separator />
+                            <br />
+                            <center>
+                                <h:outputText value="Duración" style='font-weight: bold;' />
+                            </center>
+                            <br />
+                            <h:outputText value="Tiempo ejecución del proyecto:" />
+                            <br />
+                            <br />
+                            <p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes">
+                                <h:outputText value="Duración (meses):" />
+                                <p:inputText
+                                    readonly="#{not empty manejadorFichaMinimaHomeJovenes.proyectoActual.listaInvestigadorPrincipal}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.duracion}"
+                                    size="3" id="horam"
+                                    validatorMessage="La duración del proyecto no puede ser superior a 12 meses" />
+                                <p:message id="msg_duracion" for="horam" display="icon"
+                                    rendered="#{manejadorFichaMinimaHomeJovenes.proyectoActual.duracion lt 13}" />
+                            </p:panelGrid>
+                            <br />
+                            <h:outputText
+                                value="Tiempo dedicado a la formulación del proyecto: " />
+                            <br />
+                            <br />
+                            <p:panelGrid columns="9" styleClass="estilo-panelgrid-sinbordes"
+                                id="idPGTiempoFormulacion">
+
+                                <h:outputText value="Horas por semana"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.proyectoActual.naDuracionF}" />
+                                <p:inputText
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.proyectoActual.naDuracionF}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.horasSemanaFormulacion}"
+                                    id="horasv" size="3">
+                                </p:inputText>
+                                <p:message for="horasv" display="icon" />
+
+                                <h:outputText value="semanas"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.proyectoActual.naDuracionF}" />
+                                <p:inputText
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.semanasFormulacion}"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.proyectoActual.naDuracionF}"
+                                    id="semanasv" size="3">
+                                </p:inputText>
+                                <p:message for="semanasv" display="icon" />
+
+                                <h:outputText value="No aplica " />
+                                <p:selectBooleanCheckbox
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.naDuracionF}">
+                                    <p:ajax update="idPGTiempoFormulacion"
+                                        process="idPGTiempoFormulacion" />
+                                </p:selectBooleanCheckbox>
+
+                                <h:outputText value="" />
+                            </p:panelGrid>
+                            <h:outputText value="" />
+
+
+                            <br />
+                            <p:separator />
+                            <center>
+                                <h:outputText value="Director del Proyecto"
+                                    style='font-weight: bold;' />
+                            </center>
+                            <br />
+
+
+                            <h:outputText value="NOTA:  " style='font-weight: bold;' />
+                            <h:outputText
+                                value="Por favor agregue la información del director y de clic sobre el botón 'Agregar director'. En caso de que el tutor sea otro docente integrante del grupo, por favor agreguelo en la sección 'Equipo de trabajo'." />
+                            <br />
+                            <br />
+                            <p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+                                rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta and empty manejadorFichaMinimaHomeJovenes.proyectoActual.listaInvestigadorPrincipal}"
+                                id="registroinv">
+
+                                <h:outputText value="Tipo documento:" />
+                                <p:selectOneMenu style="width:160px"
+                                    value="#{manejadorFichaMinimaHomeJovenes.tipoDocumentoCoInv.id}"
+                                    id="tipodoecv">
+                                    <f:selectItems
+                                        value="#{manejadorFichaMinimaHomeJovenes.tipoDocumentoItem}" />
+                                </p:selectOneMenu>
+                                <p:message for="tipodoecv" display="icon" />
+
+                                <h:outputText value="Documento de identidad:" />
+                                <p:inputText
+                                    value="#{manejadorFichaMinimaHomeJovenes.documentoCoinv}"
+                                    id="documentov" />
+                                <p:message for="documentov" display="icon" />
+
+                                <h:outputText
+                                    value="Tiempo de dedicación al proyecto (Horas semanales) - td:" />
+                                <p:inputText id="horasCoinv"
+                                    value="#{manejadorFichaMinimaHomeJovenes.horasDirector}">
+                                </p:inputText>
+                                <p:message for="horasCoinv" display="icon" />
+
+                                <h:outputText
+                                    value="Estímulo económico (ingrese solo el valor): "
+                                    rendered="false" />
+                                <p:inputText id="horasCoinv4" rendered="false"
+                                    value="#{manejadorFichaMinimaHomeJovenes.factorIncrementoDir}">
+                                </p:inputText>
+                                <p:message for="horasCoinv4" display="icon" rendered="false" />
+
+                                <h:outputText value="" />
+                                <p:commandButton id="buscarDirector"
+                                    update=":form:panelUnoInfAcad, :form:panelInformacionFinanciera"
+                                    ajax="false"
+                                    action="#{manejadorFichaMinimaHomeJovenes.agregarDirector}"
+                                    value="Agregar director" />
+
+
+                            </p:panelGrid>
+
+                            <br />
+                            <h:outputText value="El director del proyecto es:"
+                                style='font-weight: bold;' />
+                            <br />
+                            <br />
+
+                            <center>
+                                <p:dataTable id="directorTabla" var="coinvestigador"
+                                    rendered="#{not empty manejadorFichaMinimaHomeJovenes.proyectoActual.listaInvestigadorPrincipal}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaInvestigadorPrincipal}"
+                                    emptyMessage="No se ha agregado el director" style="width:80%">
+
+                                    <p:column headerText="Director">
+                                        <h:outputText
+                                            value="#{coinvestigador.investigador.nombre1} #{coinvestigador.investigador.apellido1}" />
+                                    </p:column>
+                                    <p:column headerText="Documento">
+                                        <h:outputText
+                                            value="#{coinvestigador.investigador.id.documento}" />
+                                    </p:column>
+
+                                    <p:column headerText="Unidad">
+                                        <h:outputText
+                                            value="#{coinvestigador.investigador.dependencia.nombre}" />
+                                    </p:column>
+
+                                    <p:column headerText="td" style="width:60%">
+                                        <h:outputText value=" #{coinvestigador.dedicacionHorasSemana}" />
+                                    </p:column>
+
+                                    <p:column headerText="Valor(dedicación-$)" style="width:60%">
+                                        <h:outputText value=" #{coinvestigador.valorPagar}" />
+                                    </p:column>
+
+
+                                    <p:column headerText="Eliminar" id="columnCoinv"
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:commandButton
+                                            action="#{manejadorFichaMinimaHomeJovenes.eliminarDirector}"
+                                            update=":form:panelUnoInfAcad" id="eliminarDirector"
+                                            icon="ui-icon-trash" title="Eliminar Director">
+                                        </p:commandButton>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </center>
+
+
+
+                            <br />
+                            <br />
+                            <p:separator />
+                            <br />
+                            <center>
+                                <h:outputText value="Dependencia responsable del proyecto" />
+                            </center>
+                            <br />
+                            <p:outputPanel id="depEjeOP" 
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+
+                                <p:panelGrid columns="2" cellpadding="5" cellspacing="5"
+                                    id="panelGridSede" styleClass="estilo-panelgrid-sinbordes">
+
+                                    <h:outputText value="Sede:" />
+                                    <p:selectOneMenu
+                                        value="#{manejadorFichaMinimaHomeJovenes.sedeSel}" id="sedeUN"
+                                        style="width:300px">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.sedeItem}" />
+                                        <p:ajax
+                                            listener="#{manejadorFichaMinimaHomeJovenes.cambiarSede}"
+                                            update="depEjeOP, depEjeOP2, panelGridFacultad,  facultadUN, panelGridDepnd, dependenciasUN" />
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+
+                                <p:outputPanel id="depEjeOP2">
+
+                                    <p:panelGrid columns="2" cellpadding="5" cellspacing="5"
+                                        id="panelGridFacultad" styleClass="estilo-panelgrid-sinbordes"
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.mostrarFacultades}">
+
+                                        <h:outputText value="Facultad:"
+                                            rendered="#{manejadorFichaMinimaHomeJovenes.mostrarFacultades}" />
+                                        <p:selectOneMenu
+                                            value="#{manejadorFichaMinimaHomeJovenes.facultadSel}"
+                                            rendered="#{manejadorFichaMinimaHomeJovenes.mostrarFacultades}"
+                                            id="facultadUN" style="width:300px">
+                                            <f:selectItems
+                                                value="#{manejadorFichaMinimaHomeJovenes.facultadItem}" />
+                                            <p:ajax
+                                                listener="#{manejadorFichaMinimaHomeJovenes.cambiarFacultad}"
+                                                update="depEjeOP, depEjeOP2, panelGridDepnd, dependenciasUN" />
+                                        </p:selectOneMenu>
+
+                                    </p:panelGrid>
+
+                                    <p:panelGrid columns="2" cellpadding="5" cellspacing="5"
+                                        id="panelGridDepnd" styleClass="estilo-panelgrid-sinbordes">
+
+                                        <h:outputText value="Dependencia:" />
+                                        <p:selectOneMenu
+                                            value="#{manejadorFichaMinimaHomeJovenes.dependenciaProyecto}"
+                                            id="dependenciasUN" style="width:300px">
+                                            <f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+                                            <f:selectItems
+                                                value="#{manejadorFichaMinimaHomeJovenes.dependenciaItem}" />
+                                        </p:selectOneMenu>
+
+                                        <p:tooltip for="dependenciasUN" showEffect="fade"
+                                            hideEffect="fade">
+                                            <h:panelGrid columns="1"
+                                                style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                                                <h:outputText
+                                                    value="Para agregar la dependencia seleccionada, por favor haga clic en el botón Adicionar Dependencia." />
+                                            </h:panelGrid>
+                                        </p:tooltip>
+
+                                    </p:panelGrid>
+
+                                </p:outputPanel>
+
+
+
+
+
+
+
+                            </p:outputPanel>
+
+                            <br />
+                            <center>
+                                <p:spacer width="20" height="20" />
+                                <p:commandButton id="botonAgregarDependencia"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                    binding="#{manejadorFichaMinimaHomeJovenes.botonAgregarDependencia}"
+                                    action="#{manejadorFichaMinimaHomeJovenes.adicionarDependencia}"
+                                    value="Adicionar dependencia" icon="ui-icon-plus"
+                                    update="dependenciasTabla, msgDep, msgTester" />
+                                <p:spacer width="20" height="20" />
+                            </center>
+                            <br />
+
+                            <p:outputPanel id="msgDep" align="center">
+                                <p:message id="msgTester" for="botonAgregarDependencia"
+                                    showSummary="false" />
+                            </p:outputPanel>
+
+                            <br />
+                            <p:dataTable id="dependenciasTabla" var="dependencia"
+                                value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaDependenciasAreaResponsabilidad}"
+                                emptyMessage="No se han agregado dependencias" style="width:80%">
+
+                                <p:column headerText="Dependencia">
+                                    <h:outputText value="#{dependencia.dependencia.nombre}" />
+                                </p:column>
+                                <p:column headerText="Sede">
+                                    <h:outputText value=" #{dependencia.dependencia.sede.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Eliminar" id="columndependencia"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                    <p:commandButton
+                                        action="#{manejadorFichaMinimaHomeJovenes.eliminarDependencia}"
+                                        update="dependenciasTabla" id="eliminardependencia"
+                                        icon="ui-icon-trash" title="Eliminar dependencia" ajax="false">
+                                        <f:setPropertyActionListener value="#{dependencia}"
+                                            target="#{manejadorFichaMinimaHomeJovenes.dependenciaAreaResponsabilidadSeleccionada}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+
+                            <br />
+                            <br />
+                        </p:tab>
+
+
+                        <p:tab title="Información general" id="infoGeneral"
+                            rendered="#{manejadorFichaMinimaHomeJovenes.inscPryJI_Aval}">
+                            <br />
+
+                            <p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+                                id="panelGridAspectoGeneral"
+                                styleClass="estilo-panelgrid-sinbordes">
+
+                                <h:outputText value="SubTipo de proyecto:" rendered="false" />
+                                <p:selectOneMenu rendered="false" style="width: 300px;"
+                                    id="categoria"
+                                    disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                    <f:selectItems
+                                        value="#{manejadorFichaMinimaHomeJovenes.categoriaItems}" />
+                                    <p:ajax
+                                        listener="#{manejadorFichaMinimaHomeJovenes.cambiarTipo}"
+                                        update=":form:panelInformacionFinanciera" />
+                                </p:selectOneMenu>
+                                <p:message for="categoria" display="icon" rendered="false" />
+
+                                <h:outputText value="Rol de la Universidad Nacional:"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+                                <p:selectOneMenu
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}"
+                                    disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.rolUniversidad}"
+                                    style="width: 300px;" id="modalidadSolicitud">
+                                    <f:selectItems
+                                        value="#{manejadorFichaMinimaHomeJovenes.rolUniversidadItems}" />
+                                </p:selectOneMenu>
+                                <p:tooltip for="modalidadSolicitud" showEffect="fade"
+                                    hideEffect="fade">
+                                    <h:panelGrid columns="1"
+                                        style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                                        <h:outputText
+                                            value="Gestora de iniciativa propia: solo aplica para actividades de ECP y hace referencia a las actividades que surgen de la iniciativa de docentes o administrativo de la UN" />
+                                    </h:panelGrid>
+                                </p:tooltip>
+                                <h:outputText value=""
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+                                <h:outputText value=""
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+                                <p:message for="modalidadSolicitud" display="icon"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+
+                                <h:outputText value="Tipo de proceso:"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+                                <p:selectOneMenu
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}"
+                                    disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.mecanismoParticipacion}"
+                                    style="width: 300px;" id="mecanismoSolicitud">
+                                    <f:selectItems
+                                        value="#{manejadorFichaMinimaHomeJovenes.mecanismoSolicitudItems}" />
+                                </p:selectOneMenu>
+                                <p:message for="mecanismoSolicitud" display="icon"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.mostrarMenuFormulario}" />
+                            </p:panelGrid>
+
+                            <br />
+                            <center>
+                                <h:outputText value="Descripción General del Proyecto"
+                                    style='font-weight: bold;' />
+                            </center>
+                            <br />
+
+                            <h:panelGroup id="infoGeneralPry">
+                                <p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+                                    id="descripcionPry">
+
+
+                                    <h:outputText value="Dependencia responsable del proyecto:"
+                                        rendered="false" />
+                                    <p:selectOneMenu
+                                        value="#{manejadorFichaMinimaHomeJovenes.dependenciaProyecto}"
+                                        rendered="false" id="dependenciasUN" style="width:300px"
+                                        filter="true">
+                                        <f:selectItem itemLabel="Seleccione una opción" itemValue="0" />
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.dependenciaItem}" />
+                                    </p:selectOneMenu>
+                                    <h:outputText value="" rendered="false" />
+
+                                    <h:outputText value="Resumen (Máx. 4000 caracteres):" />
+                                    <p:inputTextarea
+                                        readonly="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.resumen}"
+                                        id="resumen" autoResize="false"
+                                        validatorMessage="Resumen debe estar entre 1 - 4000 caracteres"
+                                        rows="5" cols="60" counter="counter2" maxlength="4000"
+                                        counterTemplate="{0} caracteres restantes.">
+                                        <f:validateLength minimum="1" maximum="4000" for="resumen"></f:validateLength>
+                                    </p:inputTextarea>
+                                    <p:message for="resumen" display="icon" />
+                                    <h:outputText id="count2" value="" />
+                                    <h:outputText id="counter2" />
+                                    <h:outputText id="countTxt2" value="" />
+
+                                    <h:outputText
+                                        value="Descripción del Problema u oportunidad a la cual responde el proyecto (Máx. 4000 caracteres):"
+                                        rendered="#{!(manejadorFichaMinimaHomeJovenes.proyectoActual.tipoActividad == 58)}" />
+                                    <h:outputText
+                                        value="Descripción de la oportunidad a la cual responde la iniciativa de innovación (Máx. 4000 caracteres):"
+                                        rendered="#{(manejadorFichaMinimaHomeJovenes.proyectoActual.tipoActividad == 58)}" />
+                                    <p:inputTextarea id="proyectoActualMarcoTeorico"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.marcoTeorico}"
+                                        rows="8" cols="60" required="false" autoResize="false"
+                                        validatorMessage="Descripción del problema debe estar entre 1 - 4000 caracteres"
+                                        counter="counter3" maxlength="4000"
+                                        counterTemplate="{0} caracteres restantes.">
+                                    </p:inputTextarea>
+                                    <p:message for="proyectoActualMarcoTeorico" />
+                                    <h:outputText id="count3" value="" />
+                                    <h:outputText id="counter3" />
+                                    <h:outputText id="countTxt3" value="" />
+
+                                    <h:outputText
+                                        value="Objeto/Objetivo general (Máx. 4000 caracteres):" />
+                                    <p:inputTextarea
+                                        readonly="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        validatorMessage="Objeto/Objetivo Principal debe estar entre 1 - 4000 caracteres"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.objetivoGeneral}"
+                                        rows="3" id="objeto" cols="60" counter="counter4"
+                                        maxlength="4000" counterTemplate="{0} caracteres restantes.">
+                                        <f:validateLength minimum="1" maximum="4000" for="objeto"></f:validateLength>
+                                    </p:inputTextarea>
+                                    <p:message for="objeto" display="icon" />
+                                    <h:outputText id="count4" value="" />
+                                    <h:outputText id="counter4" />
+                                    <h:outputText id="countTxt4" value="" />
+
+                                </p:panelGrid>
+
+                                <p:spacer width="20" height="20" />
+                                <p:separator />
+                                <p:spacer width="20" height="20" />
+                                <center>
+                                    <h:outputText value="Productos" style='font-weight: bold;' />
+                                </center>
+                                <p:spacer width="20" height="20" />
+                                <p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+                                    style="margin: auto; margin-bottom: 20px;" rendered="false">
+                                    <p:selectBooleanCheckbox
+                                        value="#{manejadorFichaMinimaHomeJovenes.noAplicaProductos}">
+                                        <p:ajax update="infoGeneralPry" process="infoGeneralPry" />
+                                    </p:selectBooleanCheckbox>
+                                    <h:outputText value="No aplica" />
+                                </p:panelGrid>
+                                <p:panelGrid columns="1" id="panelProductos" align="center"
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.noAplicaProductos}"
+                                    styleClass="estilo-panelgrid-sinbordes">
+                                    <p:panelGrid columns="2" align="center" id="panelSubProductos"
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <h:outputText value="Productos" />
+                                        <p:selectOneMenu id="listaNivel3"
+                                            value="#{manejadorFichaMinimaHomeJovenes.productoNivel3}"
+                                            style="width: 400px;">
+                                            <f:selectItems
+                                                value="#{manejadorFichaMinimaHomeJovenes.productoNivel3Item}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Cantidad" />
+                                        <p:inputText id="uiCantidad"
+                                            value="#{manejadorFichaMinimaHomeJovenes.cantidad}"
+                                            binding="#{manejadorFichaMinimaHomeJovenes.uiCantidad}"
+                                            validatorMessage="La cantidad debe ser máximo de 4 dígitos y mayor a 0"
+                                            size="5">
+                                            <f:validateLength minimum="1" maximum="4" />
+                                            <f:validateDoubleRange minimum="1" maximum="9999" />
+                                        </p:inputText>
+                                        <h:outputText value="" />
+                                        <p:message id="msgCantiProd" for="uiCantidad" />
+                                    </p:panelGrid>
+                                    <center>
+                                        <p:commandButton
+                                            rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                            action="#{manejadorFichaMinimaHomeJovenes.adicionarProducto}"
+                                            value="Adicionar producto" icon="ui-icon-plus"
+                                            update="panelProductosAdicionados, panelSubProductos, uiCantidad, msgCantiProd" />
+                                    </center>
+                                    <p:spacer width="20" height="20" />
+
+
+                                    <p:panelGrid columns="1" align="left"
+                                        id="panelProductosAdicionados" style="width:600px">
+
+                                        <p:dataTable id="tablaProductos"
+                                            value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaProductosProyecto}"
+                                            var="proyectoProducto" cellpadding="6" cellspacing="3"
+                                            border="0"
+                                            emptyMessage="No existen productos asociados al proyecto">
+
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="PRODUCTOS ADICIONADOS" />
+                                                </f:facet>
+                                                <h:outputText value="#{proyectoProducto.producto.nombre}" />
+                                            </p:column>
+
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="CANTIDAD" />
+                                                </f:facet>
+                                                <h:outputText value="#{proyectoProducto.cantidad}" />
+                                            </p:column>
+
+                                            <p:column
+                                                rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                                <f:facet name="header">
+                                                    <h:outputText value="ELIMINAR" />
+                                                </f:facet>
+                                                <center>
+                                                    <p:commandButton
+                                                        action="#{manejadorFichaMinimaHomeJovenes.eliminarProducto}"
+                                                        title="Eliminar Producto" icon="ui-icon-trash"
+                                                        update="tablaProductos" immediate="true">
+                                                        <f:setPropertyActionListener
+                                                            target="#{manejadorFichaMinimaHomeJovenes.productoSeleccionado}"
+                                                            value="#{proyectoProducto}" />
+                                                    </p:commandButton>
+                                                </center>
+                                            </p:column>
+                                        </p:dataTable>
+
+                                    </p:panelGrid>
+                                </p:panelGrid>
+
+                                <h:panelGrid rendered="false">
+
+                                    <p:spacer width="20" height="20" />
+                                    <p:separator />
+                                    <p:spacer width="20" height="20" />
+
+
+                                    <center>
+                                        <h:outputText value="Objetivos específicos"
+                                            style='font-weight: bold;' />
+                                    </center>
+                                    <br />
+                                    <p:panelGrid columns="3" align="center"
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        styleClass="estilo-panelgrid-sinbordes">
+                                        <h:outputText value="Por favor ingrese el objetivo específico" />
+                                        <p:inputTextarea
+                                            value="#{manejadorFichaMinimaHomeJovenes.objetivoEspecifico}"
+                                            rows="3" id="objetoEspecifico" cols="60"
+                                            binding="#{manejadorFichaMinimaHomeJovenes.objetoEspecifico}"
+                                            validatorMessage="El objetivo específico debe estar entre 1 - 2000 caracteres"
+                                            counter="counter5" maxlength="2000"
+                                            counterTemplate="{0} caracteres restantes.">
+                                            <f:validateLength minimum="1" maximum="2000"
+                                                for="objetoEspecifico"></f:validateLength>
+                                        </p:inputTextarea>
+                                        <p:message id="msgObjEsp" for="objetoEspecifico"
+                                            showSummary="false"></p:message>
+                                        <h:outputText id="count5" value="" />
+                                        <h:outputText id="counter5" />
+                                        <h:outputText id="countTxt5" value="" />
+                                    </p:panelGrid>
+                                    <center>
+                                        <p:spacer width="20" height="20" />
+                                        <p:commandButton
+                                            rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                            action="#{manejadorFichaMinimaHomeJovenes.insertarObjetivo}"
+                                            value="Adicionar objetivo" icon="ui-icon-plus"
+                                            update="objetivoEspTable, objetoEspecifico, msgObjEsp" />
+                                        <p:spacer width="20" height="20" />
+                                    </center>
+                                    <p:spacer width="20" height="20" />
+                                    <p:dataTable id="objetivoEspTable"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaObjetivos}"
+                                        var="obj"
+                                        emptyMessage="No se encuentran objetivos específicos registrados"
+                                        editable="true">
+
+                                        <p:column style="width:80%">
+                                            <f:facet name="header">
+                                                <h:outputText value="Objetivo Específico" />
+                                            </f:facet>
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{obj.nombre}" />
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputTextarea rows="3" cols="60" value="#{obj.nombre}"
+                                                        style="width:100%" />
+                                                </f:facet>
+                                            </p:cellEditor>
+
+                                        </p:column>
+
+                                        <p:column style="width:10%">
+                                            <f:facet name="header">
+                                                <h:outputText value="Editar" />
+                                            </f:facet>
+                                            <p:rowEditor />
+                                        </p:column>
+
+                                        <p:column style="width:10%"
+                                            rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Eliminar" />
+                                            </f:facet>
+                                            <center>
+                                                <p:commandButton id="selectButton" update="objetivoEspTable"
+                                                    icon="ui-icon-trash"
+                                                    action="#{manejadorFichaMinimaHomeJovenes.eliminarObjetivo}"
+                                                    title="Eliminar objetivo específico">
+                                                    <f:setPropertyActionListener value="#{obj}"
+                                                        target="#{manejadorFichaMinimaHomeJovenes.objetivoTabla}" />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:spacer width="20" height="20" />
+                                    <p:separator />
+                                    <p:spacer width="20" height="20" />
+                                    <center>
+                                        <h:outputText value="Resultados esperados"
+                                            style='font-weight: bold;' />
+                                    </center>
+                                    <p:spacer width="20" height="20" />
+                                    <p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        align="center" styleClass="estilo-panelgrid-sinbordes">
+
+                                        <h:outputText value="Por favor ingrese el resultado"></h:outputText>
+                                        <p:inputTextarea
+                                            value="#{manejadorFichaMinimaHomeJovenes.resultado}" rows="3"
+                                            id="uiResultado" cols="60"
+                                            binding="#{manejadorFichaMinimaHomeJovenes.uiResultado}"
+                                            validatorMessage="El resultado debe estar entre 1 - 2000 caracteres"
+                                            counter="counter6" maxlength="2000"
+                                            counterTemplate="{0} caracteres restantes.">
+                                            <f:validateLength minimum="1" maximum="2000" for="resultado"></f:validateLength>
+                                        </p:inputTextarea>
+                                        <p:message id="msgErrRes" for="uiResultado"
+                                            showSummary="false"></p:message>
+                                        <h:outputText id="count6" value="" />
+                                        <h:outputText id="counter6" />
+                                        <h:outputText id="countTxt6" value="" />
+
+                                    </p:panelGrid>
+                                    <br />
+                                    <center>
+                                        <p:commandButton
+                                            rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                            action="#{manejadorFichaMinimaHomeJovenes.insertarResultado}"
+                                            value="Adicionar resultado" icon="ui-icon-plus"
+                                            update="resultadoTable, uiResultado, msgErrRes" />
+                                    </center>
+                                    <p:spacer width="20" height="20" />
+                                    <p:dataTable id="resultadoTable"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaResultados}"
+                                        var="res"
+                                        emptyMessage="No se encuentran resultados registrados"
+                                        editable="true">
+
+                                        <p:column style="width:80%">
+                                            <f:facet name="header">
+                                                <h:outputText value="Resultado" />
+                                            </f:facet>
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{res.descripcion}" />
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputTextarea rows="3" cols="60"
+                                                        value="#{res.descripcion}" style="width:100%" />
+                                                </f:facet>
+                                            </p:cellEditor>
+
+                                        </p:column>
+
+                                        <p:column style="width:10%">
+                                            <f:facet name="header">
+                                                <h:outputText value="Editar" />
+                                            </f:facet>
+                                            <p:rowEditor />
+                                        </p:column>
+
+                                        <p:column style="width:10%"
+                                            rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Eliminar" />
+                                            </f:facet>
+                                            <center>
+                                                <p:commandButton id="selectButtonRes"
+                                                    update="resultadoTable" icon="ui-icon-trash"
+                                                    action="#{manejadorFichaMinimaHomeJovenes.eliminarResultado}"
+                                                    title="Eliminar resultado">
+                                                    <f:setPropertyActionListener value="#{res}"
+                                                        target="#{manejadorFichaMinimaHomeJovenes.resultadoTabla}" />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+                                    </p:dataTable>
+
+
+                                </h:panelGrid>
+
+
+                            </h:panelGroup>
+                        </p:tab>
+                        <p:tab title="Clasificación" id="duracionClasificacion"
+                            rendered="#{manejadorFichaMinimaHomeJovenes.inscPryJI_Aval}">
+
+                            <br />
+                            <center>
+                                <h:outputText value="Clasificación" style='font-weight: bold;' />
+                            </center>
+                            <br />
+                            <br />
+
+                            <center>
+                                <p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+                                    id="panelObjetivo" styleClass="estilo-panelgrid-sinbordes">
+
+                                    <h:outputText value="Objetivo socioeconómico:" />
+                                    <p:selectOneMenu id="socioeconomico" style="width:250px"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.objetivoSocioeconomico}">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.objSocioeconomicoItems}" />
+                                    </p:selectOneMenu>
+                                    <h:outputLink
+                                        value="#{manejadorFichaMinimaHomeJovenes.linkObjetivos}"
+                                        target="_blank">
+                                        <h:graphicImage id="images" alt="jsf-sun"
+                                            url="/images/iconpdf.png">
+                                        </h:graphicImage>
+                                    </h:outputLink>
+
+                                    <br />
+                                </p:panelGrid>
+
+                                <br />
+                                <h:outputText value="Área principal" style='font-weight: bold;' />
+                                <br /> <br />
+
+                                <p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+                                    id="panelDurac" styleClass="estilo-panelgrid-sinbordes">
+
+                                    <h:outputText value="Area científica y tecnológica principal:" />
+                                    <p:selectOneMenu style="width:250px"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.areaCiencia}"
+                                        id="areaCiencia">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.areaCienciaItems}" />
+                                        <p:ajax
+                                            listener="#{manejadorFichaMinimaHomeJovenes.cambiarArea}"
+                                            update="subareaCiencia" />
+                                    </p:selectOneMenu>
+                                    <h:outputLink
+                                        value="#{manejadorFichaMinimaHomeJovenes.linkLineas}"
+                                        target="_blank">
+                                        <h:graphicImage id="imageee" alt="jsf-sun"
+                                            url="/images/iconpdf.png">
+                                        </h:graphicImage>
+                                    </h:outputLink>
+
+                                    <h:outputText value="Sub-área de la ciencia:" />
+                                    <p:selectOneMenu style="width:250px"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.subAreaCiencia}"
+                                        id="subareaCiencia">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.subAreaCienciaItems}" />
+                                    </p:selectOneMenu>
+                                    <h:outputText value="" />
+                                </p:panelGrid>
+
+                                <br /> <br />
+                                <h:outputText value="Áreas secundarias"
+                                    style='font-weight: bold;' />
+                                <br /> <br />
+
+                                <p:panelGrid columns="3" cellpadding="5" cellspacing="5"
+                                    id="panelDurac2" styleClass="estilo-panelgrid-sinbordes">
+                                    <h:outputText value="Area científica y tecnológica secundaria:" />
+                                    <p:selectOneMenu style="width:250px"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.areaCienciaSec}"
+                                        id="areaCienciaSec">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.areaCienciaItems}" />
+                                        <p:ajax
+                                            listener="#{manejadorFichaMinimaHomeJovenes.cambiarAreaSec}"
+                                            update="subareaCienciaSec" />
+                                    </p:selectOneMenu>
+                                    <h:outputLink
+                                        value="#{manejadorFichaMinimaHomeJovenes.linkLineas}"
+                                        target="_blank">
+                                        <h:graphicImage id="imageees" alt="jsf-sun"
+                                            url="/images/iconpdf.png">
+                                        </h:graphicImage>
+                                    </h:outputLink>
+
+                                    <h:outputText value="Sub-área de la ciencia secundaria:" />
+                                    <p:selectOneMenu style="width:250px"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.subAreaCienciaSec}"
+                                        id="subareaCienciaSec">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.subAreaCienciaSecItems}" />
+                                    </p:selectOneMenu>
+                                    <h:outputText value="" />
+                                    <p:tooltip for="subareaCienciaSec" showEffect="fade"
+                                        id="toolSec" hideEffect="fade">
+                                        <h:panelGrid columns="1"
+                                            style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                                            <h:outputText
+                                                value="Para agregar el Area científica y tecnológica secundaria seleccionada, por favor haga clic en el botón Adicionar área." />
+                                        </h:panelGrid>
+                                    </p:tooltip>
+
+                                    <h:outputText value="Area de la ciencia asociada:"
+                                        rendered="false" />
+                                    <p:selectOneMenu style="width:250px" rendered="false"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.areaCienciaSec}"
+                                        id="areaCiencia1">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.areaCienciaItems}" />
+                                        <p:ajax
+                                            listener="#{manejadorFichaMinimaHomeJovenes.cambiarAreaSec}"
+                                            update="subareaCienciaSec" />
+                                    </p:selectOneMenu>
+                                    <p:message for="areaCiencia" display="icon" rendered="false" />
+
+                                    <h:outputText value="Sub-área de la ciencia asociada:"
+                                        rendered="false" />
+                                    <p:selectOneMenu style="width:250px" rendered="false"
+                                        disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                        value="#{manejadorFichaMinimaHomeJovenes.subAreaCienciaSec}"
+                                        id="subareaCienciaSec">
+                                        <f:selectItems
+                                            value="#{manejadorFichaMinimaHomeJovenes.subAreaCienciaSecItems}" />
+                                    </p:selectOneMenu>
+                                    <p:tooltip for="subareaCienciaSec" showEffect="fade"
+                                        hideEffect="fade">
+                                        <h:panelGrid columns="1"
+                                            style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                                            <h:outputText
+                                                value="Para agregar el Area científica y tecnológica secundaria seleccionada, por favor haga clic en el botón Adicionar área." />
+                                        </h:panelGrid>
+                                    </p:tooltip>
+                                    <h:outputText value="" rendered="false" />
+
+                                </p:panelGrid>
+                            </center>
+
+                            <br />
+                            <center>
+                                <p:spacer width="20" height="20" />
+                                <p:commandButton
+                                    rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                    action="#{manejadorFichaMinimaHomeJovenes.agregarArea}"
+                                    value="Adicionar área" icon="ui-icon-plus"
+                                    update="areasTabla, botonAreasTabla, msgArea, msgAreaSEc" />
+                                <p:spacer width="20" height="20" />
+                            </center>
+                            <br />
+
+                            <h:outputText id="botonAreasTabla" value=""
+                                binding="#{manejadorFichaMinimaHomeJovenes.botonAreasTabla}">
+                            </h:outputText>
+                            <p:outputPanel id="msgArea" align="center">
+                                <p:message id="msgAreaSEc" for="botonAreasTabla"
+                                    showSummary="false" />
+                            </p:outputPanel>
+
+
+                            <br />
+                            <center>
+                                <p:dataTable id="areasTabla" var="area"
+                                    value="#{manejadorFichaMinimaHomeJovenes.listaAreasTematicas}"
+                                    emptyMessage="No se han agregado áreas" style="width:80%">
+
+                                    <p:column headerText="Área">
+                                        <h:outputText value="#{area.nombreArea}" />
+                                    </p:column>
+                                    <p:column headerText="Subárea">
+                                        <h:outputText value=" #{area.nombreSubArea}" />
+                                    </p:column>
+
+                                    <p:column headerText="Eliminar" id="columndarea"
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:commandButton
+                                            action="#{manejadorFichaMinimaHomeJovenes.eliminarArea}"
+                                            update="areasTabla" id="eliminararea" icon="ui-icon-trash"
+                                            title="Eliminar área" ajax="false">
+                                            <f:setPropertyActionListener value="#{area}"
+                                                target="#{manejadorFichaMinimaHomeJovenes.areaSeleccionada}" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </center>
+
+
+                            <br />
+                            <center>
+                                <h:outputText
+                                    value="Plan Global de Desarrollo de la Universidad Nacional de Colombia "
+                                    style='font-weight: bold;' rendered="false" />
+                            </center>
+                            <br />
+
+                            <p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes"
+                                rendered="false">
+
+                                <h:outputText value="Política:" />
+                                <h:outputText
+                                    value="Plan global de desarrollo 2013-2015 calidad académica y autonomía responsable" />
+                                <h:outputText value="" />
+
+                                <h:outputText value="Elemento Estratégico:" />
+                                <h:outputText
+                                    value="Plan global de desarrollo 2013-2015 calidad académica y autonomía responsable" />
+                                <h:outputText value="" />
+
+                                <h:outputText value="Líneas de acción:" />
+                                <p:selectOneMenu style="width:450px"
+                                    disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.codLineaAccion}"
+                                    id="codLineaAccion">
+                                    <f:selectItems
+                                        value="#{manejadorFichaMinimaHomeJovenes.lineasAccionItems}" />
+                                </p:selectOneMenu>
+                                <p:message for="codLineaAccion" display="icon" />
+
+                                <h:outputText value="Programa:" />
+                                <p:selectOneMenu style="width:450px"
+                                    disabled="#{manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.codPrograma}"
+                                    id="codPrograma">
+                                    <f:selectItems
+                                        value="#{manejadorFichaMinimaHomeJovenes.programaItems}" />
+                                </p:selectOneMenu>
+                                <p:message for="codPrograma" display="icon" />
+
+                            </p:panelGrid>
+
+                            <br />
+                        </p:tab>
+
+                        <p:tab title="Palabras clave" id="palabrasClave"
+                            rendered="#{manejadorFichaMinimaHomeJovenes.inscPryJI_Aval}">
+
+                            <br />
+                            <h:outputText value="Por favor agregue mínimo 3 palabras claves:" />
+                            <br />
+                            <p:panelGrid columns="3" id="gridPalabraClave" align="center"
+                                rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                styleClass="estilo-panelgrid-sinbordes">
+                                <h:outputText value="Palabras Clave" />
+                                <p:autoComplete id="palabraClaveS"
+                                    value="#{manejadorFichaMinimaHomeJovenes.palabraClave.palabra}"
+                                    size="50" maxResults="10"
+                                    completeMethod="#{manejadorFichaMinimaHomeJovenes.obtenerPalabraClavesSugeridas}"
+                                    minQueryLength="2">
+                                    <f:validateLength maximum="100" />
+                                </p:autoComplete>
+
+                                <p:commandButton id="agregarPalabraClave"
+                                    value="Agregar palabra"
+                                    update="palabrasTable, gridPalabraClave"
+                                    action="#{manejadorFichaMinimaHomeJovenes.insertarPalabraClave}">
+                                </p:commandButton>
+
+                            </p:panelGrid>
+
+                            <br />
+                            <br />
+                            <p:outputPanel id="grupoListaPalabras" align="center">
+                                <p:dataTable id="palabrasTable"
+                                    value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaPalabrasES}"
+                                    var="pal"
+                                    emptyMessage="No se encuentran palabras clave registradas">
+
+                                    <p:column style="width:25%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Palabra Clave" />
+                                        </f:facet>
+                                        <h:outputText value="#{pal.palabraVista}" />
+                                    </p:column>
+
+                                    <p:column style="width:3%"
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <center>
+                                            <p:commandButton id="selectButton" update="palabrasTable"
+                                                icon="ui-icon-trash"
+                                                action="#{manejadorFichaMinimaHomeJovenes.eliminarPalabraClave}"
+                                                title="Eliminar palabra clave">
+                                                <f:setPropertyActionListener value="#{pal}"
+                                                    target="#{manejadorFichaMinimaHomeJovenes.palabraClaveTabla}" />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <br />
+
+                        </p:tab>
+
+                        <p:tab title="Equipo de trabajo">
+                            <t:div styleClass="tabView-no-padding">
+                                <t:div
+                                    style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
+                                    <h:outputText value="INTEGRANTES DEL PROYECTO"
+                                        style="font-weight: bold;" />
+                                </t:div>
+                                <p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+                                    style="width: 100%;" id="infoEquipoTrabajo">
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <h:panelGrid columns="1"
+                                                styleClass="estilo-panelgrid-sinbordes">
+                                                <t:div>
+                                                    <b>NOTA:</b> El cálculo de la dedicación para docentes contempla un incremento anual del 5% correspondiente al porcentaje estimado de incremento anual.
+                                                    Puede incluir integrantes que conozca y también que no conozca los datos personales, de acuerdo a la selección de la opción a continuación.
+                                            </t:div>
+                                            </h:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.convocatoriaActual.mostrarIntegrantesSinDatos}">
+                                        <p:column style="width: 210px;">
+                                            <h:outputText
+                                                value="¿Conoce los datos personales de los integrantes que conformarán el proyecto?" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu id="conoceDatos" style="width:60px"
+                                                value="#{manejadorFichaMinimaHomeJovenes.conoceDatos}">
+                                                <f:selectItem itemLabel="NO" itemValue="NO" />
+                                                <f:selectItem itemLabel="SI" itemValue="SI" />
+                                                <p:ajax
+                                                    listener="#{manejadorFichaMinimaHomeJovenes.mostrarPanelConoceDatos}"
+                                                    update=":form:panelInformacionFinanciera,infoEquipoTrabajo"
+                                                    onstart="dialogEspere.show()"
+                                                    oncomplete="dialogEspere.hide()" />
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'NO' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Tipo de vinculación:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu
+                                                value="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId}"
+                                                style="width:160px">
+                                                <f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+                                                <f:selectItems
+                                                    value="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionItemsNumero}" />
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'NO' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Cantidad:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="horasCoPart"
+                                                value="#{manejadorFichaMinimaHomeJovenes.cantidadPart}"
+                                                maxlength="3">
+                                                <f:validateLongRange minimum="0" maximum="100"
+                                                    for="horasCoPart" />
+                                            </p:inputText>
+                                            <p:message for="horasCoPart" display="icon" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'NO' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column colspan="2" style="text-align: center;">
+                                            <p:commandButton id="buscarPer3"
+                                                binding="#{manejadorFichaMinimaHomeJovenes.buscarPer3}"
+                                                styleClass="ui-priority-primary"
+                                                update=":form:panelInformacionFinanciera, msgParticip_2, infoEquipoTrabajo"
+                                                onstart="dialogEspere.show()"
+                                                oncomplete="dialogEspere.hide()"
+                                                action="#{manejadorFichaMinimaHomeJovenes.agregarParticipanteNum}"
+                                                value="Agregar">
+                                            </p:commandButton>
+                                            <p:message id="msgParticip_2" for="buscarPer3" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column colspan="2"
+                                            rendered="#{!manejadorFichaMinimaHomeJovenes.esConvProyectos2016_2018}">
+                                            <h:panelGrid columns="1"
+                                                styleClass="estilo-panelgrid-sinbordes">
+                                                <t:div>
+                                                    <b>NOTA:</b> Por favor agregue uno a uno los integrantes del proyecto. Recuerde que para valorar la contrapartida de la Universidad Nacional, debe colocar los datos de personal administrativo y docente (Si no conoce la información de los contratistas no es necesario vincularlos.)
+                                            </t:div>
+                                            </h:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Tipo de vinculación:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu
+                                                value="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId}"
+                                                style="width:280px;" panelStyle="width:280px;">
+                                                <f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+                                                <f:selectItems id="siCategoriaGrupos"
+                                                    value="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionItems}" />
+                                                <p:ajax
+                                                    listener="#{manejadorFichaMinimaHomeJovenes.cambiarVinculacion}"
+                                                    update="infoEquipoTrabajo" process="infoEquipoTrabajo"
+                                                    onstart="dialogEspere.show()"
+                                                    oncomplete="dialogEspere.hide()" />
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Tipo documento:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu style="width:200px"
+                                                value="#{manejadorFichaMinimaHomeJovenes.tipoDocumentoCoInvEquipo.id}"
+                                                disabled="#{manejadorFichaMinimaHomeJovenes.esOtraVinculacion}"
+                                                id="tipodoecv2">
+                                                <f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+                                                <f:selectItems
+                                                    value="#{manejadorFichaMinimaHomeJovenes.tipoDocumentoItem}" />
+                                            </p:selectOneMenu>
+                                            <p:message for="tipodoecv2" display="icon" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Documento de identidad:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText maxlength="30"
+                                                readonly="#{manejadorFichaMinimaHomeJovenes.esOtraVinculacion}"
+                                                value="#{manejadorFichaMinimaHomeJovenes.documentoCoinvEquipo}"
+                                                id="documentov2" style="width:220px" />
+                                            <p:message for="documentov2" display="icon" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarOpcionBuscarInvestigador and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column colspan="2" style="text-align: center;">
+                                            <p:commandButton value="Buscar Investigador"
+                                                id="botonBuscarInvestigadorExterno"
+                                                update="infoEquipoTrabajo" process="infoEquipoTrabajo"
+                                                onstart="dialogEspere.show()"
+                                                oncomplete="dialogEspere.hide()"
+                                                action="#{manejadorFichaMinimaHomeJovenes.buscarParticipanteExterno}"
+                                                styleClass="ui-priority-primary" />
+                                            <p:commandButton value="Limpiar"
+                                                id="botonLimpiarInvestigador" update="infoEquipoTrabajo"
+                                                onstart="dialogEspere.show()"
+                                                oncomplete="dialogEspere.hide()"
+                                                action="#{manejadorFichaMinimaHomeJovenes.limpiar}"
+                                                process="infoEquipoTrabajo" styleClass="ui-priority-primary">
+                                                <p:resetInput target="infoEquipoTrabajo" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Primer Nombre *" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="primerNombreInvestigador"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.nombre1}"
+                                                style="width:210px;"
+                                                requiredMessage="El Primer Nombre es obligatorio">
+                                                <f:validateLength maximum="20" />
+                                            </p:inputText>
+                                            <p:message id="errorPrimerNombreInvestigador"
+                                                for="primerNombreInvestigador" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Segundo Nombre"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.esOtraVinculacion}" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="segundoNombreInv"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.nombre2}"
+                                                style="width:210px;">
+                                                <f:validateLength maximum="20" />
+                                            </p:inputText>
+                                            <p:message id="errorSegundoNombreInv" for="segundoNombreInv" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Primer Apellido *" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="primerApellidoInvestigador"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.apellido1}"
+                                                style="width:210px;"
+                                                requiredMessage="El Primer Apellido es obligatorio">
+                                                <f:validateLength maximum="20" />
+                                            </p:inputText>
+                                            <p:message id="errorPrimerApellidoInvestigador"
+                                                for="primerApellidoInvestigador" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Segundo Apellido" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="segundoApellidoInv"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.apellido2}"
+                                                style="width:210px;">
+                                                <f:validateLength maximum="20" />
+                                            </p:inputText>
+                                            <p:message id="errorSegundoApellidoInv"
+                                                for="segundoApellidoInv" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Género" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu style="width:40px"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.genero}"
+                                                id="idGenero">
+                                                <f:selectItems
+                                                    value="#{manejadorFichaMinimaHomeJovenes.generoItem}" />
+                                            </p:selectOneMenu>
+                                            <h:outputText value=""
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.esOtraVinculacion}" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Correo electrónico" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_correoElectronico"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.email}"
+                                                size="40" validatorMessage="Dirección de E-mail no válida">
+                                                <f:validateRegex
+                                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                                                <f:validateLength maximum="40" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_correoElectronico"
+                                                for="IT_correoElectronico" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.esOtraVinculacion}">
+                                        <p:column>
+                                            <h:outputText value="Institución" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:autoComplete id="idInstitucion"
+                                                value="#{manejadorFichaMinimaHomeJovenes.institucionNombre}"
+                                                completeMethod="#{manejadorFichaMinimaHomeJovenes.obtenerListaInstituciones}"
+                                                minQueryLength="1" size="38" maxResults="10">
+                                                <f:validateLength maximum="100" />
+                                            </p:autoComplete>
+                                            <p:message id="errorIdInstitucion" for="idInstitucion"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.esOtraVinculacion}" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Teléfono fijo" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_telefonoFijo"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.telefono}"
+                                                size="15">
+                                                <f:validateLength maximum="15" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_telefonoFijo" for="IT_telefonoFijo" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Teléfono Móvil" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_telefonoMovil"
+                                                requiredMessage="Campo obligatorio"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.celular}"
+                                                size="15">
+                                                <f:validateLength maximum="15" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_telefonoMovil" for="IT_telefonoMovil" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Nacionalidad" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_nacionalidad"
+                                                requiredMessage="Campo obligatorio"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.nacionalidad}"
+                                                size="40">
+                                                <f:validateLength maximum="40" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_nacionalidad" for="IT_nacionalidad" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Lugar de Nacimiento" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu
+                                                value="#{manejadorFichaMinimaHomeJovenes.lugarNacimiento}"
+                                                id="IT_lugar_nacimiento" required="true"
+                                                requiredMessage="Campo obligatorio" effect="fade"
+                                                filter="true" style="width: 255px"
+                                                filterMatchMode="contains">
+                                                <f:selectItems
+                                                    value="#{manejadorFichaMinimaHomeJovenes.ciudadItemList}" />
+                                            </p:selectOneMenu>
+                                            <p:message id="error_IT_lugar_nacimiento"
+                                                for="IT_lugar_nacimiento" required="true" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Fecha de Nacimiento" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:calendar id="IT_fechaNacimiento" pages="2" locale="es"
+                                                requiredMessage="Campo obligatorio" required="true"
+                                                readonlyInput="false" pattern="dd/MM/yyyy"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.fechaNacimiento}"
+                                                navigator="true" pagedate="01/01/1986" mindate="01/01/1986"
+                                                maxdate="31/12/2013">
+                                            </p:calendar>
+                                            <p:message id="error_IT_fechaNacimiento"
+                                                for="IT_fechaNacimiento" required="true" />
+                                            <p:tooltip for="IT_fechaNacimiento"
+                                                value="La fecha debe ser digitada en el formato 'dd/MM/AAAA'"
+                                                showEffect="fade" hideEffect="fade" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarProgramaAcademico and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Título pregrado obtenido:"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'SEMC' or manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'JIPO' or manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'JIEU'}" />
+                                            <h:outputText value="Programa académico:"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId != 'SEMC' and manejadorFichaMinimaHomeJovenes.tipoVinculacionId != 'JIPO' and manejadorFichaMinimaHomeJovenes.tipoVinculacionId != 'JIEU'}" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_tituloPregrado"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.profesion}"
+                                                style="width: 300px;">
+                                                <f:validateLength maximum="70" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_tituloPregrado"
+                                                for="IT_tituloPregrado"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'SEMC' or manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'JIPO' or manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'JIEU'}" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText
+                                                value="Fecha de la obtención del título de Pregrado" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:calendar id="IT_fechaTituloPregrado" pages="1" locale="es"
+                                                readonlyInput="false" pattern="dd/MM/yyyy"
+                                                requiredMessage="Campo obligatorio"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.fechaTituloPregrado}"
+                                                navigator="true" mindate="01/01/2000">
+                                            </p:calendar>
+                                            <p:message id="error_IT_fechaTituloPregrado"
+                                                for="IT_fechaTituloPregrado" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText value="Promedio obtenido en el pregrado" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_promedioPregrado"
+                                                requiredMessage="Campo obligatorio"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.promedioPregrado}"
+                                                update="IT_promedioPregrado" size="6"
+                                                onstart="dialogEspere.show()"
+                                                oncomplete="dialogEspere.hide()"
+                                                validatorMessage="El promedio debe ser un número entre 3.8 y 5.0"
+                                                converterMessage="El promedio debe ser un número entre 3.8 y 5.0">
+                                                <f:validateDoubleRange minimum="3.8" maximum="5" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_promedioPregrado"
+                                                for="IT_promedioPregrado" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDatosJoven and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText
+                                                value="Universidad en la cual realizó los estudios de pregrado" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:autoComplete id="idInstitucion"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.resumenHojaDeVida}"
+                                                completeMethod="#{manejadorFichaMinimaHomeJovenes.obtenerListaInstituciones}"
+                                                minQueryLength="1" style="width: 300px;" maxResults="10">
+                                                <f:validateLength maximum="70" />
+                                            </p:autoComplete>
+                                            <p:message id="errorIdInstitucion" for="idInstitucion" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.mostrarDependencia and !manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                        <p:column>
+                                            <h:outputText
+                                                value="Facultad en la cual realizó el pregrado:"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'SEMC' or manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'JIPO' or manejadorFichaMinimaHomeJovenes.tipoVinculacionId == 'JIEU'}" />
+                                            <h:outputText value="Dependencia:"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.tipoVinculacionId != 'SEMC' and manejadorFichaMinimaHomeJovenes.tipoVinculacionId != 'JIPO' and manejadorFichaMinimaHomeJovenes.tipoVinculacionId != 'JIEU'}" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="IT_facultad"
+                                                requiredMessage="Campo obligatorio"
+                                                value="#{manejadorFichaMinimaHomeJovenes.investigadorExterno.facultadPregrado}"
+                                                style="width: 300px;">
+                                                <f:validateLength maximum="40" />
+                                            </p:inputText>
+                                            <p:message id="error_IT_facultad" for="IT_facultad" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta and !manejadorFichaMinimaHomeJovenes.mostrarOpcionBuscarInvestigador}">
+                                        <p:column style="width: 210px;">
+                                            <h:outputText
+                                                value="Dedicación al proyecto (N° horas semanales) - h/s:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="horasCoinv2"
+                                                binding="#{manejadorFichaMinimaHomeJovenes.horasCoinv2}"
+                                                value="#{manejadorFichaMinimaHomeJovenes.horasParticipante}"
+                                                converterMessage="La dedicación del participante debe ser un valor numérico mayor a cero."
+                                                maxQueryLength="2"
+                                                validatorMessage="La dedicación del participante debe tener máximo dos caracteres.">
+                                            </p:inputText>
+                                            <p:message for="horasCoinv2" showSummary="false" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta  and !manejadorFichaMinimaHomeJovenes.mostrarOpcionBuscarInvestigador}">
+                                        <p:column style="width: 210px;">
+                                            <h:outputText
+                                                value="Vinculación total al proyecto (N° meses) - m:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="horasCoinv3"
+                                                binding="#{manejadorFichaMinimaHomeJovenes.horasCoinv3}"
+                                                value="#{manejadorFichaMinimaHomeJovenes.tiempoTotalParticipante}"
+                                                converterMessage="La vinculación total del participante debe ser un valor numérico mayor a cero."
+                                                maxQueryLength="2"
+                                                validatorMessage="La vinculación total del participante debe tener máximo dos caracteres.">
+                                            </p:inputText>
+                                            <p:message for="horasCoinv3" showSummary="false" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and manejadorFichaMinimaHomeJovenes.convocatoriaActual.mostrarActividadesInvestigador and !manejadorFichaMinimaHomeJovenes.esConsulta  and !manejadorFichaMinimaHomeJovenes.mostrarOpcionBuscarInvestigador}">
+                                        <p:column>
+                                            <h:outputText value="Actividades y responsabilidades:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputTextarea id="funcionInvestigador"
+                                                value="#{manejadorFichaMinimaHomeJovenes.funcionInvestigador}"
+                                                rows="10" style="width: 350px; height: 80px;"
+                                                maxlength="2000" />
+                                            <p:message for="funcionInvestigador" showSummary="false" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row
+                                        rendered="#{manejadorFichaMinimaHomeJovenes.conoceDatos == 'SI' and !manejadorFichaMinimaHomeJovenes.esConsulta  and !manejadorFichaMinimaHomeJovenes.mostrarOpcionBuscarInvestigador}">
+                                        <p:column style="text-align: center;" colspan="2">
+                                            <p:commandButton id="buscarPer2"
+                                                rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}"
+                                                styleClass="ui-priority-primary"
+                                                binding="#{manejadorFichaMinimaHomeJovenes.buscarPer2}"
+                                                update="@form"
+                                                onstart="dialogEspere.show()"
+                                                oncomplete="dialogEspere.hide()"
+                                                action="#{manejadorFichaMinimaHomeJovenes.agregarParticipante}"
+                                                value="Agregar">
+                                            </p:commandButton>
+                                            <p:commandButton value="Limpiar"
+                                                id="botonLimpiarInvestigador" update="infoEquipoTrabajo"
+                                                onstart="dialogEspere.show()"
+                                                oncomplete="dialogEspere.hide()"
+                                                rendered="#{manejadorFichaMinimaHomeJovenes.esOtraVinculacion}"
+                                                action="#{manejadorFichaMinimaHomeJovenes.limpiar}"
+                                                process="infoEquipoTrabajo" styleClass="ui-priority-primary">
+                                                <p:resetInput target="infoEquipoTrabajo" />
+                                            </p:commandButton>
+                                            <p:message id="msgParticip" for="buscarPer2" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="text-align: center;" colspan="2">
+                                            <p:dataTable id="participantesTablaNum"
+                                                var="coinvestigadorPartNum"
+                                                value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaInvestigadoresProyectoSinDatos}"
+                                                emptyMessage="No se han agregado participantes"
+                                                style="width:100%;">
+                                                <f:facet name="header">
+                                                    <h:outputText
+                                                        value="Participantes de los cuales NO se conocen los datos personales" />
+                                                </f:facet>
+                                                <p:column headerText="Tipo de participante"
+                                                    style="width:20%">
+                                                    <h:outputText value="#{coinvestigadorPartNum.tipo.nombre}" />
+                                                </p:column>
+                                                <p:column headerText="Cantidad" style="width:10%">
+                                                    <h:outputText
+                                                        value=" #{coinvestigadorPartNum.dedicacionHorasSemana}" />
+                                                </p:column>
+                                                <p:column headerText="Eliminar" id="columnCoinv_2"
+                                                    style="width:5%"
+                                                    rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                                    <p:commandButton
+                                                        action="#{manejadorFichaMinimaHomeJovenes.eliminarParticipanteNum}"
+                                                        update="@form" id="eliminarInv_2" icon="ui-icon-trash"
+                                                        onstart="dialogEspere.show()"
+                                                        oncomplete="dialogEspere.hide()"
+                                                        title="Eliminar participantes">
+                                                        <f:setPropertyActionListener
+                                                            value="#{coinvestigadorPartNum}"
+                                                            target="#{manejadorFichaMinimaHomeJovenes.participante}" />
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column style="text-align: center;" colspan="2">
+                                            <p:dataTable id="participantesTabla" var="coinvestigadorPart"
+                                                value="#{manejadorFichaMinimaHomeJovenes.proyectoActual.listaInvestigadoresProyectoConDatos}"
+                                                emptyMessage="No se han agregado participantes"
+                                                style="width:100%">
+                                                <f:facet name="header">
+                                                    <h:outputText
+                                                        value="Participantes de los cuales se conocen los datos personales" />
+                                                </f:facet>
+                                                <p:column headerText="Participante" style="width:20%">
+                                                    <h:outputText
+                                                        value="#{coinvestigadorPart.investigador.nombre1} #{coinvestigadorPart.investigador.apellido1}" />
+                                                    <br />
+                                                    <h:outputText
+                                                        value=" #{coinvestigadorPart.investigador.id.tipoDocumento} - #{coinvestigadorPart.investigador.id.documento}" />
+                                                </p:column>
+                                                <p:column headerText="Unidad" style="width:20%">
+                                                    <h:outputText
+                                                        value="#{coinvestigadorPart.investigador.dependencia.nombre}" />
+                                                </p:column>
+                                                <p:column style="width:10%">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Tipo " />
+                                                        <br />
+                                                        <h:outputText value="vinculación" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{coinvestigadorPart.tipo.nombre}" />
+                                                </p:column>
+                                                <p:column headerText="h/s" style="width:5%">
+                                                    <h:outputText
+                                                        value=" #{coinvestigadorPart.dedicacionHorasSemana}" />
+                                                </p:column>
+                                                <p:column headerText="m" style="width:5%">
+                                                    <h:outputText
+                                                        value=" #{coinvestigadorPart.totalHorasVinculacion}" />
+                                                </p:column>
+                                                <p:column style="width:10%">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Valor " />
+                                                        <br />
+                                                        <h:outputText value="(dedicación-$)" />
+                                                    </f:facet>
+                                                    <h:outputText value="#{coinvestigadorPart.valorPagar}">
+                                                        <f:convertNumber currencySymbol="$" groupingUsed="true"
+                                                            type="currency" minFractionDigits="0"
+                                                            maxFractionDigits="0" />
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column headerText="Act/Resp." style="width:60%"
+                                                    rendered="#{manejadorFichaMinimaHomeJovenes.esConvProyectos2016_2018}">
+                                                    <h:outputText value=" #{coinvestigadorPart.funcion}" />
+                                                </p:column>
+                                                <p:column headerText="Eliminar" id="columnCoinv2"
+                                                    style="width:5%"
+                                                    rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta}">
+                                                    <p:commandButton
+                                                        action="#{manejadorFichaMinimaHomeJovenes.eliminarParticipante}"
+                                                        update="@form, :form:panelInformacionFinanciera, participantesTabla"
+                                                        onstart="dialogEspere.show()"
+                                                        oncomplete="dialogEspere.hide()" id="eliminarInv2"
+                                                        icon="ui-icon-trash" title="Eliminar participante">
+                                                        <f:setPropertyActionListener value="#{coinvestigadorPart}"
+                                                            target="#{manejadorFichaMinimaHomeJovenes.participante}" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </t:div>
+                        </p:tab>
+                        <br />
+                        <br />
+                    </p:accordionPanel>
+                </p:panel>
+                <br />
+                <p:panel id="panelInformacionFinanciera"
+                    header="II. INFORMACIÓN FINANCIERA DEL PROYECTO" toggleable="true"
+                    toggleSpeed="500" closeSpeed="500" rendered="true">
+                    <p:tab title="Información financiera" id="infoFinanciera2">
+                        <p:dataTable cellpadding="6" cellspacing="3"
+                            value="#{manejadorFichaMinimaHomeJovenes.listaFinanciacionesConv}"
+                            var="financiacion" id="listaFuentesFinan2"
+                            rendered="#{not empty manejadorFichaMinimaHomeJovenes.listaFinanciacionesConv}">
+                            <p:column style="width:40%">
+                                <f:facet name="header">
+                                    <h:outputText value="FUENTE DE FINANCIACIÓN" />
+                                </f:facet>
+                                <h:outputText value="#{financiacion.fuente.descripcion}" />
+                            </p:column>
+                            <p:column style="width:20%">
+                                <f:facet name="header">
+                                    <h:outputText value="VALOR" />
+                                </f:facet>
+                                <p:inputText id="valorFinanciacion"
+                                    value="#{financiacion.valor}" required="true" readonly="true" />
+                            </p:column>
+                        </p:dataTable>
+                        <br />
+                        <h:panelGrid columns="2" id="panelGastos2"
+                            rendered="#{!manejadorFichaMinimaHomeJovenes.verFichaMinJI2015}">
+                            <h:outputText value="Tipo de rubro" />
+                            <p:selectOneMenu
+                                value="#{manejadorFichaMinimaHomeJovenes.idTipoRubro}"
+                                id="selectTipoRubro">
+                                <f:selectItems
+                                    value="#{manejadorFichaMinimaHomeJovenes.tiposRubroItem}" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Año" rendered="false" />
+                            <p:spinner
+                                value="#{manejadorFichaMinimaHomeJovenes.vigenciaGasto}" min="1"
+                                max="10" size="2" rendered="false" />
+                            <h:outputText value="Valor" />
+                            <p:inputText id="valorRubro"
+                                value="#{manejadorFichaMinimaHomeJovenes.valorGasto}">
+                                <f:validateLength minimum="1" />
+                            </p:inputText>
+
+                            <h:outputText value="Descripción" />
+                            <p:inputTextarea id="gastosDescripcion"
+                                value="#{manejadorFichaMinimaHomeJovenes.descripcionGasto}"
+                                rows="4" cols="50" autoResize="false" maxlenght="3000" />
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton id="botonAgregarGasto"
+                                rendered="#{!manejadorFichaMinimaHomeJovenes.verFichaMinJI2015}"
+                                action="#{manejadorFichaMinimaHomeJovenes.agregarGasto}"
+                                value="Agregar"
+                                update="dataTableGastoVista2, panelGastos2, grupoGastos2 , listaFuentesFinan2 " />
+                        </center>
+                        <br />
+                        <p:outputPanel id="grupoGastos2" align="center"
+                            rendered="#{!manejadorFichaMinimaHomeJovenes.verFichaMinJI2015}">
+                            <p:dataTable id="dataTableGastoVista2" var="gasto"
+                                value="#{manejadorFichaMinimaHomeJovenes.listaGastos}"
+                                align="center" border="1" cellpadding="4" cellspacing="0"
+                                rendered="#{!empty manejadorFichaMinimaHomeJovenes.listaGastos }">
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="RUBRO ADICIONADO" />
+                                    </f:facet>
+                                    <h:outputText value="#{gasto.tipoRubro.nombre}" />
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="AÑO" />
+                                    </f:facet>
+
+                                    <h:outputText value="#{gasto.vigencia}" />
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="DESCRIPCIÓN" />
+                                    </f:facet>
+                                    <h:outputText value="#{gasto.descripcion}" />
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="VALOR" />
+                                    </f:facet>
+                                    <h:outputText value="#{gasto.valor}" />
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="ELIMINAR" />
+                                    </f:facet>
+                                    <center>
+                                        <p:commandButton id="eliminarGastoBoton"
+                                            action="#{manejadorFichaMinimaHomeJovenes.eliminarGastoConv}"
+                                            icon="ui-icon-trash" update="dataTableGastoVista2"
+                                            ajax="false" title="Eliminar gasto">
+                                            <f:setPropertyActionListener
+                                                target="#{manejadorFichaMinimaHomeJovenes.gastoSeleccionado}"
+                                                value="#{gasto}" />
+                                        </p:commandButton>
+                                    </center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </p:tab>
+                </p:panel>
+                <br />
+                <p:messages id="messages" showDetail="false" autoUpdate="true"
+                    closable="true" />
+
+                <br />
+                <h:panelGrid columns="3" align="center">
+
+                    <p:commandButton value="Regresar a proyectos"
+                        action="#{manejadorFichaMinimaHomeJovenes.atras}"
+                        id="botonGuardarFinalizar1" styleClass="ui-priority-primary" />
+                    <p:commandButton value="Guardar" ajax="false"
+                        action="#{manejadorFichaMinimaHomeJovenes.siguienteFM}"
+                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.convocatoriaActual.id == 2}"
+                        id="botonGuardarFinalizar4" styleClass="ui-priority-primary" />
+                    <p:commandButton value="Guardar y continuar después" ajax="false"
+                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.convocatoriaActual.id != 2}"
+                        action="#{manejadorFichaMinimaHomeJovenes.terminarDespues}"
+                        id="botonGuardarTerminarDespues" styleClass="ui-priority-primary" />
+                    <p:commandButton value="Guardar y Avanzar" ajax="false"
+                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.convocatoriaActual.id != 2}"
+                        action="#{manejadorFichaMinimaHomeJovenes.siguiente}"
+                        id="botonGuardarAvanzar" styleClass="ui-priority-primary" />
+                    <p:commandButton value="Guardar y finalizar edición" update="@form"
+                        ajax="false"
+                        rendered="#{!manejadorFichaMinimaHomeJovenes.esConsulta and manejadorFichaMinimaHomeJovenes.convocatoriaActual.id == 2}"
+                        action="#{manejadorFichaMinimaHomeJovenes.guardarFinalizar}"
+                        id="botonGuardarSiguiente" styleClass="ui-priority-primary" />
+                    <p:tooltip for="botonGuardarFinalizar1" showEffect="fade"
+                        hideEffect="fade">
+                        <h:panelGrid columns="1"
+                            style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                            <h:outputText
+                                value="Al oprimir este botón se regresa a la página principal de proyectos. Si no ha dado clic sobre alguno de los botones de guardar, perderá la información que haya registrado." />
+                        </h:panelGrid>
+                    </p:tooltip>
+                    <p:tooltip for="botonGuardarFinalizar4" showEffect="fade" id="ptp"
+                        hideEffect="fade">
+                        <h:panelGrid columns="1"
+                            style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                            <h:outputText
+                                value="Al oprimir este botón guardará parcialmente toda la información que haya registrado y podrá ingresar en otro momento y continuar diligenciando los formularios. Tenga en cuenta que el proyecto no quedará en estado propuesto y no podrá realizar ninguna solicitud adicional con este proyecto." />
+                        </h:panelGrid>
+                    </p:tooltip>
+                    <p:tooltip for="botonGuardarSiguiente" showEffect="fade"
+                        hideEffect="fade">
+                        <h:panelGrid columns="1"
+                            style="border-bottom: 0px; padding-bottom: 0px; width: 400px">
+                            <h:outputText
+                                value="Al oprimir este botón guardará toda la información que haya registrado y NO podrá editarla en otro momento. Además, el proyecto quedará en estado propuesto y podrá realizar una solicitud adicional (en caso de ser requerido). " />
+                        </h:panelGrid>
+                    </p:tooltip>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:form>
+        <p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+            modal="true">
+            <p:graphicImage value="/images/ajaxloading.gif" />
+                        Por favor espere...
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+
+

@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="title">Revisión aval</ui:define>
+	<ui:define name="content">
+		<h:form>
+			<style type="text/css">
+.confirmaEdicion .ui-state-default, .confirmaEdicion .ui-widget-content .ui-state-default,
+	.confirmaEdicion .ui-widget-header .ui-state-default {
+	border: 1px solid #646464;
+}
+</style>
+
+			<t:div styleClass="contenido-titulo-general-myriad">Revisión aval</t:div>
+			<br />
+			<p:panel id="panelFormatoUnico">
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes" id="panelAval"
+					style="text-align:left; width:100%;">
+					<p:row>
+						<p:column style="font-weight:bold;">
+							<h:outputText value="Nombre proyecto: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorAprobacionAvalUAB.aval.aviTitulo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="font-weight:bold;">
+							<h:outputText value="Código Aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorAprobacionAvalUAB.aval.aviId}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="font-weight:bold;">
+							<h:outputText value="Tipo Aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{ManejadorAprobacionAvalUAB.aval.nombreTipo}"></h:outputText>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="font-weight:bold;">
+							<h:outputText value="Consultar información aval: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:commandLink
+								action="#{ManejadorAprobacionAvalUAB.descargarArchivoInformacionAdicional}"
+								value="Ver reporte específico" target="_popUpWindow"
+								onclick="javascript: void window.open('', '_popUpWindow', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+											color: #16A8E2;
+											font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="font-weight:bold;">
+							<h:outputText value="Consultar información proyecto: "></h:outputText>
+						</p:column>
+						<p:column>
+							<h:commandLink
+								action="#{ManejadorAprobacionAvalUAB.imprimirProyecto}"
+								value="Ver reporte proyecto" target="_popUpWindow2"
+								onclick="javascript: void window.open('', '_popUpWindow2', 'status=0,toolbar=0,location=0,menubar=0,resizable,width=750,height=500,scrollbars,left=0,top=0');"
+								style="text-decoration:none; 
+											color: #16A8E2;
+											font-weight: bold;">
+							</h:commandLink>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<center>
+					<p:dataTable var="documento" id="tablaArchivoDoc"
+						value="#{ManejadorAprobacionAvalUAB.listaArchivos}"
+						emptyMessage="No hay archivos adjuntos." cellpadding="1"
+						cellspacing="8" align="center" border="1" style="width:100%">
+						<f:facet name="header">Archivos Adjuntos</f:facet>
+
+						<p:column headerText="Id" style="width:2%;">
+
+							<h:outputText value=" #{documento.id}" />
+						</p:column>
+
+						<p:column headerText="Archivo" style="width:95%;">
+
+							<h:outputText value=" #{documento.nombre}" />
+						</p:column>
+
+						<p:column headerText="Descargar"
+							style="text-align:center; width:3%;">
+							<p:commandButton id="descargar"
+								action="#{ManejadorAprobacionAvalUAB.descargarArchivo}"
+								icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+								ajax="false">
+								<f:setPropertyActionListener value="#{documento}"
+									target="#{ManejadorAprobacionAvalUAB.documentoSeleccionado}" />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</center>
+				<br />
+			</p:panel>
+			<br />
+			<p:panel id="panelAprobacionAval"
+				header="Aval Unidad Académica Básica"
+				rendered="#{!ManejadorAprobacionAvalUAB.esConsulta}">
+				<p:panelGrid id="panelAvalUAB"
+					styleClass="estilo-panelgrid-sinbordes" style="width:100%;">
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoDecision" icon="ui-icon-info" />
+							<p:tooltip for="infoDecision" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Seleccione una decisión para la solicitud de aval (Devolver, aprobar o negar).
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Decisión de la solicitud: "></h:outputText>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu value="#{ManejadorAprobacionAvalUAB.selItem}">
+								<f:selectItems
+									value="#{ManejadorAprobacionAvalUAB.categoriaItems}" />
+								<p:ajax update="panelAprobacionAval"
+									process="panelAprobacionAval" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:20px;">
+							<p:commandButton id="infoObservacion" icon="ui-icon-info" />
+							<p:tooltip for="infoObservacion" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Ingrese las observaciones de la decisión sobre la solicitud de aval.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Observaciones: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea rows="10" cols="50" style="width:100%;"
+								autoResize="false" id="obs"
+								value="#{ManejadorAprobacionAvalUAB.aval.comentariosUab}"
+								maxlength="1000">
+								<f:validateLength minimum="0" maximum="1000" for="obs"></f:validateLength>
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2">
+							<h:outputText value="" />
+						</p:column>
+						<p:column>
+							<h:outputText id="counterObs" value="Tamaño máximo 1000 caracteres"/>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorAprobacionAvalUAB.selItem == '4'}">
+						<p:column colspan="3" styleClass="confirmaEdicion"
+							style="text-align:justify;">
+							<h:outputText
+								value="Si es necesario hacer cambios en el proyecto y desea habilitarlo para la edición del docente marque la siguiente casilla:"></h:outputText>
+							<br />
+							<table>
+								<tr>
+									<td><h:outputText
+											value="¿Habilitar edición del proyecto asociado? " /></td>
+									<td style="vertical-align: middle;"><p:selectBooleanCheckbox
+											value="#{ManejadorAprobacionAvalUAB.edicionProyecto}">
+											<p:ajax update="panelAprobacionAval"
+												process="panelAprobacionAval" />
+										</p:selectBooleanCheckbox></td>
+								</tr>
+							</table>
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorAprobacionAvalUAB.selItem == '2'}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoAval" icon="ui-icon-info" />
+							<p:tooltip for="infoAval" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Adjunte el documento del aval para el proyecto (Opcional).
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Cargar carta de aval:" />
+						</p:column>
+						<p:column>
+							<p:fileUpload style="width:30%"
+								fileUploadListener="#{ManejadorAprobacionAvalUAB.guardarArchivo}"
+								id="archivo2" mode="advanced" auto="true"
+								update="archivo_adjunto" multiple="true" sizeLimit="3000000"
+								label="Seleccionar archivo" />
+						</p:column>
+					</p:row>
+					<p:row rendered="#{ManejadorAprobacionAvalUAB.selItem == '2'}">
+						<p:column style="width:20px;">
+							<p:commandButton id="infoNombreAval" icon="ui-icon-info" />
+							<p:tooltip for="infoNombreAval" styleClass="tooltip-mesage"
+								showDelay="999">
+								<t:div style="text-align: left; float:left;">
+								     Documento cargado.
+									</t:div>
+							</p:tooltip>
+						</p:column>
+						<p:column>
+							<h:outputText value="Archivo aval:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="archivo_adjunto"
+								value=" #{ManejadorAprobacionAvalUAB.aval.archivoAval}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<br />
+				<center>
+					<p:commandButton id="infoDocs" icon="ui-icon-info" />
+					<p:tooltip for="infoDocs" styleClass="tooltip-mesage"
+						showDelay="999">
+						<t:div style="text-align: left; float:left;">
+								       	En caso de ser necesario, por favor adjunte los documentos <br />
+								       	relacionados con la revisión del aval.
+								</t:div>
+					</p:tooltip>
+					<h:outputText
+						value=" DOCUMENTOS ADICIONALES DE SOPORTE AL TRÁMITE (Opcional)"
+						style='font-weight: bold;' />
+					<br /> <br />
+				</center>
+				<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+					id="panelArchivoSoporte" style="text-align:left; width:100%;">
+					<p:row>
+						<p:column>
+							<p:fileUpload
+								fileUploadListener="#{ManejadorAprobacionAvalUAB.guardarArchivoCoor}"
+								id="archivo1" mode="advanced" update="tablaArchivo" auto="true"
+								multiple="true" sizeLimit="3072000" label="Seleccionar archivo" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:dataTable var="archivoResumen"
+								value="#{ManejadorAprobacionAvalUAB.aval.archivosCoorList}"
+								id="tablaArchivo" emptyMessage="No tiene archivos de soporte."
+								style="width:100%">
+								<f:facet name="header">Archivos de soporte</f:facet>
+								<p:column style="text-align: center; width:95%"
+									headerText="Archivo">
+									<h:outputText value="#{archivoResumen.nombre}" />
+								</p:column>
+								<p:column headerText="Descargar" style="width:5%">
+									<p:commandButton id="descargar"
+										action="#{ManejadorAprobacionAvalUAB.descargarArchivo}"
+										icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+										ajax="false">
+										<f:setPropertyActionListener value="#{archivoResumen}"
+											target="#{ManejadorAprobacionAvalUAB.arCoor}" />
+									</p:commandButton>
+								</p:column>
+								<p:column headerText="Borrar"
+									style="width:5%; text-align:center;">
+									<p:commandButton id="eliminar"
+										action="#{ManejadorAprobacionAvalUAB.eliminarArchivoCoor}"
+										icon="ui-icon-trash" title="Eliminar archivo" ajax="false">
+										<f:setPropertyActionListener value="#{archivoResumen}"
+											target="#{ManejadorAprobacionAvalUAB.arCoor}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+			<br />
+			<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+				id="panelGuardar" align="center"
+				rendered="#{!ManejadorAprobacionAvalUAB.esConsulta}">
+
+				<p:commandButton action="#{ManejadorAprobacionAvalUAB.anterior}"
+					value="Regresar" onstart="dialogEspere.show()"
+					oncomplete="dialogEspere.hide()">
+				</p:commandButton>
+				<p:commandButton
+					action="#{ManejadorAprobacionAvalUAB.guardarAvalGenerado}"
+					value="Guardar revisión aval" onstart="dialogEspere.show()"
+					oncomplete="dialogEspere.hide()">
+				</p:commandButton>
+
+			</h:panelGrid>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true" header="Acción en proceso">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+								Por favor espere
+				</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

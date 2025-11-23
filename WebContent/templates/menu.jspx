@@ -1,0 +1,1788 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+	<h:form>
+		<style type="text/css">
+			.menu li a {
+				
+			}
+		</style>
+		<t:div styleClass="menu-superior"
+			style="padding-bottom: 0px; margin-bottom: 0px; margin-left: 6px;">
+			<t:div styleClass="logo-hermes" rendered="#{manejadorAutenticacion.esAmbienteProduccion}">
+				<h:commandLink action="#{manejadorAutenticacion.inicio}">
+					<h:graphicImage url="/images/her-general/logo_hermes.png" style="border:0px" />
+				</h:commandLink>
+			</t:div>
+			
+			<t:div styleClass="logo-hermes" rendered="#{!manejadorAutenticacion.esAmbienteProduccion}">
+				<h:commandLink action="#{manejadorAutenticacion.inicio}">
+					<h:graphicImage url="/images/her-general/logo_hermes_pruebas.png" style="border:0px" />
+				</h:commandLink>
+			</t:div>
+			
+			<div class="botones-login">
+				<div class="login-inicio">
+					<h:commandButton styleClass="boton_inicio"
+						action="#{manejadorAutenticacion.inicio}" value="" />
+				</div>
+				<div class="login-salir">
+					<h:commandButton
+						onclick="if(!confirm('¿Esta seguro de cerrar sesión?'))return false"
+						styleClass="boton_salir"
+						actionListener="#{manejadorAutenticacion.consultarPaginaSalida}"
+						value="" alt="Salir" />
+				</div>
+			</div>
+			<div class="cabeza-login">
+				<div class="login-bienvenido">Bienvenido (a)</div>
+			</div>
+			<div class="usuario-registrado">
+				<h:outputText value="#{manejadorAutenticacion.nombrePersona} " />
+			</div>
+		</t:div>
+		<t:div styleClass="cabezote-derecho-menu-especifico" rendered="#{!manejadorAutenticacion.esAmbienteProduccion}">
+			<h:outputText value="Ambiente de PRUEBAS" />
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarGrupos}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Grupos de investigación" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								rendered="#{manejadorAutenticacion.tienePermisosCrearGrupo}"
+								action="#{manejadorGruposInvestigador.agregarNuevoGrupo}"
+								ajax="false">
+								<h:outputText value="Agregar nuevo grupo" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorAvalMenu.solicitarAval}" ajax="false">
+								<h:outputText value="Solicitar aval institucional grupo" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarLaboratorios and !manejadorAutenticacion.esDiagnosticoSoftware and not manejadorAutenticacion.esInventariosLaboratorios}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Laboratorios" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.irAdministrarEquipos}"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios or manejadorAutenticacion.esLaboratoriosSede or manejadorAutenticacion.esCoordinadorLaboratorio or manejadorAutenticacion.esLaboratoriosFacultad}">
+								<h:outputText value="Búsqueda de Equipos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="administrarInsumos" ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios}">
+								<h:outputText value="Administrar Insumos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="AdministrarLaboratorios"
+								ajax="false">
+								<h:outputText value="Administrar Laboratorios" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="consultarConvocatoriasLaboratorios" ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios}">
+								<h:outputText value="Programa proy. laboratorios" />
+							</p:commandLink></li>
+                        <li><p:commandLink
+                                action="irVerTodasSolicitudesLaboratorios" ajax="false"
+                                rendered="#{manejadorAutenticacion.esLaboratorios}">
+                                <h:outputText value="Consulta proyectos laboratorios" />
+                            </p:commandLink></li>
+						<li><p:commandLink action="#{manejadorAutenticacion.irCrearLaboratorio}" ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios or manejadorAutenticacion.esLaboratoriosSede}">
+								<h:outputText value="Crear Laboratorio" />
+							</p:commandLink></li>
+						<li><p:commandLink action="buscarCostosServiciosLaboratorio"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios or manejadorAutenticacion.esCoordinadorLaboratorio or manejadorAutenticacion.esLaboratoriosSede}">
+								<h:outputText value="Costos Servicios" />
+							</p:commandLink></li>
+						<li><p:commandLink action="encuestaDiagnosticoSoftware"
+								ajax="false" rendered="#{manejadorAutenticacion.esLaboratorios}">
+								<h:outputText value="Diagnóstico Software" />
+							</p:commandLink></li>
+						<li><p:commandLink action="evaluacionProveedores"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios or manejadorAutenticacion.esLaboratoriosSede or manejadorAutenticacion.esCoordinadorLaboratorio}">
+								<h:outputText value="Evaluación Proveedores" />
+							</p:commandLink></li>
+						<li><p:commandLink action="#{manejadorAutenticacion.irReportesDNL}" ajax="false"
+								rendered="#{manejadorAutenticacion.esLaboratorios 
+									or manejadorAutenticacion.esLaboratoriosSede 
+									or manejadorAutenticacion.esLaboratoriosFacultad 
+									or manejadorAutenticacion.esLaboratoriosDepto 
+									or manejadorAutenticacion.esConsultaLaboratorios
+									or manejadorAutenticacion.esCoordinadorLaboratorio
+									or manejadorAutenticacion.esPersonalLaboratorio
+									}">
+								<h:outputText value="Reportes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="solicitudLaboratorio" ajax="false"
+								rendered="false"
+								title="Solicitar al SNL crear, formalizar, modificar o eliminar un Laboratorio">
+								<h:outputText value="Solicitud Laboratorio" />
+							</p:commandLink></li>
+						<li><p:commandLink action="listadoSolicitudesSNL"
+								ajax="false"
+								rendered="false"
+								title="Consulta de las solicitudes al SNL registradas">
+								<h:outputText value="Solicitudes SNL" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesInnovacion}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="inscritosReconocimientoEspirituInnovador" ajax="false">
+								<h:outputText value="Espíritu innovador" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		
+		<!-- <t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesTerminosReferenciaConvocatoria}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li>
+							<p:commandLink
+								action="crearTerminiosReferenciaConvocatoria" ajax="false">
+								<h:outputText value="Generar términos de referencia" />
+							</p:commandLink>
+						</li>
+						<li>
+						<p:commandLink
+								action="crearTerminiosReferenciaConvocatoria" ajax="false">
+								<h:outputText value="Solicitar parametrización" />
+						</p:commandLink>
+						</li>
+						<li>
+						<p:commandLink
+								action="administrarConvocatoriasInternas" ajax="false">
+								<h:outputText value="Consultar convocatorias" />
+						</p:commandLink>
+						</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>-->
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesCertificados and manejadorAutenticacion.esInvestigador}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Certificados" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="irCertificaciones" ajax="false">
+								<h:outputText value="Investigador" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irCertificacionesEstudiantes"
+								ajax="false">
+								<h:outputText value="Estudiantes/coinvestigadores" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarLaboratorios and manejadorAutenticacion.esInventariosLaboratorios}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Laboratorios" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="inventariosLaboratorios"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.esInventariosLaboratorios}">
+								<h:outputText value="Inventarios Laboratorios" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarEducacionContinuaFacultad}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="listaCursosECP" ajax="false">
+								<h:outputText value="Administrar Actividades ECP" />
+							</p:commandLink></li>
+
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarConsultarModuloECP}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="crearModuloECP" ajax="false">
+								<h:outputText value="Vincular cursos a Módulo ECP" />
+							</p:commandLink></li>
+						<li><p:commandLink action="crearModuloECP" ajax="false">
+								<h:outputText value="Consultar cursos Módulo ECP" />
+							</p:commandLink></li>
+						<li><p:commandLink action="crearModuloECP" ajax="false">
+								<h:outputText value="Ficha Quipu Módulo ECP" />
+							</p:commandLink></li>
+						<li><p:commandLink action="crearModuloECP" ajax="false">
+								<h:outputText value="Resoluciones Módulo ECP" />
+							</p:commandLink></li>
+					</ul>
+
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesListaCursosECP}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="volverAdministrarModulo"
+								ajax="false">
+								<h:outputText value="Volver" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesEditarCursosECP}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{ManejadorCursosAvaladosECP.listaCurso}" ajax="false">
+								<h:outputText value="Lista Inscritos" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorCursosAvaladosECP.descuentosCursoECP}"
+								ajax="false">
+								<h:outputText value="Descuentos" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorCursosAvaladosECP.InfoPagoVCursoECP}"
+								ajax="false">
+								<h:outputText value="Pago virtual" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorCursosAvaladosECP.InfoFacultadECP}"
+								ajax="false">
+								<h:outputText value="Información Oficina ECP" />
+							</p:commandLink></li>
+						<li><p:commandLink action="volverlistaCursosECP" ajax="false">
+
+								<h:outputText value="Volver" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesListaInscritosCursoECP}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Opciones" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="volverlistaCursosECP" ajax="false">
+								<h:outputText value="Volver a lista de cursos" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<!-- 		INI Editorial CAZ -->
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesEditorial}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Editorial UN" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="irEditorial" ajax="false">
+								<h:outputText value="Solicitud ISBN" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irVerTodasSolicitudesEditorial"
+								ajax="false">
+								<h:outputText value="Mis Solicitudes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="proyectosEditoriales" ajax="false">
+								<h:outputText value="Proyectos Editoriales" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Asociar Coordinadores" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Asignar Proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Reportes" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarEditorialDocente}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Proy. y Conv. Editoriales" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="irVerTodasSolicitudesEditorial" ajax="false">
+								<h:outputText value="Mis Proyectos Editoriales" />
+							</p:commandLink></li>
+						<!--<li><p:commandLink
+								action="#{manejadorAutenticacion.irNuevoProyectoEditorial}"
+								ajax="false">
+								<h:outputText value="Nuevo Proyecto Editorial" />
+							</p:commandLink></li>-->
+						<li><p:commandLink action="irEditorial" ajax="false">
+								<h:outputText value="Convocatorias Editorial" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesAsesorEditorial}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Asesor Editorial" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="irAsesorEditorial" ajax="false">
+								<h:outputText value="Asociar coordinadores" />
+							</p:commandLink></li>
+						<li><p:commandLink action="asignarProyectosEditoriales" ajax="false">
+								<h:outputText value="Asignar proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesEditorialUN}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Editorial UN" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="irEditorialUN" ajax="false">
+								<h:outputText value="Revisión de solicitud de ISBN" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irEditorialUN" ajax="false">
+								<h:outputText value="Consultar solicitudes de ISBN" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irEditorialUN" ajax="false">
+								<h:outputText value="Lista de chequeo de sello editorial" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irEditorialUN" ajax="false">
+								<h:outputText value="Consulta por convocatoria" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irEditorialUN" ajax="false">
+								<h:outputText value="Consultar proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irEditorialUN" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<!-- 		FIN Editorial CAZ -->
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarAvales and manejadorAutenticacion.esInvestigador}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Avales" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{ManejadorAvalMenu.solicitarAval}" ajax="false">
+								<h:outputText value="Solicitud de aval" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorAvalMenu.registroProyectos}" ajax="false">
+								<h:outputText value="Registro de proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorAvalMenu.verAvalesRegistrados}" ajax="false">
+								<h:outputText value="Ver avales registrados" />
+							</p:commandLink></li>
+						<li><p:commandLink rendered="#{manejadorAutenticacion.nuevaConvocatoriaExterna}"
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Nueva convocatoria externa" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarColecciones and manejadorColeccionesBiologicas.verReporte}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Colecciones biológicas" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorColeccionesBiologicas.verColecciones}"
+								ajax="false">
+								<h:outputText value="Mis colecciones" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorColeccionesBiologicas.adminColecciones}"
+								ajax="false">
+								<h:outputText value="Gestión de colecciones" />
+							</p:commandLink></li>
+						<li><p:commandLink action="reporteAvalVice" ajax="false">
+								<h:outputText value="Reportes gráficos" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarRequerimientos}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Requerimiento" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{ManejadorCrearRequerimiento.verSolicAsignadas}"
+								ajax="false">
+								<h:outputText value="Ver mejoras asignadas" />
+						</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorCrearRequerimiento.verSolucionados}"
+								ajax="false">
+								<h:outputText value="Ver solicitudes solucionadas" />
+						</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorCrearRequerimiento.verInconvAsignados}"
+								ajax="false">
+								<h:outputText value="Ver inconvenientes asignados" />
+						</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarAdmRequerimientos}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Adm. Requerimientos" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{ManejadorConsultarRequerimientoAdm.verMejoras}">
+								<h:outputText value="Mejoras registradas" />
+							</p:commandLink></li>											
+						<li><p:commandLink
+								action="#{ManejadorConsultarRequerimientoAdm.verAsignadosSolucionados}">
+								<h:outputText value="Mejoras asignadas o atendidas" />
+						</p:commandLink></li>						
+						<li><p:commandLink
+							action="#{ManejadorConsultarRequerimientoAdm.verInconvenientes}">
+							<h:outputText value="Inconvenientes registrados" />
+						</p:commandLink></li>
+						
+						<li><p:commandLink
+							action="#{ManejadorConsultarRequerimientoAdm.verInconvenientesAsignadosOSolucionados}">
+							<h:outputText value="Inconvenientes asignados o atendidos" />
+						</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorConsultarEncuesta.verTodosResultados}">
+								<h:outputText value="Ver encuesta" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorConsultarRequerimientoAdm.generarReportes}">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorConsultarRequerimientoAdm.reportarInconveniente}">
+								<h:outputText value="Reportar inconveniente" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorConsultarRequerimientoAdm.verSolicitudesVRIE}"
+								rendered="false">
+								<h:outputText value="Ver solicitudes VRIE" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorConsultarRequerimientoAdm.verSolicAsignadasVRIE}"
+								rendered="false">
+								<h:outputText value="Ver asignados VRIE" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesUAB}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Unidad Académica Básica" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{ManejadorAprobacionAvalUAB.irListaAvalesSolicitados}"
+								ajax="false">
+								<h:outputText value="Avales solicitados" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorAprobacionAvalUAB.irListaAvalesOtorgados}"
+								ajax="false">
+								<h:outputText value="Avales otorgados" />
+							</p:commandLink></li>
+						<li><p:commandLink action="reporteProyectos" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{ManejadorAprobacionAvalUAB.irListaInformes}"
+								ajax="false">
+								<h:outputText value="Revisar informes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irSemilleroAprobacionUAB"
+								ajax="false">
+								<h:outputText value="Solicitudes Semilleros" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false" action="irSemilleroConsultaUAB">
+								<h:outputText value="Semilleros Revisados" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarMovilidadesFacultad}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Movilidades facultad" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="listadoAprobacion" ajax="false">
+								<h:outputText value="Aprobación movilidades" />
+							</p:commandLink> <p:commandLink action="listadoRevisionCons" ajax="false">
+								<h:outputText value="Consultar movilidades fac" />
+							</p:commandLink> 
+							<p:commandLink action="listadoRevisionSeguimiento" ajax="false">
+								<h:outputText value="Alertas de seguimiento" />
+							</p:commandLink>
+							<p:commandLink action="ConsultaGeneralMovilidades" ajax="false">
+								<h:outputText value="Consultar movilidades" />
+							</p:commandLink>
+						</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesRequerimiento}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Requerimientos" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="consultarRequerimiento"
+								ajax="false">
+								<h:outputText value="Consultar mejoras" />
+							</p:commandLink> <p:commandLink action="crearRequerimiento" ajax="false">
+								<h:outputText value="Proponer mejora" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesEvaluador}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Evaluador" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li>
+							<p:commandLink action="evaluarProyectos" ajax="false">
+								<h:outputText value="Evaluar proyectos" />
+							</p:commandLink>
+							<p:commandLink action="consultarEvaluaciones"
+								ajax="false">
+								<h:outputText value="Consultar evaluaciones" />
+							</p:commandLink>
+							<p:commandLink action="certificadoEvaluacion"
+								ajax="false">
+								<h:outputText value="Generar certificado evaluación" />
+							</p:commandLink>  
+						</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<!---->
+
+
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarMovilidadesSede}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Movilidades Sede" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="listadoRevisionSede" ajax="false">
+								<h:outputText value="Aprobación Movilidades" />
+							</p:commandLink> <p:commandLink action="listadoRevisionConsSede" ajax="false">
+								<h:outputText value="Mov. Registradas Sede" />
+							</p:commandLink> <p:commandLink action="listadoRevisionSeguimientoSede"
+								ajax="false">
+								<h:outputText value="Alertas de seguimiento" />
+							</p:commandLink>
+							<p:commandLink action="listadoAprobacionConvSede" ajax="false">
+								<h:outputText value="Convocatoria Sede" />
+							</p:commandLink>
+							<p:commandLink action="ConsultaGeneralMovilidades" ajax="false">
+								<h:outputText value="Consultar movilidades" />
+							</p:commandLink>
+						</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<!---->
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarProyectos and manejadorAutenticacion.esInvestigador}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Proyectos" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.cargarFichaMinima}"
+								ajax="false"
+								rendered="#{!manejadorAutenticacion.estudianteLider}">
+								<h:outputText value="Registro de proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.cargarProyectosInvestigador}"
+								ajax="false">
+								<h:outputText value="Ver proyectos registrados" />
+							</p:commandLink></li>
+						<li><p:commandLink action="consultarConvocatorias"
+								ajax="false"
+								rendered="#{!manejadorAutenticacion.estudianteLider}">
+								<h:outputText value="Agregar Proy. Convocatoria" />
+							</p:commandLink></li>
+						<li><p:commandLink action="jornadaDocente" ajax="false"
+								rendered="false">
+								<h:outputText value="Agregar Proy. Jornada Docente" />
+							</p:commandLink></li>
+
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarFacultad}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Vicedecanatura" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="avalarFacultad" ajax="false">
+								<h:outputText value="Aval institucional facultad" />
+							</p:commandLink></li>
+						<li><p:commandLink action="consultaInformesAval" ajax="false">
+								<h:outputText value="Revisar informes" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.cargarSolicitudesRenovacionFacultad}"
+								ajax="false">
+								<h:outputText value="Revisar renovaciones" />
+							</p:commandLink></li>
+						<li><p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink></li>
+						<li><p:commandLink action="ConsultarImprimirAvales"
+								ajax="false">
+								<h:outputText value="Actualizar solicitud aval" />
+							</p:commandLink></li>
+						<li>
+							<p:commandLink action="#{manejadorAutenticacion.irReporteAvalFacultad}" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink>
+						</li>
+						<li><p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Ingresar convocatoria externa" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.irGenerarCertificacionesInvVIF}"
+								ajax="false">
+								<h:outputText value="Certificados" />
+							</p:commandLink></li>
+						<li><p:commandLink action="administrarGruposVicerrectoria"
+								ajax="false">
+								<h:outputText value="Administrar grupos" />
+							</p:commandLink> 
+						</li>
+						<li><p:commandLink ajax="false"
+								action="irGrupoTramiteSolicitudes">
+								<h:outputText value="Solicitudes Grupos" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false"
+								action="irSemilleroAprobacionVIF">
+								<h:outputText value="Solicitudes Semilleros" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false"
+								action="irSemilleroConsultaVIF">
+								<h:outputText value="Semilleros Revisados" />
+							</p:commandLink></li>
+						<!-- <li>
+							<p:commandLink action="administrarConvocatoriasInternas" ajax="false">
+								<h:outputText value="Admon. convocatorias internas" />
+							</p:commandLink>
+						</li> -->
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarComiteEticaAvales}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Comite de Ética" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink>
+						</li>
+						<li><p:commandLink action="ConsultarImprimirAvales" ajax="false">
+								<h:outputText value="Actualizar solicitud aval" />
+							</p:commandLink>
+						</li>
+<!-- 						<li><p:commandLink action="reporteAvalFacultad" ajax="false"> -->
+<!-- 								<h:outputText value="Generar reportes" /> -->
+<!-- 							</p:commandLink> -->
+<!-- 						</li> -->
+						<li>
+							<p:commandLink action="#{manejadorAutenticacion.irReporteAvalComiteEtica}" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink>
+						</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesCoordinador 
+						and !manejadorAutenticacion.esConsulta}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Coordinador" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="inbox" ajax="false">
+								<h:outputText value="Alertas de proyecto" />
+							</p:commandLink></li>
+						<li><p:commandLink action="revisarRequisitos" ajax="false">
+								<h:outputText value="Revisar Requisitos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="evaluadoresProyecto" ajax="false">
+								<h:outputText value="Asignar evaluadores" />
+							</p:commandLink></li>
+						<li><p:commandLink action="asignarEstadoProyectos"
+								ajax="false">
+								<h:outputText value="Cambiar estado proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="consultarConvocatoriasPadre"
+								ajax="false">
+								<h:outputText value="Consulta por convocatoria" />
+							</p:commandLink></li>
+						<li><p:commandLink action="proyectosConvocatoria"
+								ajax="false">
+								<h:outputText value="Consultar proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="ConsultaGeneralMovilidades"
+								ajax="false">
+								<h:outputText value="Consultar movilidades" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.cargarSolicitudesRenovacion}"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.esRevisionRenovacion}">
+								<h:outputText value="Consultar renovaciones" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.cargarSolicitudesPermisoMarco}"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.coordinadorBiodiversidad or manejadorAutenticacion.esMenuAdicionalBiodiversidadCoordinador}">
+								<h:outputText value="Autorizaciones de biodiversidad" />
+							</p:commandLink></li>
+						<li><p:commandLink action="reporteProyectos" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false"
+								action="irSemilleroConsultaCoordinador">
+								<h:outputText value="Consultar Semilleros" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irReporteEvaluadores" ajax="false">
+								<h:outputText value="Reporte Evaluadores" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesCoordinador 
+						and manejadorAutenticacion.esConsulta}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Consulta" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="consultarConvocatoriasPadre"
+								ajax="false">
+								<h:outputText value="Consulta por convocatoria" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irConsulta" ajax="false">
+								<h:outputText value="Consultar proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="ConsultaGeneralMovilidades"
+								ajax="false">
+								<h:outputText value="Consultar movilidades" />
+							</p:commandLink></li>
+						<li><p:commandLink action="reporteProyectos" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="reporteAvalVice" ajax="false">
+								<h:outputText value="Generar reportes gráficos" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesDNE}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="DNE" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="RegistrarConvocatoriaExtension"
+								ajax="false">
+								<h:outputText value="Registrar convocatoria" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesAsesor}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Asesor" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="asociarCoordinadores" ajax="false">
+								<h:outputText value="Asociar coordinadores" />
+							</p:commandLink></li>
+						<li><p:commandLink action="asignarProyectos" ajax="false">
+								<h:outputText value="Asignar proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="irAdministrarDocumentosConvocatoria" ajax="false">
+								<h:outputText value="Documentos convocatorias" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="asociarCoordinadorSemillero" ajax="false">
+								<h:outputText value="Asociar coordinador semillero" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesCrSolUsuario}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Crear Solicitudes Usuario" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="consultaTodasSolicitudesUsuarios"
+								ajax="false">
+								<h:outputText value="Consultar Solicitud Usuario" />
+							</p:commandLink></li>
+						<li><p:commandLink action="crearSolicitudUsuario"
+								ajax="false">
+								<h:outputText value="Crear Solicitud Usuario" />
+							</p:commandLink></li>
+
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesUnidadAdministrativa}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Unidad Administrativa" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="inboxUnidadAdministrativa"
+								ajax="false">
+								<h:outputText value="Alertas de solicitudes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="proyectosConvocatoria"
+								ajax="false">
+								<h:outputText value="Consulta proyectos" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesVicerrectoriaInvestigacion}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Vicerrectoría de inv." />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="avalarVice" ajax="false">
+								<h:outputText value="Aval institucional" />
+							</p:commandLink> 
+							<p:commandLink action="consultaAvalVice" ajax="false">
+								<h:outputText value="Pendientes otra dependencia" />
+							</p:commandLink> 
+							<p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink> 
+							<p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Ingresar convocatoria externa" />
+							</p:commandLink>
+							<p:commandLink action="administrarGruposVicerrectoria"
+								ajax="false">
+								<h:outputText value="Administrar grupos" />
+							</p:commandLink> 
+							<p:commandLink action="#{manejadorAutenticacion.irReporteAvalVice}" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink>
+							<!-- <p:commandLink action="administrarConvocatoriasInternas" ajax="false">
+								<h:outputText value="Admon. convocatorias internas" />
+							</p:commandLink> -->
+							</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesRectoria}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Rectoría" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="rectoria" ajax="false">
+								<h:outputText value="Revisar Avales Institucionales" />
+							</p:commandLink></li>
+						<li><p:commandLink action="consultaPendientesRectoria" ajax="false">
+								<h:outputText value="Pendientes otras dependencias" />
+							</p:commandLink></li>
+						<li><p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Ingresar convocatoria externa" />
+							</p:commandLink></li>
+						<li><p:commandLink action="#{manejadorAutenticacion.irReporteAvalDRERectoria}" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink>
+						</li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesCoordinadorEditorial}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Coordinador Editorial" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="irCoordinadorEditorial"
+								ajax="false">
+								<h:outputText value="Inicio" />
+							</p:commandLink></li>
+						<li><p:commandLink action="proyectosEditoriales" ajax="false">
+								<h:outputText value="Proyectos Editoriales" />
+							</p:commandLink></li>
+						<li><p:commandLink action="consultarConvocatoriasPadre"
+								ajax="false">
+								<h:outputText value="Consulta por Convocatoria" />
+							</p:commandLink></li>
+						<li><p:commandLink action="revisarRequisitosEditorial" ajax="false">
+								<h:outputText value="Revisar Requisitos" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Emitir Concepto Editorial" />
+							</p:commandLink></li>
+						<li><p:commandLink action="evaluadoresProyecto" ajax="false">
+								<h:outputText value="Asignar Evaluadores" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Cambiar Estado Proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false">
+								<h:outputText value="Consultar Proyectos" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false" action="irReporteEvaluadores">
+								<h:outputText value="Reporte Evaluadores" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesDRE}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="DRE" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="avalarDRE" ajax="false">
+								<h:outputText value="Aval institucional" />
+							</p:commandLink> <p:commandLink action="consultaAvalDRE" ajax="false">
+								<h:outputText value="Pendientes otras dependencias" />
+							</p:commandLink> <p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink> <p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Ingresar convocatoria externa" />
+							</p:commandLink> <p:commandLink action="#{manejadorAutenticacion.irReporteAvalDRERectoria}" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesComunicaciones}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Comunicaciones" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="enviarCorreoBoletin" ajax="false">
+								<h:outputText value="Envio boletín DIB" />
+							</p:commandLink></li>
+						<li><p:commandLink action="enviarAlertasCompromisos"
+                                ajax="false">
+                                <h:outputText value="Envío alertas proyecto" />
+                            </p:commandLink></li>
+                        <li><p:commandLink action="enviarAlertasActasInicio"
+                                ajax="false">
+                                <h:outputText value="Envío alertas actas inicio." />
+                            </p:commandLink></li>
+                        <li><p:commandLink action="enviarAlertasConvocatoriasExternas"
+                                ajax="false">
+                                <h:outputText value="Envío alertas resultados conv ext." />
+                            </p:commandLink></li>
+                        <li><p:commandLink action="enviarAlertasColecciones"
+                                ajax="false">
+                                <h:outputText value="Envío alertas colecciones" />
+                            </p:commandLink></li>
+						<li><p:commandLink action="enviarAlertasMovilidades"
+								ajax="false">
+								<h:outputText value="Envío alertas movilidades" />
+							</p:commandLink></li>
+						<li><p:commandLink action="enviarAlertasInformes"
+								ajax="false">
+								<h:outputText value="Envío alertas informes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="enviarAlertasInformesDocentes"
+								ajax="false">
+								<h:outputText value="Envío alertas consol. docentes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="enviarAlertasLegalizacion"
+								ajax="false">
+								<h:outputText value="Envío alertas legalización" />
+							</p:commandLink></li>
+						<li><p:commandLink action="historicoBusquedas" ajax="false">
+								<h:outputText value="Histórico de búsquedas SIUN" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesInformacionVicerrectoria}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Información Vicerrectoría" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="documentosVicerrectoria"
+								ajax="false">
+								<h:outputText value="Documentos Vicerrectoría" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarMenuPermisoMarco}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Sistema de biodiversidad" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="convenioMarco" ajax="false">
+								<h:outputText value="Solicitud inclusión" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.consultarPermisosMarco}"
+								ajax="false">
+								<h:outputText value="Consultar solicitudes" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesAvalDireccion}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Dirección de investigación" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAutenticacion.avalInstitucionalDireccion}"
+								ajax="false">
+								<h:outputText value="Aval institucional" />
+							</p:commandLink> <p:commandLink action="ConsultarImprimirAvales" ajax="false">
+								<h:outputText value="Actualizar solicitud aval" />
+							</p:commandLink> <p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink> <p:commandLink action="consultaAvalFacultad" ajax="false">
+								<h:outputText value="Avales facultad" />
+							</p:commandLink> 
+							<p:commandLink action="#{manejadorAutenticacion.irReporteAvalCoord}" ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink>
+							<p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Ingresar convocatoria externa" />
+							</p:commandLink>
+							<!-- <p:commandLink action="administrarConvocatoriasInternas" ajax="false">
+								<h:outputText value="Admon. convocatorias internas" />
+							</p:commandLink> -->
+							</li>
+							<li><p:commandLink
+								action="#{manejadorAutenticacion.irGenerarCertificacionesInvVIF}"
+								ajax="false">
+								<h:outputText value="Certificados" />
+							</p:commandLink></li>
+							<li>
+							<p:commandLink action="administrarGruposVicerrectoria"
+								ajax="false">
+								<h:outputText value="Administrar grupos" />
+							</p:commandLink> 
+							</li>
+							<li>
+							<p:commandLink rendered="#{manejadorAutenticacion.personaActual.dependencia.sede.esSedePresenciaNacional}" 
+								action="irGrupoTramiteSolicitudes" ajax="false">
+								<h:outputText value="Solicitudes Grupos" />
+							</p:commandLink>
+							</li>
+						<li><p:commandLink ajax="false"
+								action="irSemilleroAprobacionDI">
+								<h:outputText value="Solicitudes Semilleros" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false"
+								action="irSemilleroConsultaDI">
+								<h:outputText value="Semilleros Revisados" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesActualizarAval}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Consultar/Actualizar Aval" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="ConsultarImprimirAvales"
+								ajax="false">
+								<h:outputText value="Actualizar solicitud aval" />
+							</p:commandLink> <p:commandLink action="ConsultarAvalxId" ajax="false">
+								<h:outputText value="Consultar aval" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<!-- 
+			<t:div styleClass="menu-superior" style="width: 210px; padding-top: 0px; margin-top: 0px; margin-left: 6px;">
+				<div class="menu-roles">
+				   		<p:panelMenu model="#{manejadorAutenticacion.simpleMenuModel}" />  
+				</div>
+			</t:div>
+		 -->
+
+		<!-- edacanonsa -->
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesAdmSolUsuario}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Administrar Solicitudes" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+
+						<li><p:commandLink
+								action="consultaTodasSolicitudesUsuariosAdm" ajax="false"
+								rendered="#{manejadorAutenticacion.esAdmSolUsuario}">
+								<h:outputText value="Administrar Solicitudes" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="ConsultarHistoricoSolicitudesUsuario" ajax="false"
+								rendered="#{manejadorAutenticacion.esAdmSolUsuario}">
+								<h:outputText value="Consultar Histórico Solicitudes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="crearSolicitudUsuarioAdm"
+								ajax="false"
+								rendered="#{manejadorAutenticacion.esAdmSolUsuario}">
+								<h:outputText value="Crear Solicitud Usuario" />
+							</p:commandLink></li>
+						<li><p:commandLink action="buscarUsuario" ajax="false">
+								<h:outputText value="Búsqueda de Usuarios" />
+							</p:commandLink></li>
+						<li><p:commandLink action="cambiarVinculacionUsuario" ajax="false">
+							<h:outputText value="Editar Usuario" />
+						</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesAdministradorConvocatorias}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Administrador" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="administrarConvocatoria"
+								ajax="false">
+								<h:outputText value="Archivos convocatoria" />
+							</p:commandLink> <p:commandLink action="crearConvocatoriaPadre" ajax="false">
+								<h:outputText value="Crear convocatoria" />
+							</p:commandLink> <p:commandLink action="consultarConvocatoriasCreacion"
+								ajax="false">
+								<h:outputText value="Administrar convocatorias" />
+							</p:commandLink> <p:commandLink action="configurarCortes" ajax="false">
+								<h:outputText value="Configurar cortes" />
+							</p:commandLink> <p:commandLink action="administrarConvocatoriaExterna"
+								ajax="false">
+								<h:outputText value="Convocatorias externas" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesConvocatoriasExternas}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Convocatorias Externas" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.crearConvocatoriaExterna}"
+								ajax="false">
+								<h:outputText value="Crear convocatoria externa" />
+							</p:commandLink> <p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.administrarTerminosReferencia}"
+								rendered="#{manejadorAutenticacion.esAdministradorConvocatorias}"
+								ajax="false">
+								<h:outputText value="Términos de referencia" />
+							</p:commandLink> <p:commandLink
+								action="#{manejadorAdministrarConvocatoriasExternas.administrarConvocatoriasExternas}"
+								ajax="false">
+								<h:outputText value="Convocatorias externas" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesAdministradorHermes}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Administrador Hermes" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="cambioEstadosAministrador"
+								ajax="false">
+								<h:outputText value="Cambio de estados" />
+							</p:commandLink></li>
+						<li><p:commandLink action="administrarFuentesFinanciacion"
+								ajax="false">
+								<h:outputText value="Administrar fuentes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="ConsultarSolicitudesFuentes"
+								ajax="false">
+								<h:outputText value="Solicitudes fuentes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irAdministrarInstructivos"
+								ajax="false">
+								<h:outputText value="Administrar instructivos" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irAdministrarPreguntas"
+								ajax="false">
+								<h:outputText value="Admin. preguntas frecuentes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irAdministrarNovedades"
+								ajax="false">
+								<h:outputText value="Administrar novedades" />
+							</p:commandLink></li>
+						<li><p:commandLink action="segmentacion"
+								ajax="false">
+								<h:outputText value="Consultas temporales" />
+							</p:commandLink></li>
+						<li><h:outputLink
+								value="http://168.176.39.182/sige" target="_blank">
+								<h:outputText value="SIGE" />
+							</h:outputLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesInstructivos}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Administrar instructivos" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAdministrarInstructivos.crearInstructivo}"
+								ajax="false">
+								<h:outputText value="Crear instructivo" />
+							</p:commandLink> <p:commandLink
+								action="#{manejadorAdministrarInstructivos.crearEditarClasificacionInstructivo}"
+								ajax="false">
+								<h:outputText value="Clasificación instructivos" />
+							</p:commandLink> <p:commandLink action="irAdministrarInstructivos" ajax="false">
+								<h:outputText value="Editar/consultar Instructivos" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesPreguntas}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Administrar preguntas" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAdministrarPreguntas.crearPregunta}"
+								ajax="false">
+								<h:outputText value="Crear pregunta" />
+							</p:commandLink> <p:commandLink
+								action="#{manejadorAdministrarPreguntas.crearEditarClasificacionPregunta}"
+								ajax="false">
+								<h:outputText value="Clasificación preguntas" />
+							</p:commandLink> <p:commandLink action="irAdministrarPreguntas" ajax="false">
+								<h:outputText value="Editar/consultar preguntas" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesNovedades}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Administrar novedades" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorAdministrarNovedad.crearNovedad}"
+								ajax="false">
+								<h:outputText value="Crear novedad" />
+							</p:commandLink> <p:commandLink
+								action="#{manejadorAdministrarNovedad.crearEditarClasificacionNovedad}"
+								ajax="false">
+								<h:outputText value="Clasificación novedades" />
+							</p:commandLink> <p:commandLink action="irAdministrarNovedades" ajax="false">
+								<h:outputText value="Ver / editar novedades" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<!-- Menu propiedad intelectual -->
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarRegistroPI}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Propiedad intelectual" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorPropiedadIntelectualListas.registrarPropiedad}"
+								ajax="false">
+								<h:outputText value="Registro propiedad intelectual" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorPropiedadIntelectualListas.verPropiedadRegistrada}"
+								ajax="false">
+								<h:outputText value="Ver propiedades registradas" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarRevisionPI}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Propiedad intelectual" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink
+								action="#{manejadorPropiedadIntelectualListas.verPropiedadTramitar}"
+								ajax="false">
+								<h:outputText value="Revisión propiedad intelectual" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorPropiedadIntelectualListas.consultarRegistroPropiedad}"
+								ajax="false">
+								<h:outputText value="Consultar propiedad" />
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="#{manejadorPropiedadIntelectualListas.reportesPropiedadIntelectual}"
+								ajax="false">
+								<h:outputText value="Generar reportes" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;"
+			rendered="#{manejadorAutenticacion.mostrarOpcionesSemillerosHome or manejadorAutenticacion.mostrarOpcionesSemillerosRegistro}">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Semilleros" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><p:commandLink action="crearSemillero" ajax="false"
+								rendered="#{manejadorAutenticacion.mostrarOpcionesSemillerosHome 
+									and !(manejadorAutenticacion.esEstudianteLider or manejadorAutenticacion.esAsistenteLider)
+									and manejadorAutenticacion.tienePermisosCrearSemillero}">
+								<h:outputText value="Agregar Nuevo Semillero" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false" rendered="false">
+								<h:outputText value="Informes" />
+							</p:commandLink></li>
+						<li><p:commandLink ajax="false" rendered="false">
+								<h:outputText value="Solicitudes" />
+							</p:commandLink></li>
+						<li><p:commandLink action="irSemillerosHome" ajax="false"
+								rendered="#{manejadorAutenticacion.mostrarOpcionesSemillerosRegistro or manejadorAutenticacion.mostrarOpcionesSemillerosHome}">
+								<h:outputText value="Mis Semilleros" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<!-- Fin menu propiedad intelectual -->
+
+		<t:div styleClass="contenido-menu-adicional"
+			style="padding-bottom: 0px; margin-bottom: 0px; padding-top: 10px;">
+			<t:div styleClass="menu-superior"
+				style="padding-bottom: 0px; margin-bottom: 0px;">
+				<t:div styleClass="cabezote-derecho-menu-especifico">
+					<h:outputText value="Ayuda" />
+				</t:div>
+				<t:div styleClass="menu">
+					<ul style="margin-left: 6px;">
+						<li><h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/html/descargas/index.xhtml"
+								target="_blank">
+								<h:outputText value="Instructivos" />
+							</h:outputLink></li>
+						<li><h:outputLink
+								value="#{facesContext.externalContext.requestContextPath}/pages/Consultas/preguntas.xhtml"
+								target="_blank">
+								<h:outputText value="Preguntas frecuentes" />
+							</h:outputLink></li>
+						<li><a
+							href="#{facesContext.externalContext.requestContextPath}/pages/Consultas/novedades.xhtml"
+							target="_blank">Novedades</a></li>
+						<li><p:commandLink action="irEncuestaSatisfaccion" ajax="false">
+								<h:outputText value="Encuesta de satisfacción" />
+							</p:commandLink></li>
+					</ul>
+				</t:div>
+			</t:div>
+		</t:div>
+		<t:div>
+			<div class="columna2" style="padding: 0px; margin: 0px; float: left;">
+			    <div style="padding: 5px;">
+			        <h:graphicImage url="/images/her-general/hermes_recomendacion.png?v=1"
+			            style="border:0px; max-width: 100%; height: auto;" />
+			    </div>
+			</div>
+		</t:div>
+		
+		<p:stack icon="/images/Hermes_buzon_V06.png">
+			<p:menuitem value="Consultar" icon="/images/Hermes_solicitudes.png" action="consultarRequerimiento" />
+			<p:menuitem value="Proponer" icon="/images/Hermes_mejoras.png" action="#{manejadorAutenticacion.irCrearRequerimiento}" />
+		</p:stack>
+	
+	</h:form>
+	
+</ui:composition>

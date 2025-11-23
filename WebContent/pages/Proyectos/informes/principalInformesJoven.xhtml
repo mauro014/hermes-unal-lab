@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Informes joven investigador</t:div>
+			<p:panel style="margin-top: 20px; " rendered="#{manejadorPrincipalInforme.esCoordinador}">
+			
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;" >
+					<h:outputText value="Nombre estudiante: " style="font-weight: bold;"/><h:outputText value="#{manejadorPrincipalInforme.nombreEstudiante}"/>
+					<h:outputText value="Programa académico: " style="font-weight: bold;"/><h:outputText value="#{manejadorPrincipalInforme.nombrePrograma}"/>
+				</p:panelGrid>
+			</p:panel>
+			<t:div styleClass="estilo-propio" id="panelPropio">
+				<p:dataTable var="informe"  value="#{manejadorPrincipalInforme.listaInformesJoven}" 
+				emptyMessage="No tiene solicitudes registradas">
+					<f:facet name="header">
+						<h:outputText value="Solicitudes registrados"/>
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Código" /><br />
+							<h:outputText value="solicitud" />
+						</f:facet>
+						<h:outputText value=" #{informe.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText value=" #{informe.estadoInforme.nombreEstado}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value=" #{informe.fechaGeneracion}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Comentarios" />
+						</f:facet>
+						<h:outputText value=" #{informe.noAprobacion}" />
+					</p:column>	
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Consultar"/>
+						</f:facet>
+						<div style="text-align:center;">
+		     				<p:commandButton
+								icon="ui-icon-search"
+								action="#{manejadorPrincipalInforme.ingresardetalleConsultaRenovacion}" >
+								<f:setPropertyActionListener value="#{informe}" target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+						</div>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Imprimir"/>
+						</f:facet>
+						<div style="text-align:center;">
+		     				<p:commandLink
+								action="#{manejadorPrincipalInforme.imprimirDetalleConsultaRenovacion}"  ajax="false" style="text-decoration:none; 
+								color: #16A8E2; 
+								font-weight: bold;">
+								<h:outputText value="Imprimir"/>
+								<f:setPropertyActionListener value="#{informe}" target="#{manejadorPrincipalInforme.informeSeleccionado}"/>
+							</p:commandLink>
+						</div>
+					</p:column>
+				</p:dataTable>
+			</t:div>
+			<p:messages id="msgs" /> 
+			<br />
+			<t:div style="margin: auto; text-align: center; width: 660px;" rendered="#{!manejadorPrincipalInforme.esCoordinador}">
+				<p:commandButton value="Registrar nuevo informe de avance"  
+					action="#{manejadorPrincipalInforme.ingresardetalleInformeJoven}" 
+					onclick="if(!confirm('¿Está seguro(a) de registrar una nueva solicitud?'))return false"
+					ajax="false"
+					/>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>

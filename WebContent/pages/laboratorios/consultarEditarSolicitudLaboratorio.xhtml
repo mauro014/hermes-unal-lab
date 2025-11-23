@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form" styleClass="estilo-panelgrid-sinbordes">
+			<t:div styleClass="contenido-titulo-general-myriad">Solicitud Laboratorio</t:div>
+
+			<p:spacer height="20" />
+
+			<p:panel>
+
+				<p:panelGrid columns="2"
+					rendered="#{manejadorSolicitudLaboratorio.nuevaSolicitud.id ne null}"
+					styleClass="estilo-panelgrid-sinbordes">
+					<t:div style="width:120px;">
+						<h:outputText value="Id" styleClass="negrilla" />
+					</t:div>
+					<h:outputText
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.id}" />
+
+					<h:outputText value="Fecha" styleClass="negrilla" />
+					<h:outputText
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.fecha}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+					</h:outputText>
+
+					<h:outputText value="Estado" styleClass="negrilla" />
+					<h:outputText
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.estadoSolicitud.nombre}" />
+
+					<h:outputText value="Responsable" styleClass="negrilla" />
+					<h:outputText
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.persona.nombreCompleto}" />
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					id="pgNS">
+					<t:div style="width:120px;">
+						<h:outputText value="Tipo de solicitud *" styleClass="negrilla" />
+					</t:div>
+					<t:div
+						rendered="#{manejadorSolicitudLaboratorio.nuevaSolicitud.id eq null}"
+						title="Tipo de la solicitud: Creación, Formalización, Modificación o Eliminación">
+						<p:selectOneMenu converter="ConvertidorTipos"
+							disabled="#{manejadorSolicitudLaboratorio.soloLectura}"
+							value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.tipoSolicitud}">
+							<f:selectItems
+								value="#{manejadorSolicitudLaboratorio.selectItemTipoSolicitud}" />
+							<p:ajax update="@form" />
+						</p:selectOneMenu>
+					</t:div>
+					<h:outputText
+						rendered="#{manejadorSolicitudLaboratorio.nuevaSolicitud.id ne null}"
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.tipoSolicitud.nombre}" />
+
+					<p:outputLabel value="Laboratorio" for="siLab"
+						styleClass="negrilla" />
+					<t:div
+						rendered="#{not manejadorSolicitudLaboratorio.esCreacionYaGuardada}"
+						title="Seleccione el Laboratorio existente en el sistema sobre el cual va a realizar la solicitud de Formalización, Modificación o Eliminación.  Si se trata de Creación, deberá ingresar la Justificación y Crear/Editar el nuevo Laboratorio.">
+						<p:selectOneMenu id="siLab" style="width:440px" filter="true"
+							filterMatchMode="contains"
+							disabled="#{manejadorSolicitudLaboratorio.creacionLab or manejadorSolicitudLaboratorio.soloLectura}"
+							value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.laboratorio.id}">
+							<f:selectItems
+								value="#{manejadorSolicitudLaboratorio.selectItemLaboratorios}" />
+						</p:selectOneMenu>
+					</t:div>
+					<h:outputText
+						rendered="#{manejadorSolicitudLaboratorio.esCreacionYaGuardada}"
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.laboratorio.nombre}" />
+
+					<p:outputLabel value="Justificación *" for="itJust"
+						styleClass="negrilla" />
+					<p:inputTextarea id="itJust" rows="7" cols="65" autoResize="false"
+						counter="counterJustificacion" maxlength="4000"
+						counterTemplate="{0} caracteres restantes"
+						title="Justificación la Solicitud.  Si se trata de una Formalización, toda la información del Módulo Administración de Laboratorios debe estar registrada y actualizada; en caso de una Modificación (fusión) seleccione un Laboratorio y mencione en éste campo el otro."
+						readonly="#{manejadorSolicitudLaboratorio.soloLectura}"
+						value="#{manejadorSolicitudLaboratorio.nuevaSolicitud.justificacion}" />
+					<h:outputText
+						rendered="#{not manejadorSolicitudLaboratorio.soloLectura}" />
+					<h:outputText
+						rendered="#{not manejadorSolicitudLaboratorio.soloLectura}"
+						id="counterJustificacion" styleClass="pequennio" />
+
+				</p:panelGrid>
+
+				<center>
+					<p:panelGrid columns="5">
+
+						<p:commandButton value="Regresar" icon="ui-icon-zoomout"
+							action="#{manejadorSolicitudLaboratorio.regresarListado}"
+							onclick="if(!confirm('Está seguro de regresar? Cualquier cambio realizado y no guardado se perderá.'))return false"
+							title="Regresar a listado de Solicitudes Registradas">
+						</p:commandButton>
+
+						<p:commandButton
+							rendered="#{not manejadorSolicitudLaboratorio.soloLectura and not manejadorSolicitudLaboratorio.creacionLab}"
+							action="#{manejadorSolicitudLaboratorio.guardarSolicitud}"
+							update="@form" title="Guardar solicitud"
+							onclick="if(!confirm('Está seguro de guardar la solicitud? Quedará en estado Propuesto y ya no será modificable.'))return false"
+							icon="ui-icon-disk" value="Guardar Solicitud" />
+
+						<p:commandButton
+							rendered="#{not manejadorSolicitudLaboratorio.soloLectura and manejadorSolicitudLaboratorio.creacionLab}"
+							disabled="#{not manejadorSolicitudLaboratorio.puedeGuardarCreacion}"
+							title="Disponible solamente si ha guardado en la sección 'Presupuesto', al editar el Laboratorio."
+							action="#{manejadorSolicitudLaboratorio.guardarSolicitud}"
+							onclick="if(!confirm('Está seguro de guardar la solicitud? Quedará en estado Propuesto y ya no será modificable.'))return false"
+							icon="ui-icon-disk" value="Guardar Solicitud" />
+
+						<p:commandButton
+							rendered="#{not manejadorSolicitudLaboratorio.soloLectura and manejadorSolicitudLaboratorio.creacionLab and not manejadorSolicitudLaboratorio.esCreacionYaGuardada}"
+							action="#{manejadorSolicitudLaboratorio.nuevoLab}" update="@form"
+							onclick="if(!confirm('Está seguro de solicitar la creación de un Laboratorio? Se le dirigirá a una nueva página, donde tendrá que ingresar información sobre la localización, el personal, las actividades de docencia, investigación y extensión, la infraestructura, y el presupuesto requerido.'))return false"
+							value="Crear Laboratorio" icon="ui-icon-disk" />
+
+						<p:commandButton
+							rendered="#{manejadorSolicitudLaboratorio.esCreacionYaGuardada}"
+							action="#{manejadorSolicitudLaboratorio.consultarLaboratorioCreacion}"
+							value="Consultar Laboratorio" icon="ui-icon-search" />
+
+						<p:commandButton
+							rendered="#{not manejadorSolicitudLaboratorio.soloLectura and manejadorSolicitudLaboratorio.esCreacionYaGuardada}"
+							action="#{manejadorSolicitudLaboratorio.editarLaboratorioCreacion}"
+							onclick="if(!confirm('Está seguro de editar el Laboratorio? Se le dirigirá a una página, donde tendrá que ingresar información sobre la localización, el personal, las actividades de docencia, investigación y extensión, la infraestructura, y el presupuesto requerido.'))return false"
+							value="Editar Laboratorio" icon="ui-icon-pencil" />
+
+					</p:panelGrid>
+				</center>
+
+				<p:messages id="messages" autoUpdate="true" closable="true"
+					redisplay="false" />
+
+			</p:panel>
+
+			<p:spacer height="20" />
+			<center>
+				<p:commandButton action="#{manejadorSolicitudLaboratorio.salir}"
+					onclick="if(!confirm('Está seguro de salir?  Cualquier cambio no guardado se perderá.'))return false"
+					value="Inicio" icon="ui-icon-home" />
+			</center>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

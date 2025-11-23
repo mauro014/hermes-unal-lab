@@ -1,0 +1,587 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="formCrearMovilidadPosgradoInvestigacion"
+			enctype="multipart/form-data" styleClass="estilo-panelgrid-sinbordes">
+
+			<t:div styleClass="contenido-titulo-general-myriad">Registro solicitud de movilidad</t:div>
+			<p:panel
+				header="Estudiantes que participan en actividades de investigación">
+				<p:panelGrid columns="3" id="identificacion" align="left">
+					<t:div style="width: 247px;">
+						<h:outputText value="Tipo de documento del docente UN" />
+					</t:div>
+					<p:selectOneMenu disabled = "true"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoDocumento.id}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoDocumentoItem}" />
+					</p:selectOneMenu>
+					<h:outputText />
+
+					<h:outputText value="Número de documento del docente UN" />
+					<p:inputText id="Numero" readonly = "true"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.documento}"
+						size="20">
+					</p:inputText>
+					<p:commandButton value="Continuar" icon="ui-icon-search"
+						onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+						action="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.buscarPersona}"
+						update="formCrearMovilidadPosgradoInvestigacion" />
+				</p:panelGrid>
+
+				<br />
+
+				<p:panelGrid columns="1" id="identificacionEstudiante"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarDatosEvento}"
+					align="left">
+
+					<p:panelGrid columns="3">
+						<t:div style="width: 247px;">
+							<h:outputText value="Tipo de documento del estudiante" />
+						</t:div>
+						<p:selectOneMenu
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoDocumentoEstudiante.id}">
+							<f:selectItems
+								value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoDocumentoEstudianteItem}" />
+						</p:selectOneMenu>
+						<h:outputText />
+
+						<h:outputText value="Número de documento del estudiante" />
+						<p:inputText id="NumeroEstudiante"
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.documentoEstudiante}"
+							size="20">
+						</p:inputText>
+
+						<p:commandButton value="Buscar" icon="ui-icon-search"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							action="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.buscarEstudiante}"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:panelGrid>
+
+					<p:panelGrid columns="2"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarDatosEstudiante}"
+						align="left">
+						
+						<h:outputText value="Grupo de investigación" />
+						<p:selectOneMenu id="somGrupo" style="width:330px;"
+						panelStyle="width:330px;"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.idgrupo}">
+							<f:selectItems
+								value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.listaGrupos}" />
+						</p:selectOneMenu>
+
+						<h:outputText value="Nombre de estudiante" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.nombreDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Documento de identidad" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.documentoDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Facultad o instituto" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.facultadDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Departamento" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.departamentoDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Programa academico " />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.carreraDocente}"
+							style="font-weight: bold;" />
+
+						<h:outputText value="Correo electrónico " />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.correoDocente}"
+							style="font-weight: bold;" />
+						<h:outputText
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorPapa}"
+							style="font-weight: bold;" />
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[10]}"
+							styleClass="mensajeerror"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorPapa}"
+							style="font-weight: bold;" />
+						<t:div style="width: 247px;">
+							<h:outputText
+								value="Promedio aritmético ponderado acumulado PAPA" />
+						</t:div>
+						<h:outputText
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.papaEstudiante}"
+							style="font-weight: bold;" />
+					</p:panelGrid>
+				</p:panelGrid>
+
+
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarDatosEstudiante}" />
+			<p:panel header="Información del evento"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarDatosEstudiante}">
+
+				<p:panelGrid columns="2" id="evento">
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errorSubmodalidad}" />
+					<h:outputText value="Por favor seleccionar la submodalidad."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errorSubmodalidad}" />
+
+					<h:outputText value="Submodalidad"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarSubModalidades}" />
+					<p:selectOneMenu id="idListaSelDos"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.submodalidad}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarSubModalidades}"
+						style="width:400px" panelStyle="width:460px">
+						<f:selectItem itemLabel="Seleccione una opción" itemValue="" />
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.listaSubmodalidades}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorPonencia}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[5]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorPonencia}" />
+					<h:outputText value="Tipo de trabajo a presentar"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<p:selectOneMenu id="somTipoPonencia1"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.idTipoPonencia}"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoPonencia}" />
+						<p:ajax update="formCrearMovilidadPosgradoInvestigacion"
+							process="@form" onstart="dialogEspere.show()"
+							oncomplete="dialogEspere.hide()"
+							listener="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.activarOtrotipoPonencia}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Cual tipo de ponencia"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BOtroTipoPonencia}" />
+					<p:inputText id="otroTipoPonencia"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.otroTipoPonencia}"
+						size="60" styleClass="labels_proyecto"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BOtroTipoPonencia}"
+						maxlength="200">
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorEvento}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[1]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorEvento}" />
+
+					<t:div style="width: 247px;">
+						<h:outputText
+							value="Nombre del evento científico en el que va a participar (Incluir enlace del evento)" />
+					</t:div>
+					<p:inputTextarea id="nombreEvento"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.nombreEvento}"
+						rows="3" cols="50" counter="contadorNombreEvento"
+						counterTemplate="{0} caracteres restantes." maxlength="2000">
+					</p:inputTextarea>
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}" />
+					<h:outputText id="contadorNombreEvento"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}" />
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorTitulo}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[2]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorTitulo}" />
+
+					<h:outputText value="Título del concurso internacional"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<h:outputText
+						value="Título de trabajo, trabajo de grado o actividad investigativa a presentar"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia and !ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<p:inputTextarea id="tituloPonencia"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tituloPonencia}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}"
+						rows="3" cols="50" counter="contadorTituloPonencia"
+						counterTemplate="{0} caracteres restantes." maxlength="2000">
+					</p:inputTextarea>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}" />
+					<h:outputText id="contadorTituloPonencia"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}" />
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorResumen}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[6]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorResumen}" />
+
+					<t:div style="width: 247px;">
+						<h:outputText value="Resumen de trabajo (Máximo 3900 caracteres)"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+						<h:outputText
+							value="Resumen de trabajo, trabajo de grado o actividad investigativa a presentar (Máximo 3900 carácteres)"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia and !ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+
+					</t:div>
+					<p:inputTextarea id="resumenPonencia"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.resumenPonencia}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}"
+						rows="9" cols="50" maxlength="3900">
+					</p:inputTextarea>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorPais}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[3]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorPais}" />
+
+					<h:outputText value="País donde se realizará el concurso internacional"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<h:outputText
+						value="País donde se realizará el evento, trabajo de grado o actividad investigativa" rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}"/>
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.idPais}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.paises}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorCiudad}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[4]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorCiudad}" />
+
+					<h:outputText value="Ciudad donde se realizará el concurso internacional"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<h:outputText
+						value="Ciudad donde se realizará el evento, trabajo de grado o actividad investigativa" rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}"/>
+					<p:inputText id="Ciudad"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.ciudadEvento}"
+						size="60" styleClass="labels_proyecto" maxlength="250">
+					</p:inputText>
+
+					<t:div style="width: 247px;">
+						<h:outputText value="Nombre de la Universidad o Institución organizadora del concurso internacional"
+							rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+						<h:outputText
+							value="Nombre de la Universidad o Institución organizadora del evento donde se va a presentar el trabajo, trabajo de grado o actividad investigativa"  rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}"/>
+					</t:div>
+
+					<p:inputText id="nombreUniversidad"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.universidad}"
+						size="60" styleClass="labels_proyecto" maxlenght="180">
+					</p:inputText>
+
+					<h:outputText value="Universidad"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}"
+						styleClass="labels_proyecto" />
+					<p:inputText id="univ1"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.universidad}"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esPonencia}"
+						size="60" styleClass="labels_proyecto">
+					</p:inputText>
+
+					<h:outputText value="Caracter del evento"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.caracterEvento}"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.caracterEventoItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaIncorrecta}" />
+					<h:outputText
+						value="La fecha del viaje debe ser superior que la fecha actual en 30 días calendario."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaIncorrecta}" />
+
+					<h:outputText value="Fecha de inicio del viaje" />
+					<p:calendar id="fechainicio" pages="1" locale="es" navigator="true"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaInicioEvento}"
+						mindate="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaMinimaInicio}"
+						valueChangeListener="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.validarFecha}">
+						<p:ajax event="dateSelect" process="@all"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:calendar>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaIncorrecta2}" />
+					<h:outputText
+						value="La fecha de finalización viaje no es válida. La fecha debe ser superior a la fecha de incio."
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaIncorrecta2}" />
+
+					<h:outputText value="Fecha de finalización del viaje"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos}" />
+					<p:calendar id="fechafin" pages="1" locale="es" navigator="true"
+						readonlyInput="true" pattern="dd/MM/yyyy"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaFinEvento}"
+						mindate="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.fechaInicioEvento}"
+						valueChangeListener="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.validarFechaLlegada}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos}">
+						<p:ajax event="dateSelect" process="@all"
+							onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+							update="formCrearMovilidadPosgradoInvestigacion" />
+					</p:calendar>
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2}" />
+			<p:panel header="Apoyo financiero"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2}">
+				<p:panelGrid columns="2" id="panelMasDatos2"
+					style="estilo-panelgrid-sinbordes">
+					
+					<h:outputText value="" rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}"/>
+					<h:outputText
+						value="Por favor revisar la restricción de valor del apoyo de las movilidades nacionales e internacionales de acuerdo a los términos de referencia"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}"
+						/>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorResolucion}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[7]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorResolucion}" />
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorTiquete}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[8]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorTiquete}" />
+
+					<h:outputText value="Medio de transporte"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.medioTransporte}"
+						rendered="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esModConcurso}">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.medioTransporteItem}" />
+					</p:selectOneMenu>
+
+					<h:outputText />
+					<p:message for="valorTiquetes" styleClass="mensajeerror"
+						showDetail="true" showSummary="true" />
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorTiquetes}">
+						<h:outputText value="Valor del tiquete en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorTiquetes"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorTiquetes}"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.costoTiquetes}"
+						styleClass="labels_proyecto">
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorTotalSol}">
+						<h:outputText
+							value="Valor total de la movilidad en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorMov"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.valorTotalMovSolicitado}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorTotalSol}">
+						<f:converter converterId="ConvertidorLong" />
+					</p:inputText>
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorInscripcion}" />
+					<h:outputText
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[9]}"
+						styleClass="mensajeerror"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorInscripcion}" />
+
+					<h:outputText
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorInscripcionEvento}" />
+					<p:message for="valorInscripcion" styleClass="mensajeerror"
+						showDetail="true" showSummary="true"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorInscripcionEvento}" />
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorInscripcionEvento}">
+						<h:outputText
+							value="Valor de la inscripción al evento en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorInscripcion"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.costoInscripcion}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorInscripcionEvento}"
+						styleClass="labels_proyecto">
+						<f:converter converterId="ConvertidorLong" />
+					</p:inputText>
+
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorViaticos}">
+						<h:outputText
+							value="Valor de viáticos y gastos de viaje en pesos colombianos" />
+					</t:div>
+					<p:inputText id="valorViaticos"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.valorViaticos}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarValorViaticos}"
+						styleClass="labels_proyecto">
+						<f:converter converterId="ConvertidorLong" />
+					</p:inputText>
+					
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarAportesOtrasDependencias}">
+						<h:outputText
+							value="Valor del apoyo de otras dependencias" />
+					</t:div>
+					<p:inputText id="valorApOtDep"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.valorAporteOtrasDep}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarAportesOtrasDependencias}">
+						<f:converter converterId="ConvertidorLong" />
+					</p:inputText>
+					
+					<t:div style="width: 247px;"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarAportesOtrasDependencias}">
+						<h:outputText
+							value="Nombre de las dependencias" />
+					</t:div>
+					
+					<p:inputTextarea id="depApOtDep"
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.depValorAporteOtrasDep}"
+						rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.mostrarAportesOtrasDependencias}"
+						rows="9" cols="50" maxlength="3900">
+					</p:inputTextarea>
+				</p:panelGrid>
+			</p:panel>
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2}" />
+
+			<h:outputText
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorDocumentos}" />
+			<h:outputText
+				value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.errores[11]}"
+				styleClass="mensajeerror"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.BErrorDocumentos}" />
+
+			<p:panel header="Documentos Obligatorios" id="panelDocumentos"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2}">
+				<p:panelGrid columns="2" style="width: 100%;">
+					<h:outputText value="Tipos de documentos" />
+					<p:selectOneMenu
+						value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoDocumentoSel}"
+						style="width:460px" panelStyle="width:460px">
+						<f:selectItems
+							value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.tipoDocumentoSelItem}" />
+						<p:ajax update="panelDocumentos"
+							listener="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.seleccionarTipoDocumento}" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+				<br />
+				<p:fileUpload id="myFileId11" label="Adjuntar" auto="true"
+					mode="advanced" showButtons="false" style="width: 100%;"
+					update="tablaArchivos, panelDocumentos"
+					fileUploadListener="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.guardarArchivoMovEP3}"
+					disabled="#{!ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.puedeSubirArchivos}">
+				</p:fileUpload>
+				<br />
+				<p:dataTable id="tablaArchivos" var="archivoResumen1"
+					value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.listaArchivosObligatoriosSel}"
+					emptyMessage="No existen archivos.">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Nombre documento" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.tipoArchivo.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Archivo Cargado" />
+						</f:facet>
+						<h:outputText value="#{archivoResumen1.nombre}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Eliminar" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-trash"
+							action="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.eliminarArchivoObligatorio}"
+							update=":formCrearMovilidadPosgradoInvestigacion"
+							onclick="if(!confirm('Esta seguro de eliminar el archivo?'))return false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.archivoMovilidadEPSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descargar" />
+						</f:facet>
+
+						<p:commandButton id="descargar"
+							action="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.descargarArchivoMovEP}"
+							icon="ui-icon-arrowthickstop-1-s" title="Descargar archivo"
+							ajax="false">
+							<f:setPropertyActionListener value="#{archivoResumen1}"
+								target="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.documentoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<center>
+				<h:outputText
+					value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.noExiste}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelNoExiste}" />
+
+				<h:outputText
+					value="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.noExiste1}"
+					styleClass="mensajeerror"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelNoExiste}" />
+			</center>
+
+			<p:messages id="msg" autoUpdate="true" closable="true"
+				redisplay="false" />
+
+			<p:spacer height="20"
+				rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2}" />
+			<center>
+				<p:commandButton value="Guardar y enviar" icon="ui-icon-check"
+					action="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.guardar}"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2 and !ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esConvocatoriaFacultad}"
+					update="formCrearMovilidadPosgradoInvestigacion"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+
+				<p:commandButton value="Guardar convocatoria facultad"
+					icon="ui-icon-check"
+					action="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.guardarConvocatoriaFacultad}"
+					rendered="#{ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.panelMasDatos2 and ManejadorCrearMovilidadPosgradoInvPonenciasConvFac.esConvocatoriaFacultad}"
+					update="formCrearMovilidadPosgradoInvestigacion"
+					onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+			</center>
+
+			<p:dialog header="Por favor espere..." widgetVar="dialogEspere"
+				resizable="false" closable="false" modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" />
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

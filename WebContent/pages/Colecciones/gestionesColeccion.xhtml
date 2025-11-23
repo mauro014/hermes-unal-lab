@@ -1,0 +1,581 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<style type="text/css">
+.resumen-financiero tr, .resumen-financiero td {
+	border: 1px solid #a6c9e2;
+	padding: 0px;
+	color: #464646;
+	padding-left: 3px;
+}
+</style>
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad">Gestiones colección</t:div>
+			<p:panel id="panelInformacion">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+					style="border-collapse: separate;">
+					<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+						style="border-collapse: separate; width: 530px;">
+						<h:outputText value="Código: " />
+						<h:outputText value="#{manejadorGestionColecciones.coleccion.id}"
+							style=' font-weight: bold' />
+						<h:outputText value="Nombre: " />
+						<h:outputText
+							value="#{manejadorGestionColecciones.coleccion.nombre}"
+							style=' font-weight: bold;' />
+					</p:panelGrid>
+					<p:commandButton
+						action="#{manejadorGestionColecciones.verAgregarGestion}"
+						icon="ui-icon-plusthick" onstart="dialogEspere.show()"
+						oncomplete="dialogEspere.hide()" value="Agregar gestión"
+						update="@form" ajax="false" />
+				</p:panelGrid>
+			</p:panel>
+			<br />
+				<p:panel rendered="#{manejadorGestionColecciones.existeVistaGestion}"
+					id="id-existeVistaSolicitud">
+				<p:panel rendered="#{manejadorGestionColecciones.gestion.id!=null}">
+					<h:outputText
+						style="font-size:16px; font-weight:bold; color: #646464;"
+						value="Código gestión: "></h:outputText>
+					<h:outputText style="font-size:18px; color: #646464;"
+						value="#{manejadorGestionColecciones.gestion.id}"></h:outputText>
+					<br />
+				</p:panel>
+				<t:div rendered="#{manejadorGestionColecciones.gestion.id!=null}"></t:div>
+				<p:growl id="growl" showDetail="true" for="growl" effect="fade" />
+				<p:panel id="solAval">
+					<p:panelGrid styleClass="estilo-panelgrid-sinbordes"
+						id="paneltipoAval">
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="infoTipo" icon="ui-icon-info" />
+								<p:tooltip for="infoTipo" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									       	Seleccione el tipo de gestión a solicitar. 
+										</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:130px;">
+								<h:outputText value="Tipo:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu
+									value="#{manejadorGestionColecciones.idTipoGestion}"
+									style="width: 300px;" id="categoria"
+									disabled="#{manejadorGestionColecciones.gestion.id!=null}">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems
+										value="#{manejadorGestionColecciones.categoriaItems}" />
+									<p:ajax
+										update="@form" process="@form" onstart="dialogEspere.show()"
+										oncomplete="dialogEspere.hide();" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:20px;">
+								<p:commandButton id="infoJustificacion" icon="ui-icon-info" />
+								<p:tooltip for="infoJustificacion" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									       	Indique la justificación de su solicitud. 
+										</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:130px;">
+								<h:outputText value="Justificación:" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="70"
+									value="#{manejadorGestionColecciones.gestion.justificacion}"
+									readonly="#{manejadorGestionColecciones.esConsulta}"
+									maxlength="3500" counter="counterSolicitudDescripcion"
+									counterTemplate="{0} caracteres restantes." />	
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+							</p:column>
+							<p:column>
+							</p:column>
+							<p:column>
+								<h:outputText id="counterSolicitudDescripcion" />
+							</p:column>
+						</p:row>
+						<p:row
+							rendered="#{manejadorGestionColecciones.idTipoGestion == 'RC' || manejadorGestionColecciones.idTipoGestion == 'AC'}">
+							<p:column style="width:20px;">
+								<p:commandButton id="infoAutoridad" icon="ui-icon-info" />
+								<p:tooltip for="infoAutoridad" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									       	Indique la autoridad competente. 
+										</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column style="width:130px;">
+								<h:outputText value="Autoridad:" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:320px;" id="idAutoridad"
+									value="#{manejadorGestionColecciones.idAutoridad}"
+									disabled="#{manejadorGestionColecciones.esConsulta}"
+									panelStyle="320px">
+									<f:selectItems
+										value="#{manejadorGestionColecciones.listaAutoridades}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorGestionColecciones.gestion.estadoAutoridad != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Estado ante la autoridad competente:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:300px;"
+									value="#{manejadorGestionColecciones.gestion.estadoAutoridad.descripcion}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						<p:row  rendered="#{manejadorGestionColecciones.gestion.comentariosAutoridad != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Comentarios ante la autoridad competente:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="70"
+									value="#{manejadorGestionColecciones.gestion.comentariosAutoridad}"
+									readonly="true"
+									/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorGestionColecciones.idTipoGestion == 'CD'}">
+							<p:column>
+								<p:commandButton id="infoAutoridad" icon="ui-icon-info" />
+								<p:tooltip for="infoAutoridad" styleClass="tooltip-mesage"
+									showDelay="999">
+									<t:div style="text-align: left; float:left;">
+									       	Por favor ingrese la información del nuevo director	</t:div>
+								</p:tooltip>
+							</p:column>
+							<p:column>
+								<h:outputText value="Nuevo director: "	style=' font-weight: bold'/>
+							</p:column>
+							<p:column>
+							
+								<p:panel
+									id="panelNuevoInvestigadorPrincipal">
+									<p:messages id="msgsInvestigadorPrincipal" />
+									<p:panelGrid styleClass="estilo-panelgrid-sinbordes">
+										<p:row>
+											<p:column>
+												<h:outputText value="Tipo de documento:" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu style="width:300px"
+													value="#{manejadorGestionColecciones.tipoDocumento}"
+													disabled="#{manejadorGestionColecciones.esConsulta}">
+													<f:selectItem itemLabel="" itemValue="" />
+													<f:selectItems
+														value="#{manejadorGestionColecciones.tipoDocumentoItem}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column>
+												<h:outputText value="Número de documento:" />
+											</p:column>
+											<p:column>
+												<p:inputText value="#{manejadorGestionColecciones.documentoIdentidad}"
+													disabled="#{manejadorGestionColecciones.esConsulta}"
+													style="width:200px" maxlength="25" />
+											</p:column>
+										</p:row>
+										
+										<p:row>
+											<p:column colspan="2" style="text-align: center;">
+												<p:commandButton value="Buscar"
+													action="#{manejadorGestionColecciones.buscarNuevoDirector}"
+													rendered="#{!manejadorGestionColecciones.esConsulta}"
+													update="@form"
+													onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()">
+												</p:commandButton>
+											</p:column>
+										</p:row>
+										<p:row rendered="#{manejadorGestionColecciones.directorPropuesto != null}">
+											<p:column>
+												<b>Nuevo director seleccionado: </b>
+											</p:column>
+											<p:column style="text-align: center;">
+												
+												<h:outputText 
+													value="#{manejadorGestionColecciones.directorPropuesto.nombreCompletoMinusculas}" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+						
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorGestionColecciones.idTipoGestion == 'PB'}">
+							<p:column colspan="3">
+								<t:div>
+									<p:panel style="width:100%; margin-top: 20px;" >
+										<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes"
+											style="width:100%;">
+											<h:outputText value="Acepto la publicación de la información en el portal de colecciones"
+													style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />	
+													<p:selectOneMenu
+														value="#{manejadorGestionColecciones.aceptaPublicacion}"
+														effect="fade"
+														disabled="#{manejadorGestionColecciones.esConsulta}">
+														<f:selectItem itemValue="" itemLabel="" />
+														<f:selectItem itemValue="SI" itemLabel="Si" />
+													</p:selectOneMenu>
+										</p:panelGrid>									
+									</p:panel>
+								</t:div>
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{manejadorGestionColecciones.gestion.personaRegistra != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText 
+									value="Persona que registra:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:300px;"
+									value="#{manejadorGestionColecciones.gestion.personaRegistra.nombreCompleto}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{manejadorGestionColecciones.gestion.id!=null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Fecha registro:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:300px; color: #000000 !important;"
+									value="#{manejadorGestionColecciones.gestion.fechaRegistro}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						
+						<p:row>
+							<p:column colspan="3">
+								<t:div rendered="#{manejadorGestionColecciones.idTipoGestion == 'CD'}">
+									<br />
+									<p:panel style="width:100%">
+										<br />
+										<p>Adjunte los siguientes documentos:</p>
+										<ul>
+											<li>- Acto administrativo de designación del nuevo director de la colección (Obligatorio)</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>
+									</p:panel>
+									<br />
+								</t:div>
+								<t:div rendered="#{manejadorGestionColecciones.idTipoGestion == 'IC'}">
+									<br />
+									<p:panel style="width:100%">
+										<br />
+										<p>Adjunte los siguientes documentos:</p>
+										<ul>
+											<li>- Oficio de solicitud de inactivación de la colección en el Sistema de información Hermes y en el Portal de colecciones científicas (si aplica), con el visto bueno del director de la UAB (Obligatorio)</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>
+									</p:panel>
+									<br />
+								</t:div>
+								<t:div rendered="#{manejadorGestionColecciones.idTipoGestion == 'PB'}">
+									<br />
+									<p:panel style="width:100%">
+										<br />
+										<p>Adjunte los siguientes documentos:</p>
+										<ul>
+											<li>- Conjunto de datos de los especímenes a publicar en formato MS Excel (Si pretende publicar datos de especímenes)</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>
+									</p:panel>
+									<br />
+								</t:div>
+								<t:div rendered="#{manejadorGestionColecciones.idTipoGestion == 'RC'}">
+									<br />
+									<p:panel style="width:100%">
+										<br />
+										<p>Adjunte los siguientes documentos para RNC:</p>
+										<ul>
+											<li>- Carpeta comprimida (.zip, .rar, etc) con los documentos que evidencien la procedencia legal de los especímenes (certificados de movilización, permisos, licencias, contratos, certificados de donación, etc) (Obligatorio).</li>
+											<li>- Protocolo de manejo de la colección científica en versión PDF (Obligatorio)</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>
+												
+										<br />
+										<p>Adjunte los siguientes documentos para INGEP:</p>
+										<ul>
+											<li>- Ficha registro INGEP debidamente diligenciada (Obligatorio) <a href="https://docs.google.com/spreadsheets/d/1YZ55V8IqA6CLUAVSCCucMT95VrXZ62hc/edit?gid=1429195298#gid=1429195298" target="_blank">descargar</a>.</li>
+											<li>- Documento en PDF que contenga un enlace a una carpeta de la nube de Google drive del correo institucional de la colección, que contenga los archivos multimedia de los especímenes que pretende registrar, garantizando acceso permanente al correo coleccionescientificas_nal@unal.edu.co   (Obligatorio)</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>	
+										
+										<br />
+										<p>Adjunte los siguientes documentos para ICANH:</p>
+										<ul>
+											<li>- Ficha única para registro de bienes muebles pertenecientes al patrimonio arqueológico de la nación (Obligatorio) (Descargar)</li>
+											<li>- Documento en PDF que contenga un enlace a una carpeta de la nube de Google drive del correo institucional de la colección, que contenga los archivos multimedia de los especímenes que pretende registrar, garantizando acceso permanente al correo coleccionescientificas_nal@unal.edu.co   (Obligatorio)</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>								
+									</p:panel>
+									<br />
+								</t:div>
+								<t:div rendered="#{manejadorGestionColecciones.idTipoGestion == 'AC'}">
+									<br />
+									<p:panel style="width:100%">
+										<br />
+										<p>Adjunte los siguientes documentos para RNC:</p>
+										<ul>
+											<li>- Carpeta comprimida (.zip, .rar, etc) con los documentos que evidencien la procedencia legal de los especímenes (certificados de movilización, permisos, licencias, contratos, certificados de donación, etc) (Obligatorio).</li>
+											<li>- En caso de haberse actualizado el Protocolo de manejo de la colección adjúntelo (Opcional).</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>
+												
+										<br />
+										<p>Adjunte los siguientes documentos para INGEP:</p>
+										<ul>
+											<li>- Ficha registro INGEP debidamente diligenciada (Obligatorio) <a href="https://docs.google.com/spreadsheets/d/1YZ55V8IqA6CLUAVSCCucMT95VrXZ62hc/edit?gid=1429195298#gid=1429195298" target="_blank">descargar</a>.</li>
+											<li>- Documento en PDF que contenga un enlace a una carpeta de la nube de Google drive del correo institucional de la colección, que contenga los archivos multimedia de los especímenes que pretende registrar, garantizando acceso permanente al correo coleccionescientificas_nal@unal.edu.co   (Obligatorio)</li>
+											<li>- En caso de haberse actualizado el Protocolo de manejo de la colección adjúntelo (Opcional).</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>	
+										
+										<br />
+										<p>Adjunte los siguientes documentos para ICANH:</p>
+										<ul>
+											<li>- Ficha única para registro de bienes muebles pertenecientes al patrimonio arqueológico de la nación (Obligatorio) (Descargar)</li>
+											<li>- Documento en PDF que contenga un enlace a una carpeta de la nube de Google drive del correo institucional de la colección, que contenga los archivos multimedia de los especímenes que pretende registrar, garantizando acceso permanente al correo coleccionescientificas_nal@unal.edu.co   (Obligatorio)</li>
+											<li>- En caso de haberse actualizado el Protocolo de manejo de la colección adjúntelo (Opcional).</li>
+											<li>- Cualquier otro documento que considere (opcional)</li>
+										</ul>								
+									</p:panel>
+									<br />
+								</t:div>
+								<p:panelGrid columns="1" styleClass="estilo-panelgrid-sinbordes"
+									id="tblArchivos" style="width:100%;">
+									<p:fileUpload
+										fileUploadListener="#{manejadorGestionColecciones.adjuntarArchivo}"
+										mode="advanced" auto="true" update="tblArchivos"
+										multiple="true" sizeLimit="3072000" label="Seleccionar archivo"
+										rendered="#{!manejadorGestionColecciones.esConsulta}"
+										invalidSizeMessage="El tamaño máximo por archivo es de 3MB." />
+									<p:dataTable
+										value="#{manejadorGestionColecciones.listaArchivos}"
+										var="archivo" headerText="Documentos Adjuntos"
+										emptyMessage="No hay archivos asociados" id="tabla-archivo"
+										style="width:100%;"
+										paginator="true" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false"  rows="5"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+										<p:column headerText="Id" style="width: 10%;">
+											<h:outputText value="#{archivo.id}"
+												style="text-align: left; text-transform:uppercase; padding-bottom: 10px;" />
+										</p:column>
+										<p:column style="width: 40%;" headerText="Tipo" rendered="false">
+											<h:outputText value="#{archivo.tipoUsuario}" />
+										</p:column>
+										<p:column style="width: 40%;" headerText="Documento Adjunto">
+											<h:outputText value="#{archivo.nombre}" />
+										</p:column>
+										<p:column headerText="Acciones"
+											style="width:10%; text-align:center;">
+											<p:commandButton id="descargar"
+												action="#{manejadorGestionColecciones.descargarArchivo}"
+												icon="ui-icon-circle-arrow-s" title="Descargar archivo"
+												ajax="false">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{manejadorGestionColecciones.archivoGestion}" />
+											</p:commandButton>
+										</p:column>
+										<p:column style="width:3%; text-align:center;" headerText="(-)"
+											rendered="#{!manejadorGestionColecciones.esConsulta}">
+											<p:commandButton id="selectButton" update="tabla-archivo"
+												icon="ui-icon-trash"
+												rendered="#{!manejadorGestionColecciones.esConsulta and archivo.tipoUsuario != 'CO'}"
+												action="#{manejadorGestionColecciones.eliminarArchivo}"
+												title="Eliminar archivo">
+												<f:setPropertyActionListener value="#{archivo}"
+													target="#{manejadorGestionColecciones.archivoGestion}" />
+											</p:commandButton>
+										</p:column>
+									</p:dataTable>
+								</p:panelGrid>
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{manejadorGestionColecciones.gestion.estado != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Estado solicitud:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:300px;"
+									value="#{manejadorGestionColecciones.gestion.estado.descripcion}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						
+						<p:row  rendered="#{manejadorGestionColecciones.gestion.comentariosRevision != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Observación revisión:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputTextarea cols="70"
+									value="#{manejadorGestionColecciones.gestion.comentariosRevision}"
+									readonly="true"
+									/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{manejadorGestionColecciones.gestion.personaRevisa != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Persona que revisa:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:300px;"
+									value="#{manejadorGestionColecciones.gestion.personaRevisa.nombreCompleto}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						
+						<p:row rendered="#{manejadorGestionColecciones.gestion.fechaRevision != null}">
+							<p:column></p:column>
+							<p:column>
+								<h:outputText
+									value="Fecha revisión:"></h:outputText>
+							</p:column>
+							<p:column>
+								<p:inputText style="width:300px;"
+									value="#{manejadorGestionColecciones.gestion.fechaRevision}"
+									disabled="true" />
+							</p:column>
+						</p:row>
+						
+						<p:row>
+							<p:column colspan="3">
+								<t:div rendered="#{!manejadorGestionColecciones.esConsulta}">
+									<center>
+										<p:commandButton
+											action="#{manejadorGestionColecciones.guardarParcialmente}"
+											value="Guardar parcialmente" update="@form"
+											onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+				
+										<p:commandButton
+											action="#{manejadorGestionColecciones.enviarSolicitud}"
+											value="Guardar y enviar" update="msgs2,@form" 
+											onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()" />
+									</center>
+									<br />
+								</t:div>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</p:panel>
+			
+			</p:panel>
+			<br />
+			<p:messages id="msgs2" autoUpdate="true" closable="true" />
+			<t:div styleClass="estilo-propio" id="panelPropio">
+				<p:dataTable
+						value="#{manejadorGestionColecciones.listaGestionesColeccion}" rows="10"
+						paginator="true" paginatorPosition="bottom"
+						paginatorAlwaysVisible="false"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						var="gestion" style="margin-left: 5px;"
+						emptyMessage="No tiene gestiones registradas">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{gestion.id}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo" />
+							</f:facet>
+							<h:outputText value="#{gestion.tipo.descripcion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Registro" />
+							</f:facet>
+							<h:outputText value="#{gestion.fechaRegistro}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText value="#{gestion.estado.descripcion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Fecha Revision" />
+							</f:facet>
+							<h:outputText value="#{gestion.fechaRevision}" />
+						</p:column>
+						<p:column style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText value="Opciones" />
+							</f:facet>
+							<p:commandButton action="#{manejadorGestionColecciones.verGestion}"
+								icon="ui-icon-search" update="@form"
+								rendered="#{gestion.estado.identificador.tipo!='I' and gestion.estado.identificador.tipo!='D' and gestion.tipo.identificador.tipo !='RCUN'}"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								title="Consultar" ajax="false">
+								<f:setPropertyActionListener value="#{gestion}"
+									target="#{manejadorGestionColecciones.gestionSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton 
+								action="#{manejadorGestionColecciones.editarGestionTabla}"
+								icon="ui-icon-pencil" update="@form"
+								rendered="#{gestion.estado.identificador.tipo=='I' or gestion.estado.identificador.tipo=='D' and gestion.tipo.identificador.tipo !='RCUN'}"
+								title="Editar" onstart="dialogEspere.show()"
+								oncomplete="dialogEspere.hide()">
+								<f:setPropertyActionListener value="#{gestion}"
+									target="#{manejadorGestionColecciones.gestionSeleccionada}" />
+							</p:commandButton>
+							<p:commandButton
+								action="#{manejadorGestionColecciones.eliminarSolicitudTabla}"
+								icon="ui-icon-trash" update="@form"
+								rendered="#{gestion.estado.identificador.tipo=='I' or gestion.estado.identificador.tipo=='D' and gestion.tipo.identificador.tipo !='RCUN'}" title="Eliminar solicitud"
+								onstart="dialogEspere.show()" oncomplete="dialogEspere.hide()"
+								onclick="if(!confirm('¿Esta seguro de eliminar esta gestion?'))return false">
+								<f:setPropertyActionListener value="#{gestion}"
+									target="#{manejadorGestionColecciones.gestionSeleccionada}" />
+							</p:commandButton>
+						</p:column>
+				</p:dataTable>
+			</t:div>
+			<p:dialog widgetVar="dialogEspere" resizable="false" closable="false"
+				modal="true">
+				<p:graphicImage value="/images/ajaxloading.gif" /> Por favor espere...
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

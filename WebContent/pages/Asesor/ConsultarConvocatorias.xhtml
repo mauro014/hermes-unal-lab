@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../templates/common.xhtml">
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="contenido-titulo-general-myriad" >Consultar proyectos por convocatoria</t:div>
+				<p:panel  style="margin-top: 20px;">
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes">
+						<t:div style="width: 170px;"><h:outputText value="Nombre convocatoria:" /></t:div>
+						<p:inputText id="numCom"  style="width:350px;"	value="#{manejadorConsultarConvocatorias.nombreConvocatoria}" />
+						<p:commandButton
+							action="#{manejadorConsultarConvocatorias.consultarConvocatorias}"
+							value="Consultar"
+							update="@form">
+						</p:commandButton>					
+					 </p:panelGrid>
+				 </p:panel>
+ 				<p:growl id="growl" showDetail="true"/> 
+				<p:dataTable var="convocatoria"
+					emptyMessage="No existen resultados de la Consulta"
+					 style="margin-top: 20px;"
+					value="#{manejadorConsultarConvocatorias.listaConvocatorias}"
+					binding="#{manejadorConsultarConvocatorias.tablaConvocatorias}" >
+						
+						<p:ajax event="rowToggle" listener="#{manejadorConsultarConvocatorias.consultarHijos}" update=":form:growl" />  
+
+						 <p:column style="width:4%">  
+				            <p:rowToggler />  
+				        </p:column>
+						<p:column headerText="Nombre Convocatoria">
+							<h:outputText value="#{convocatoria.titulo}"  /> - 
+							<h:outputText value="#{convocatoria.estadoConvocatoria.nombre}" style="font-weight: bold;"/>
+						</p:column>
+
+						<p:rowExpansion>  
+	           				<p:dataTable var="hijo"
+							rendered="#{manejadorConsultarConvocatorias.bandera}"
+							value="#{manejadorConsultarConvocatorias.listaHijo}"
+							style="margin: 15px;">
+								<p:column headerText="Nombre modalidad">
+									<div class="listaSencilla" style="width:350px;">
+										<h:outputText value="#{hijo.titulo}"  />
+									</div>
+								</p:column>
+								<p:column headerText="Resumen Estados">
+									<div class="listaSencilla" style="width:250px;">
+										<p:dataList value="#{hijo.estados}" 
+											var="hijo1" 
+											itemType="disc" style="margin: 0px; border: none;">  
+										    (#{hijo1[0]}) -
+										    
+										    <p:commandLink 
+													action="#{manejadorConsultarConvocatorias.consultarReporte}"
+													value="#{hijo1[1]}" ajax="false" >
+												<f:param name="modalidadId" value="#{hijo.id}" />
+												<f:param name="estadoId" value="#{hijo1[3]}" />
+												<f:param name="convocatoriaId" value="#{convocatoria.id}" />
+											</p:commandLink>
+										</p:dataList>  															
+									</div>
+								</p:column>
+							</p:dataTable>
+	        			</p:rowExpansion>  
+
+					</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

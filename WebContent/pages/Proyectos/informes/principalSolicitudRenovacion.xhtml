@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	template="../../../templates/common.xhtml">
+
+	<ui:define name="content">
+		<h:form>
+			<t:div styleClass="contenido-titulo-general-myriad" >Solicitud de renovación</t:div>
+			<p:panel style="width: 97%; text-align: center;" rendered="#{!manejadorPrincipalInforme.esCoordinador}">
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;" >
+					<h:outputLink value="#{facesContext.externalContext.requestContextPath}/pages/descargas/ColcienciasFormato.doc"
+						style="text-decoration:none; 
+								color: #16A8E2;
+								font-weight: bold;"
+					target="_blank">
+					<h:outputText value="Formato informe colciencias " />
+					</h:outputLink>
+					<h:outputLink value="#{facesContext.externalContext.requestContextPath}/pages/descargas/ColcienciasFormato.doc"
+					target="_blank">
+					<h:graphicImage id="images" alt="jsf-sun"
+						url="/images/iconpdf.png">
+					</h:graphicImage>
+					</h:outputLink>
+				</p:panelGrid>
+			</p:panel>			
+			
+			<p:panel style="margin-top: 20px; " rendered="#{manejadorPrincipalInforme.esCoordinador}" 				
+				header="Información Estudiante Solicitante" toggleable="true" toggleSpeed="500" closeSpeed="500">	
+			
+				<p:panelGrid columns="2" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;" >
+					<h:outputText value="Nombre estudiante: " style="font-weight: bold;"/><h:outputText value="#{manejadorPrincipalInforme.nombreEstudiante}"/>
+					<h:outputText value="Programa académico: " style="font-weight: bold;"/><h:outputText value="#{manejadorPrincipalInforme.nombrePrograma}"/>
+				</p:panelGrid>
+				<p:panel style="margin-top: 16px; ">
+					<p:panelGrid columns="3" styleClass="estilo-panelgrid-sinbordes" style="margin: auto;" >
+						<p:commandButton					
+						value="#{manejadorPrincipalInforme.accionBoton}"					
+						action="#{manejadorPrincipalInforme.ejecutarAccion}" 
+						update="@parent"						
+						disabled="#{(!manejadorPrincipalInforme.esCoordinador) or manejadorPrincipalInforme.consultaFacultad}"
+						/>							
+						<h:outputText value="Estado: " style="font-weight: bold;"/>					
+						<p:selectOneMenu rendered="#{manejadorPrincipalInforme.accionBoton=='Guardar'}"
+							value="#{manejadorPrincipalInforme.estadoInvestigador}">
+							<f:selectItems value="#{manejadorPrincipalInforme.listaEstadoRenovacion}" var="estado"
+								itemLabel="#{estado.descripcion}" itemValue="#{estado.identificador.tipo}"/>					
+						</p:selectOneMenu>
+						<h:outputText  rendered="#{!(manejadorPrincipalInforme.accionBoton=='Guardar')}" value="#{manejadorPrincipalInforme.descripcionEstInv}"/>								
+						<p:commandButton					
+						value="Cancelar"
+						action="#{manejadorPrincipalInforme.cancelar}" 		
+						disabled="#{!(manejadorPrincipalInforme.accionBoton=='Guardar')}"		
+						update="@parent"
+						/>					
+						<h:outputText value="Comentarios: " style="font-weight: bold;"/>
+						<p:inputTextarea rows="5" cols="50" 
+						value="#{manejadorPrincipalInforme.comentariosInvestigador}"
+						readonly="#{!(manejadorPrincipalInforme.accionBoton=='Guardar')}"/>
+						<p:spacer width="100" height="10"/>
+						<h:outputText value="Año convocatoria: " style="font-weight: bold;"/>
+						<h:selectOneMenu value="#{manejadorPrincipalInforme.anoConvocatoria}" 
+							rendered="#{(manejadorPrincipalInforme.accionBoton=='Guardar')}" required="true" requiredMessage="Debe ingresar los meses de sostenimiento">	
+							<f:selectItem itemLabel="2002" itemValue="2002" />
+							<f:selectItem itemLabel="2003" itemValue="2003" />
+							<f:selectItem itemLabel="2004" itemValue="2004" />							
+							<f:selectItem itemLabel="2005" itemValue="2005" />
+							<f:selectItem itemLabel="2006" itemValue="2006" />
+							<f:selectItem itemLabel="2007" itemValue="2007" />							
+							<f:selectItem itemLabel="2008" itemValue="2008" />							
+							<f:selectItem itemLabel="2009" itemValue="2009" />							
+							<f:selectItem itemLabel="2010" itemValue="2010" />							
+							<f:selectItem itemLabel="2011" itemValue="2011" />														
+						</h:selectOneMenu>
+						<p:inputText value="#{manejadorPrincipalInforme.anoConvocatoria}" rendered="#{!(manejadorPrincipalInforme.accionBoton=='Guardar')}" 
+						size="5" readonly="true"/>
+						<p:spacer width="100" height="10"/>
+						<h:outputText value="Meses Aprobados: " style="font-weight: bold;"/>
+						
+						<p:spinner id="spMesesSostenimiento" value="#{manejadorPrincipalInforme.mesesAprobados}" min="0" max="6" stepFactor="0.5"
+						size="5" rendered="#{(manejadorPrincipalInforme.accionBoton=='Guardar')}" required="true" requiredMessage="Debe ingresar los meses de aprobados"/>
+												
+						<p:inputText value="#{manejadorPrincipalInforme.mesesAprobados}"  rendered="#{!(manejadorPrincipalInforme.accionBoton=='Guardar')}" 
+						size="5" readonly="true"/>	
+						
+					</p:panelGrid>	
+				</p:panel>	
+			</p:panel>
+			<t:div styleClass="estilo-propio" id="panelPropio">
+				<p:dataTable var="informe"  value="#{manejadorPrincipalInforme.listaSolicitudesRenovacion}" 
+				emptyMessage="No tiene solicitudes registradas">
+					<f:facet name="header">
+						<h:outputText value="Solicitudes registrados"/>
+					</f:facet>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Código" /><br />
+							<h:outputText value="solicitud" />
+						</f:facet>
+						<h:outputText value=" #{informe.id}" />
+					</p:column>
+					<p:column sortBy="#{informe.estadoInforme.nombreEstado}">
+						<f:facet name="header">
+							<h:outputText value="Estado" />
+						</f:facet>
+						<h:outputText value=" #{informe.estadoInforme.nombreEstado}" />
+					</p:column>					
+					<p:column>
+						<f:facet name="header">							
+							<h:outputText value="Año" /><br />
+							<h:outputText value="solicitud" />
+						</f:facet>
+						<h:outputText value="#{informe.dependenciaAvalFacultad}" />
+					</p:column>					
+					<p:column>
+						<f:facet name="header">							
+							<h:outputText value="Semestre" /><br />
+							<h:outputText value="solicitud" />
+						</f:facet>
+						<h:outputText value="#{informe.noAprobacion}" />
+					</p:column>					
+					<p:column sortBy=" #{informe.fechaGeneracion}">
+						<f:facet name="header">
+							<h:outputText value="Fecha" />
+						</f:facet>
+						<h:outputText value=" #{informe.fechaGeneracion}" />
+					</p:column>					
+					<p:column>
+						<f:facet name="header">							
+							<h:outputText value="Ir a la" /><br />
+							<h:outputText value="Solicitud" />
+						</f:facet>
+						<div style="text-align:center;">
+							<p:commandButton icon="ui-icon-search"
+								action="#{manejadorPrincipalInforme.ingresardetalleConsultaRenovacion}">
+								<f:setPropertyActionListener value="#{informe}"
+									target="#{manejadorPrincipalInforme.informeSeleccionado}" />
+							</p:commandButton>
+						</div>
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Imprimir"/>
+						</f:facet>
+						<div style="text-align:center;">
+		     				<p:commandLink
+								action="#{manejadorPrincipalInforme.imprimirDetalleConsultaRenovacion}"  ajax="false" style="text-decoration:none; 
+								color: #16A8E2; 
+								font-weight: bold;">
+								<h:outputText value="Imprimir"/>
+								<f:setPropertyActionListener value="#{informe}" target="#{manejadorPrincipalInforme.informeSeleccionado}"/>
+							</p:commandLink>
+						</div>
+					</p:column>
+				</p:dataTable>
+			</t:div>
+			<p:messages id="msgs" /> 
+			<br />
+			<t:div style="margin: auto; text-align: center; width: 660px;" rendered="#{!manejadorPrincipalInforme.esCoordinador}">
+				<p:commandButton value="Registrar nueva solicitud de renovación"  
+					action="#{manejadorPrincipalInforme.ingresardetallesolicitudrenovacion}" 
+					onclick="if(!confirm('¿Está seguro(a) de registrar una nueva solicitud?'))return false"
+					ajax="false"
+					/>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>
