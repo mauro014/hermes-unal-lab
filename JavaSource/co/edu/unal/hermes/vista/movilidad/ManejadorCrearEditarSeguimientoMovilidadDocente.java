@@ -471,76 +471,81 @@ public class ManejadorCrearEditarSeguimientoMovilidadDocente extends ManejadorBa
                         "No se encuentra registrado la experiencia del trabajo presentado");
                 mostrarMensaje(message, null);
             }
-            if (apoyoTotal == null || (apoyoTotal != null && apoyoTotal.length() == 0)) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor total del apoyo", "Debe ingresar el valor total del apoyo");
-                mostrarMensaje(message, null);
-                bandera = false;
-            } else {
-                try {
-                    int valor = Integer.parseInt(apoyoTotal.trim());
-                    /*if (valor == 0) {
-                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Debe ingresar el valor total del apoyo válido",
-                                "Debe ingresar el valor total del apoyo válido");
-                        mostrarMensaje(message, null);
-                        bandera = false;
-                    }*/
-                } catch (NumberFormatException e) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Debe ingresar el valor total del apoyo válido",
-                            "Debe ingresar el valor total del apoyo válido");
-                    mostrarMensaje(message, null);
-                    bandera = false;
-                }
-
-            }
-            if (costoTiquetes == null || (costoTiquetes != null && costoTiquetes.length() == 0)) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor de los tiquetes", "Debe ingresar el valor de los tiquetes");
-                mostrarMensaje(message, null);
-                bandera = false;
-            } else {
-                try {
-                    Integer.parseInt(costoTiquetes.trim());
-                } catch (NumberFormatException e) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Debe ingresar el valor de tiquetes válido", "Debe ingresar el valor de tiquetes válido");
-                    mostrarMensaje(message, null);
-                    bandera = false;
-                }
-            }
-            if (valorTotalViativos == null || (valorTotalViativos != null && valorTotalViativos.length() == 0)) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor total de viaticos", "Debe ingresar el valor total de viaticos");
-                mostrarMensaje(message, null);
-                bandera = false;
-            } else {
-                try {
-                    Integer.parseInt(valorTotalViativos.trim());
-                } catch (NumberFormatException e) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Debe ingresar el valor total de viaticos válido",
-                            "Debe ingresar el valor total de viaticos válido");
-                    mostrarMensaje(message, null);
-                    bandera = false;
-                }
-            }
-            if (valorEvento == null || (valorEvento != null && valorEvento.length() == 0)) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor total de inscripión", "Debe ingresar el valor total de inscripión");
-                mostrarMensaje(message, null);
-                bandera = false;
-            } else {
-                try {
-                    Integer.parseInt(valorEvento.trim());
-                } catch (NumberFormatException e) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Debe ingresar el valor total de inscripión", "Debe ingresar el valor total de inscripión");
-                    mostrarMensaje(message, null);
-                    bandera = false;
-                }
-            }
+            
+//            if (apoyoTotal == null || (apoyoTotal != null && apoyoTotal.length() == 0)) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor total del apoyo", "Debe ingresar el valor total del apoyo");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            } else {
+//                try {
+//                    int valor = Integer.parseInt(apoyoTotal.trim());
+//                    /*if (valor == 0) {
+//                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                                "Debe ingresar el valor total del apoyo válido",
+//                                "Debe ingresar el valor total del apoyo válido");
+//                        mostrarMensaje(message, null);
+//                        bandera = false;
+//                    }*/
+//                } catch (NumberFormatException e) {
+//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                            "Debe ingresar el valor total del apoyo válido",
+//                            "Debe ingresar el valor total del apoyo válido");
+//                    mostrarMensaje(message, null);
+//                    bandera = false;
+//                }
+//
+//            }
+            
+//            if (costoTiquetes == null || (costoTiquetes != null && costoTiquetes.length() == 0)) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor de los tiquetes", "Debe ingresar el valor de los tiquetes");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            } else {
+//                try {
+//                    Integer.parseInt(costoTiquetes.trim());
+//                } catch (NumberFormatException e) {
+//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                            "Debe ingresar el valor de tiquetes válido", "Debe ingresar el valor de tiquetes válido");
+//                    mostrarMensaje(message, null);
+//                    bandera = false;
+//                }
+//            }
+            
+//            if (valorTotalViativos == null || (valorTotalViativos != null && valorTotalViativos.length() == 0)) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor total de viaticos", "Debe ingresar el valor total de viaticos");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            } else {
+//                try {
+//                    Integer.parseInt(valorTotalViativos.trim());
+//                } catch (NumberFormatException e) {
+//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                            "Debe ingresar el valor total de viaticos válido",
+//                            "Debe ingresar el valor total de viaticos válido");
+//                    mostrarMensaje(message, null);
+//                    bandera = false;
+//                }
+//            }
+            
+//            if (valorEvento == null || (valorEvento != null && valorEvento.length() == 0)) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor total de inscripión", "Debe ingresar el valor total de inscripión");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            } else {
+//                try {
+//                    Integer.parseInt(valorEvento.trim());
+//                } catch (NumberFormatException e) {
+//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                            "Debe ingresar el valor total de inscripión", "Debe ingresar el valor total de inscripión");
+//                    mostrarMensaje(message, null);
+//                    bandera = false;
+//                }
+//            }
+            
             return bandera;
         } else {
             return true;
@@ -622,7 +627,7 @@ public class ManejadorCrearEditarSeguimientoMovilidadDocente extends ManejadorBa
                 apoyoTotal = 0L;
             }
             mde.setValorTotalApoyo(apoyoTotal);
-            mde.setMontoAdicionalEjecutado(apoyoTotalAdicional);
+            //mde.setMontoAdicionalEjecutado(apoyoTotalAdicional);
             Long costoTiquetes;
             try {
                 costoTiquetes = Long.parseLong(this.costoTiquetes.trim());
@@ -750,7 +755,7 @@ public class ManejadorCrearEditarSeguimientoMovilidadDocente extends ManejadorBa
             valorEvento = 0L;
         }
         movilidadDocentesExterior.setValorTotalEvento(valorEvento);
-        movilidadDocentesExterior.setMontoAdicionalEjecutado(this.apoyoTotalAdicional);
+        //movilidadDocentesExterior.setMontoAdicionalEjecutado(this.apoyoTotalAdicional);
         return movilidadDocentesExterior;
     }
 

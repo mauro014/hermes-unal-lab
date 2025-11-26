@@ -387,9 +387,9 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudianteArtes extends Man
 			mde.setSegMovDescripcion(descripcionMovilidad);
 			mde.setExperienciaResidencia(experiencia);
 			
-			Long totalApoyoSuma = Long.parseLong(mde.getTotalTiquetesUN()) + Long.parseLong(mde.getTotalTallerUN()) + Long.parseLong(mde.getTotalAlojamientoUN()) + Long.parseLong(mde.getTotalAlimentacionUN()) + Long.parseLong(mde.getTotalMaterialesUN()) + Long.parseLong(mde.getTotalTransporteUN()) + Long.parseLong(mde.getTotalSocializacionUN());
-
-			mde.setTotalApoyoUN(totalApoyoSuma.toString());
+//			Long totalApoyoSuma = Long.parseLong(mde.getTotalTiquetesUN()) + Long.parseLong(mde.getTotalTallerUN()) + Long.parseLong(mde.getTotalAlojamientoUN()) + Long.parseLong(mde.getTotalAlimentacionUN()) + Long.parseLong(mde.getTotalMaterialesUN()) + Long.parseLong(mde.getTotalTransporteUN()) + Long.parseLong(mde.getTotalSocializacionUN());
+//
+//			mde.setTotalApoyoUN(totalApoyoSuma.toString());
 
 			for (int i = 0; i < listaArchivosObligatoriosSel.size(); i++) {
 				ArchivoMovilidad archivo = new ArchivoMovilidad();

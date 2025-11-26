@@ -507,61 +507,61 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
     
     public boolean validarMontos() {
         boolean bandera = true;
-        if (apoyoTotal == null || (apoyoTotal != null && apoyoTotal.length() == 0)) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Debe ingresar el valor total del apoyo", "Debe ingresar el valor total del apoyo");
-            mostrarMensaje(message, null);
-            bandera = false;
-        } else {
-            try {
-                int valor = Integer.parseInt(apoyoTotal.trim());
-                /*if (valor == 0) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Debe ingresar el valor total del apoyo válido",
-                            "Debe ingresar el valor total del apoyo válido");
-                    mostrarMensaje(message, null);
-                    bandera = false;
-                }*/
-            } catch (NumberFormatException e) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor total del apoyo válido",
-                        "Debe ingresar el valor total del apoyo válido");
-                mostrarMensaje(message, null);
-                bandera = false;
-            }
-
-        }
-        if (costoTiquetes == null || (costoTiquetes != null && costoTiquetes.length() == 0)) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Debe ingresar el valor de los tiquetes", "Debe ingresar el valor de los tiquetes");
-            mostrarMensaje(message, null);
-            bandera = false;
-        } else {
-            try {
-                Integer.parseInt(costoTiquetes.trim());
-            } catch (NumberFormatException e) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor de tiquetes válido", "Debe ingresar el valor de tiquetes válido");
-                mostrarMensaje(message, null);
-                bandera = false;
-            }
-        }
-        if (valorTotalViativos == null || (valorTotalViativos != null && valorTotalViativos.length() == 0)) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Debe ingresar el valor total de viaticos", "Debe ingresar el valor total de viaticos");
-            mostrarMensaje(message, null);
-            bandera = false;
-        } else {
-            try {
-                Integer.parseInt(valorTotalViativos.trim());
-            } catch (NumberFormatException e) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Debe ingresar el valor total de viaticos válido",
-                        "Debe ingresar el valor total de viaticos válido");
-                mostrarMensaje(message, null);
-                bandera = false;
-            }
-        }
+//        if (apoyoTotal == null || (apoyoTotal != null && apoyoTotal.length() == 0)) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                    "Debe ingresar el valor total del apoyo", "Debe ingresar el valor total del apoyo");
+//            mostrarMensaje(message, null);
+//            bandera = false;
+//        } else {
+//            try {
+//                int valor = Integer.parseInt(apoyoTotal.trim());
+//                /*if (valor == 0) {
+//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                            "Debe ingresar el valor total del apoyo válido",
+//                            "Debe ingresar el valor total del apoyo válido");
+//                    mostrarMensaje(message, null);
+//                    bandera = false;
+//                }*/
+//            } catch (NumberFormatException e) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor total del apoyo válido",
+//                        "Debe ingresar el valor total del apoyo válido");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            }
+//
+//        }
+//        if (costoTiquetes == null || (costoTiquetes != null && costoTiquetes.length() == 0)) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                    "Debe ingresar el valor de los tiquetes", "Debe ingresar el valor de los tiquetes");
+//            mostrarMensaje(message, null);
+//            bandera = false;
+//        } else {
+//            try {
+//                Integer.parseInt(costoTiquetes.trim());
+//            } catch (NumberFormatException e) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor de tiquetes válido", "Debe ingresar el valor de tiquetes válido");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            }
+//        }
+//        if (valorTotalViativos == null || (valorTotalViativos != null && valorTotalViativos.length() == 0)) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                    "Debe ingresar el valor total de viaticos", "Debe ingresar el valor total de viaticos");
+//            mostrarMensaje(message, null);
+//            bandera = false;
+//        } else {
+//            try {
+//                Integer.parseInt(valorTotalViativos.trim());
+//            } catch (NumberFormatException e) {
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                        "Debe ingresar el valor total de viaticos válido",
+//                        "Debe ingresar el valor total de viaticos válido");
+//                mostrarMensaje(message, null);
+//                bandera = false;
+//            }
+//        }
         return bandera;
     }
 
@@ -686,7 +686,7 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
             valorEvento = 0L;
         }
         movilidadEstudiantesPosgrado.setValorTotalEvento(valorEvento);
-        movilidadEstudiantesPosgrado.setMontoAdicionalEjecutado(this.apoyoTotalAdicional);
+        //movilidadEstudiantesPosgrado.setMontoAdicionalEjecutado(this.apoyoTotalAdicional);
         return movilidadEstudiantesPosgrado;
     }
 
