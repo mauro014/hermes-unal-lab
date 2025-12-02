@@ -33,6 +33,7 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
     private MovilidadEstudiantesPosgrado mep;
     private List<Object[]> listaCooproductos;
     private boolean consulta;
+    private boolean completado;
 
     private String personaMovilidad = "";
     private String tipoProducto;
@@ -115,6 +116,7 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
         cargarValoresIniciales();
 
         consulta = habilitarEdicion();
+        
         mep = (MovilidadEstudiantesPosgrado) sesion.getAttribute("movilidadEstudiantePos");
 
         List<MovilidadEstudiantesPosgrado> movs = servicioGeneral.obtenerObjetos(MovilidadEstudiantesPosgrado.class,
@@ -147,6 +149,9 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
         if (sesion.getAttribute("esRevisionSede") != null) {
             esRevisionSede = (Boolean) sesion.getAttribute("esRevisionSede");
             sesion.removeAttribute("esRevisionSede");
+        }
+        if(esRevisionFacultad || esRevisionSede) {
+        	completado = false;            	
         }
     }
 
@@ -507,61 +512,65 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
     
     public boolean validarMontos() {
         boolean bandera = true;
-//        if (apoyoTotal == null || (apoyoTotal != null && apoyoTotal.length() == 0)) {
-//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                    "Debe ingresar el valor total del apoyo", "Debe ingresar el valor total del apoyo");
-//            mostrarMensaje(message, null);
-//            bandera = false;
-//        } else {
-//            try {
-//                int valor = Integer.parseInt(apoyoTotal.trim());
-//                /*if (valor == 0) {
-//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                            "Debe ingresar el valor total del apoyo válido",
-//                            "Debe ingresar el valor total del apoyo válido");
-//                    mostrarMensaje(message, null);
-//                    bandera = false;
-//                }*/
-//            } catch (NumberFormatException e) {
-//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                        "Debe ingresar el valor total del apoyo válido",
-//                        "Debe ingresar el valor total del apoyo válido");
-//                mostrarMensaje(message, null);
-//                bandera = false;
-//            }
-//
-//        }
-//        if (costoTiquetes == null || (costoTiquetes != null && costoTiquetes.length() == 0)) {
-//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                    "Debe ingresar el valor de los tiquetes", "Debe ingresar el valor de los tiquetes");
-//            mostrarMensaje(message, null);
-//            bandera = false;
-//        } else {
-//            try {
-//                Integer.parseInt(costoTiquetes.trim());
-//            } catch (NumberFormatException e) {
-//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                        "Debe ingresar el valor de tiquetes válido", "Debe ingresar el valor de tiquetes válido");
-//                mostrarMensaje(message, null);
-//                bandera = false;
-//            }
-//        }
-//        if (valorTotalViativos == null || (valorTotalViativos != null && valorTotalViativos.length() == 0)) {
-//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                    "Debe ingresar el valor total de viaticos", "Debe ingresar el valor total de viaticos");
-//            mostrarMensaje(message, null);
-//            bandera = false;
-//        } else {
-//            try {
-//                Integer.parseInt(valorTotalViativos.trim());
-//            } catch (NumberFormatException e) {
-//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                        "Debe ingresar el valor total de viaticos válido",
-//                        "Debe ingresar el valor total de viaticos válido");
-//                mostrarMensaje(message, null);
-//                bandera = false;
-//            }
-//        }
+
+        if(esRevisionFacultad || esRevisionSede) {
+        
+            if (apoyoTotal == null || (apoyoTotal != null && apoyoTotal.length() == 0)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Debe ingresar el valor total del apoyo", "Debe ingresar el valor total del apoyo");
+                mostrarMensaje(message, null);
+                bandera = false;
+            } else {
+                try {
+                    int valor = Integer.parseInt(apoyoTotal.trim());
+                    /*if (valor == 0) {
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Debe ingresar el valor total del apoyo válido",
+                                "Debe ingresar el valor total del apoyo válido");
+                        mostrarMensaje(message, null);
+                        bandera = false;
+                    }*/
+                } catch (NumberFormatException e) {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Debe ingresar el valor total del apoyo válido",
+                            "Debe ingresar el valor total del apoyo válido");
+                    mostrarMensaje(message, null);
+                    bandera = false;
+                }
+
+            }
+            if (costoTiquetes == null || (costoTiquetes != null && costoTiquetes.length() == 0)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Debe ingresar el valor de los tiquetes", "Debe ingresar el valor de los tiquetes");
+                mostrarMensaje(message, null);
+                bandera = false;
+            } else {
+                try {
+                    Integer.parseInt(costoTiquetes.trim());
+                } catch (NumberFormatException e) {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Debe ingresar el valor de tiquetes válido", "Debe ingresar el valor de tiquetes válido");
+                    mostrarMensaje(message, null);
+                    bandera = false;
+                }
+            }
+            if (valorTotalViativos == null || (valorTotalViativos != null && valorTotalViativos.length() == 0)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Debe ingresar el valor total de viaticos", "Debe ingresar el valor total de viaticos");
+                mostrarMensaje(message, null);
+                bandera = false;
+            } else {
+                try {
+                    Integer.parseInt(valorTotalViativos.trim());
+                } catch (NumberFormatException e) {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Debe ingresar el valor total de viaticos válido",
+                            "Debe ingresar el valor total de viaticos válido");
+                    mostrarMensaje(message, null);
+                    bandera = false;
+                }
+            }
+        }
         return bandera;
     }
 
@@ -686,7 +695,9 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
             valorEvento = 0L;
         }
         movilidadEstudiantesPosgrado.setValorTotalEvento(valorEvento);
-        //movilidadEstudiantesPosgrado.setMontoAdicionalEjecutado(this.apoyoTotalAdicional);
+        if(esRevisionFacultad || esRevisionSede) {
+        	movilidadEstudiantesPosgrado.setMontoAdicionalEjecutado(this.apoyoTotalAdicional);
+        }
         return movilidadEstudiantesPosgrado;
     }
 
@@ -777,6 +788,7 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
             if (!parcial) {
                 mensaje = "Seguimiento de movilidad guardado satisfactoriamente.";
                 consulta = true;
+                setCompletado(true);
             } else {
                 mensaje = "Seguimiento de movilidad guardado parcialmente.";
             }
@@ -876,14 +888,18 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
 
     public void guardarLectura() {
         actualizarRevisionSeguimiento(MovilidadEstudiantesPosgrado.LECTURA_FACULTAD, "","MOV_OBSERVACION_REV_SEG");
+        setCompletado(true);
         enviarCorreoSeguimientoMovilidad(PLANT_ENVIO_REVI_FACULTAD, mep.getPersonaInv().getEmail());
         mensajeRevisionFacultad = "Se ha dado lectura al informe.";
     }
 
     public void guardarAprobacion() {
-        actualizarRevisionSeguimiento(MovilidadVisitanteExterior.APROBACION_SEDE, "","MOV_OBSERVACIONES_APR_SEG");
-        enviarCorreoSeguimientoMovilidad(PLANT_ENVIO_APROBACION_SEDE, mep.getPersonaInv().getEmail());
-        mensajeRevisionFacultad = "Se ha dado aprobación al informe.";
+    	if(validarMontos()) {
+	        actualizarRevisionSeguimiento(MovilidadVisitanteExterior.APROBACION_SEDE, "","MOV_OBSERVACIONES_APR_SEG");
+	        setCompletado(true);
+	        enviarCorreoSeguimientoMovilidad(PLANT_ENVIO_APROBACION_SEDE, mep.getPersonaInv().getEmail());
+	        mensajeRevisionFacultad = "Se ha dado aprobación al informe.";
+    	}
     }
 
     public void guardarDevolucion() {
@@ -1228,5 +1244,13 @@ public class ManejadorCrearEditarSeguimientoMovilidadEstudiante extends Manejado
 
 	public void setApoyoTotalAdicional(Long apoyoTotalAdicional) {
 		this.apoyoTotalAdicional = apoyoTotalAdicional;
+	}
+
+	public boolean isCompletado() {
+		return completado;
+	}
+
+	public void setCompletado(boolean completado) {
+		this.completado = completado;
 	}
 }
